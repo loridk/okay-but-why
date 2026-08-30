@@ -1,0 +1,2013 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 1: JavaScript With a Complicated Little Hat — Listening Companion</title>
+  <style>
+    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
+    .skip-link:focus { top: 1rem; }
+    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
+    header { padding: 2.5rem 0 1rem; }
+    header p { color: var(--muted); max-width: 68ch; }
+    audio { width: 100%; margin-top: 1rem; }
+    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
+    nav ul { columns: 2; padding-left: 1.25rem; }
+    main { padding-block: 1rem 5rem; }
+    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
+    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
+    h3 { color: var(--blue); }
+    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
+    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
+    .dialogue.parisa strong { color: var(--pink); }
+    .dialogue.jules strong { color: var(--blue); }
+    .dialogue span { max-width: 72ch; }
+    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
+    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
+    .card.terminal { border-color: var(--blue); }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
+    figcaption span { color: var(--muted); font-weight: 400; }
+    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
+    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
+    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
+    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 1: JavaScript With a Complicated Little Hat</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="typescript-01.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+<li><a href="#same-bug-different-timing">Same Bug, Different Timing</a></li>
+<li><a href="#typescript-is-not-runtime-validation">TypeScript Is Not Runtime Validation</a></li>
+<li><a href="#type-inference-typescript-can-read">Type Inference: TypeScript Can Read</a></li>
+<li><a href="#when-annotations-are-useful">When Annotations Are Useful</a></li>
+<li><a href="#the-other-thing-typescript-does">The Other Thing TypeScript Does</a></li>
+<li><a href="#what-typescript-knows-and-what-it-doesn-t">What TypeScript Knows—and What It Doesn’t</a></li>
+<li><a href="#what-does-it-cost">What Does It Cost?</a></li>
+<li><a href="#when-should-we-care">When Should We Care?</a></li>
+<li><a href="#so-what-is-typescript">So What Is TypeScript?</a></li>
+<li><a href="#closing">Closing</a></li></ul></nav>
+  <main id="script"><h1 id="episode-1-javascript-with-a-complicated-little-hat">Episode 1: JavaScript With a Complicated Little Hat</h1>
+<h2 id="cold-open">Cold Open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript has worked for decades. Who asked for JavaScript with paperwork?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Mostly developers whose JavaScript worked perfectly until a value was the wrong shape in production.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript prevents runtime errors?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. Strong product pitch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can prevent some runtime errors.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ah. So JavaScript, but with terms and conditions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript with a very anxious proofreader.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That I understand.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before your code runs, TypeScript looks through it and says things like, “You think this is a number, but three functions ago someone replaced it with the word banana.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And JavaScript’s position is?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Let’s find out.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>See, that is the reckless confidence on which the web was built.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And TypeScript exists because eventually developers wanted the web to be built with slightly less reckless confidence.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cowards.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>People maintaining payroll systems.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fine. Responsible cowards.</span>
+        </p>
+<h2 id="introduction">Introduction</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I’m Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And this is <em>Okay, But Why?</em>—the show where we refuse to memorize another piece of developer vocabulary until somebody explains why the damn thing exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Today: TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which I have avoided learning properly for an embarrassingly long time.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How long is embarrassingly long?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Long enough that job postings started writing “JavaScript slash TypeScript” like they were one word.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScriptTypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Like one of those celebrity couple names, except neither participant consented.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And now TypeScript is everywhere.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is part of my problem. I can look at TypeScript and recognize JavaScript in there. But then there’s other shit attached to it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The complicated little hat.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. JavaScript is wearing a complicated little hat, and everyone else has agreed this is normal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It mostly is normal now.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which makes me suspicious.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Naturally.</span>
+        </p>
+<h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before TypeScript, we had JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Still do.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good clarification. TypeScript has not murdered JavaScript and assumed its identity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. TypeScript depends on JavaScript. Valid JavaScript is generally valid TypeScript, and TypeScript code is ultimately turned into JavaScript before it runs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hold on. Turned into JavaScript by what?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The TypeScript compiler—or another tool that understands TypeScript syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have reached the word “compiler” suspiciously early.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We’ll unpack it. For now, the important part is that the browser does not ordinarily run your TypeScript source code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It runs JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. The TypeScript-specific parts are checked and then removed. What reaches the browser is JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript isn’t replacing JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It’s examining the JavaScript you intend to create.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Like airport security for variables.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sort of. Except airport security continues to exist after you board the plane.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And TypeScript doesn’t?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Its type system doesn’t. Once the program is running, those TypeScript types are gone.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Put a pin in that, because it sounds important and slightly alarming.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extremely important. But first: why did anyone want this?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript already has types. Strings, numbers, booleans, objects—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. JavaScript is dynamically typed. Values have types while the program is running, but a variable isn’t permanently restricted to one type.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Meaning I can do this:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>let total = 10;
+total = &quot;ten&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Completely legal JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Deeply questionable JavaScript, but legal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript won’t object merely because <code>total</code> changed from a number to a string.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It may object later, when I attempt to do math with my exciting new word-number.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The mistake and the visible failure can happen far apart.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is how you end up debugging a checkout total at two in the morning when the actual problem entered the system six functions ago.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That distance is the problem TypeScript is trying to shorten.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It wants to complain closer to where I made the mistake.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ideally before you run the code at all.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. That’s actually useful.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>First one of the series!</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don’t get excited. I haven’t seen the syntax yet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript lets us describe what kinds of values our code expects. Then it compares those expectations with how we actually use the values.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So if <code>total</code> is supposed to remain a number—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript can flag the assignment of <code>&quot;ten&quot;</code> while we’re writing the code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before a user discovers it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before the browser runs it. Often directly in the editor.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is the sales pitch, then. Find certain contradictions earlier.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Not “make bugs impossible.” Not “prove the program is correct.” Find a useful category of mistakes before runtime.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I appreciate the less magical version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The less magical version is usually the useful one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript exists because JavaScript’s flexibility is wonderful when you’re moving quickly—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And increasingly stressful when the application gets large, several developers share it, or you need to change code without remembering every assumption anyone ever made.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript trusts the team.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript has met the team.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fair.</span>
+        </p>
+<h2 id="same-bug-different-timing">Same Bug, Different Timing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Show me an actual example. Something small enough that we don’t need a repository, a build system, and three meetings about architecture.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Deal. Here’s ordinary JavaScript:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>function shoutName(user) {
+  return user.name.toUpperCase();
+}
+
+shoutName({ name: 42 });</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The function expects an object with a <code>name</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More specifically, it assumes that <code>name</code> is a string.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But we gave it the number forty-two.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript accepts the call. Then the function runs and tries to use the string method <code>toUpperCase</code> on a number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which does not have that method.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we get a runtime error.</span>
+        </p>
+
+        <figure class="card terminal" aria-label="Terminal output 1">
+          <figcaption>Terminal output 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>TypeError: user.name.toUpperCase is not a function</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fine. That’s a bug. But it’s also an extremely obvious bug.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Here, yes. In a real application, the object might travel through several files before reaching this function.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or it came from a form. Or an API. Or somebody “temporarily” changed the data structure eighteen months ago.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And now the error happens here even though the bad assumption began somewhere else.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>All right. Put the complicated hat on it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One TypeScript version could look like this:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type User = {
+  name: string;
+};
+
+function shoutName(user: User) {
+  return user.name.toUpperCase();
+}
+
+shoutName({ name: 42 });</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There are the attachments.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There are the attachments.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before we continue: which parts are TypeScript, and which parts are modern JavaScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The <code>type User</code> block is TypeScript. The <code>: User</code> after the parameter is also TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The function declaration, object, method call, <code>const</code>, braces, and template-literal-looking general ecosystem—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Because developers have developed an alarming habit of showing six unfamiliar things at once and calling the entire pile TypeScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Recurring segment?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely.</span>
+        </p>
+<h3 id="wait-that-s-just-javascript">Wait, That’s Just JavaScript</h3>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In this example, <code>type User</code> describes the shape we expect.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An object with a property called <code>name</code>, whose value must be a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Then <code>user: User</code> says the function’s <code>user</code> parameter should match that shape.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the colon is not JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. That colon is a TypeScript type annotation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So when we call the function with <code>{ name: 42 }</code>—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript compares what we supplied with what the function expects.</span>
+        </p>
+
+        <figure class="card terminal" aria-label="Terminal output 2">
+          <figcaption>Terminal output 2<span>text</span></figcaption>
+          <pre tabindex="0"><code>Type 'number' is not assignable to type 'string'.</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is significantly more useful than discovering it when somebody clicks a button.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And notice the difference in timing. JavaScript reports the problem while the program is running.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript reports the contradiction while it’s checking the source code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That distinction—compile time versus runtime—is the heart of the thing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Define compile time without assuming I have spent my life compiling things.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Here, “compile time” means the period when a tool examines and transforms our source code before the finished JavaScript runs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not necessarily mean we are manufacturing a native executable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. “Compiler” covers more than one kind of transformation. The TypeScript compiler checks the types and can produce JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And runtime is when that resulting JavaScript is actually executing in the browser or Node.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So this is not TypeScript hovering beside the website in production, guarding every variable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. It checks our work earlier, then gets out of the final program’s way.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Show me what “gets out of the way” means.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>After the TypeScript-specific syntax is removed, the relevant JavaScript is basically:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>function shoutName(user) {
+  return user.name.toUpperCase();
+}
+
+shoutName({ name: 42 });</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We’re back where we started.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>At runtime, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Meaning if we ignore the TypeScript error and produce JavaScript anyway—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The JavaScript can still fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If some other piece of code bypasses the check—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can still fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the data comes from outside the program and doesn’t match what we claimed—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can still fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript’s actual promise is not “this can never go wrong.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Its promise is closer to: “Given the information you provided, I found a contradiction before the code ran.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is much less sexy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And much more accurate.</span>
+        </p>
+<h2 id="typescript-is-not-runtime-validation">TypeScript Is Not Runtime Validation</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let’s deal with the outside-data problem now, because that sounds like a footgun wearing a sensible shoe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose an API claims it returns this:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type User = {
+  name: string;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We tell TypeScript, “This response is a <code>User</code>.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But the server actually sends:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>json</span></figcaption>
+          <pre tabindex="0"><code>{
+  &quot;name&quot;: 42
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does TypeScript intercept the response and say, “Excuse me, this violates the paperwork”?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. The type system is not present at runtime.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then our number marches straight into <code>toUpperCase</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unless we validate the data while the program is running.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different job.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. TypeScript checks relationships inside the code it can analyze. Runtime validation examines the actual data that arrives while the program is executing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Forms, API responses, local storage, URL parameters—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Database results, third-party libraries, messages from other systems. Anything outside the trusted assumptions of the current code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Please Don’t Do This: slap a type on untrusted data and call it validated.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Perfect.</span>
+        </p>
+<h3 id="please-don-t-do-this">Please Don’t Do This</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A TypeScript type describes what we believe or require.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It does not force reality to cooperate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which may be the most broadly applicable sentence in software development.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Runtime validation is a later episode. For now, remember that TypeScript’s safety exists during development and checking. It does not replace checking real external data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So we have two different questions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Does my code use values consistently?”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And, “Is this incoming value actually what it claims to be?”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Runtime validation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. That distinction alone has cleared up approximately half my suspicion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about the other half?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’ve seen TypeScript files where every available surface is covered in colons, angle brackets, and declarations. Do I have to label every variable like I’m packing a warehouse?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Because the hat was becoming a helmet.</span>
+        </p>
+<h2 id="type-inference-typescript-can-read">Type Inference: TypeScript Can Read</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>You said I don’t have to annotate everything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. TypeScript can often infer a type from the code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Infer” meaning it looks at the value and figures out the obvious thing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>ts</span></figcaption>
+          <pre tabindex="0"><code>let score = 10;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No colon. No explicit <code>number</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But TypeScript can see that <code>10</code> is a number. If we later do this—</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>ts</span></figcaption>
+          <pre tabindex="0"><code>score = &quot;ten&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It flags the assignment.</span>
+        </p>
+
+        <figure class="card terminal" aria-label="Terminal output 3">
+          <figcaption>Terminal output 3<span>text</span></figcaption>
+          <pre tabindex="0"><code>Type 'string' is not assignable to type 'number'.</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Even though I never wrote <code>score: number</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because TypeScript inferred it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That seems important, because most TypeScript examples make the language look like JavaScript contracted punctuation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Beginners often over-annotate because annotations are the visible new feature.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I’m learning TypeScript, I naturally assume my job is to type more types.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But good TypeScript frequently means letting the compiler infer the obvious parts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So this—</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>ts</span></figcaption>
+          <pre tabindex="0"><code>const podcastName: string = &quot;Okay, But Why?&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Is legal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But TypeScript already knows that the quoted text is a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the annotation provides no new information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It’s a tiny bureaucratic name tag saying, “Hello, my name is String,” while standing inside a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. This is generally enough:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>ts</span></figcaption>
+          <pre tabindex="0"><code>const podcastName = &quot;Okay, But Why?&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And because it’s <code>const</code>, we can’t assign a different value later anyway.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct—and that part is JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Wait, That’s Just JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>const</code> was introduced in ES2015. TypeScript understands it, but TypeScript did not invent it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Type inference is TypeScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>let</code> and <code>const</code> are JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I would like this distinction printed on several tutorial authors.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We’ll need a large printer.</span>
+        </p>
+<h2 id="when-annotations-are-useful">When Annotations Are Useful</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If inference handles the obvious cases, when should I write a type annotation?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>When the type is not obvious, when you want to restrict what is allowed, or when you’re defining a boundary between pieces of code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A function parameter is a boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Perfect example. TypeScript cannot reliably guess what callers are supposed to pass into this function:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name) {
+  return `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because there’s no starting value for <code>name</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Depending on our configuration, TypeScript may complain that <code>name</code> implicitly has the type <code>any</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We’re not unpacking <code>any</code> yet, are we?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not fully. For now, <code>any</code> effectively tells TypeScript to stop checking that value.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The official type of “mind your business.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Pretty much.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful occasionally. Concerning as a lifestyle.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much so. We can give the parameter an explicit type:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 12">
+          <figcaption>Code card 12<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string) {
+  return `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now the boundary says callers must provide a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And TypeScript can infer that the function returns a string.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We could annotate the return type too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We could:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 13">
+          <figcaption>Code card 13<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string): string {
+  return `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The second <code>: string</code> describes what comes back.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Whether to write that return annotation is partly a team and design decision. It can document and enforce the intended contract, especially for exported functions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But it isn’t mandatory just because we are doing TypeScript now.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. TypeScript can infer many return types.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m sensing a theme: annotate the decisions, not every object that moves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s a good working principle.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Functions, module boundaries, public APIs, complicated data structures—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Places where the intended contract matters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And let TypeScript infer <code>const count = 3</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unless there’s a specific reason not to.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. That’s actually less irritating than I expected.</span>
+        </p>
+<h2 id="the-other-thing-typescript-does">The Other Thing TypeScript Does</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So far, TypeScript catches inconsistent types. Is that the whole benefit?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. The type information also helps development tools understand the code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Autocomplete.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Autocomplete, documentation, navigation, and safer refactoring.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript editors already do some of that.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely. Modern JavaScript tooling can infer a lot. TypeScript gives the editor a more complete model, particularly as the project grows.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Example.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose we have this type:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 14">
+          <figcaption>Code card 14<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type Episode = {
+  title: string;
+  durationMinutes: number;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>When we work with an <code>Episode</code>, the editor knows its available properties.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So after I type <code>episode.</code> it can suggest <code>title</code> and <code>durationMinutes</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if you write <code>episode.durationSeconds</code>, TypeScript can tell you that property doesn’t exist.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unless we actually meant to rename it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which brings us to refactoring. Imagine changing <code>durationMinutes</code> to <code>lengthMinutes</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In a small project, search and replace.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In a large project, you want to know every place that depends on the old property—including places you forgot existed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript can identify the broken assumptions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The errors become a to-do list for the refactor.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That may be the first genuinely persuasive argument for me.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More than preventing <code>toUpperCase</code> on a number?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have maintained old code. “Here is a list of everything your change broke” is a love language.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript can make changing code less dependent on one person remembering the entire application.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which matters when the original developer has left the company.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or when the original developer is you six months later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That woman documents nothing and cannot be trusted.</span>
+        </p>
+<h2 id="what-typescript-knows-and-what-it-doesn-t">What TypeScript Knows—and What It Doesn’t</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript understands the model created by our source code and type declarations.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can catch contradictions inside that model.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can improve editor tooling because the editor understands more about our intended data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot prove that the program does what the business wanted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot tell me whether the checkout calculation is mathematically wrong if every value involved is still a number.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot guarantee that a network request succeeds.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot make inaccessible markup accessible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot sanitize malicious input.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extremely correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It cannot replace tests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct, although it may reduce the number of tests you need solely to confirm basic type relationships.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It also cannot replace runtime validation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript handles one layer of confidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A useful layer, not the entire building.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers do love installing one useful layer and announcing that weather has been solved.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript is not a force field.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It’s the anxious proofreader.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Who catches certain inconsistencies before publication.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But doesn’t fact-check reality.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="what-does-it-cost">What Does It Cost?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We’ve done the benefits. What is the price?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More tooling, for one thing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There it is.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript code needs to be checked and transformed into JavaScript. That means a compiler or a build tool that understands TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Configuration.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>More syntax.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes significantly more syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Error messages written by a Victorian mathematician trapped inside a terminal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some of them are improving.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That was not a denial.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript can also slow you down when its understanding doesn’t match what you know the program is doing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The compiler says no. I say, “But look at it.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the compiler says, “I cannot look at it the way you are looking at it.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So now I’m debugging my program and my explanation of the program.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Types are another representation of the software, and that representation requires maintenance.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Type definitions can be wrong.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely. They’re written by people.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or generated by tools written by people.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also people.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There’s no escaping them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript can also create false confidence. A codebase having zero type errors does not mean it has zero bugs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It means it has zero errors TypeScript found under the current configuration and assumptions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Configuration matters. Looser settings catch less. Escape hatches can bypass checks. Incorrect type assertions can tell TypeScript to believe something untrue.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So you can cheat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Oh, extensively.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers demanded a responsible adult and immediately started finding ways to sneak out the window.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The responsible adult is configurable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That sentence explains the industry.</span>
+        </p>
+<h2 id="when-should-we-care">When Should We Care?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does every JavaScript project need TypeScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you. We can end the episode.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A seven-line script you’ll throw away tomorrow probably doesn’t need a full TypeScript setup.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A simple static site with a tiny amount of behavior?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe not. It depends on the code and the team.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A quick experiment where I’m still trying to discover what I’m building?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript might help, but strict modeling can also become friction while everything is changing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A larger application maintained for years by multiple people?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s where the benefits become easier to justify.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Shared data structures, lots of function boundaries, APIs, components, refactoring—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript gives those relationships a form the tools can check.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A library used by other developers?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Types can become valuable documentation and improve the experience of using it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A codebase where nobody knows what half the objects look like?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript may expose that problem rather dramatically.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not automatically fix the design.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. Sometimes it merely gives the confusion a name.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Still useful.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The question isn’t, “Is TypeScript good?”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It’s, “Do TypeScript’s earlier feedback and stronger tooling solve problems this project actually has?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And are those benefits worth the additional tooling and type maintenance?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is disappointingly reasonable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I practiced.</span>
+        </p>
+<h2 id="so-what-is-typescript">So What Is TypeScript?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>All right. Final answer. What is TypeScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript is a language built on JavaScript that adds a static type system and related tooling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It checks our source code before runtime.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It looks for contradictions between the types we expect and the ways we use values.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can improve autocomplete, navigation, documentation, and refactoring.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Its type syntax is removed before the resulting JavaScript runs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the browser is still running JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript does not validate actual outside data at runtime.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not eliminate bugs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not need an annotation attached to every available noun.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t do that.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And it is most valuable when earlier feedback and explicit contracts reduce the cost of understanding and changing the code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript with an anxious proofreader.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a complicated little hat.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fine. The hat may remain.</span>
+        </p>
+<h2 id="closing">Closing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next time, I want to understand the actual type system without being buried under every piece of syntax TypeScript has accumulated since birth.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We’ll start with the types JavaScript already has, then look at how TypeScript represents them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Strings, numbers, booleans, objects—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Arrays, functions, inference, and annotations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And we will continue identifying whether unfamiliar syntax is TypeScript or merely JavaScript invented after I learned it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Wait, That’s Just JavaScript will be busy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. I have grievances.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I know.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Until next time: newer does not automatically mean better.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Older does not automatically mean simpler.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if somebody tells you TypeScript makes your application safe—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ask what kind of safety they mean.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Look at that. We learned a follow-up question.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Honestly more useful than memorizing syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. But why?</span>
+        </p></main>
+  <footer>14 code cards · 3 terminal cards</footer>
+</body>
+</html>

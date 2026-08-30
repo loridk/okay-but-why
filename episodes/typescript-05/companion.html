@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 5: Functions Have Boundaries — Listening Companion</title>
+  <style>
+    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
+    .skip-link:focus { top: 1rem; }
+    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
+    header { padding: 2.5rem 0 1rem; }
+    header p { color: var(--muted); max-width: 68ch; }
+    audio { width: 100%; margin-top: 1rem; }
+    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
+    nav ul { columns: 2; padding-left: 1.25rem; }
+    main { padding-block: 1rem 5rem; }
+    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
+    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
+    h3 { color: var(--blue); }
+    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
+    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
+    .dialogue.parisa strong { color: var(--pink); }
+    .dialogue.jules strong { color: var(--blue); }
+    .dialogue span { max-width: 72ch; }
+    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
+    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
+    .card.terminal { border-color: var(--blue); }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
+    figcaption span { color: var(--muted); font-weight: 400; }
+    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
+    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
+    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
+    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 5: Functions Have Boundaries</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <p class="notice">Audio has not been generated for this draft yet.</p>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
+<li><a href="#parameters-and-returns">Parameters and Returns</a></li>
+<li><a href="#optional-default-and-rest-parameters">Optional, Default, and Rest Parameters</a></li>
+<li><a href="#function-types">Function Types</a></li>
+<li><a href="#callbacks-carry-contracts">Callbacks Carry Contracts</a></li>
+<li><a href="#void-does-not-mean-nothing-happened">`void` Does Not Mean Nothing Happened</a></li>
+<li><a href="#methods-and-this">Methods and `this`</a></li>
+<li><a href="#overloads-briefly">Overloads, Briefly</a></li>
+<li><a href="#closing">Closing</a></li></ul></nav>
+  <main id="script"><h1 id="episode-5-functions-have-boundaries">Episode 5: Functions Have Boundaries</h1>
+<h2 id="cold-open">Cold Open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Functions are where perfectly reasonable values go to become somebody else’s problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Inputs arrive, outputs leave, callbacks return later with consequences.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript stations paperwork at the border.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More or less.</span>
+        </p>
+<h2 id="parameters-and-returns">Parameters and Returns</h2>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function calculateEndTime(
+  startMinutes: number,
+  durationMinutes: number,
+): number {
+  return startMinutes + durationMinutes;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Parameter annotations describe allowed inputs. The return annotation describes the promised output.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript can infer that return, but writing it can protect an intentional public contract.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function calculateEndTime(
+  startMinutes: number,
+  durationMinutes: number,
+): number {
+  return `${startMinutes + durationMinutes}`;
+}</code></pre>
+        </figure>
+
+        <figure class="card terminal" aria-label="Terminal output 1">
+          <figcaption>Terminal output 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>Type 'string' is not assignable to type 'number'.</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The annotation catches a change in implementation that violates the contract.</span>
+        </p>
+<h2 id="optional-default-and-rest-parameters">Optional, Default, and Rest Parameters</h2>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string, title?: string) {
+  return title ? `Hello, ${title} ${name}` : `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Optional parameters may be omitted, so inside the function <code>title</code> is <code>string | undefined</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A default value is JavaScript.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string, title = &quot;Developer&quot;) {
+  return `Hello, ${title} ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript infers the defaulted parameter as a string.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And rest parameters?</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function listTopics(...topics: string[]) {
+  return topics.join(&quot;, &quot;);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Rest syntax is JavaScript. <code>string[]</code> is the TypeScript description of the collected arguments.</span>
+        </p>
+<h2 id="function-types">Function Types</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes the function itself is the value.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type Formatter = (title: string) =&gt; string;
+
+const uppercase: Formatter = (title) =&gt; title.toUpperCase();</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The arrow inside the type describes a callable contract. The arrow in the implementation is JavaScript arrow-function syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Identical-looking arrows doing jobs in different layers. Excellent for beginners.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Context tells us whether we are in a type position or value position.</span>
+        </p>
+<h2 id="callbacks-carry-contracts">Callbacks Carry Contracts</h2>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function transformTitles(
+  titles: string[],
+  formatter: (title: string) =&gt; string,
+) {
+  return titles.map(formatter);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The callback receives a string and must return a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That lets TypeScript check both the function accepting the callback and every callback passed to it.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>ts</span></figcaption>
+          <pre tabindex="0"><code>transformTitles([&quot;types&quot;], (title) =&gt; title.length);</code></pre>
+        </figure>
+
+        <figure class="card terminal" aria-label="Terminal output 2">
+          <figcaption>Terminal output 2<span>text</span></figcaption>
+          <pre tabindex="0"><code>Type 'number' is not assignable to type 'string'.</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also, TypeScript inferred <code>title</code> inside the callback from context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Contextual typing. Information flows inward from the expected function type.</span>
+        </p>
+<h2 id="void-does-not-mean-nothing-happened"><code>void</code> Does Not Mean Nothing Happened</h2>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function logEpisode(title: string): void {
+  console.log(title);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>void</code> means callers should not rely on a useful returned value.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The function may still have effects. Logging is very much something happening.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. <code>void</code> describes the return contract, not moral purity.</span>
+        </p>
+<h2 id="methods-and-this">Methods and <code>this</code></h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do methods work differently?</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type Player = {
+  currentTime: number;
+  seek(time: number): void;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Method parameters and returns are checked like other functions. JavaScript’s <code>this</code> behavior still exists underneath.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So TypeScript may describe <code>this</code>, but it does not rewrite JavaScript’s calling rules unless another transformation is involved.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Losing <code>this</code> remains a JavaScript problem with better editor diagnostics.</span>
+        </p>
+<h2 id="overloads-briefly">Overloads, Briefly</h2>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function findEpisode(id: number): Episode;
+function findEpisode(slug: string): Episode;
+function findEpisode(value: number | string): Episode {
+  // implementation
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Overload signatures describe several supported call shapes above one implementation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why not just use a union parameter?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use a union when the return relationship is the same. Overloads help when different inputs produce meaningfully different call signatures or returns.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So they are not decorative documentation for every function with options.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t do that.</span>
+        </p>
+<h2 id="closing">Closing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Function types describe boundaries: inputs, outputs, and callable relationships.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Defaults, rest parameters, arrows, and callbacks are JavaScript behavior. TypeScript adds checked contracts around them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Contextual typing lets information flow into callback parameters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And next we make those relationships reusable without replacing everything with <code>any</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The angle brackets are approaching.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Generics.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. But why?</span>
+        </p></main>
+  <footer>11 code cards · 2 terminal cards</footer>
+</body>
+</html>

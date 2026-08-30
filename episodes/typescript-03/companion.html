@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 3: It Can Be a String or a Number. Now What? — Listening Companion</title>
+  <style>
+    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
+    .skip-link:focus { top: 1rem; }
+    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
+    header { padding: 2.5rem 0 1rem; }
+    header p { color: var(--muted); max-width: 68ch; }
+    audio { width: 100%; margin-top: 1rem; }
+    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
+    nav ul { columns: 2; padding-left: 1.25rem; }
+    main { padding-block: 1rem 5rem; }
+    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
+    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
+    h3 { color: var(--blue); }
+    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
+    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
+    .dialogue.parisa strong { color: var(--pink); }
+    .dialogue.jules strong { color: var(--blue); }
+    .dialogue span { max-width: 72ch; }
+    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
+    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
+    .card.terminal { border-color: var(--blue); }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
+    figcaption span { color: var(--muted); font-weight: 400; }
+    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
+    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
+    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
+    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 3: It Can Be a String or a Number. Now What?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <p class="notice">Audio has not been generated for this draft yet.</p>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
+<li><a href="#more-than-one-possibility">More Than One Possibility</a></li>
+<li><a href="#permission-is-not-knowledge">Permission Is Not Knowledge</a></li>
+<li><a href="#control-flow-analysis">Control-Flow Analysis</a></li>
+<li><a href="#null-and-undefined-join-the-meeting">Null and Undefined Join the Meeting</a></li>
+<li><a href="#optional-does-not-mean-imaginary">Optional Does Not Mean Imaginary</a></li>
+<li><a href="#optional-chaining-is-javascript">Optional Chaining Is JavaScript</a></li>
+<li><a href="#literal-types">Literal Types</a></li>
+<li><a href="#discriminated-unions">Discriminated Unions</a></li>
+<li><a href="#closing">Closing</a></li></ul></nav>
+  <main id="script"><h1 id="episode-3-it-can-be-a-string-or-a-number-now-what">Episode 3: It Can Be a String or a Number. Now What?</h1>
+<h2 id="cold-open">Cold Open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have a user ID. Sometimes it is a number. Sometimes it is a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That sounds plausible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript says I must choose.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript says no such thing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then why is it red?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because you told it the ID could only be a number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the machine is being pedantic about my own paperwork.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is going to be a recurring emotional journey.</span>
+        </p>
+<h2 id="more-than-one-possibility">More Than One Possibility</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A union type describes a value that may be one of several types.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>ts</span></figcaption>
+          <pre tabindex="0"><code>let userId: string | number;
+
+userId = 42;
+userId = &quot;user-42&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The vertical bar means “or.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. <code>string | number</code> means a string or a number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not a new runtime container. Not an array holding both.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Just a static description of the allowed possibilities.</span>
+        </p>
+<h2 id="permission-is-not-knowledge">Permission Is Not Knowledge</h2>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function printId(id: string | number) {
+  return id.toUpperCase();
+}</code></pre>
+        </figure>
+
+        <figure class="card terminal" aria-label="Terminal output 1">
+          <figcaption>Terminal output 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>Property 'toUpperCase' does not exist on type 'string | number'.</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It exists on the string half.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But TypeScript does not know which half arrived. Code must be safe for every member of the union.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function printId(id: string | number) {
+  if (typeof id === &quot;string&quot;) {
+    return id.toUpperCase();
+  }
+
+  return id.toString();
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>typeof</code> is JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And TypeScript understands what that JavaScript condition proves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inside the <code>if</code>, <code>id</code> must be a string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Outside it, after the string branch returns, the remaining possibility is number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is narrowing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript starts with a broader union and narrows it as control flow rules possibilities out.</span>
+        </p>
+<h2 id="control-flow-analysis">Control-Flow Analysis</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Assignments, returns, equality checks, <code>typeof</code>, <code>instanceof</code>, and property checks all provide evidence.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function describe(value: string | string[]) {
+  if (Array.isArray(value)) {
+    return `${value.length} items`;
+  }
+
+  return value.toUpperCase();
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>Array.isArray</code> is JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript uses it as a type guard.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Runtime check, static information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="null-and-undefined-join-the-meeting">Null and Undefined Join the Meeting</h2>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string | null) {
+  return name.toUpperCase();
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If <code>name</code> is null, runtime explodes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With strict null checking, TypeScript makes us handle that possibility.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function greet(name: string | null) {
+  if (name === null) {
+    return &quot;Hello, mysterious person&quot;;
+  }
+
+  return `Hello, ${name.toUpperCase()}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why compare explicitly with null instead of <code>if (!name)</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because an empty string is also falsy. The correct check depends on the business rule.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript can follow a sloppy condition. It cannot decide whether that condition means what we intended.</span>
+        </p>
+<h2 id="optional-does-not-mean-imaginary">Optional Does Not Mean Imaginary</h2>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type Guest = {
+  name: string;
+  website?: string;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The question mark makes <code>website</code> optional. Reading it gives us <code>string | undefined</code>.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function printWebsite(guest: Guest) {
+  if (guest.website) {
+    return guest.website.toUpperCase();
+  }
+
+  return &quot;No website provided&quot;;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again: runtime condition, static narrowing.</span>
+        </p>
+<h2 id="optional-chaining-is-javascript">Optional Chaining Is JavaScript</h2>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>ts</span></figcaption>
+          <pre tabindex="0"><code>const upperWebsite = guest.website?.toUpperCase();
+const label = guest.website ?? &quot;No website&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Optional chaining and nullish coalescing are JavaScript, not TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The question-mark dot returns undefined instead of calling the method on null or undefined.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And double question marks use the fallback only for null or undefined—not for empty strings, zero, or false.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Wait, That’s Just JavaScript has been productive.</span>
+        </p>
+<h2 id="literal-types">Literal Types</h2>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type Status = &quot;draft&quot; | &quot;published&quot; | &quot;archived&quot;;
+
+let status: Status = &quot;draft&quot;;
+status = &quot;banana&quot;; // error</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally, a workplace where banana is not a valid status.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Literal unions model a closed set of values and provide autocomplete. At runtime, they are still ordinary strings.</span>
+        </p>
+<h2 id="discriminated-unions">Discriminated Unions</h2>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type LoadState =
+  | { status: &quot;loading&quot; }
+  | { status: &quot;success&quot;; episodes: string[] }
+  | { status: &quot;error&quot;; message: string };</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The shared <code>status</code> property has a different literal value in each member.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 12">
+          <figcaption>Code card 12<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function render(state: LoadState) {
+  if (state.status === &quot;success&quot;) {
+    return state.episodes.join(&quot;, &quot;);
+  }
+
+  if (state.status === &quot;error&quot;) {
+    return state.message;
+  }
+
+  return &quot;Loading...&quot;;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In the success branch, TypeScript knows <code>episodes</code> exists. In the error branch, it knows <code>message</code> exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We model valid states separately instead of building one giant object full of optional properties.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Making impossible states harder to represent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One of TypeScript’s best tricks.</span>
+        </p>
+<h2 id="closing">Closing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A union gives honest permission for several possibilities.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Narrowing proves which possibility the current code has.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Normal JavaScript checks provide the evidence; TypeScript follows the control flow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time, we describe object shapes—and why TypeScript provides both type aliases and interfaces.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Two ways to describe an object. I am already calm about this.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You look calm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. But why?</span>
+        </p></main>
+  <footer>12 code cards · 1 terminal cards</footer>
+</body>
+</html>

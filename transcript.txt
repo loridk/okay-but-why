@@ -1,0 +1,8 @@
+PARISA: Okay. TypeScript.
+JULES: TypeScript! We are already doing great.
+PARISA: That feels... statistically unlikely.
+JULES: You successfully said the word. Strong opening.
+PARISA: Is that the bar?
+JULES: No—but it is technically progress.
+PARISA: “Technically progress” sounds like something a developer says right before production catches fire.
+JULES: Great news: this is a podcast, so production is only metaphorically on fire.
