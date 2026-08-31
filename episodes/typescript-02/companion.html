@@ -1,126 +1,310 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 2: JavaScript Already Has Types, So What the Hell? — Listening Companion</title>
-  <style>
-    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
-    a { color: var(--blue); }
-    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
-    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
-    .skip-link:focus { top: 1rem; }
-    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
-    header { padding: 2.5rem 0 1rem; }
-    header p { color: var(--muted); max-width: 68ch; }
-    audio { width: 100%; margin-top: 1rem; }
-    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
-    nav ul { columns: 2; padding-left: 1.25rem; }
-    main { padding-block: 1rem 5rem; }
-    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
-    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
-    h3 { color: var(--blue); }
-    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
-    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
-    .dialogue.parisa strong { color: var(--pink); }
-    .dialogue.jules strong { color: var(--blue); }
-    .dialogue span { max-width: 72ch; }
-    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
-    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
-    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
-    .card.terminal { border-color: var(--blue); }
-    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
-    figcaption span { color: var(--muted); font-weight: 400; }
-    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
-    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
-    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
-    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 2: JavaScript Already Has Types, So What the Hell?</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <p class="notice">Audio has not been generated for this draft yet.</p>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
-<li><a href="#values-have-types">Values Have Types</a></li>
-<li><a href="#the-typeof-s-ance">The `typeof` Séance</a></li>
-<li><a href="#runtime-type-versus-static-type">Runtime Type Versus Static Type</a></li>
-<li><a href="#inference-is-the-default-conversation">Inference Is the Default Conversation</a></li>
-<li><a href="#the-lowercase-types">The Lowercase Types</a></li>
-<li><a href="#arrays-are-objects-but-we-can-be-more-specific">Arrays Are Objects, But We Can Be More Specific</a></li>
-<li><a href="#function-boundaries-need-information">Function Boundaries Need Information</a></li>
-<li><a href="#what-typescript-adds">What TypeScript Adds</a></li>
-<li><a href="#closing">Closing</a></li></ul></nav>
-  <main id="script"><h1 id="episode-2-javascript-already-has-types-so-what-the-hell">Episode 2: JavaScript Already Has Types, So What the Hell?</h1>
-<h2 id="cold-open">Cold Open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 2: JavaScript Already Has Types, So What the Hell? — Listening
+      Companion
+    </title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #11131a;
+        --panel: #1b1f2a;
+        --text: #f4f1e8;
+        --muted: #c8c2b5;
+        --gold: #ffd166;
+        --blue: #8ecae6;
+        --pink: #ffafcc;
+        --border: #495164;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          1rem/1.65 system-ui,
+          sans-serif;
+      }
+      a {
+        color: var(--blue);
+      }
+      a:focus-visible,
+      audio:focus-visible,
+      pre:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 4px;
+      }
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -5rem;
+        background: var(--gold);
+        color: #111;
+        padding: 0.75rem 1rem;
+        z-index: 3;
+      }
+      .skip-link:focus {
+        top: 1rem;
+      }
+      header,
+      main,
+      nav {
+        width: min(75rem, calc(100% - 2rem));
+        margin-inline: auto;
+      }
+      header {
+        padding: 2.5rem 0 1rem;
+      }
+      header p {
+        color: var(--muted);
+        max-width: 68ch;
+      }
+      audio {
+        width: 100%;
+        margin-top: 1rem;
+      }
+      nav {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+      }
+      nav ul {
+        columns: 2;
+        padding-left: 1.25rem;
+      }
+      main {
+        padding-block: 1rem 5rem;
+      }
+      h1 {
+        font-size: clamp(2rem, 7vw, 4.5rem);
+        line-height: 1.05;
+        margin: 0;
+        max-width: 18ch;
+      }
+      h2 {
+        color: var(--gold);
+        border-top: 1px solid var(--border);
+        padding-top: 2.5rem;
+        margin-top: 3.5rem;
+      }
+      h3 {
+        color: var(--blue);
+      }
+      .dialogue {
+        display: grid;
+        grid-template-columns: 6rem 1fr;
+        gap: 1rem;
+        max-width: 70rem;
+        margin: 0.65rem 0;
+      }
+      .dialogue strong {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+        padding-top: 0.25rem;
+      }
+      .dialogue.parisa strong {
+        color: var(--pink);
+      }
+      .dialogue.jules strong {
+        color: var(--blue);
+      }
+      .dialogue span {
+        max-width: 72ch;
+      }
+      code {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      }
+      .dialogue code {
+        background: #292f3d;
+        padding: 0.08em 0.3em;
+        border-radius: 0.25rem;
+      }
+      .card {
+        margin: 2rem 0;
+        border: 2px solid var(--gold);
+        border-radius: 0.8rem;
+        overflow: hidden;
+        background: #0a0c11;
+      }
+      .card.terminal {
+        border-color: var(--blue);
+      }
+      figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        background: var(--panel);
+        padding: 0.65rem 1rem;
+        font-weight: 700;
+      }
+      figcaption span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      pre {
+        margin: 0;
+        padding: 1.25rem;
+        overflow-x: auto;
+        line-height: 1.5;
+      }
+      .notice {
+        padding: 1rem;
+        border-left: 4px solid var(--gold);
+        background: var(--panel);
+      }
+      footer {
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        padding: 2rem 1rem;
+        text-align: center;
+      }
+      @media (max-width: 42rem) {
+        nav ul {
+          columns: 1;
+        }
+        .dialogue {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: JavaScript Already Has Types, So What the Hell?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <audio controls preload="metadata">
+        <source src="typescript-02.wav" type="audio/wav" />
+        Your browser does not support the audio player.
+      </audio>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold Open</a></li>
+        <li><a href="#values-have-types">Values Have Types</a></li>
+        <li><a href="#the-typeof-s-ance">The `typeof` Séance</a></li>
+        <li>
+          <a href="#runtime-type-versus-static-type"
+            >Runtime Type Versus Static Type</a
+          >
+        </li>
+        <li>
+          <a href="#inference-is-the-default-conversation"
+            >Inference Is the Default Conversation</a
+          >
+        </li>
+        <li><a href="#the-lowercase-types">The Lowercase Types</a></li>
+        <li>
+          <a href="#arrays-are-objects-but-we-can-be-more-specific"
+            >Arrays Are Objects, But We Can Be More Specific</a
+          >
+        </li>
+        <li>
+          <a href="#function-boundaries-need-information"
+            >Function Boundaries Need Information</a
+          >
+        </li>
+        <li><a href="#what-typescript-adds">What TypeScript Adds</a></li>
+        <li><a href="#closing">Closing</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-2-javascript-already-has-types-so-what-the-hell">
+        Episode 2: JavaScript Already Has Types, So What the Hell?
+      </h1>
+      <h2 id="cold-open">Cold Open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>People keep telling me TypeScript adds types to JavaScript.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>People keep telling me TypeScript adds types to JavaScript.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is the short version.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the short version.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It is also wrong enough to be irritating. JavaScript already has strings, numbers, booleans, objects, undefined, null—</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is also wrong enough to be irritating. JavaScript already has
+          strings, numbers, booleans, objects, undefined, null—</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You came prepared.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You came prepared.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I have been arguing with coercion since before you had email.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have been arguing with coercion since before you had email.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>JavaScript absolutely has types. TypeScript adds a static model of how we expect those types to move through the program.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JavaScript absolutely has types. TypeScript adds a static model of
+          how we expect those types to move through the program.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So JavaScript knows what a value is right now.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So JavaScript knows what a value is right now.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And TypeScript tries to know what values should be allowed before the code runs.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And TypeScript tries to know what values should be allowed before the
+          code runs.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Better. The distinction may live.</span>
-        </p>
-<h2 id="values-have-types">Values Have Types</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Better. The distinction may live.</span>
+      </p>
+      <h2 id="values-have-types">Values Have Types</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Start with JavaScript. No hats.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Start with JavaScript. No hats.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Every value has a runtime type.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Every value has a runtime type.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>js</span></figcaption>
-          <pre tabindex="0"><code>&quot;hello&quot;
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>js</span></figcaption>
+        <pre tabindex="0"><code>&quot;hello&quot;
 42
 true
 undefined
@@ -128,59 +312,74 @@ null
 { name: &quot;Parisa&quot; }
 [&quot;JavaScript&quot;, &quot;TypeScript&quot;]
 function explain() {}</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Strings, numbers, booleans, undefined, null, objects, arrays, and functions.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Strings, numbers, booleans, undefined, null, objects, arrays, and
+          functions.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. “Dynamically typed” does not mean “untyped.” It means the checks happen while the program runs, and a variable can hold values of different types over time.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. “Dynamically typed” does not mean “untyped.” It means the
+          checks happen while the program runs, and a variable can hold values
+          of different types over time.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>js</span></figcaption>
-          <pre tabindex="0"><code>let result = 42;
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre tabindex="0"><code>let result = 42;
 result = &quot;forty-two&quot;;
 result = false;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Legal JavaScript. Possibly a cry for help, but legal.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Legal JavaScript. Possibly a cry for help, but legal.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The variable is not permanently stamped NUMBER. Each value still has a type.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The variable is not permanently stamped NUMBER. Each value still has
+          a type.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So JavaScript asks, “What value is here now?”</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So JavaScript asks, “What value is here now?”</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript asks, “What values should this location be allowed to hold?”</span>
-        </p>
-<h2 id="the-typeof-s-ance">The <code>typeof</code> Séance</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript asks, “What values should this location be allowed to
+          hold?”</span
+        >
+      </p>
+      <h2 id="the-typeof-s-ance">The <code>typeof</code> Séance</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript even gives us <code>typeof</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript even gives us <code>typeof</code>.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It does. With historical personality.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It does. With historical personality.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>js</span></figcaption>
-          <pre tabindex="0"><code>typeof &quot;hello&quot;        // &quot;string&quot;
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>typeof &quot;hello&quot;        // &quot;string&quot;
 typeof 42             // &quot;number&quot;
 typeof true           // &quot;boolean&quot;
 typeof undefined      // &quot;undefined&quot;
@@ -188,437 +387,584 @@ typeof {}             // &quot;object&quot;
 typeof []             // &quot;object&quot;
 typeof null           // &quot;object&quot;
 typeof function () {} // &quot;function&quot;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>typeof null</code> is <code>&quot;object&quot;</code>, because JavaScript contains an ancient bug we are all now legally required to call behavior.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>typeof null</code> is <code>&quot;object&quot;</code>, because
+          JavaScript contains an ancient bug we are all now legally required to
+          call behavior.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Essentially. It dates back to the original value representation in early JavaScript. Fixing it now would break code that depends on it.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Essentially. It dates back to the original value representation in
+          early JavaScript. Fixing it now would break code that depends on
+          it.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The web platform: where mistakes achieve tenure.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The web platform: where mistakes achieve tenure.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Arrays also report as objects because arrays are specialized objects in JavaScript.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrays also report as objects because arrays are specialized objects
+          in JavaScript.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And functions get <code>&quot;function&quot;</code>, even though functions are callable objects.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And functions get <code>&quot;function&quot;</code>, even though
+          functions are callable objects.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Which is why <code>typeof</code> is useful, but not a complete taxonomy of JavaScript values.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is why <code>typeof</code> is useful, but not a complete
+          taxonomy of JavaScript values.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript has to model the language we actually have, including the haunted basement.</span>
-        </p>
-<h2 id="runtime-type-versus-static-type">Runtime Type Versus Static Type</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript has to model the language we actually have, including the
+          haunted basement.</span
+        >
+      </p>
+      <h2 id="runtime-type-versus-static-type">
+        Runtime Type Versus Static Type
+      </h2>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>At runtime, JavaScript can inspect the value currently present.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At runtime, JavaScript can inspect the value currently present.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript works before runtime, so it cannot inspect future values.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript works before runtime, so it cannot inspect future
+          values.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It analyzes the source code and builds a model from assignments, annotations, conditions, and declarations.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It analyzes the source code and builds a model from assignments,
+          annotations, conditions, and declarations.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 4">
-          <figcaption>Code card 4<span>ts</span></figcaption>
-          <pre tabindex="0"><code>let episodeNumber = 2;
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>ts</span></figcaption>
+        <pre tabindex="0"><code>let episodeNumber = 2;
 episodeNumber = &quot;two&quot;;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript sees the initial number and infers that <code>episodeNumber</code> should remain a number.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript sees the initial number and infers that
+          <code>episodeNumber</code> should remain a number.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Then it reports the string assignment before the JavaScript runs.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then it reports the string assignment before the JavaScript
+          runs.</span
+        >
+      </p>
 
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>text</span></figcaption>
-          <pre tabindex="0"><code>Type 'string' is not assignable to type 'number'.</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Type 'string' is not assignable to type 'number'.</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Static type: TypeScript’s development-time model. Runtime type: the type of the actual JavaScript value while executing.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Static type: TypeScript’s development-time model. Runtime type: the
+          type of the actual JavaScript value while executing.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And the static model can be incomplete or wrong.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And the static model can be incomplete or wrong.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It is powerful, not psychic.</span>
-        </p>
-<h2 id="inference-is-the-default-conversation">Inference Is the Default Conversation</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. It is powerful, not psychic.</span>
+      </p>
+      <h2 id="inference-is-the-default-conversation">
+        Inference Is the Default Conversation
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>In Episode 1, we established that TypeScript can infer obvious types.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In Episode 1, we established that TypeScript can infer obvious
+          types.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Let’s make that less abstract.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Let’s make that less abstract.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 5">
-          <figcaption>Code card 5<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const host = &quot;Parisa&quot;;
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>ts</span></figcaption>
+        <pre tabindex="0"><code>const host = &quot;Parisa&quot;;
 let episodeNumber = 2;
 const published = false;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The compiler knows <code>host</code> is a string, <code>episodeNumber</code> is a number, and <code>published</code> is a boolean.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The compiler knows <code>host</code> is a string,
+          <code>episodeNumber</code> is a number, and <code>published</code> is
+          a boolean.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Without us narrating the evidence back to it.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Without us narrating the evidence back to it.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 6">
-          <figcaption>Code card 6<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const episode = {
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>ts</span></figcaption>
+        <pre tabindex="0"><code>const episode = {
   title: &quot;Types You Already Had&quot;,
   durationMinutes: 28,
   published: false,
 };</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It also infers the object’s property names and value types.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It also infers the object’s property names and value types.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So autocomplete can offer <code>title</code>, <code>durationMinutes</code>, and <code>published</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So autocomplete can offer <code>title</code>,
+          <code>durationMinutes</code>, and <code>published</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And reject a property that is not there.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And reject a property that is not there.</span>
+      </p>
 
-        <figure class="card terminal" aria-label="Terminal output 2">
-          <figcaption>Terminal output 2<span>text</span></figcaption>
-          <pre tabindex="0"><code>Property 'durationSeconds' does not exist on type ...</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 2">
+        <figcaption>Terminal output 2<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Property 'durationSeconds' does not exist on type ...</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The error may be annoying, but at least it is annoyed about something real.</span>
-        </p>
-<h2 id="the-lowercase-types">The Lowercase Types</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The error may be annoying, but at least it is annoyed about something
+          real.</span
+        >
+      </p>
+      <h2 id="the-lowercase-types">The Lowercase Types</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Show me explicit primitive annotations.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Show me explicit primitive annotations.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 7">
-          <figcaption>Code card 7<span>ts</span></figcaption>
-          <pre tabindex="0"><code>let title: string = &quot;TypeScript&quot;;
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>ts</span></figcaption>
+        <pre tabindex="0"><code>let title: string = &quot;TypeScript&quot;;
 let episodeNumber: number = 2;
 let published: boolean = false;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript’s primitive types are lowercase: <code>string</code>, <code>number</code>, and <code>boolean</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript’s primitive types are lowercase: <code>string</code>,
+          <code>number</code>, and <code>boolean</code>.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Why are you emphasizing lowercase like someone has made a mistake?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why are you emphasizing lowercase like someone has made a
+          mistake?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Because JavaScript also has uppercase wrapper constructors named <code>String</code>, <code>Number</code>, and <code>Boolean</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because JavaScript also has uppercase wrapper constructors named
+          <code>String</code>, <code>Number</code>, and
+          <code>Boolean</code>.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Ah, boxed primitives. A feature everyone remembers immediately before asking why it exists.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ah, boxed primitives. A feature everyone remembers immediately before
+          asking why it exists.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Application code almost always wants the lowercase primitive types.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Application code almost always wants the lowercase primitive
+          types.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 8">
-          <figcaption>Code card 8<span>ts</span></figcaption>
-          <pre tabindex="0"><code>// Usually what you mean
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>ts</span></figcaption>
+        <pre tabindex="0"><code>// Usually what you mean
 let name: string;
 
 // Almost never what you mean
 let boxedName: String;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Please Don’t Do This: capitalize primitive type annotations because they look more official.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Please Don’t Do This: capitalize primitive type annotations because
+          they look more official.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. The capital letter changes the meaning.</span>
-        </p>
-<h2 id="arrays-are-objects-but-we-can-be-more-specific">Arrays Are Objects, But We Can Be More Specific</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct. The capital letter changes the meaning.</span>
+      </p>
+      <h2 id="arrays-are-objects-but-we-can-be-more-specific">
+        Arrays Are Objects, But We Can Be More Specific
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>typeof</code> says an array is an object. TypeScript can do better.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>typeof</code> says an array is an object. TypeScript can do
+          better.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 9">
-          <figcaption>Code card 9<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const topics: string[] = [&quot;types&quot;, &quot;inference&quot;, &quot;annotations&quot;];</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 9">
+        <figcaption>Code card 9<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const topics: string[] = [&quot;types&quot;, &quot;inference&quot;, &quot;annotations&quot;];</code></pre>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>string[]</code> means an array whose elements are strings.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>string[]</code> means an array whose elements are
+          strings.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The brackets are TypeScript syntax here.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The brackets are TypeScript syntax here.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>In the annotation, yes. The array literal on the right is JavaScript.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the annotation, yes. The array literal on the right is
+          JavaScript.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Wait, That’s Just JavaScript remains employed.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wait, That’s Just JavaScript remains employed.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 10">
-          <figcaption>Code card 10<span>ts</span></figcaption>
-          <pre tabindex="0"><code>topics.push(&quot;functions&quot;); // okay
+      <figure class="card code" aria-label="Code card 10">
+        <figcaption>Code card 10<span>ts</span></figcaption>
+        <pre tabindex="0"><code>topics.push(&quot;functions&quot;); // okay
 topics.push(42);          // error</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript checks the element type when we add values.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>TypeScript checks the element type when we add values.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It does not freeze the array.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not freeze the array.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. <code>const</code> prevents reassignment of the variable; it does not make the array immutable.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. <code>const</code> prevents reassignment of the variable; it
+          does not make the array immutable.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Also JavaScript.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Also JavaScript.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Also frequently misunderstood JavaScript.</span>
-        </p>
-<h2 id="function-boundaries-need-information">Function Boundaries Need Information</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also frequently misunderstood JavaScript.</span>
+      </p>
+      <h2 id="function-boundaries-need-information">
+        Function Boundaries Need Information
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Local values are easy to infer because the values are right there. Function parameters arrive later.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Local values are easy to infer because the values are right there.
+          Function parameters arrive later.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. TypeScript needs us to describe what callers may provide.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. TypeScript needs us to describe what callers may
+          provide.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 11">
-          <figcaption>Code card 11<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function formatTitle(title: string) {
+      <figure class="card code" aria-label="Code card 11">
+        <figcaption>Code card 11<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function formatTitle(title: string) {
   return title.toUpperCase();
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The parameter annotation contributes information. The return type can be inferred as string.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The parameter annotation contributes information. The return type can
+          be inferred as string.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We could annotate the return when we want to enforce an explicit contract.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could annotate the return when we want to enforce an explicit
+          contract.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 12">
-          <figcaption>Code card 12<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function formatTitle(title: string): string {
+      <figure class="card code" aria-label="Code card 12">
+        <figcaption>Code card 12<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function formatTitle(title: string): string {
   return title.toUpperCase();
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Useful at a boundary. Redundant on <code>const title = &quot;TypeScript&quot;</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful at a boundary. Redundant on
+          <code>const title = &quot;TypeScript&quot;</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Usually. An annotation can also intentionally widen or restrict a value, but we’ll meet that when we discuss unions and literal types.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually. An annotation can also intentionally widen or restrict a
+          value, but we’ll meet that when we discuss unions and literal
+          types.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So the rule is not “never annotate obvious values.”</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So the rule is not “never annotate obvious values.”</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The rule is “know what information the annotation adds.”</span>
-        </p>
-<h2 id="what-typescript-adds">What TypeScript Adds</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The rule is “know what information the annotation adds.”</span>
+      </p>
+      <h2 id="what-typescript-adds">What TypeScript Adds</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Final distinction. JavaScript values already have runtime types.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Final distinction. JavaScript values already have runtime
+          types.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript adds a static system for describing and checking expected relationships between those values.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript adds a static system for describing and checking expected
+          relationships between those values.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript lets a variable hold different kinds of values.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript lets a variable hold different kinds of values.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript can restrict that variable based on inference or an explicit annotation.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript can restrict that variable based on inference or an
+          explicit annotation.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript’s <code>typeof</code> inspects runtime values, imperfectly.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JavaScript’s <code>typeof</code> inspects runtime values,
+          imperfectly.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript uses <code>typeof</code> checks as one source of information when analyzing code, which becomes important next time.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript uses <code>typeof</code> checks as one source of
+          information when analyzing code, which becomes important next
+          time.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript objects, arrays, functions, <code>let</code>, and <code>const</code> remain JavaScript.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JavaScript objects, arrays, functions, <code>let</code>, and
+          <code>const</code> remain JavaScript.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Type annotations such as <code>: string</code>, <code>string[]</code>, and named object shapes are TypeScript.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Type annotations such as <code>: string</code>,
+          <code>string[]</code>, and named object shapes are TypeScript.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So TypeScript did not bring types to a lawless language.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So TypeScript did not bring types to a lawless language.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It brought a development-time model to a dynamically typed one.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It brought a development-time model to a dynamically typed one.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Considerably less dramatic. Considerably more accurate.</span>
-        </p>
-<h2 id="closing">Closing</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Considerably less dramatic. Considerably more accurate.</span>
+      </p>
+      <h2 id="closing">Closing</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Next problem. Sometimes a value really can be more than one type.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next problem. Sometimes a value really can be more than one
+          type.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A string or a number. A user or null. Success or failure.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A string or a number. A user or null. Success or failure.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And if TypeScript only allows one possibility, we have replaced JavaScript’s chaos with paperwork that lies.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if TypeScript only allows one possibility, we have replaced
+          JavaScript’s chaos with paperwork that lies.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is why unions exist.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is why unions exist.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And narrowing?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And narrowing?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is how we prove which possibility we currently have.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is how we prove which possibility we currently have.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Excellent. TypeScript has invented asking follow-up questions.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. TypeScript has invented asking follow-up questions.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Honestly, yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Honestly, yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. But why?</span>
-        </p></main>
-  <footer>12 code cards · 2 terminal cards</footer>
-</body>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. But why?</span>
+      </p>
+    </main>
+    <footer>12 code cards · 2 terminal cards</footer>
+  </body>
 </html>

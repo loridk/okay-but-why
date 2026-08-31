@@ -1,145 +1,351 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 8 — Who Invited the Compiler? — Listening Companion</title>
-  <style>
-    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
-    a { color: var(--blue); }
-    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
-    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
-    .skip-link:focus { top: 1rem; }
-    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
-    header { padding: 2.5rem 0 1rem; }
-    header p { color: var(--muted); max-width: 68ch; }
-    audio { width: 100%; margin-top: 1rem; }
-    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
-    nav ul { columns: 2; padding-left: 1.25rem; }
-    main { padding-block: 1rem 5rem; }
-    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
-    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
-    h3 { color: var(--blue); }
-    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
-    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
-    .dialogue.parisa strong { color: var(--pink); }
-    .dialogue.jules strong { color: var(--blue); }
-    .dialogue span { max-width: 72ch; }
-    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
-    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
-    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
-    .card.terminal { border-color: var(--blue); }
-    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
-    figcaption span { color: var(--muted); font-weight: 400; }
-    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
-    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
-    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
-    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 8 — Who Invited the Compiler?</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <p class="notice">Audio has not been generated for this draft yet.</p>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold open</a></li>
-<li><a href="#what-the-compiler-does">What the compiler does</a></li>
-<li><a href="#the-config-file">The config file</a></li>
-<li><a href="#strict-is-a-family-plan">Strict is a family plan</a></li>
-<li><a href="#target-is-not-audience-demographics">Target is not audience demographics</a></li>
-<li><a href="#modules-two-questions-wearing-one-coat">Modules: two questions wearing one coat</a></li>
-<li><a href="#no-emit-and-the-crowded-kitchen">No emit and the crowded kitchen</a></li>
-<li><a href="#source-output-and-maps">Source, output, and maps</a></li>
-<li><a href="#types-are-dependencies-too">Types are dependencies too</a></li>
-<li><a href="#please-do-not-worship-the-config">Please do not worship the config</a></li>
-<li><a href="#closing">Closing</a></li></ul></nav>
-  <main id="script"><h1 id="episode-8-who-invited-the-compiler">Episode 8 — Who Invited the Compiler?</h1>
-<h2 id="cold-open">Cold open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 8 — Who Invited the Compiler? — Listening Companion</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #11131a;
+        --panel: #1b1f2a;
+        --text: #f4f1e8;
+        --muted: #c8c2b5;
+        --gold: #ffd166;
+        --blue: #8ecae6;
+        --pink: #ffafcc;
+        --border: #495164;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          1rem/1.65 system-ui,
+          sans-serif;
+      }
+      a {
+        color: var(--blue);
+      }
+      a:focus-visible,
+      audio:focus-visible,
+      pre:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 4px;
+      }
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -5rem;
+        background: var(--gold);
+        color: #111;
+        padding: 0.75rem 1rem;
+        z-index: 3;
+      }
+      .skip-link:focus {
+        top: 1rem;
+      }
+      header,
+      main,
+      nav {
+        width: min(75rem, calc(100% - 2rem));
+        margin-inline: auto;
+      }
+      header {
+        padding: 2.5rem 0 1rem;
+      }
+      header p {
+        color: var(--muted);
+        max-width: 68ch;
+      }
+      audio {
+        width: 100%;
+        margin-top: 1rem;
+      }
+      nav {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+      }
+      nav ul {
+        columns: 2;
+        padding-left: 1.25rem;
+      }
+      main {
+        padding-block: 1rem 5rem;
+      }
+      h1 {
+        font-size: clamp(2rem, 7vw, 4.5rem);
+        line-height: 1.05;
+        margin: 0;
+        max-width: 18ch;
+      }
+      h2 {
+        color: var(--gold);
+        border-top: 1px solid var(--border);
+        padding-top: 2.5rem;
+        margin-top: 3.5rem;
+      }
+      h3 {
+        color: var(--blue);
+      }
+      .dialogue {
+        display: grid;
+        grid-template-columns: 6rem 1fr;
+        gap: 1rem;
+        max-width: 70rem;
+        margin: 0.65rem 0;
+      }
+      .dialogue strong {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+        padding-top: 0.25rem;
+      }
+      .dialogue.parisa strong {
+        color: var(--pink);
+      }
+      .dialogue.jules strong {
+        color: var(--blue);
+      }
+      .dialogue span {
+        max-width: 72ch;
+      }
+      code {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      }
+      .dialogue code {
+        background: #292f3d;
+        padding: 0.08em 0.3em;
+        border-radius: 0.25rem;
+      }
+      .card {
+        margin: 2rem 0;
+        border: 2px solid var(--gold);
+        border-radius: 0.8rem;
+        overflow: hidden;
+        background: #0a0c11;
+      }
+      .card.terminal {
+        border-color: var(--blue);
+      }
+      figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        background: var(--panel);
+        padding: 0.65rem 1rem;
+        font-weight: 700;
+      }
+      figcaption span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      pre {
+        margin: 0;
+        padding: 1.25rem;
+        overflow-x: auto;
+        line-height: 1.5;
+      }
+      .notice {
+        padding: 1rem;
+        border-left: 4px solid var(--gold);
+        background: var(--panel);
+      }
+      footer {
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        padding: 2rem 1rem;
+        text-align: center;
+      }
+      @media (max-width: 42rem) {
+        nav ul {
+          columns: 1;
+        }
+        .dialogue {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 8 — Who Invited the Compiler?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <audio controls preload="metadata">
+        <source src="typescript-08.wav" type="audio/wav" />
+        Your browser does not support the audio player.
+      </audio>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold open</a></li>
+        <li><a href="#what-the-compiler-does">What the compiler does</a></li>
+        <li><a href="#the-config-file">The config file</a></li>
+        <li><a href="#strict-is-a-family-plan">Strict is a family plan</a></li>
+        <li>
+          <a href="#target-is-not-audience-demographics"
+            >Target is not audience demographics</a
+          >
+        </li>
+        <li>
+          <a href="#modules-two-questions-wearing-one-coat"
+            >Modules: two questions wearing one coat</a
+          >
+        </li>
+        <li>
+          <a href="#no-emit-and-the-crowded-kitchen"
+            >No emit and the crowded kitchen</a
+          >
+        </li>
+        <li><a href="#source-output-and-maps">Source, output, and maps</a></li>
+        <li>
+          <a href="#types-are-dependencies-too">Types are dependencies too</a>
+        </li>
+        <li>
+          <a href="#please-do-not-worship-the-config"
+            >Please do not worship the config</a
+          >
+        </li>
+        <li><a href="#closing">Closing</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-8-who-invited-the-compiler">
+        Episode 8 — Who Invited the Compiler?
+      </h1>
+      <h2 id="cold-open">Cold open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I installed TypeScript and it immediately gave me a config file containing enough switches to launch a regional airport.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I installed TypeScript and it immediately gave me a config file
+          containing enough switches to launch a regional airport.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>tsconfig.json</code>: because apparently “please check my code” needed a control panel.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>tsconfig.json</code>: because apparently “please check my code”
+          needed a control panel.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Today I want to know which machine is doing what. Type checker, compiler, bundler, transpiler, runtime—everybody put on a name tag.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Today I want to know which machine is doing what. Type checker,
+          compiler, bundler, transpiler, runtime—everybody put on a name
+          tag.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Excellent. No toolchain fog. We begin with <code>tsc</code>.</span>
-        </p>
-<h2 id="what-the-compiler-does">What the compiler does</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Excellent. No toolchain fog. We begin with <code>tsc</code>.</span
+        >
+      </p>
+      <h2 id="what-the-compiler-does">What the compiler does</h2>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The TypeScript package includes the TypeScript compiler, commonly run as <code>tsc</code>. It reads TypeScript, reports type errors, and can emit JavaScript.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The TypeScript package includes the TypeScript compiler, commonly run
+          as <code>tsc</code>. It reads TypeScript, reports type errors, and can
+          emit JavaScript.</span
+        >
+      </p>
 
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>text</span></figcaption>
-          <pre tabindex="0"><code>npx tsc</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>npx tsc</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So the browser does not run my TypeScript file directly?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So the browser does not run my TypeScript file directly?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Generally, no. Type information has to be removed and syntax may be transformed into JavaScript your chosen environment understands.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Generally, no. Type information has to be removed and syntax may be
+          transformed into JavaScript your chosen environment understands.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>ts</span></figcaption>
-          <pre tabindex="0"><code>// source.ts
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>ts</span></figcaption>
+        <pre tabindex="0"><code>// source.ts
 const greeting: string = &quot;hello&quot;;</code></pre>
-        </figure>
+      </figure>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>js</span></figcaption>
-          <pre tabindex="0"><code>// emitted JavaScript
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre tabindex="0"><code>// emitted JavaScript
 const greeting = &quot;hello&quot;;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The type annotation disappears because it was for development, not runtime behavior.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The type annotation disappears because it was for development, not
+          runtime behavior.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. “Compiler” can sound like TypeScript is creating machine code. Here it usually means checking types and transforming TypeScript-flavored source into JavaScript.</span>
-        </p>
-<h2 id="the-config-file">The config file</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. “Compiler” can sound like TypeScript is creating machine code.
+          Here it usually means checking types and transforming
+          TypeScript-flavored source into JavaScript.</span
+        >
+      </p>
+      <h2 id="the-config-file">The config file</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And <code>tsconfig.json</code> tells the compiler how to interpret the project.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And <code>tsconfig.json</code> tells the compiler how to interpret
+          the project.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It marks the project boundary and stores compiler options: what files belong, how strict checking should be, what JavaScript version to target, how modules are handled, whether output should be emitted, and more.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It marks the project boundary and stores compiler options: what
+          files belong, how strict checking should be, what JavaScript version
+          to target, how modules are handled, whether output should be emitted,
+          and more.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>json</span></figcaption>
-          <pre tabindex="0"><code>{
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
   &quot;compilerOptions&quot;: {
     &quot;strict&quot;: true,
     &quot;target&quot;: &quot;ES2022&quot;,
@@ -148,258 +354,404 @@ const greeting = &quot;hello&quot;;</code></pre>
   },
   &quot;include&quot;: [&quot;src&quot;]
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That is a small example, not a universal sacred config.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is a small example, not a universal sacred config.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Very much not universal. A Node server, browser app, library, test suite, and framework project need different settings. Start from the environment’s current documentation instead of copying a mysterious config from a six-year-old blog post.</span>
-        </p>
-<h2 id="strict-is-a-family-plan">Strict is a family plan</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Very much not universal. A Node server, browser app, library, test
+          suite, and framework project need different settings. Start from the
+          environment’s current documentation instead of copying a mysterious
+          config from a six-year-old blog post.</span
+        >
+      </p>
+      <h2 id="strict-is-a-family-plan">Strict is a family plan</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>strict: true</code> sounds judgmental.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>strict: true</code> sounds judgmental.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It enables a family of stricter checks, including stronger handling of nulls and implicit <code>any</code>. It is usually the best starting point for new work because the compiler’s guarantees are much more useful.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It enables a family of stricter checks, including stronger handling
+          of nulls and implicit <code>any</code>. It is usually the best
+          starting point for new work because the compiler’s guarantees are much
+          more useful.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Existing JavaScript migrations may have to turn strictness on gradually.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Existing JavaScript migrations may have to turn strictness on
+          gradually.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. A thousand errors are not a learning experience; they are weather. You can migrate deliberately, but know which safety checks you have postponed.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A thousand errors are not a learning experience; they are
+          weather. You can migrate deliberately, but know which safety checks
+          you have postponed.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 4">
-          <figcaption>Code card 4<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function greet(name) {
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function greet(name) {
   return `Hello, ${name}`;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>With <code>noImplicitAny</code>, that untyped parameter is flagged instead of silently becoming <code>any</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >With <code>noImplicitAny</code>, that untyped parameter is flagged
+          instead of silently becoming <code>any</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Which catches missing information at a boundary where it matters.</span>
-        </p>
-<h2 id="target-is-not-audience-demographics">Target is not audience demographics</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which catches missing information at a boundary where it
+          matters.</span
+        >
+      </p>
+      <h2 id="target-is-not-audience-demographics">
+        Target is not audience demographics
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>What does <code>target</code> do?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What does <code>target</code> do?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It selects the JavaScript language version TypeScript should emit. If your source uses newer syntax and the target is older, TypeScript can rewrite some of that syntax into older equivalents.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It selects the JavaScript language version TypeScript should emit. If
+          your source uses newer syntax and the target is older, TypeScript can
+          rewrite some of that syntax into older equivalents.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 5">
-          <figcaption>Code card 5<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const label = user?.profile?.label ?? &quot;Guest&quot;;</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const label = user?.profile?.label ?? &quot;Guest&quot;;</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Depending on the target, that may be emitted with explicit checks instead of optional chaining and nullish coalescing.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Depending on the target, that may be emitted with explicit checks
+          instead of optional chaining and nullish coalescing.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. But TypeScript does not automatically supply every missing browser feature. Syntax transformation and runtime polyfills are different jobs.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. But TypeScript does not automatically supply every missing
+          browser feature. Syntax transformation and runtime polyfills are
+          different jobs.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Important. Rewriting the sentence does not install the vocabulary.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important. Rewriting the sentence does not install the
+          vocabulary.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Also, <code>target</code> influences which built-in APIs TypeScript assumes exist through its default library definitions. Your real runtime support still needs to match your deployment plan.</span>
-        </p>
-<h2 id="modules-two-questions-wearing-one-coat">Modules: two questions wearing one coat</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, <code>target</code> influences which built-in APIs TypeScript
+          assumes exist through its default library definitions. Your real
+          runtime support still needs to match your deployment plan.</span
+        >
+      </p>
+      <h2 id="modules-two-questions-wearing-one-coat">
+        Modules: two questions wearing one coat
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Then <code>module</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Then <code>module</code>.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Modules involve both the JavaScript format and the rules used to find imported files. Modern Node projects have CommonJS and ECMAScript module concerns; browsers and bundlers have their own expectations.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modules involve both the JavaScript format and the rules used to find
+          imported files. Modern Node projects have CommonJS and ECMAScript
+          module concerns; browsers and bundlers have their own
+          expectations.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 6">
-          <figcaption>Code card 6<span>ts</span></figcaption>
-          <pre tabindex="0"><code>import { formatTitle } from &quot;./format-title.js&quot;;</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>import { formatTitle } from &quot;./format-title.js&quot;;</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This is where copying a config without understanding the runtime can create errors that feel supernatural.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where copying a config without understanding the runtime can
+          create errors that feel supernatural.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. Your <code>package.json</code>, file extensions, Node version, bundler, and compiler settings have to agree about what an import means.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Your <code>package.json</code>, file extensions, Node version,
+          bundler, and compiler settings have to agree about what an import
+          means.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The bug is not always in the code. Sometimes four configuration files are reenacting a custody dispute.</span>
-        </p>
-<h2 id="no-emit-and-the-crowded-kitchen">No emit and the crowded kitchen</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The bug is not always in the code. Sometimes four configuration files
+          are reenacting a custody dispute.</span
+        >
+      </p>
+      <h2 id="no-emit-and-the-crowded-kitchen">
+        No emit and the crowded kitchen
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Why would we set <code>noEmit: true</code> if <code>tsc</code> can create JavaScript?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why would we set <code>noEmit: true</code> if <code>tsc</code> can
+          create JavaScript?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Because many projects use TypeScript only for type checking while another tool—such as a framework compiler, Babel, or SWC—handles transformation and bundling.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because many projects use TypeScript only for type checking while
+          another tool—such as a framework compiler, Babel, or SWC—handles
+          transformation and bundling.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript checks the ingredients; somebody else cooks and plates them.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript checks the ingredients; somebody else cooks and plates
+          them.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. <code>noEmit</code> says, “Report type problems, but do not write output files.”</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. <code>noEmit</code> says, “Report type problems, but do not
+          write output files.”</span
+        >
+      </p>
 
-        <figure class="card terminal" aria-label="Terminal output 2">
-          <figcaption>Terminal output 2<span>text</span></figcaption>
-          <pre tabindex="0"><code>npx tsc --noEmit</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 2">
+        <figcaption>Terminal output 2<span>text</span></figcaption>
+        <pre tabindex="0"><code>npx tsc --noEmit</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And a bundler is not automatically a type checker.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And a bundler is not automatically a type checker.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. Some fast development tools remove TypeScript syntax without fully checking types. Your build can produce runnable JavaScript even while a separate type-check command would fail.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Some fast development tools remove TypeScript syntax without
+          fully checking types. Your build can produce runnable JavaScript even
+          while a separate type-check command would fail.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That deserves a recurring bit called “The Build Passed, Unfortunately.”</span>
-        </p>
-<h2 id="source-output-and-maps">Source, output, and maps</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That deserves a recurring bit called “The Build Passed,
+          Unfortunately.”</span
+        >
+      </p>
+      <h2 id="source-output-and-maps">Source, output, and maps</h2>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>If TypeScript does emit files, <code>rootDir</code> and <code>outDir</code> can help separate source from generated output.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If TypeScript does emit files, <code>rootDir</code> and
+          <code>outDir</code> can help separate source from generated
+          output.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 7">
-          <figcaption>Code card 7<span>json</span></figcaption>
-          <pre tabindex="0"><code>{
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
   &quot;compilerOptions&quot;: {
     &quot;rootDir&quot;: &quot;src&quot;,
     &quot;outDir&quot;: &quot;dist&quot;,
     &quot;sourceMap&quot;: true
   }
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>src</code> is what humans edit. <code>dist</code> is what the tool produces.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>src</code> is what humans edit. <code>dist</code> is what the
+          tool produces.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And source maps help debugging tools connect emitted JavaScript back to the TypeScript source. They are maps, not runtime type preservation.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And source maps help debugging tools connect emitted JavaScript back
+          to the TypeScript source. They are maps, not runtime type
+          preservation.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The browser still receives JavaScript. It just gets directions back to the original scene of the crime.</span>
-        </p>
-<h2 id="types-are-dependencies-too">Types are dependencies too</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser still receives JavaScript. It just gets directions back
+          to the original scene of the crime.</span
+        >
+      </p>
+      <h2 id="types-are-dependencies-too">Types are dependencies too</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Where do definitions like <code>document</code> or <code>setTimeout</code> come from?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Where do definitions like <code>document</code> or
+          <code>setTimeout</code> come from?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript includes declaration libraries describing standard JavaScript and common runtime APIs. The <code>lib</code> option lets you choose environments—for example, browser DOM APIs versus a pure server context.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript includes declaration libraries describing standard
+          JavaScript and common runtime APIs. The <code>lib</code> option lets
+          you choose environments—for example, browser DOM APIs versus a pure
+          server context.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So including DOM types says the code may use browser APIs. It does not summon a browser inside Node.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So including DOM types says the code may use browser APIs. It does
+          not summon a browser inside Node.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. Once again, a type declaration describes reality; it does not create reality.</span>
-        </p>
-<h2 id="please-do-not-worship-the-config">Please do not worship the config</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Once again, a type declaration describes reality; it does
+          not create reality.</span
+        >
+      </p>
+      <h2 id="please-do-not-worship-the-config">
+        Please do not worship the config
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I have seen TypeScript configs with thirty inherited files and options nobody can explain.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have seen TypeScript configs with thirty inherited files and
+          options nobody can explain.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Configuration should serve the project. Useful questions are: What runs this code? Who creates the JavaScript? What module rules apply? How strict do we want to be? What files are source, tests, or output?</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Configuration should serve the project. Useful questions are: What
+          runs this code? Who creates the JavaScript? What module rules apply?
+          How strict do we want to be? What files are source, tests, or
+          output?</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If we cannot answer those, adding another preset is not necessarily progress.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we cannot answer those, adding another preset is not necessarily
+          progress.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And compiler options evolve. Use the documentation for the TypeScript version and framework you actually have.</span>
-        </p>
-<h2 id="closing">Closing</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And compiler options evolve. Use the documentation for the TypeScript
+          version and framework you actually have.</span
+        >
+      </p>
+      <h2 id="closing">Closing</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>tsc</code> checks types and may emit JavaScript. <code>tsconfig.json</code> defines the project and its checking and output rules.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>tsc</code> checks types and may emit JavaScript.
+          <code>tsconfig.json</code> defines the project and its checking and
+          output rules.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>strict</code> strengthens checks. <code>target</code> affects emitted syntax. Module settings must match the runtime. <code>noEmit</code> lets another tool own the output.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>strict</code> strengthens checks. <code>target</code> affects
+          emitted syntax. Module settings must match the runtime.
+          <code>noEmit</code> lets another tool own the output.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And a successful bundle does not necessarily mean the type check passed.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a successful bundle does not necessarily mean the type check
+          passed.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Next time we take all of this into a real project: migration, package types, API data, React’s TSX, and the radical idea that not every file needs to become TypeScript by lunchtime.</span>
-        </p></main>
-  <footer>7 code cards · 2 terminal cards</footer>
-</body>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time we take all of this into a real project: migration, package
+          types, API data, React’s TSX, and the radical idea that not every file
+          needs to become TypeScript by lunchtime.</span
+        >
+      </p>
+    </main>
+    <footer>7 code cards · 2 terminal cards</footer>
+  </body>
 </html>

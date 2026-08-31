@@ -3,9 +3,9 @@ const path = require("node:path");
 const { createHash } = require("node:crypto");
 
 const MODEL = "gemini-3.1-flash-tts-preview";
-const EPISODE_SLUG = process.argv
-  .slice(2)
-  .find((argument) => !argument.startsWith("--")) ?? "typescript-01";
+const EPISODE_SLUG =
+  process.argv.slice(2).find((argument) => !argument.startsWith("--")) ??
+  "typescript-01";
 
 if (!/^typescript-\d{2}$/.test(EPISODE_SLUG)) {
   throw new Error(
@@ -17,7 +17,7 @@ const EPISODE_DIRECTORY = path.join(__dirname, "episodes", EPISODE_SLUG);
 const SCRIPT_PATH = path.join(EPISODE_DIRECTORY, "master-script.md");
 const OUTPUT_PATH = path.join(EPISODE_DIRECTORY, `${EPISODE_SLUG}.wav`);
 const PARTS_DIRECTORY = path.join(EPISODE_DIRECTORY, "audio-parts");
-const MAX_CHUNK_CHARACTERS = 4_500;
+const MAX_CHUNK_CHARACTERS = 1000;
 const SILENCE_BETWEEN_CHUNKS_MS = 400;
 
 const CAST = {
@@ -26,9 +26,7 @@ const CAST = {
 };
 
 function removeMarkdown(text) {
-  return text
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1");
+  return text.replace(/`([^`]+)`/g, "$1").replace(/\*([^*]+)\*/g, "$1");
 }
 
 function extractSections(source) {
@@ -69,7 +67,9 @@ function extractSections(source) {
   }
 
   if (sections.length === 0) {
-    throw new Error("The master script contains no PARISA: or JULES: dialogue.");
+    throw new Error(
+      "The master script contains no PARISA: or JULES: dialogue.",
+    );
   }
 
   return sections;
@@ -93,7 +93,10 @@ function buildChunks(sections) {
       currentLength + (current.dialogue.length ? 1 : 0) + sectionLength;
 
     if (sectionLength <= MAX_CHUNK_CHARACTERS) {
-      if (current.dialogue.length > 0 && combinedLength > MAX_CHUNK_CHARACTERS) {
+      if (
+        current.dialogue.length > 0 &&
+        combinedLength > MAX_CHUNK_CHARACTERS
+      ) {
         flush();
       }
 
@@ -193,8 +196,7 @@ async function fileExists(filePath) {
 }
 
 async function generateConversation(transcript, apiKey) {
-  const endpoint =
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
   const prompt = `
 Generate speech for the exact transcript below. Do not add, remove, or paraphrase words.
 
@@ -317,9 +319,10 @@ async function main() {
         chunk.dialogue.join("\n"),
         apiKey,
       );
-      wav = audio.subarray(0, 4).toString() === "RIFF"
-        ? audio
-        : addWavHeader(audio);
+      wav =
+        audio.subarray(0, 4).toString() === "RIFF"
+          ? audio
+          : addWavHeader(audio);
       await fs.writeFile(partPath, wav);
       console.log(`  Saved ${fileName}.`);
     }
