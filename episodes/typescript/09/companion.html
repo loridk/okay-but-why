@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 9 — Put It in a Real Project — Listening Companion</title>
+  <style>
+    :root { color-scheme: dark; --bg: #11131a; --panel: #1b1f2a; --text: #f4f1e8; --muted: #c8c2b5; --gold: #ffd166; --blue: #8ecae6; --pink: #ffafcc; --border: #495164; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
+    a { color: var(--blue); }
+    a:focus-visible, audio:focus-visible, pre:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--gold); color: #111; padding: .75rem 1rem; z-index: 3; }
+    .skip-link:focus { top: 1rem; }
+    header, main, nav { width: min(75rem, calc(100% - 2rem)); margin-inline: auto; }
+    header { padding: 2.5rem 0 1rem; }
+    header p { color: var(--muted); max-width: 68ch; }
+    audio { width: 100%; margin-top: 1rem; }
+    nav { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
+    nav ul { columns: 2; padding-left: 1.25rem; }
+    main { padding-block: 1rem 5rem; }
+    h1 { font-size: clamp(2rem, 7vw, 4.5rem); line-height: 1.05; margin: 0; max-width: 18ch; }
+    h2 { color: var(--gold); border-top: 1px solid var(--border); padding-top: 2.5rem; margin-top: 3.5rem; }
+    h3 { color: var(--blue); }
+    .dialogue { display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; max-width: 70rem; margin: .65rem 0; }
+    .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
+    .dialogue.parisa strong { color: var(--pink); }
+    .dialogue.jules strong { color: var(--blue); }
+    .dialogue span { max-width: 72ch; }
+    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+    .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
+    .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }
+    .card.terminal { border-color: var(--blue); }
+    figcaption { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel); padding: .65rem 1rem; font-weight: 700; }
+    figcaption span { color: var(--muted); font-weight: 400; }
+    pre { margin: 0; padding: 1.25rem; overflow-x: auto; line-height: 1.5; }
+    .notice { padding: 1rem; border-left: 4px solid var(--gold); background: var(--panel); }
+    footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; }
+    @media (max-width: 42rem) { nav ul { columns: 1; } .dialogue { grid-template-columns: 1fr; gap: 0; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 9 — Put It in a Real Project</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="typescript-09.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold open</a></li>
+<li><a href="#start-at-a-boundary">Start at a boundary</a></li>
+<li><a href="#javascript-and-typescript-can-coexist">JavaScript and TypeScript can coexist</a></li>
+<li><a href="#third-party-package-types">Third-party package types</a></li>
+<li><a href="#the-network-is-not-type-safe">The network is not type-safe</a></li>
+<li><a href="#react-and-tsx-without-starting-the-react-series">React and TSX, without starting the React series</a></li>
+<li><a href="#where-typescript-pays-rent">Where TypeScript pays rent</a></li>
+<li><a href="#a-practical-adoption-checklist">A practical adoption checklist</a></li>
+<li><a href="#what-typescript-does-not-do">What TypeScript does not do</a></li>
+<li><a href="#series-close">Series close</a></li></ul></nav>
+  <main id="script"><h1 id="episode-9-put-it-in-a-real-project">Episode 9 — Put It in a Real Project</h1>
+<h2 id="cold-open">Cold open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We understand the types. We met the compiler. I am ready to convert the entire production codebase before lunch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Coward.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Professional survivor. Today we decide where TypeScript earns its keep, how to migrate without detonating the schedule, and why data from the internet remains capable of lying.</span>
+        </p>
+<h2 id="start-at-a-boundary">Start at a boundary</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Suppose I have an existing JavaScript app. Where do I start?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Choose a small, valuable boundary: a utility with clear inputs and outputs, a data transformation, or a module that causes recurring mistakes. Do not begin with the largest, weirdest file because it looks heroic.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript migration is renovation while people still live in the house.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. One room, working smoke alarms, no surprise removal of the staircase.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type CartItem = {
+  price: number;
+  quantity: number;
+};
+
+export function total(items: CartItem[]): number {
+  return items.reduce(
+    (sum, item) =&gt; sum + item.price * item.quantity,
+    0,
+  );
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Clear contract, pure logic, easy test. Better first target than the eleven-year-old checkout controller with six global variables.</span>
+        </p>
+<h2 id="javascript-and-typescript-can-coexist">JavaScript and TypeScript can coexist</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript supports gradual adoption. Depending on the project, <code>allowJs</code> can let JavaScript files participate while TypeScript files are added incrementally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>checkJs</code> can report some type errors in JavaScript, using inference and JSDoc, before we rename every file.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>// @ts-check
+
+/** @param {number} price */
+function formatPrice(price) {
+  return `$${price.toFixed(2)}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That can be a sensible bridge. The goal is useful feedback, not winning a file-extension contest.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But we still need a migration policy. New files only? Touched files? One folder at a time?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, plus a shared strictness target and a rule against hiding every error with <code>any</code> just to make the dashboard green.</span>
+        </p>
+<h2 id="third-party-package-types">Third-party package types</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What happens when we import a JavaScript package?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Many packages ship their own type declaration files. Those <code>.d.ts</code> files describe the package’s public API without adding runtime code.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>ts</span></figcaption>
+          <pre tabindex="0"><code>import express from &quot;express&quot;;
+
+const app = express();</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the package does not include types?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The community may publish them in an <code>@types</code> package. For example, installing <code>@types/some-library</code> can teach TypeScript about a JavaScript library.</span>
+        </p>
+
+        <figure class="card terminal" aria-label="Terminal output 1">
+          <figcaption>Terminal output 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>npm install --save-dev @types/some-library</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if neither exists, we can write a small declaration ourselves.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>ts</span></figcaption>
+          <pre tabindex="0"><code>declare module &quot;tiny-legacy-widget&quot; {
+  export function mount(selector: string): void;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Start narrow. A declaration file is a promise about code you do not control. If the promise is wrong, TypeScript can confidently help you crash.</span>
+        </p>
+<h2 id="the-network-is-not-type-safe">The network is not type-safe</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here is the mistake I most want burned into the walls: giving <code>fetch</code> a type does not force the server to obey it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Network data, local storage, environment variables, form data, and messages from other systems arrive at runtime. TypeScript cannot inspect future values while compiling.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type User = {
+  id: number;
+  name: string;
+};
+
+const response = await fetch(&quot;/api/user/42&quot;);
+const data: unknown = await response.json();</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now we validate <code>data</code> before treating it as <code>User</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. That validator might be handwritten or provided by a runtime schema library. Either way, validation is executable JavaScript running against the actual value.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>ts</span></figcaption>
+          <pre tabindex="0"><code>function isUser(value: unknown): value is User {
+  return (
+    typeof value === &quot;object&quot; &amp;&amp;
+    value !== null &amp;&amp;
+    &quot;id&quot; in value &amp;&amp;
+    typeof value.id === &quot;number&quot; &amp;&amp;
+    &quot;name&quot; in value &amp;&amp;
+    typeof value.name === &quot;string&quot;
+  );
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then TypeScript can narrow after the runtime check.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>ts</span></figcaption>
+          <pre tabindex="0"><code>if (!isUser(data)) {
+  throw new Error(&quot;The API returned an invalid user&quot;);
+}
+
+console.log(data.name.toUpperCase());</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is the partnership: runtime validation establishes a fact; TypeScript carries that fact through the rest of the code.</span>
+        </p>
+<h2 id="react-and-tsx-without-starting-the-react-series">React and TSX, without starting the React series</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We promised one look at React because people see <code>.tsx</code> and assume the X is TypeScript getting promoted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TSX is TypeScript source that contains JSX syntax. JSX itself is the angle-bracket syntax commonly used to describe UI in React.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>tsx</span></figcaption>
+          <pre tabindex="0"><code>type GreetingProps = {
+  name: string;
+};
+
+function Greeting({ name }: GreetingProps) {
+  return &lt;h1&gt;Hello, {name}&lt;/h1&gt;;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The object annotation describes the component’s props. The <code>&lt;h1&gt;</code> is JSX. The destructuring is modern JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Beautiful. “Wait, That’s Just JavaScript” survives the finale.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript can catch a missing or incorrectly typed prop while we build. It does not make the rendered interface accessible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Semantic HTML, labels, keyboard behavior, focus management, contrast, and understandable feedback are still design and implementation responsibilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A perfectly typed inaccessible button is still an inaccessible button.</span>
+        </p>
+<h2 id="where-typescript-pays-rent">Where TypeScript pays rent</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript tends to earn its keep in long-lived codebases, shared libraries, teams, complex state, frequently changed business rules, and systems where refactoring confidence matters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or when data structures are complex enough that remembering everything in your head has become an unpaid second job.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can provide fast feedback, editor navigation, safer renames, and contracts between parts of a system.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where might it not be worth much?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A tiny disposable script, a short prototype, or a simple page maintained by one person may not need the setup. Though TypeScript can still be pleasant there if the environment already supports it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The answer is not “TypeScript everywhere because serious developers.” The answer is “What mistakes are likely here, and will static checking repay its cost?”</span>
+        </p>
+<h2 id="a-practical-adoption-checklist">A practical adoption checklist</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before adopting it, answer five questions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One: what problem are we trying to reduce?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Two: what runtime and build tools already exist?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Three: what strictness level is our destination?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Four: where does untrusted data enter, and how will we validate it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Five: how will the team migrate without freezing feature work or carpeting the codebase in <code>any</code>?</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>text</span></figcaption>
+          <pre tabindex="0"><code>Adoption plan
+1. Name the recurring problem.
+2. Confirm the runtime and toolchain.
+3. Choose strictness and migration rules.
+4. Validate external data at runtime.
+5. Convert one useful boundary and measure the result.</code></pre>
+        </figure>
+<h2 id="what-typescript-does-not-do">What TypeScript does not do</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finale lightning round. Does TypeScript make bad architecture good?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does it test behavior?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Validate a production API response?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Prevent every bug?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Replace accessibility review, security review, or understanding the code?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also no.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then why should I give a shit?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because a large class of ordinary mistakes can become immediate feedback instead of runtime surprises. Because types can document relationships the compiler actually checks. And because refactoring becomes less like searching a dark basement by touch.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There it is. TypeScript is not smarter JavaScript. It is a development tool for making assumptions visible and checkable before the code runs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It costs syntax, configuration, learning, and occasional arguments with error messages. Sometimes that trade is excellent. Sometimes it is not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means the final answer is deeply annoying.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“It depends,” but now we know what it depends on.</span>
+        </p>
+<h2 id="series-close">Series close</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We started with JavaScript wearing a complicated little hat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then we found runtime types, inference, unions, narrowing, object shapes, function contracts, generics, escape hatches, and the compiler underneath it all.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>More importantly, we found the boundary of the promise. TypeScript checks our model of the program before runtime. Reality still gets the last word.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And next in our broader journey: Node, npm, and modern JavaScript tooling—the machinery many of us installed years ago and have been politely pretending is self-explanatory.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally. I have questions for <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It has retained counsel.</span>
+        </p></main>
+  <footer>9 code cards · 1 terminal cards</footer>
+</body>
+</html>

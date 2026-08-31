@@ -3,17 +3,31 @@ const path = require("node:path");
 const { createHash } = require("node:crypto");
 
 const MODEL = "gemini-3.1-flash-tts-preview";
-const EPISODE_SLUG =
-  process.argv.slice(2).find((argument) => !argument.startsWith("--")) ??
-  "typescript-01";
+const POSITIONAL_ARGUMENTS = process.argv
+  .slice(2)
+  .filter((argument) => !argument.startsWith("--"));
+const SERIES_SLUG = POSITIONAL_ARGUMENTS[0] ?? "typescript";
+const EPISODE_NUMBER = POSITIONAL_ARGUMENTS[1] ?? "01";
 
-if (!/^typescript-\d{2}$/.test(EPISODE_SLUG)) {
+if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(SERIES_SLUG)) {
   throw new Error(
-    `Invalid episode "${EPISODE_SLUG}". Use a slug such as typescript-02.`,
+    `Invalid series "${SERIES_SLUG}". Use a slug such as typescript or modern-css.`,
   );
 }
 
-const EPISODE_DIRECTORY = path.join(__dirname, "episodes", EPISODE_SLUG);
+if (!/^\d{2}$/.test(EPISODE_NUMBER)) {
+  throw new Error(
+    `Invalid episode number "${EPISODE_NUMBER}". Use two digits, such as 02.`,
+  );
+}
+
+const EPISODE_SLUG = `${SERIES_SLUG}-${EPISODE_NUMBER}`;
+const EPISODE_DIRECTORY = path.join(
+  __dirname,
+  "episodes",
+  SERIES_SLUG,
+  EPISODE_NUMBER,
+);
 const SCRIPT_PATH = path.join(EPISODE_DIRECTORY, "master-script.md");
 const OUTPUT_PATH = path.join(EPISODE_DIRECTORY, `${EPISODE_SLUG}.wav`);
 const PARTS_DIRECTORY = path.join(EPISODE_DIRECTORY, "audio-parts");

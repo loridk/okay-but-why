@@ -173,8 +173,13 @@ function createPage(episode, hasAudio, slug) {
 </html>`;
 }
 
-async function buildEpisode(slug) {
-  const episodeDirectory = path.join(EPISODES_DIRECTORY, slug);
+async function buildEpisode(seriesSlug, episodeNumber) {
+  const slug = `${seriesSlug}-${episodeNumber}`;
+  const episodeDirectory = path.join(
+    EPISODES_DIRECTORY,
+    seriesSlug,
+    episodeNumber,
+  );
   const scriptPath = path.join(episodeDirectory, "master-script.md");
   const audioPath = path.join(episodeDirectory, `${slug}.wav`);
   const outputPath = path.join(episodeDirectory, "companion.html");
@@ -188,13 +193,20 @@ async function buildEpisode(slug) {
   );
 }
 
-const slug = process.argv[2];
+const seriesSlug = process.argv[2];
+const episodeNumber = process.argv[3];
 
-if (!slug) {
-  console.error("Usage: node build-companion.js typescript-01");
+if (!seriesSlug || !episodeNumber) {
+  console.error("Usage: node build-companion.js typescript 01");
+  process.exitCode = 1;
+} else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(seriesSlug)) {
+  console.error("Series must be a lowercase slug such as typescript or modern-css.");
+  process.exitCode = 1;
+} else if (!/^\d{2}$/.test(episodeNumber)) {
+  console.error("Episode number must use two digits, such as 01 or 02.");
   process.exitCode = 1;
 } else {
-  buildEpisode(slug).catch((error) => {
+  buildEpisode(seriesSlug, episodeNumber).catch((error) => {
     console.error(`Companion build stopped: ${error.message}`);
     process.exitCode = 1;
   });
