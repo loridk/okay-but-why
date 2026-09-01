@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 2: npm — Composer, But Make It JavaScript — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 2: npm — Composer, But Make It JavaScript</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="node-npm-02.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
+<li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+<li><a href="#what-is-a-package">What Is a Package?</a></li>
+<li><a href="#install-one-thing-receive-a-village">Install One Thing, Receive a Village</a></li>
+<li><a href="#local-and-global-two-different-kinds-of-trouble">Local and Global: Two Different Kinds of Trouble</a></li>
+<li><a href="#npm-install-with-no-package-name">`npm install` With No Package Name</a></li>
+<li><a href="#how-did-package-json-get-here">How Did `package.json` Get Here?</a></li>
+<li><a href="#what-changes-when-i-install-a-package">What Changes When I Install a Package?</a></li>
+<li><a href="#npx-borrow-the-tool-run-the-tool">`npx`: Borrow the Tool, Run the Tool</a></li>
+<li><a href="#dependencies-and-dev-dependencies">Dependencies and Dev Dependencies</a></li>
+<li><a href="#updating-is-a-decision">Updating Is a Decision</a></li>
+<li><a href="#choosing-a-package">Choosing a Package</a></li>
+<li><a href="#the-lockfile-is-not-decorative">The Lockfile Is Not Decorative</a></li>
+<li><a href="#please-don-t-do-this-packages-are-code">Please Don't Do This: Packages Are Code</a></li>
+<li><a href="#installation-scripts-why-is-it-compiling-something">Installation Scripts: Why Is It Compiling Something?</a></li>
+<li><a href="#who-can-publish-an-update">Who Can Publish an Update?</a></li>
+<li><a href="#funding-warnings-and-terminal-emotional-weather">Funding, Warnings, and Terminal Emotional Weather</a></li>
+<li><a href="#npm-is-not-the-only-one">npm Is Not the Only One</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script"><h1 id="episode-2-npm-composer-but-make-it-javascript">Episode 2: npm — Composer, But Make It JavaScript</h1>
+<h2 id="cold-open">Cold Open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I typed <code>npm install</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Brave.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The terminal displayed several hundred lines, created a directory large enough to develop weather, and then asked me for money.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ah. The complete npm experience.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What did I install?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Your project's dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I asked for one thing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That thing asked for other things.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Without consulting me?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It was all written down.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In package manifests.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>You have introduced two nouns and somehow made this worse.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em>, the show where developers may ask what a command does before letting it furnish an apartment on their hard drive.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I'm Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And I'm Parisa. Last time, we learned that Node lets JavaScript run outside the browser.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which means developers can write command-line tools in JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And today we meet the tool that brings us all the other tools.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Lowercase?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Officially, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does it stand for Node Package Manager?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is already contentious.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is episode two.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The practical answer is that npm is the package manager commonly bundled with Node. Its own documentation has historically enjoyed saying npm is not an acronym.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Great. A package manager with lore.</span>
+        </p>
+<h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before npm, how did we use somebody else's code?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How did you do it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Download a ZIP. Copy a library into the project. Add a script tag. Hope <code>jquery.final.REAL.min.js</code> was the right file.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Beautiful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or use a content delivery network and pray the URL stayed alive.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also beautiful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It was not beautiful. But it was legible. I could point at the file and say, “There. That is the code I downloaded.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The problem appears when projects use many libraries, those libraries need particular versions, and those libraries depend on more libraries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Dependency management.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I know this problem from PHP. Composer has a package registry, a project file, a lockfile, and a command that installs everything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then you already understand the category. npm is Composer, but make it JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally. A sentence with handles.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Different ecosystem and details, same broad problem: describe the packages a project needs, resolve compatible versions, download them, and make them available to the project.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So npm did not invent using other people's code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It automated the increasingly horrible spreadsheet in my head.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's package management.</span>
+        </p>
+<h3 id="old-person-yells-at-cloud">Old Person Yells at Cloud</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In the old system, upgrading meant visiting a website, downloading a file, replacing the old file, and checking whether the application caught fire.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With npm, upgrading can be a command.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Followed by checking whether the application caught fire.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some traditions endure.</span>
+        </p>
+<h2 id="what-is-a-package">What Is a Package?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Define package without using the word package.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A reusable bundle of code and metadata that can be published and installed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Library?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes. It could be a library your application imports, like a date utility.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A command-line tool. A framework. A plugin. Type definitions. A tiny helper that does one oddly specific thing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How tiny?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The ecosystem has tested the philosophical limits of that question.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The metadata says things like the package's name, version, entry points, and its own dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a package is not just a JavaScript file.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. It is a unit the package manager knows how to identify and install.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And where does npm find it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually in the public npm registry.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm the command and npm the website are different things?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Related things. The npm command-line interface is the program on your computer. The registry is the service containing published packages and metadata.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Like the grocery app and the warehouse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Except the groceries can execute code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please stop improving the metaphor.</span>
+        </p>
+<h2 id="install-one-thing-receive-a-village">Install One Thing, Receive a Village</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I run <code>npm install vite</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm asks the registry for information about Vite.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then downloads Vite.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the packages Vite says it needs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Its dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And their dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Dependencies of dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Transitive dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Of course they have a name.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm builds a dependency graph.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not just a list?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A graph, because the relationships branch. Your app depends on A and B. A depends on C. B might also depend on C, or on a different version of C.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the package manager has to figure out which versions can coexist and where to put them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That explains why one package becomes two hundred packages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It explains it. It does not necessarily make it emotionally acceptable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you.</span>
+        </p>
+<h2 id="local-and-global-two-different-kinds-of-trouble">Local and Global: Two Different Kinds of Trouble</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Tutorials say <code>npm install something</code> and sometimes <code>npm install --global something</code>. Why?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A local install belongs to the current project. It is recorded for that project and installed where that project can use it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Project A can use version one while Project B uses version two.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Global?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Installs a command for your user or system environment so you can run it from many places.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Convenient.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes. But global installs can create version drift. Your machine has one version while the project expects another.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why modern instructions often prefer local tools and <code>npx</code> or npm scripts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. The project carries the version decision instead of trusting whatever happens to live globally on your laptop.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reproducibility.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the goal.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We will return to <code>npx</code> later?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Today it is enough to know it can run package-provided commands without making you maintain a permanent global installation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A deliberately incomplete answer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Labeled as such.</span>
+        </p>
+<h2 id="npm-install-with-no-package-name"><code>npm install</code> With No Package Name</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here is the command I use most often. I clone a repository and run plain <code>npm install</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In that case, npm reads the project's package metadata.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>package.json</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are not unpacking that entire file yet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next episode.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But it contains the direct dependencies the project says it needs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And npm uses that information, plus the lockfile when present, to reconstruct the installed dependency tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Reconstruct” is important.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very. The installed directory is generated material. The project records a recipe; npm produces the local installation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So teammates do not usually email each other <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don't.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Put it in Git?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually, absolutely not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why “usually”?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because software has edge cases and historians, but ordinary application projects ignore <code>node_modules</code> and recreate it with the package manager.</span>
+        </p>
+<h2 id="how-did-package-json-get-here">How Did <code>package.json</code> Get Here?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We keep treating <code>package.json</code> like it arrived with the land.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In a new project, you can create one with <code>npm init</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That asks questions about the package and writes the file.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or <code>npm init --yes</code> accepts defaults.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Convenient, but I should still read what it created.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Always. Framework scaffolding tools may create the file too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Such as <code>npm create vite</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That runs a package-provided project creator. It can ask what kind of project you want and generate starter files.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a cheerful “create my app” command is also executing downloaded code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Scaffolding is code execution plus file creation. Read the official instructions and verify the package name.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Typosquatting must love commands copied from memory.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Attackers can publish names designed to resemble popular packages. One wrong character can select somebody else's code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Copy commands from official documentation. Do not improvise package spelling with confidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good life advice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if I'm joining an existing repository, I do not run <code>npm init</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The project already has a manifest.</span>
+        </p>
+<h2 id="what-changes-when-i-install-a-package">What Changes When I Install a Package?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's watch one install carefully.</span>
+        </p>
+
+        <figure class="card terminal" aria-label="Terminal output 1">
+          <figcaption>Terminal output 1<span>bash</span></figcaption>
+          <pre tabindex="0"><code>npm install date-fns</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm resolves an acceptable version, downloads the package and anything new its graph requires, and updates the local installation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It records the package under dependencies in <code>package.json</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And updates <code>package-lock.json</code> with the exact resolution.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Three related changes: declared intent, resolved graph, installed files.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That model will matter next episode.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I uninstall it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm removes the direct declaration and updates the lockfile and installed tree. Packages needed only by that dependency can disappear too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So deleting a line manually from <code>package.json</code> is not the complete uninstall workflow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm can reconcile things later, but its uninstall command keeps the related state synchronized now.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>--no-save</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can install without recording the dependency in the project records.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful for an experiment, dangerous if source code quietly starts relying on it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the project needs a package, the manifest should tell the truth.</span>
+        </p>
+<h2 id="npx-borrow-the-tool-run-the-tool"><code>npx</code>: Borrow the Tool, Run the Tool</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We deferred <code>npx</code>. Payment is due.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>npx</code> runs commands from npm packages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the package is installed locally, it can run that local executable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. If it is not local, npm tooling can fetch a package for execution, with a prompt in interactive situations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Convenient and worthy of the same package-name caution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much so.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why use it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For an occasional command, an initializer, or a tool you do not want permanently installed globally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But if my project depends on a specific tool every day, record it as a dev dependency and expose it through a script.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's often clearer and more reproducible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>npx</code> is package-command execution. Installation may be part of making execution possible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="dependencies-and-dev-dependencies">Dependencies and Dev Dependencies</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm asks whether something is a dependency or a development dependency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A regular dependency is needed by the application when it runs in its deployed environment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a dev dependency is needed while developing, testing, or building it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the intended distinction.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>React might be a dependency. A test runner might be a dev dependency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Often, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Vite?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually a dev dependency for a frontend app because it builds and serves the project during development.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But real projects blur this depending on how they build and deploy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The label describes the package's role in that project, not a universal moral category.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the commands?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>npm install package-name</code> records a regular dependency. <code>npm install --save-dev package-name</code> records a dev dependency.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or the shorter <code>-D</code> flag.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is tooling syntax, not JavaScript.</span>
+        </p>
+<h3 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h3>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More accurately: it isn't JavaScript at all. It is a command-line option understood by npm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. The segment has escaped containment.</span>
+        </p>
+<h2 id="updating-is-a-decision">Updating Is a Decision</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm tells me packages are outdated.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>npm outdated</code> can compare installed, wanted, and latest versions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Wanted” means the newest version satisfying my declared range.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. “Latest” may be outside that range.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>npm update</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It updates within the constraints of the manifest and npm's rules, then updates the installed tree and lockfile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not mean “rewrite everything to whatever newest version exists and hope.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A major upgrade may require changing the range, reading migration notes, changing code, and testing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Package managers resolve versions. They cannot verify every behavioral assumption your application makes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How often should I update?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Regularly enough that changes stay understandable, with tests and review. Small dependency changes are often easier to diagnose than one annual avalanche.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Automated update pull requests can help surface changes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But automation does not replace review. Run the checks and understand production impact.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Boring maintenance is a security feature.</span>
+        </p>
+<h2 id="choosing-a-package">Choosing a Package</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The registry has approximately everything. How do I choose?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Start by asking whether you need a dependency at all.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The web platform may already solve the problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or the needed code may be small enough to own. But do not rewrite cryptography, sanitization, or authentication because dependencies feel uncool.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Use fewer dependencies” is not “become your own standards body.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I need one?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Check whether it solves the requirement. Look at documentation, maintenance, recent releases, issues, license, runtime support, package size when relevant, and who controls publication.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Download count?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A signal, not proof of quality or safety.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Number of dependencies?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also context. Zero dependencies does not prove correct code. Many dependencies may be justified or excessive.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Read the shape of the choice, not one badge.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And verify the exact name and scope before installing.</span>
+        </p>
+<h2 id="the-lockfile-is-not-decorative">The Lockfile Is Not Decorative</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have mentioned a lockfile twice. What is it locking?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The resolved dependency tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>package.json</code> might say my project accepts a range of versions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The lockfile records the exact versions npm selected, where they came from, and integrity information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So when my teammate installs, npm has a much more precise map.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. That helps teams and automated builds reproduce the same dependency tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do we commit <code>package-lock.json</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For an npm-managed application, generally yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Even though it is huge and unpleasant?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Especially because it contains decisions you do not want every machine making independently.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do I hand-edit it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Normally no. Let npm manage it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So: commit the lockfile, don't lovingly artisanal-edit the lockfile.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good rule.</span>
+        </p>
+<h2 id="please-don-t-do-this-packages-are-code">Please Don't Do This: Packages Are Code</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Time for the ominous music.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Installing a package means trusting code from outside your project.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And packages can run installation scripts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some can, yes. Depending on the package and command, lifecycle scripts may execute during installation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>With the permissions of the person or build process running npm.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>npm install random-cool-thing</code> is not the digital equivalent of buying a decorative pillow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It is closer to hiring a contractor and giving them access to the room.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Check the package name. Check who maintains it. Check whether the project is active. Check what permissions and scripts the workflow involves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Review dependency changes. Use lockfiles. Keep dependencies updated deliberately. Treat security audit output as information to investigate, not a magic score or an instruction to break the project blindly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>npm audit fix --force</code> sounds so confident.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The word “force” is the command gently removing its safety goggles.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It may install breaking major versions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Read before you run.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also: npm's public registry is enormous. Most packages are ordinary useful open-source work. The risk is not “open source bad.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. The lesson is that dependencies are part of your software supply chain. Know what you are adding.</span>
+        </p>
+<h2 id="installation-scripts-why-is-it-compiling-something">Installation Scripts: Why Is It Compiling Something?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes <code>npm install</code> downloads JavaScript. Sometimes it starts compiling C plus plus and demands Python. What happened?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A package may include native code or an installation step that prepares files for your platform.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Node can load native addons compiled for the operating system and processor.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some packages provide prebuilt binaries. If a compatible one is unavailable, tooling may try to build locally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which explains the sudden request for a compiler toolchain on a project that allegedly uses JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The ecosystem can contain JavaScript, WebAssembly, native binaries, generated files, and scripts coordinating them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Installation scripts also handle legitimate setup that is not native compilation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Because they execute during a sensitive moment, they are also part of supply-chain risk.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Can npm skip them?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It has configuration such as <code>--ignore-scripts</code>, but disabling scripts can leave packages that legitimately require setup unusable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security switches have tradeoffs. Do not paste one into team configuration without understanding what stops working.</span>
+        </p>
+<h2 id="who-can-publish-an-update">Who Can Publish an Update?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We talk about trusting a package. Technically, what am I trusting?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Its source and build process, the people or automation allowed to publish it, registry account security, dependencies, and the artifact npm retrieves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>More than the visible GitHub repository.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Potentially. Published contents may be produced by a build and need not match every repository file one-for-one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Package ownership can change too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. A once-trusted name can gain a new maintainer or publisher. Popularity history does not freeze future control.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why account protection, publishing permissions, provenance, review, and update hygiene all matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No badge eliminates trust. Good controls make compromise harder and changes more traceable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is not a reason never to use packages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It is a reason to treat dependencies as code you chose to include.</span>
+        </p>
+<h2 id="funding-warnings-and-terminal-emotional-weather">Funding, Warnings, and Terminal Emotional Weather</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm finishes and says packages are looking for funding.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maintainers can include funding information. <code>npm fund</code> shows it. That message is not an error.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then npm reports vulnerabilities.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Audit data says the graph matches known advisories that need evaluation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A development-only package may have different exposure from one reachable in production requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Context changes risk and priority. But development dependencies are not harmless; build systems and developer machines are valuable targets.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Read the advisory, affected versions, dependency path, and available fix.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then choose an upgrade, replacement, mitigation, or documented acceptance appropriate to the real risk.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Funding is not failure. A warning is not automatically catastrophe. Zero warnings is not proof of safety.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Package-manager emotional regulation.</span>
+        </p>
+<h2 id="npm-is-not-the-only-one">npm Is Not the Only One</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yarn. pnpm. Bun. Why are there several package managers?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because developers disagree about performance, storage, workflows, compatibility, and what tradeoffs are acceptable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do they all use the npm registry?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They commonly can, though they install and lock dependencies differently.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Can I casually switch package managers inside a project?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not casually. Respect the project's existing lockfile and instructions. Mixing package managers can create conflicting lockfiles and different dependency layouts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So if the repository has <code>package-lock.json</code>, use npm unless the project says otherwise.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sensible default.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If it has <code>pnpm-lock.yaml</code>, do not swagger in and generate <code>package-lock.json</code> because npm happens to be installed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Your teammates will sense a disturbance in the force.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm is a package manager and command-line tool commonly installed with Node.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The registry is the service where npm normally finds published package metadata and files.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A package is reusable code plus metadata that lets a package manager identify and install it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A dependency is a package our project needs. A transitive dependency is needed by one of our dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Plain <code>npm install</code> reads the project's declared requirements and lockfile, resolves the tree, and creates the local installation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The lockfile records exact resolution decisions and belongs in Git for ordinary npm applications.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Packages are executable supply-chain inputs, not collectible Pokémon.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You do not need to install them all.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then next time we open the two objects npm left at the crime scene.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>package.json</code> and <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One is a small text file. One contains the known universe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And between them sits the lockfile, quietly remembering what everyone agreed to.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next episode: dependency hell.</span>
+        </p></main>
+  <footer>0 code cards · 1 terminal cards</footer>
+</body>
+</html>

@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 3: package.json, node_modules &amp; Dependency Hell — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 3: package.json, node_modules &amp; Dependency Hell</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="node-npm-03.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
+<li><a href="#the-three-part-mental-model">The Three-Part Mental Model</a></li>
+<li><a href="#package-json-is-project-metadata">`package.json` Is Project Metadata</a></li>
+<li><a href="#name-version-and-private">Name, Version, and `private`</a></li>
+<li><a href="#the-mysterious-caret">The Mysterious Caret</a></li>
+<li><a href="#dependencies-are-intent">Dependencies Are Intent</a></li>
+<li><a href="#scripts-are-named-commands">Scripts Are Named Commands</a></li>
+<li><a href="#the-type-field-is-about-modules">The `type` Field Is About Modules</a></li>
+<li><a href="#what-is-actually-inside-node-modules">What Is Actually Inside `node_modules`?</a></li>
+<li><a href="#how-module-resolution-uses-the-tree">How Module Resolution Uses the Tree</a></li>
+<li><a href="#the-lockfile-knows-more-than-versions">The Lockfile Knows More Than Versions</a></li>
+<li><a href="#node-and-package-manager-versions-matter">Node and Package-Manager Versions Matter</a></li>
+<li><a href="#why-is-it-so-huge">Why Is It So Huge?</a></li>
+<li><a href="#hoisting-nesting-and-why-the-folder-lies-a-little">Hoisting, Nesting, and Why the Folder Lies a Little</a></li>
+<li><a href="#optional-and-platform-specific-dependencies">Optional and Platform-Specific Dependencies</a></li>
+<li><a href="#why-deleting-node-modules-sometimes-works">Why Deleting `node_modules` Sometimes Works</a></li>
+<li><a href="#why-we-usually-ignore-it-in-git">Why We Usually Ignore It in Git</a></li>
+<li><a href="#dependency-hell">Dependency Hell</a></li>
+<li><a href="#peer-dependencies-without-the-screaming">Peer Dependencies Without the Screaming</a></li>
+<li><a href="#overrides-the-emergency-steering-wheel">Overrides: The Emergency Steering Wheel</a></li>
+<li><a href="#workspaces-several-packages-one-repository">Workspaces: Several Packages, One Repository</a></li>
+<li><a href="#please-don-t-do-this-random-version-surgery">Please Don't Do This: Random Version Surgery</a></li>
+<li><a href="#the-clean-room-test">The Clean-Room Test</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script"><h1 id="episode-3-package-json-node-modules-dependency-hell">Episode 3: package.json, node_modules &amp; Dependency Hell</h1>
+<h2 id="cold-open">Cold Open</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I deleted <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Okay.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The project still exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I ran <code>npm install</code>, and <code>node_modules</code> came back.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So it is a fungus.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's not the official definition.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>You remove the visible fruiting body, but the spores remain in <code>package.json</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I hate that this maps as well as it does.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em>, the show where we look inside the generated directory everyone tells you not to look inside.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I'm Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And I'm Parisa. Last time, npm installed our project's dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Today we look at the records and the result: <code>package.json</code>, <code>package-lock.json</code>, and <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also dependency hell.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A beloved destination.</span>
+        </p>
+<h2 id="the-three-part-mental-model">The Three-Part Mental Model</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Give me the map first.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>package.json</code> describes the project and its declared direct dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The shopping list.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Roughly. <code>package-lock.json</code> records the exact dependency resolution npm produced.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The receipt, including which brand and size actually came home.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And <code>node_modules</code> is the installed stuff in your local working copy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The groceries currently occupying the kitchen.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I throw out the groceries, the list and receipt let npm restock.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, with one warning: the lockfile is more than a receipt. npm uses it as a reproducibility map.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Metaphor disclaimer accepted.</span>
+        </p>
+<h2 id="package-json-is-project-metadata"><code>package.json</code> Is Project Metadata</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Show me a small one.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>json</span></figcaption>
+          <pre tabindex="0"><code>{
+  &quot;name&quot;: &quot;tiny-app&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;private&quot;: true,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;vite&quot;,
+    &quot;test&quot;: &quot;node --test&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;react&quot;: &quot;^19.0.0&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;vite&quot;: &quot;^8.0.0&quot;
+  }
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First clarification: JSON is not JavaScript.</span>
+        </p>
+<h3 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h3>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. JSON means JavaScript Object Notation, but it is a data format.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It resembles a JavaScript object literal, but the syntax is stricter. Double-quoted property names. No comments. No trailing commas.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And it cannot contain functions, variables, or expressions. It represents data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>package.json</code> is data that tools read.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which fields are required?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That depends on what you're doing. A private application can have a very small file. A package intended for publication needs accurate package metadata and entry-point information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So don't cargo-cult every field from a library into a frontend app.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don't.</span>
+        </p>
+<h2 id="name-version-and-private">Name, Version, and <code>private</code></h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>name</code> seems self-explanatory.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It identifies the package. Published package names must follow registry rules and be unique within their namespace.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>version</code> is semantic versioning?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Conventionally, yes: major, minor, patch.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Major for breaking changes. Minor for backward-compatible features. Patch for backward-compatible fixes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the promise SemVer is trying to communicate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Trying.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Humans still choose the number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>private: true</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It tells npm not to publish this package accidentally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful for an application that is not meant to become a public registry package.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A tiny safety latch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One worth keeping.</span>
+        </p>
+<h2 id="the-mysterious-caret">The Mysterious Caret</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why does the React version have a little roof: <code>^19.0.0</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The caret describes an allowed version range.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not an exact version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. For a stable major version like nineteen, it generally allows compatible releases from nineteen point zero point zero up to, but not including, twenty point zero point zero.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So npm may select a newer minor or patch within major nineteen.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The caret assumes the package follows semantic versioning and doesn't sneak a breaking change into a minor release.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Version ranges are statements of trust and compatibility, not force fields.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What about a tilde?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A tilde is typically narrower and allows patch-level movement within the specified minor line.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exact number means exact number.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In <code>package.json</code>, yes. But your lockfile is what records the exact version npm resolved for the whole tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So this is why we need both files.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>package.json</code> expresses acceptable requirements. The lockfile records a concrete solution.</span>
+        </p>
+<h3 id="okay-that-s-actually-pretty-cool">Okay, That's Actually Pretty Cool</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The manifest says what changes we claim we can tolerate. The lockfile says what we actually tested together.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="dependencies-are-intent">Dependencies Are Intent</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The dependency sections contain only packages we chose directly?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually, yes. Your direct dependencies and dev dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not every transitive dependency?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those belong in the lockfile's resolved graph. If a build tool needs a parser, you usually declare the build tool. It declares the parser it needs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unless my code imports Rollup directly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then Rollup is your direct dependency too and should be declared.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Even if it happened to arrive transitively already.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Depending on a package merely because another dependency currently brings it along is fragile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A dependency changes and my accidental free passenger disappears.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then your project breaks, and everyone learns a lesson at an inconvenient time.</span>
+        </p>
+<h2 id="scripts-are-named-commands">Scripts Are Named Commands</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We saw a <code>scripts</code> object.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It maps names to command strings.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>&quot;dev&quot;: &quot;vite&quot;</code> means when I run <code>npm run dev</code>, npm runs the command <code>vite</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Is <code>dev</code> special?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. It is a common convention. You can define other names.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some commands can omit <code>run</code>, like <code>npm test</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm provides shorthand for a few lifecycle commands, but <code>npm run name</code> is the general form.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why use a script instead of telling everyone to type the full command?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It gives the project a stable interface. The underlying tool and options can change, while contributors keep running <code>npm run dev</code> or <code>npm test</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It also uses the project's local tool version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. npm adds local package executables to the script's command path while the script runs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That sentence explains years of magic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We're spending the whole next episode on it.</span>
+        </p>
+<h2 id="the-type-field-is-about-modules">The <code>type</code> Field Is About Modules</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our sample says <code>&quot;type&quot;: &quot;module&quot;</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That tells Node how to interpret ordinary <code>.js</code> files in this package: as ECMAScript modules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Meaning <code>import</code> and <code>export</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Without it, Node commonly treats <code>.js</code> as CommonJS in that package, where older code uses <code>require</code> and <code>module.exports</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Are <code>import</code> and <code>export</code> Node syntax?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. They are JavaScript module syntax.</span>
+        </p>
+<h3 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern JavaScript, not TypeScript, React, or npm.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. But the runtime and tools still need rules for resolving module files, which is why configuration matters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are deliberately not solving the entire CommonJS versus ESM situation today.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. We are placing the warning sign on the map.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here be modules.</span>
+        </p>
+<h2 id="what-is-actually-inside-node-modules">What Is Actually Inside <code>node_modules</code>?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Time to open the basement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>node_modules</code> contains installed packages and the layout npm created so Node and tools can resolve them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I see directories for packages I declared and dozens I did not.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Transitive dependencies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I also see names beginning with <code>@</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Scoped packages. The scope groups packages under a namespace, such as an organization or user.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>.bin</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Links or command shims for executables supplied by installed packages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So when an npm script runs <code>vite</code>, npm can find the local Vite command through <code>node_modules/.bin</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Precisely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is deeply mundane and enormously clarifying.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Most magic is a path somebody configured for you.</span>
+        </p>
+<h2 id="how-module-resolution-uses-the-tree">How Module Resolution Uses the Tree</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My source says <code>import something from &quot;something&quot;</code>. How does it find the package?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The runtime or build tool applies its module-resolution rules. For an installed package name, those rules can search appropriate <code>node_modules</code> locations and read the package's metadata to find an exported entry point.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“The” module-resolution algorithm is not universal?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Node, TypeScript, bundlers, and other tools have related but configurable rules. They can disagree if a project is misconfigured.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Delicious.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The key idea is that the import is not scanning every file randomly. Package layout and metadata provide a resolution contract.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And modern packages may define an <code>exports</code> field.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. It can declare which entry points consumers are allowed to use, and sometimes provide different entries for different conditions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why reaching into <code>some-package/dist/secret-internal-file.js</code> can break after an update.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You bypassed the public entrance and climbed through a bathroom window.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It worked yesterday.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Bathrooms get renovated.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use documented exports, not whatever internal path autocomplete discovered.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="the-lockfile-knows-more-than-versions">The Lockfile Knows More Than Versions</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We keep saying the lockfile records exact versions. What else?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modern npm lockfiles describe the package tree, resolved sources, and integrity hashes for downloaded package contents.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Integrity means npm can detect if the downloaded archive does not match the expected cryptographic digest.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. It helps ensure the bytes retrieved match the bytes the lockfile expects.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does not prove those expected bytes are benevolent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Important. Integrity is not a code review or a safety guarantee. It detects unexpected content changes relative to the recorded digest.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The lockfile may also contain platform constraints and dependency relationships npm needs to rebuild the tree.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which explains why merge conflicts in it are not solved by deleting whichever half looks uglier.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Resolve the underlying dependency changes, then let the package manager produce a coherent lockfile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If two branches add packages, rerunning the correct install after reconciling <code>package.json</code> may regenerate the combined graph.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then run the clean install and tests. Do not assume a conflict-free JSON file means a valid dependency tree.</span>
+        </p>
+<h2 id="node-and-package-manager-versions-matter">Node and Package-Manager Versions Matter</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same manifest, same lockfile, different Node version. Can behavior change?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Packages can require particular Node versions, native dependencies may differ by platform, and package-manager versions can produce different lockfile formats or installation behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How does a project communicate the Node requirement?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can use the <code>engines</code> field in <code>package.json</code>, documentation, and a version-manager file or tool configuration.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Is <code>engines</code> always enforced?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not necessarily. Depending on npm configuration it may warn rather than refuse. CI and hosting configuration can enforce the chosen version more reliably.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a warning about an unsupported engine is not decorative terminal confetti.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. It may explain installation or runtime failures.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a project should use one package manager consistently.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The <code>packageManager</code> field can record the expected tool and version, and projects may use Corepack or other version-management approaches.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again: the repository should describe its environment instead of relying on oral tradition from the one laptop where it works.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Ask Morgan which npm she has” is not reproducibility.</span>
+        </p>
+<h2 id="why-is-it-so-huge">Why Is It So Huge?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why does <code>node_modules</code> contain enough files to make Windows reconsider its life choices?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript packages tend to be small and composable, and a modern tool may rely on many specialized packages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which creates a broad dependency graph.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Packages may also ship source files, compiled variants, type declarations, metadata, documentation, maps, and platform-specific pieces.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm can sometimes deduplicate compatible versions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. It can place a shared version where multiple consumers can resolve it. But if two parts of the graph require incompatible versions, multiple copies may be installed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So seeing repeated packages is not automatically corruption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The layout is npm's attempt to satisfy the graph.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do I edit files in <code>node_modules</code> to fix a bug?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Strong no.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Your change will disappear on reinstall and won't reach teammates or CI. Fix your source, update or replace the dependency, contribute upstream, or use a deliberate patch workflow the project records.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Generated material is not source control by vibes.</span>
+        </p>
+<h2 id="hoisting-nesting-and-why-the-folder-lies-a-little">Hoisting, Nesting, and Why the Folder Lies a Little</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the graph branches, why does <code>node_modules</code> look surprisingly flat at the top?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm can hoist packages higher when doing so still satisfies their consumers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Several packages can resolve one compatible shared copy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. If branches require incompatible versions, npm may place one higher and another inside a dependency's nested <code>node_modules</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the physical layout implements the graph. It is not a simple picture of it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Do not infer direct dependencies merely from what appears at the top level.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And do not import a hoisted transitive package just because it is reachable today.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Declare what your code uses directly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>pnpm uses a different storage and linking strategy, so code relying on accidental npm hoisting can fail there.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Stricter layouts can expose undeclared dependencies your project was getting away with.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The package manager did not necessarily break the project. It revealed that the manifest was lying.</span>
+        </p>
+<h2 id="optional-and-platform-specific-dependencies">Optional and Platform-Specific Dependencies</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why can correct installs from one lockfile contain different platform packages?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Dependencies can be conditional on operating system or CPU architecture. Packages may also declare optional dependencies that can fail without failing the entire install.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A tool might select one native binary for Windows on x64 and another for macOS on ARM.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. The lockfile can describe possibilities while npm installs what applies to this environment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “exact same tree” has an environmental footnote.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Deterministic rules can still produce legitimately platform-specific outputs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If we require identical build artifacts, we need to control the build environment too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Containers and pinned CI environments can help later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Kubernetes is waiting behind a bush.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not yet.</span>
+        </p>
+<h2 id="why-deleting-node-modules-sometimes-works">Why Deleting <code>node_modules</code> Sometimes Works</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The traditional healing ritual: delete <code>node_modules</code> and reinstall.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can fix a local installation that is incomplete, corrupted, or out of sync.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It removes hand edits and stale packages that no longer belong.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A clean install tests whether the recorded project state can reproduce a working tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But it does not fix incorrect dependency requirements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. A broken manifest and lockfile produce a pristine broken installation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Deleting the lockfile at the same time changes the experiment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Dramatically. npm resolves a new graph, so success or failure may come from different versions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Clean <code>node_modules</code> to reproduce recorded state. Change the lockfile only when deliberately changing resolution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Excellent distinction.</span>
+        </p>
+<h2 id="why-we-usually-ignore-it-in-git">Why We Usually Ignore It in Git</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>node_modules</code> is reproducible from project records.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the idea.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is large, contains huge numbers of files, may include platform-specific artifacts, and changes noisily.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>All reasons ordinary application repositories ignore it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We commit <code>package.json</code> and the correct lockfile.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then a clean environment installs from those records.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For automated environments, <code>npm ci</code> is commonly preferred when you have a lockfile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How is that different?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It performs a clean, lockfile-driven install. It fails if the manifest and lockfile disagree instead of quietly rewriting the lockfile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So CI gets a stricter “install exactly what we agreed on” workflow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. It also removes an existing <code>node_modules</code> before installing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not run it casually if you are preserving unrecorded experiments in there.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You should not have unrecorded experiments in there.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yet another reason not to edit dependencies directly.</span>
+        </p>
+<h2 id="dependency-hell">Dependency Hell</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Define the hell.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Dependency hell is the family of problems that appears when software requirements conflict, drift, disappear, or become too complex to reason about comfortably.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Version conflicts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Package A needs version one. Package B needs version two. Maybe both can coexist; maybe a peer relationship requires one shared compatible version.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Peer dependency. New noun.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A peer dependency says, roughly, “I work alongside this package, and the consuming project needs to provide a compatible version.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Like a React plugin declaring which React versions it expects, instead of secretly installing its own private React universe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good example.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Other hells?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Abandoned packages. Breaking changes. Platform-specific builds. Lockfile conflicts. Duplicate versions. A package removed from the registry. A vulnerability deep in the transitive graph.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or two tools each requiring a range with no overlap.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The package manager can resolve graphs. It cannot repeal contradictory requirements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is the key distinction.</span>
+        </p>
+<h2 id="peer-dependencies-without-the-screaming">Peer Dependencies Without the Screaming</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I want one more pass at peer dependencies because error messages make them look like a custody dispute.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine a plugin designed to integrate with a host library.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A React-related package that expects the application to have React.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The plugin does not necessarily want its own isolated React copy. It wants to participate in the application's React environment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So it declares a compatible React range as a peer dependency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm can then check whether the surrounding dependency tree supplies a compatible peer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If Plugin A supports React eighteen through nineteen and the app uses nineteen, fine.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If Plugin B only supports seventeen, the requirements conflict.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>--legacy-peer-deps</code> tells npm to behave more like older npm versions and ignore peer dependency relationships while building the tree.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which may get an install past the error without making the packages actually compatible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The alarm stopped because I removed the battery.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes a project deliberately uses that setting for known reasons.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then record it in project configuration and understand the tradeoff. Do not paste the flag merely because the terminal became red.</span>
+        </p>
+<h2 id="overrides-the-emergency-steering-wheel">Overrides: The Emergency Steering Wheel</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What if a deep dependency has a vulnerable version and its parent has not updated yet?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm supports <code>overrides</code> in the root project manifest. An override can force a dependency or part of the tree to resolve differently.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Powerful and potentially dangerous. The parent package may have constrained its dependency for a reason.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So an override needs a comment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JSON does not allow comments.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. Of course.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Document the reason in the commit, issue, or project documentation. Test the affected behavior and remove the override when the upstream graph supports the safe version normally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Override is not a synonym for “I know better than every maintainer.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It is an explicit root-project decision to alter resolution.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And published packages cannot use their own overrides to dictate a consumer's whole dependency universe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The root project owns that final decision.</span>
+        </p>
+<h2 id="workspaces-several-packages-one-repository">Workspaces: Several Packages, One Repository</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I see <code>workspaces</code> in some <code>package.json</code> files.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm workspaces help manage multiple related packages from one top-level project.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A monorepo.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Often. You might have an application, a component library, and shared configuration packages in one repository.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm can link local workspace packages and run commands across them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, while maintaining a root installation and lockfile strategy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does every project need workspaces?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not. They solve coordination problems that appear when one repository genuinely contains multiple packages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not turn one small app into a monorepo because the word sounds employable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Put that on mug three.</span>
+        </p>
+<h2 id="please-don-t-do-this-random-version-surgery">Please Don't Do This: Random Version Surgery</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Error says dependency conflict. I delete the lockfile.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not as your first reflex.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I add <code>--force</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also not as your first reflex.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I copy a stranger's resolution override from a three-year-old forum post.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please stop helping.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What do I do?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Read which packages disagree and what ranges they require. Check the project's documented Node and package-manager versions. Look at release notes. Upgrade or downgrade deliberately. Run the tests.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Understand the graph before rearranging it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Tools such as <code>npm explain package-name</code> and <code>npm ls</code> can show why something is installed and where versions appear.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if an audit reports a transitive vulnerability?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Determine whether the vulnerable code is reachable in your use, whether a patched compatible version exists, and what upgrade path is safe. Severity labels matter, but context matters too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security without panic or denial.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="the-clean-room-test">The Clean-Room Test</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How do I know the repository contains everything another machine needs?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Try a clean install in a disposable environment or clean working copy, then run the documented checks and build.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If it works only because my laptop has a global package or a hand-edited <code>node_modules</code>, the project is lying.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nicely put.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A lockfile improves reproducibility, but operating system, CPU architecture, Node version, environment variables, and external services can still differ.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Reproducible dependencies are one layer, not a complete reproducible universe.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Metaphor disclaimer for reality itself.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>package.json</code> declares project metadata, scripts, and direct dependency intent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>package-lock.json</code> records npm's exact resolved graph and integrity information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>node_modules</code> is the generated local installation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Delete the installation and npm can reconstruct it from the records.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Assuming the packages remain obtainable and the environment is compatible, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good caveat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Thank you.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Version ranges express acceptable movement. The lockfile captures the selected versions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>npm scripts expose project commands and can find executables from locally installed packages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which leads directly to our next mystery.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I type <code>npm run dev</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm finds the script.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The script says <code>vite</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>npm finds local Vite.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Vite starts a server, transforms modules, watches files, and opens a portal into modern frontend tooling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A local web address.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same thing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next episode, we follow the command all the way from the terminal to the browser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are going into the factory.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

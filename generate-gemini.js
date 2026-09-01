@@ -318,6 +318,11 @@ async function main() {
   );
 
   for (const [index, chunk] of chunks.entries()) {
+    // Add a 2-second delay between chunks to prevent hitting rate limits
+    if (index > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+
     const fileName = chunkFileName(chunk, index);
     const partPath = path.join(PARTS_DIRECTORY, fileName);
     let wav;
