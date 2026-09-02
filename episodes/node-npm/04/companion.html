@@ -1,1647 +1,2288 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 4: What Actually Happens When You Run npm run dev? — Listening Companion</title>
-  <link rel="stylesheet" href="../../styles.css">
-</head>
-<body class="companion-page">
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p><a href="../index.html">← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a></p>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 4: What Actually Happens When You Run npm run dev?</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <p class="notice">Audio has not been generated for this draft yet.</p>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
-<li><a href="#step-zero-the-terminal-does-not-know-dev">Step Zero: The Terminal Does Not Know `dev`</a></li>
-<li><a href="#step-one-npm-finds-the-project">Step One: npm Finds the Project</a></li>
-<li><a href="#step-two-npm-finds-local-vite">Step Two: npm Finds Local Vite</a></li>
-<li><a href="#step-three-node-starts-vite">Step Three: Node Starts Vite</a></li>
-<li><a href="#step-four-vite-serves-an-entry-page">Step Four: Vite Serves an Entry Page</a></li>
-<li><a href="#modules-before-bundlers">Modules Before Bundlers</a></li>
-<li><a href="#what-vite-transforms">What Vite Transforms</a></li>
-<li><a href="#watch-it-in-the-network-panel">Watch It in the Network Panel</a></li>
-<li><a href="#css-images-and-other-non-javascript-things">CSS, Images, and Other Non-JavaScript Things</a></li>
-<li><a href="#configuration-and-plugins">Configuration and Plugins</a></li>
-<li><a href="#typescript-is-checked-somewhere-else">TypeScript Is Checked Somewhere Else</a></li>
-<li><a href="#jsx-is-another-layer">JSX Is Another Layer</a></li>
-<li><a href="#the-file-watcher">The File Watcher</a></li>
-<li><a href="#source-maps-the-helpful-lie-detector">Source Maps: The Helpful Lie Detector</a></li>
-<li><a href="#when-the-command-fails">When the Command Fails</a></li>
-<li><a href="#environment-variables-please-pause-here">Environment Variables: Please Pause Here</a></li>
-<li><a href="#development-is-not-production">Development Is Not Production</a></li>
-<li><a href="#what-the-production-build-optimizes">What the Production Build Optimizes</a></li>
-<li><a href="#what-babel-was-doing">What Babel Was Doing</a></li>
-<li><a href="#the-entire-trip-slowly">The Entire Trip, Slowly</a></li>
-<li><a href="#when-you-do-not-need-the-factory">When You Do Not Need the Factory</a></li>
-<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
-  <main id="script"><h1 id="episode-4-what-actually-happens-when-you-run-npm-run-dev">Episode 4: What Actually Happens When You Run npm run dev?</h1>
-<h2 id="cold-open">Cold Open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: What Actually Happens When You Run npm run dev? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: What Actually Happens When You Run npm run dev?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <audio controls preload="metadata">
+        <source src="node-npm-04.wav" type="audio/wav" />
+        Your browser does not support the audio player.
+      </audio>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold Open</a></li>
+        <li>
+          <a href="#step-zero-the-terminal-does-not-know-dev"
+            >Step Zero: The Terminal Does Not Know `dev`</a
+          >
+        </li>
+        <li>
+          <a href="#step-one-npm-finds-the-project"
+            >Step One: npm Finds the Project</a
+          >
+        </li>
+        <li>
+          <a href="#step-two-npm-finds-local-vite"
+            >Step Two: npm Finds Local Vite</a
+          >
+        </li>
+        <li>
+          <a href="#step-three-node-starts-vite"
+            >Step Three: Node Starts Vite</a
+          >
+        </li>
+        <li>
+          <a href="#step-four-vite-serves-an-entry-page"
+            >Step Four: Vite Serves an Entry Page</a
+          >
+        </li>
+        <li><a href="#modules-before-bundlers">Modules Before Bundlers</a></li>
+        <li><a href="#what-vite-transforms">What Vite Transforms</a></li>
+        <li>
+          <a href="#watch-it-in-the-network-panel"
+            >Watch It in the Network Panel</a
+          >
+        </li>
+        <li>
+          <a href="#css-images-and-other-non-javascript-things"
+            >CSS, Images, and Other Non-JavaScript Things</a
+          >
+        </li>
+        <li>
+          <a href="#configuration-and-plugins">Configuration and Plugins</a>
+        </li>
+        <li>
+          <a href="#typescript-is-checked-somewhere-else"
+            >TypeScript Is Checked Somewhere Else</a
+          >
+        </li>
+        <li><a href="#jsx-is-another-layer">JSX Is Another Layer</a></li>
+        <li><a href="#the-file-watcher">The File Watcher</a></li>
+        <li>
+          <a href="#source-maps-the-helpful-lie-detector"
+            >Source Maps: The Helpful Lie Detector</a
+          >
+        </li>
+        <li><a href="#when-the-command-fails">When the Command Fails</a></li>
+        <li>
+          <a href="#environment-variables-please-pause-here"
+            >Environment Variables: Please Pause Here</a
+          >
+        </li>
+        <li>
+          <a href="#development-is-not-production"
+            >Development Is Not Production</a
+          >
+        </li>
+        <li>
+          <a href="#what-the-production-build-optimizes"
+            >What the Production Build Optimizes</a
+          >
+        </li>
+        <li><a href="#what-babel-was-doing">What Babel Was Doing</a></li>
+        <li><a href="#the-entire-trip-slowly">The Entire Trip, Slowly</a></li>
+        <li>
+          <a href="#when-you-do-not-need-the-factory"
+            >When You Do Not Need the Factory</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-4-what-actually-happens-when-you-run-npm-run-dev">
+        Episode 4: What Actually Happens When You Run npm run dev?
+      </h1>
+      <h2 id="cold-open">Cold Open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>npm run dev</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>npm run dev</code>.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Explain every word.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Explain every word.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>npm—</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>npm—</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Package manager and command-line program.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Package manager and command-line program.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>run</code>—</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span><code>run</code>—</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Execute a named project script.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Execute a named project script.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>dev</code>—</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span><code>dev</code>—</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A conventional script name whose actual meaning is defined in <code>package.json</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A conventional script name whose actual meaning is defined in
+          <code>package.json</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You already know this.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You already know this.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I know the nouns. I want to see the machinery move.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I know the nouns. I want to see the machinery move.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Welcome to <em>Okay, But Why?</em>, the show where “it starts the app” is the beginning of an answer, not the end.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>, the show where “it starts the
+          app” is the beginning of an answer, not the end.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I'm Jules.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I'm Jules.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And I'm Parisa. We know Node can run JavaScript outside the browser. We know npm installs packages. We know <code>package.json</code> defines scripts.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And I'm Parisa. We know Node can run JavaScript outside the browser.
+          We know npm installs packages. We know
+          <code>package.json</code> defines scripts.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Today we trace one command through those layers.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we trace one command through those layers.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Our example uses Vite.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Our example uses Vite.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Other tools make different choices, but the layers are broadly useful.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Other tools make different choices, but the layers are broadly
+          useful.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>No pretending every dev server is secretly Vite.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>No pretending every dev server is secretly Vite.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-<h2 id="step-zero-the-terminal-does-not-know-dev">Step Zero: The Terminal Does Not Know <code>dev</code></h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+      <h2 id="step-zero-the-terminal-does-not-know-dev">
+        Step Zero: The Terminal Does Not Know <code>dev</code>
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I type this in my terminal.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I type this in my terminal.</span>
+      </p>
 
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>bash</span></figcaption>
-          <pre tabindex="0"><code>npm run dev</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>bash</span></figcaption>
+        <pre tabindex="0"><code>npm run dev</code></pre>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your shell parses that command and finds the npm executable through your environment's command path.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Your shell parses that command and finds the npm executable through
+          your environment's command path.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The shell starts npm as a process and gives it the arguments <code>run</code> and <code>dev</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The shell starts npm as a process and gives it the arguments
+          <code>run</code> and <code>dev</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>npm is not a magical terminal keyword.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>npm is not a magical terminal keyword.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It is an installed command-line program.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It is an installed command-line program.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And npm itself runs using Node.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And npm itself runs using Node.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. This is Node doing tooling work outside the browser, exactly as Episode 1 promised.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. This is Node doing tooling work outside the browser, exactly as
+          Episode 1 promised.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Factory lights on.</span>
-        </p>
-<h2 id="step-one-npm-finds-the-project">Step One: npm Finds the Project</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Factory lights on.</span>
+      </p>
+      <h2 id="step-one-npm-finds-the-project">
+        Step One: npm Finds the Project
+      </h2>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>npm looks for the relevant <code>package.json</code> in the project context.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >npm looks for the relevant <code>package.json</code> in the project
+          context.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which is why running the command from the wrong directory produces confusion.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why running the command from the wrong directory produces
+          confusion.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A classic.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A classic.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It reads the <code>scripts</code> object.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It reads the <code>scripts</code> object.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>json</span></figcaption>
-          <pre tabindex="0"><code>{
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
   &quot;scripts&quot;: {
     &quot;dev&quot;: &quot;vite&quot;
   }
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It looks for a key named <code>dev</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It looks for a key named <code>dev</code>.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If no such script exists?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If no such script exists?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>npm reports that the script is missing. <code>dev</code> is not built into npm.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >npm reports that the script is missing. <code>dev</code> is not built
+          into npm.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If it says <code>&quot;dev&quot;: &quot;vite --host&quot;</code>, npm runs that command instead.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If it says <code>&quot;dev&quot;: &quot;vite --host&quot;</code>, npm
+          runs that command instead.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. The script is a project-owned alias for a command.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right. The script is a project-owned alias for a command.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which also means I should read scripts before running an unfamiliar repository.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which also means I should read scripts before running an unfamiliar
+          repository.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. A script can run arbitrary commands with your user's permissions.</span>
-        </p>
-<h3 id="please-don-t-do-this">Please Don't Do This</h3>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A script can run arbitrary commands with your user's
+          permissions.</span
+        >
+      </p>
+      <h3 id="please-don-t-do-this">Please Don't Do This</h3>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Do not assume a friendly script name implies a friendly command.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not assume a friendly script name implies a friendly
+          command.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>npm run totally-normal</code> is not a security boundary.</span>
-        </p>
-<h2 id="step-two-npm-finds-local-vite">Step Two: npm Finds Local Vite</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>npm run totally-normal</code> is not a security boundary.</span
+        >
+      </p>
+      <h2 id="step-two-npm-finds-local-vite">Step Two: npm Finds Local Vite</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Here is the part that used to feel supernatural. I did not install Vite globally. Why does the command <code>vite</code> work inside the script?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here is the part that used to feel supernatural. I did not install
+          Vite globally. Why does the command <code>vite</code> work inside the
+          script?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The Vite package exposes a command-line executable. During an npm script, npm temporarily adds the project's local executable directory to the command path.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The Vite package exposes a command-line executable. During an npm
+          script, npm temporarily adds the project's local executable directory
+          to the command path.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Usually represented through <code>node_modules/.bin</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Usually represented through <code>node_modules/.bin</code>.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>npm can therefore find the Vite version installed for this project.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >npm can therefore find the Vite version installed for this
+          project.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Instead of whatever version might be global on your machine.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Instead of whatever version might be global on your machine.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Project A can run Vite six while Project B runs Vite seven.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Project A can run Vite six while Project B runs Vite seven.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Without you manually typing paths into <code>node_modules</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Without you manually typing paths into
+          <code>node_modules</code>.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The magic was temporary path configuration.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The magic was temporary path configuration.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The magic is almost always paperwork.</span>
-        </p>
-<h3 id="okay-that-s-actually-pretty-cool">Okay, That's Actually Pretty Cool</h3>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The magic is almost always paperwork.</span>
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        Okay, That's Actually Pretty Cool
+      </h3>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The command in <code>package.json</code> is short, but the project still controls the installed tool version through its dependencies and lockfile.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The command in <code>package.json</code> is short, but the project
+          still controls the installed tool version through its dependencies and
+          lockfile.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is a major reason npm scripts are useful.</span>
-        </p>
-<h2 id="step-three-node-starts-vite">Step Three: Node Starts Vite</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is a major reason npm scripts are useful.</span>
+      </p>
+      <h2 id="step-three-node-starts-vite">Step Three: Node Starts Vite</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite is a JavaScript program?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Vite is a JavaScript program?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Its command-line tool runs in Node.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Its command-line tool runs in Node.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node loads Vite's entry point and executes it.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node loads Vite's entry point and executes it.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite reads its command-line options, project configuration, and environment. Then it starts its development workflow.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite reads its command-line options, project configuration, and
+          environment. Then it starts its development workflow.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which can include a local HTTP server.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which can include a local HTTP server.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Let's separate two servers people blur together.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let's separate two servers people blur together.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Good idea.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good idea.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A production Node backend might handle application requests, authentication, databases, and business logic.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A production Node backend might handle application requests,
+          authentication, databases, and business logic.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A Vite development server primarily serves and transforms frontend development files for your local browser.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A Vite development server primarily serves and transforms frontend
+          development files for your local browser.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Same broad networking capability. Different job.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same broad networking capability. Different job.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And the fact that a project uses Vite's Node-based dev server does not mean its deployed frontend requires a Node server.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the fact that a project uses Vite's Node-based dev server does
+          not mean its deployed frontend requires a Node server.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It may build into static files that any suitable web host can serve.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It may build into static files that any suitable web host can
+          serve.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node runs the factory. The browser drives the car.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node runs the factory. The browser drives the car.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The metaphor survived.</span>
-        </p>
-<h2 id="step-four-vite-serves-an-entry-page">Step Four: Vite Serves an Entry Page</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The metaphor survived.</span>
+      </p>
+      <h2 id="step-four-vite-serves-an-entry-page">
+        Step Four: Vite Serves an Entry Page
+      </h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I open the local URL, perhaps <code>http://localhost:5173</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I open the local URL, perhaps
+          <code>http://localhost:5173</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The browser sends an HTTP request to the dev server listening on your machine.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser sends an HTTP request to the dev server listening on your
+          machine.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>localhost</code> means this computer.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>localhost</code> means this computer.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. The port distinguishes which local network service should receive the request.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The port distinguishes which local network service should
+          receive the request.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite responds with the development page, commonly starting from <code>index.html</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vite responds with the development page, commonly starting from
+          <code>index.html</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite treats HTML as part of the module graph and processes references it understands.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite treats HTML as part of the module graph and processes references
+          it understands.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The HTML might contain a module script.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The HTML might contain a module script.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>html</span></figcaption>
-          <pre tabindex="0"><code>&lt;script type=&quot;module&quot; src=&quot;/src/main.js&quot;&gt;&lt;/script&gt;</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;script type=&quot;module&quot; src=&quot;/src/main.js&quot;&gt;&lt;/script&gt;</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>type=&quot;module&quot;</code> is browser HTML configuration.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>type=&quot;module&quot;</code> is browser HTML
+          configuration.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And <code>import</code> inside <code>main.js</code> is JavaScript module syntax.</span>
-        </p>
-<h3 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h3>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And <code>import</code> inside <code>main.js</code> is JavaScript
+          module syntax.</span
+        >
+      </p>
+      <h3 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h3>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>import</code> and <code>export</code> are modern JavaScript, not Vite syntax.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>import</code> and <code>export</code> are modern JavaScript,
+          not Vite syntax.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. Vite understands and serves that module graph, but it did not invent JavaScript modules.</span>
-        </p>
-<h2 id="modules-before-bundlers">Modules Before Bundlers</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Vite understands and serves that module graph, but it did
+          not invent JavaScript modules.</span
+        >
+      </p>
+      <h2 id="modules-before-bundlers">Modules Before Bundlers</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Why did we need bundlers if browsers support modules?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why did we need bundlers if browsers support modules?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>History first. For a long time, browsers did not have a standard module system developers could use directly.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >History first. For a long time, browsers did not have a standard
+          module system developers could use directly.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So projects invented patterns, concatenated files, or used module formats and loaders.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So projects invented patterns, concatenated files, or used module
+          formats and loaders.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Then bundlers such as Browserify and Webpack could start from an entry file, follow imports, transform code, and produce browser-ready bundles.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then bundlers such as Browserify and Webpack could start from an
+          entry file, follow imports, transform code, and produce browser-ready
+          bundles.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>They solved real problems.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They solved real problems.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Absolutely. They also accumulated configuration because frontend applications needed more transformations and asset handling.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. They also accumulated configuration because frontend
+          applications needed more transformations and asset handling.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript, JSX, TypeScript, Sass, images, development servers, hot updates—</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JavaScript, JSX, TypeScript, Sass, images, development servers, hot
+          updates—</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The factory became an industrial park.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The factory became an industrial park.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Native browser modules changed the possibilities.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Native browser modules changed the possibilities.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Modern development tools can let the browser request modules individually during development, while the server transforms them as needed.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modern development tools can let the browser request modules
+          individually during development, while the server transforms them as
+          needed.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which avoids rebuilding one giant bundle before every small change.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which avoids rebuilding one giant bundle before every small
+          change.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's a major part of Vite's development-speed story.</span>
-        </p>
-<h2 id="what-vite-transforms">What Vite Transforms</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's a major part of Vite's development-speed story.</span>
+      </p>
+      <h2 id="what-vite-transforms">What Vite Transforms</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Suppose my entry file imports this.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Suppose my entry file imports this.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>js</span></figcaption>
-          <pre tabindex="0"><code>import React from &quot;react&quot;;
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre tabindex="0"><code>import React from &quot;react&quot;;
 import &quot;./styles.css&quot;;</code></pre>
-        </figure>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The relative CSS path is not standard JavaScript behavior in a browser.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. A browser's JavaScript module loader does not natively interpret “import this CSS file” as JavaScript module semantics.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite provides tooling behavior that understands it.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It processes the request and coordinates how the CSS reaches the page during development.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>What about <code>react</code>? That is not a relative URL.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It is a bare module specifier. In application source, tooling resolves it to the installed dependency.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node has package-resolution rules too, but the browser cannot simply rummage through <code>node_modules</code> from a bare name.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. Vite resolves and optimizes dependencies for browser development.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So this line contains JavaScript module syntax, while the useful resolution behavior depends on the environment and tooling.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. Syntax and resolution are different layers.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That distinction is doing a lot of work.</span>
-        </p>
-<h2 id="watch-it-in-the-network-panel">Watch It in the Network Panel</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Can I actually see this process, or must I trust the factory metaphor?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Open the browser developer tools and look at the Network panel.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Reload the page and I can see the HTML request, module requests, styles, images, source maps, and the Vite development client.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. Click a JavaScript request and inspect the response. During development, what arrives may look close to your source but include transformed imports or development helpers.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If <code>main.js</code> imports <code>app.js</code>, the browser requests another module.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And Vite serves it on demand. The module graph grows from actual imports.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This is different from an older development pipeline that rebuilt one large bundle before the browser could receive the change.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. Vite can transform requested source modules as needed and cache work.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Dependencies may be pre-bundled or optimized separately because packages are not always authored in the shape most efficient for native-module development.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. That step can reduce large numbers of requests and handle module-format compatibility.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So “Vite doesn't bundle in development” needs a footnote.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A large one. Your application source is served through native ESM-style requests, while dependency optimization may bundle dependencies. Simplified slogans are not architecture diagrams.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Thank you. I could feel a future interviewer preparing a trap.</span>
-        </p>
-<h2 id="css-images-and-other-non-javascript-things">CSS, Images, and Other Non-JavaScript Things</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Our factory claims to build a website, so it cannot only understand JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite also handles CSS and static assets through defined conventions and plugins.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If JavaScript imports CSS, Vite can make that stylesheet affect the development page.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>In production, the build may extract and optimize CSS assets.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If I import an image URL from JavaScript?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite can treat the image as an asset, return a resolved URL to your module, and include or copy the file appropriately during build.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Small assets may sometimes be inlined depending on configuration.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. File names may include content hashes in production so browsers can cache assets safely while changed content receives a new URL.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Cache busting without naming the file <code>logo-final-final-actually-final.png</code>.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A triumph of civilization.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>What about files in a public directory?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite supports serving designated public assets at stable root paths and copying them as-is during build.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So imported assets participate in the module graph; public assets are more like “serve this file unchanged at this path.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Good distinction. Use the approach that matches whether the asset should be processed and referenced by the graph.</span>
-        </p>
-<h2 id="configuration-and-plugins">Configuration and Plugins</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Where does Vite learn project-specific behavior?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It has defaults, command-line options, a configuration file when needed, and plugins.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A Vite config is usually JavaScript or TypeScript executed as tooling configuration.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It can set aliases, server options, build behavior, plugin configuration, and more.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This config runs in the tooling environment, not as ordinary browser code.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. That boundary matters for available APIs and secrets.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A plugin hooks into Vite's development or build pipeline.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It can support framework behavior, transform file types, adjust resolution, or participate in builds.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>React projects commonly add an official React plugin.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Which provides React-specific transformation and development integration, including fast refresh behavior.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Plugins are executable dependencies too.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. They run with tooling privileges during development or build. Choose and update them with the same supply-chain care as other dependencies.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And more plugins means more capabilities, more configuration, and more places interactions can break.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Add the ones that solve actual requirements.</span>
-        </p>
-<h2 id="typescript-is-checked-somewhere-else">TypeScript Is Checked Somewhere Else</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>What if <code>main.js</code> is <code>main.ts</code>?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite can transform TypeScript syntax into JavaScript the browser can execute.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Does Vite prove my types are correct?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Not necessarily. Vite's fast transform path commonly removes TypeScript syntax without performing full type checking.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Compile-time type checking is a separate job performed by TypeScript or an integrated checking tool.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So a dev server successfully displaying the page does not prove <code>tsc</code> will pass.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And neither one proves runtime input is valid.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Series 1 continuity survives.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Types disappear. Users remain chaotic.</span>
-        </p>
-<h2 id="jsx-is-another-layer">JSX Is Another Layer</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>What about JSX?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>JSX is syntax commonly used with React. It is not standard JavaScript syntax the browser executes directly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And it is not inherently TypeScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. JavaScript files can contain JSX by convention as <code>.jsx</code>; TypeScript plus JSX commonly uses <code>.tsx</code>.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A tool transforms JSX into JavaScript operations.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. The exact transform depends on the configured framework plugin and JSX runtime.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So when I see angle brackets inside a component file, I should ask which layer owns them.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>React ecosystem syntax transformed by tooling, not HTML pasted directly into JavaScript.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Future React series, we are coming for you.</span>
-        </p>
-<h2 id="the-file-watcher">The File Watcher</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I save a file. The browser changes almost immediately. What happened?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The development server watches relevant project files for changes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node can access filesystem events.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. Vite notices the change, invalidates affected module information, transforms what is needed, and notifies the browser through a development connection.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Hot Module Replacement.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>HMR.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Is that the same as refreshing the page?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Not exactly. A full reload replaces the whole page. HMR attempts to update affected modules while the application is running, sometimes preserving state.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Whether state survives depends on the framework integration and the kind of change.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It is not universal immortality for component state.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And the browser receives extra development client code to coordinate this.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. That machinery is for development, not something you blindly ship as production behavior.</span>
-        </p>
-<h2 id="source-maps-the-helpful-lie-detector">Source Maps: The Helpful Lie Detector</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If Vite transforms my source, why do browser errors still point at files I recognize?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Source maps can connect generated code locations back to original source locations.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A map from “line twelve in the transformed module” to “line eight in my TypeScript file.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Roughly, yes. Developer tools use that mapping for debugging and stack traces.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Source maps do not make the browser execute TypeScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. The browser executes JavaScript. The map helps humans relate that JavaScript to the source that produced it.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Development source maps are convenient. Production source maps are a deployment decision.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>They can greatly improve error monitoring and debugging, but publicly served maps may reveal original source details. Teams can keep maps private with an error-reporting service or make a deliberate public choice.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Security note: hiding source does not secure client-side secrets or prevent determined analysis.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. Minification and missing maps are not access control.</span>
-        </p>
-<h2 id="when-the-command-fails">When the Command Fails</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Let's make this practical. I run <code>npm run dev</code> and get “missing script: dev.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Read <code>package.json</code>. The project may use a different script name, or you may be in the wrong directory.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Vite is not recognized” or “command not found.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The local dependencies may not be installed, the installation may be broken, or the script may refer to a tool the manifest does not declare.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Run the project's documented install command using its package manager, not immediately install Vite globally.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Good. A global install can mask the missing project dependency and introduce the wrong version.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Unsupported Node version?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Check the project's documented version and package engine requirements. Switch with the team's version-management approach, reinstall if necessary, then retry.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Port already in use?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Stop the other process or intentionally choose another port. Do not kill random processes until you know what owns it.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Page loads but an import fails.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Read the browser console and terminal together. Check the import path, filename casing, package installation, aliases, and whether the file type needs a plugin.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Casing matters even if my Windows machine is forgiving, because Linux CI or hosting may not be.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Blank page, no terminal error.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The dev server may be fine while the application throws in the browser. A running server proves the server is running, not that your app is correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Different layer, different evidence.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is the whole series in five words.</span>
-        </p>
-<h2 id="environment-variables-please-pause-here">Environment Variables: Please Pause Here</h2>
-<h3 id="please-don-t-do-this">Please Don't Do This</h3>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A frontend build needs an API URL. I put it in an environment variable.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Fine, depending on how it is used.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I put an API secret in it.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Not fine if the build exposes it to browser code.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This is the trap. “Environment variable” sounds server-side and private.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>But frontend tooling may replace selected variables with literal values during transformation or build.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Anything delivered to the browser is inspectable by the user.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. A naming prefix such as Vite's public client-variable convention is an exposure mechanism, not encryption.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Public configuration can go into frontend code. Secrets stay on a trusted server or service boundary.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Never put private credentials in client-side source, generated bundles, or committed environment files.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Build tools transform files. They do not make browser secrets possible.</span>
-        </p>
-<h2 id="development-is-not-production">Development Is Not Production</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>npm run dev</code> starts a development server. What does <code>npm run build</code> do?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Whatever the project's build script says. In a typical Vite app, it creates optimized production assets.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It follows the module graph, transforms syntax and assets, bundles output, splits chunks when appropriate, applies production optimizations, and writes a directory such as <code>dist</code>.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Broadly, yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The exact behavior depends on configuration and plugins.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Always.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Then I deploy the generated assets, not the Vite development server.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>For a static frontend, yes. Frameworks with server rendering or specialized deployment adapters have additional runtime pieces.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Again: “uses Vite” does not fully describe the production architecture.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And <code>vite preview</code>?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A convenient local way to preview the built output. It is not automatically your production hosting strategy.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Development command, build command, preview command, deployment platform. Four related but distinct jobs.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You are dismantling the blob.</span>
-        </p>
-<h2 id="what-the-production-build-optimizes">What the Production Build Optimizes</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Optimized” can become marketing soup. What might a production build actually do?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Resolve the complete production module graph, transform syntax for configured browser targets, bundle modules, split code into chunks, process CSS and assets, and minify output.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Tree shaking?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It can remove exports that analysis determines are unused, when module structure and side-effect information make that safe.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Not a psychic garbage collector for every line I dislike.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. Dynamic behavior and side effects limit what static analysis can remove.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Code splitting lets parts of the application load separately instead of shipping one enormous initial file.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Dynamic imports and build configuration can create split points. The build tool then manages relationships among chunks.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Content hashes let long-lived browser caches keep unchanged files.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And when content changes, the file name changes, so clients request the new asset.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Minification shortens and restructures code for delivery size, not secrecy.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Then I should inspect the build output and test the built application, not assume development success guarantees production success.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Run the project checks, build, preview the actual output, and verify routes, assets, environment configuration, and deployment behavior.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Especially client-side routing, which may require the host to return the application entry page for unknown routes.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your bundler cannot configure every hosting platform by telepathy.</span>
-        </p>
-<h2 id="what-babel-was-doing">What Babel Was Doing</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We promised Babel would appear somewhere in this series.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Babel transforms JavaScript syntax from one form to another based on configured targets and plugins.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Historically, a big use was writing newer JavaScript syntax while supporting browsers that did not understand it yet.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. It can also transform JSX and support plugin-driven syntax transformations.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Does every Vite project use Babel?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No. Vite and its plugins may use other fast transformers, and the exact pipeline depends on the project.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So “Babel is the thing that makes modern JavaScript work” is an old oversimplification.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It describes an important historical role, not every current toolchain.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Newer tools did not prove the older tool was stupid. The environment changed, and different tradeoffs became available.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's the show.</span>
-        </p>
-<h2 id="the-entire-trip-slowly">The Entire Trip, Slowly</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Let's trace it with no skipped stairs.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You type <code>npm run dev</code> in a shell.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The shell starts the npm command.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>npm reads <code>package.json</code> and finds the <code>dev</code> script.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>npm configures the script environment so locally installed commands are available.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The script starts Vite's Node-based command-line program.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite reads project configuration and starts a local development server.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your browser requests the page from that server.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The page requests JavaScript modules.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite resolves, transforms, and serves those modules for development.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The browser executes the resulting JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Vite watches source files and coordinates updates when they change.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node handles the tooling and local server side. The browser handles the frontend runtime side.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And the boundary between them is visible if you follow the requests.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Nothing here was one giant action called “run the app.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It was a chain of smaller actions owned by different layers.</span>
-        </p>
-<h3 id="okay-that-s-actually-pretty-cool">Okay, That's Actually Pretty Cool</h3>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I no longer see <code>npm run dev</code> as an incantation.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>What do you see?</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A project-defined command launching a local Node tool that prepares modules for a browser.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's the factory.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>With paperwork.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Always with paperwork.</span>
-        </p>
-<h2 id="when-you-do-not-need-the-factory">When You Do Not Need the Factory</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Final question. Does every website need this?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Louder.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No. A straightforward site can use HTML, CSS, and browser JavaScript directly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Native modules work in modern browsers. Many projects do not need framework compilation, package-heavy tooling, HMR, or a sophisticated build.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Tooling is worthwhile when the problems it solves apply: transformations, dependency handling, optimization, framework support, testing integration, a consistent workflow.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It also adds dependency risk, configuration, upgrades, build failures, and another layer to understand.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The question is not “Is Vite good?”</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It is “What problem does this project have, and does Vite solve it well enough to earn its place?”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>There it is.</span>
-        </p>
-<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>npm runs the script named in <code>package.json</code>.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>npm scripts can find project-local package commands.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite's development command runs in Node and starts development tooling, including a local server.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The browser requests modules and executes browser JavaScript. Tooling resolves or transforms things the browser cannot consume directly in source form.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>import</code> and <code>export</code> are JavaScript. JSX is separate syntax transformed by tooling. TypeScript syntax is removed before runtime, and type checking remains a distinct job.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Perfect.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>HMR coordinates targeted development updates. A production build is a different workflow.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Client-exposed environment variables are not secrets.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Please put that on a mug.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And not every website needs a factory.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>But when you do need one, you now know why Node is in the building.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Series complete.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>JavaScript escaped the browser, npm invited everyone over, <code>node_modules</code> ate the pantry, and Vite started the machinery.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That is upsettingly coherent.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Next, we find out what else happened to JavaScript while I was busy making websites.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>There will be arrows.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Threatening.</span>
-        </p></main>
-  <footer>3 code cards · 1 terminal cards</footer>
-</body>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The relative CSS path is not standard JavaScript behavior in a
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A browser's JavaScript module loader does not natively
+          interpret “import this CSS file” as JavaScript module semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Vite provides tooling behavior that understands it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It processes the request and coordinates how the CSS reaches the
+          page during development.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about <code>react</code>? That is not a relative URL.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is a bare module specifier. In application source, tooling
+          resolves it to the installed dependency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Node has package-resolution rules too, but the browser cannot simply
+          rummage through <code>node_modules</code> from a bare name.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Vite resolves and optimizes dependencies for browser
+          development.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So this line contains JavaScript module syntax, while the useful
+          resolution behavior depends on the environment and tooling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Syntax and resolution are different layers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That distinction is doing a lot of work.</span>
+      </p>
+      <h2 id="watch-it-in-the-network-panel">Watch It in the Network Panel</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Can I actually see this process, or must I trust the factory
+          metaphor?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Open the browser developer tools and look at the Network panel.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reload the page and I can see the HTML request, module requests,
+          styles, images, source maps, and the Vite development client.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Click a JavaScript request and inspect the response. During
+          development, what arrives may look close to your source but include
+          transformed imports or development helpers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If <code>main.js</code> imports <code>app.js</code>, the browser
+          requests another module.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And Vite serves it on demand. The module graph grows from actual
+          imports.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is different from an older development pipeline that rebuilt one
+          large bundle before the browser could receive the change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Vite can transform requested source modules as needed and
+          cache work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Dependencies may be pre-bundled or optimized separately because
+          packages are not always authored in the shape most efficient for
+          native-module development.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That step can reduce large numbers of requests and handle
+          module-format compatibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So “Vite doesn't bundle in development” needs a footnote.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A large one. Your application source is served through native
+          ESM-style requests, while dependency optimization may bundle
+          dependencies. Simplified slogans are not architecture diagrams.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you. I could feel a future interviewer preparing a trap.</span
+        >
+      </p>
+      <h2 id="css-images-and-other-non-javascript-things">
+        CSS, Images, and Other Non-JavaScript Things
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our factory claims to build a website, so it cannot only understand
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite also handles CSS and static assets through defined conventions
+          and plugins.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If JavaScript imports CSS, Vite can make that stylesheet affect the
+          development page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In production, the build may extract and optimize CSS assets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If I import an image URL from JavaScript?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite can treat the image as an asset, return a resolved URL to your
+          module, and include or copy the file appropriately during build.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Small assets may sometimes be inlined depending on
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. File names may include content hashes in production so browsers
+          can cache assets safely while changed content receives a new
+          URL.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Cache busting without naming the file
+          <code>logo-final-final-actually-final.png</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A triumph of civilization.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about files in a public directory?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite supports serving designated public assets at stable root paths
+          and copying them as-is during build.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So imported assets participate in the module graph; public assets are
+          more like “serve this file unchanged at this path.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good distinction. Use the approach that matches whether the asset
+          should be processed and referenced by the graph.</span
+        >
+      </p>
+      <h2 id="configuration-and-plugins">Configuration and Plugins</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where does Vite learn project-specific behavior?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It has defaults, command-line options, a configuration file when
+          needed, and plugins.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A Vite config is usually JavaScript or TypeScript executed as tooling
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It can set aliases, server options, build behavior, plugin
+          configuration, and more.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This config runs in the tooling environment, not as ordinary browser
+          code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That boundary matters for available APIs and secrets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A plugin hooks into Vite's development or build pipeline.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can support framework behavior, transform file types, adjust
+          resolution, or participate in builds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React projects commonly add an official React plugin.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which provides React-specific transformation and development
+          integration, including fast refresh behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Plugins are executable dependencies too.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. They run with tooling privileges during development or build.
+          Choose and update them with the same supply-chain care as other
+          dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And more plugins means more capabilities, more configuration, and
+          more places interactions can break.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Add the ones that solve actual requirements.</span>
+      </p>
+      <h2 id="typescript-is-checked-somewhere-else">
+        TypeScript Is Checked Somewhere Else
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if <code>main.js</code> is <code>main.ts</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite can transform TypeScript syntax into JavaScript the browser can
+          execute.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does Vite prove my types are correct?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not necessarily. Vite's fast transform path commonly removes
+          TypeScript syntax without performing full type checking.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compile-time type checking is a separate job performed by TypeScript
+          or an integrated checking tool.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a dev server successfully displaying the page does not prove
+          <code>tsc</code> will pass.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And neither one proves runtime input is valid.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Series 1 continuity survives.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Types disappear. Users remain chaotic.</span>
+      </p>
+      <h2 id="jsx-is-another-layer">JSX Is Another Layer</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about JSX?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSX is syntax commonly used with React. It is not standard JavaScript
+          syntax the browser executes directly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And it is not inherently TypeScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. JavaScript files can contain JSX by convention as
+          <code>.jsx</code>; TypeScript plus JSX commonly uses
+          <code>.tsx</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A tool transforms JSX into JavaScript operations.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The exact transform depends on the configured framework plugin
+          and JSX runtime.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So when I see angle brackets inside a component file, I should ask
+          which layer owns them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React ecosystem syntax transformed by tooling, not HTML pasted
+          directly into JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Future React series, we are coming for you.</span>
+      </p>
+      <h2 id="the-file-watcher">The File Watcher</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I save a file. The browser changes almost immediately. What
+          happened?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The development server watches relevant project files for
+          changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node can access filesystem events.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Vite notices the change, invalidates affected module
+          information, transforms what is needed, and notifies the browser
+          through a development connection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hot Module Replacement.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>HMR.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is that the same as refreshing the page?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not exactly. A full reload replaces the whole page. HMR attempts to
+          update affected modules while the application is running, sometimes
+          preserving state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether state survives depends on the framework integration and the
+          kind of change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. It is not universal immortality for component state.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the browser receives extra development client code to coordinate
+          this.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That machinery is for development, not something you blindly
+          ship as production behavior.</span
+        >
+      </p>
+      <h2 id="source-maps-the-helpful-lie-detector">
+        Source Maps: The Helpful Lie Detector
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If Vite transforms my source, why do browser errors still point at
+          files I recognize?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Source maps can connect generated code locations back to original
+          source locations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A map from “line twelve in the transformed module” to “line eight in
+          my TypeScript file.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Roughly, yes. Developer tools use that mapping for debugging and
+          stack traces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Source maps do not make the browser execute TypeScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The browser executes JavaScript. The map helps humans relate
+          that JavaScript to the source that produced it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Development source maps are convenient. Production source maps are a
+          deployment decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They can greatly improve error monitoring and debugging, but publicly
+          served maps may reveal original source details. Teams can keep maps
+          private with an error-reporting service or make a deliberate public
+          choice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Security note: hiding source does not secure client-side secrets or
+          prevent determined analysis.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Minification and missing maps are not access control.</span
+        >
+      </p>
+      <h2 id="when-the-command-fails">When the Command Fails</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's make this practical. I run <code>npm run dev</code> and get
+          “missing script: dev.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Read <code>package.json</code>. The project may use a different
+          script name, or you may be in the wrong directory.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Vite is not recognized” or “command not found.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The local dependencies may not be installed, the installation may be
+          broken, or the script may refer to a tool the manifest does not
+          declare.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Run the project's documented install command using its package
+          manager, not immediately install Vite globally.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. A global install can mask the missing project dependency and
+          introduce the wrong version.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Unsupported Node version?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Check the project's documented version and package engine
+          requirements. Switch with the team's version-management approach,
+          reinstall if necessary, then retry.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Port already in use?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Stop the other process or intentionally choose another port. Do not
+          kill random processes until you know what owns it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Page loads but an import fails.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Read the browser console and terminal together. Check the import
+          path, filename casing, package installation, aliases, and whether the
+          file type needs a plugin.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Casing matters even if my Windows machine is forgiving, because Linux
+          CI or hosting may not be.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Blank page, no terminal error.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The dev server may be fine while the application throws in the
+          browser. A running server proves the server is running, not that your
+          app is correct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Different layer, different evidence.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the whole series in five words.</span>
+      </p>
+      <h2 id="environment-variables-please-pause-here">
+        Environment Variables: Please Pause Here
+      </h2>
+      <h3 id="please-don-t-do-this">Please Don't Do This</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A frontend build needs an API URL. I put it in an environment
+          variable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fine, depending on how it is used.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I put an API secret in it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Not fine if the build exposes it to browser code.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the trap. “Environment variable” sounds server-side and
+          private.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But frontend tooling may replace selected variables with literal
+          values during transformation or build.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Anything delivered to the browser is inspectable by the user.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A naming prefix such as Vite's public client-variable convention
+          is an exposure mechanism, not encryption.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Public configuration can go into frontend code. Secrets stay on a
+          trusted server or service boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Never put private credentials in client-side source, generated
+          bundles, or committed environment files.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Build tools transform files. They do not make browser secrets
+          possible.</span
+        >
+      </p>
+      <h2 id="development-is-not-production">Development Is Not Production</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>npm run dev</code> starts a development server. What does
+          <code>npm run build</code> do?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Whatever the project's build script says. In a typical Vite app, it
+          creates optimized production assets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It follows the module graph, transforms syntax and assets, bundles
+          output, splits chunks when appropriate, applies production
+          optimizations, and writes a directory such as <code>dist</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Broadly, yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The exact behavior depends on configuration and plugins.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Always.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then I deploy the generated assets, not the Vite development
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a static frontend, yes. Frameworks with server rendering or
+          specialized deployment adapters have additional runtime pieces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again: “uses Vite” does not fully describe the production
+          architecture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And <code>vite preview</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A convenient local way to preview the built output. It is not
+          automatically your production hosting strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Development command, build command, preview command, deployment
+          platform. Four related but distinct jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You are dismantling the blob.</span>
+      </p>
+      <h2 id="what-the-production-build-optimizes">
+        What the Production Build Optimizes
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Optimized” can become marketing soup. What might a production build
+          actually do?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Resolve the complete production module graph, transform syntax for
+          configured browser targets, bundle modules, split code into chunks,
+          process CSS and assets, and minify output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Tree shaking?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can remove exports that analysis determines are unused, when
+          module structure and side-effect information make that safe.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not a psychic garbage collector for every line I dislike.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Dynamic behavior and side effects limit what static analysis
+          can remove.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Code splitting lets parts of the application load separately instead
+          of shipping one enormous initial file.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Dynamic imports and build configuration can create split points. The
+          build tool then manages relationships among chunks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Content hashes let long-lived browser caches keep unchanged
+          files.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when content changes, the file name changes, so clients request
+          the new asset.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Minification shortens and restructures code for delivery size, not
+          secrecy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then I should inspect the build output and test the built
+          application, not assume development success guarantees production
+          success.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Run the project checks, build, preview the actual output, and verify
+          routes, assets, environment configuration, and deployment
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially client-side routing, which may require the host to return
+          the application entry page for unknown routes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Your bundler cannot configure every hosting platform by
+          telepathy.</span
+        >
+      </p>
+      <h2 id="what-babel-was-doing">What Babel Was Doing</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We promised Babel would appear somewhere in this series.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Babel transforms JavaScript syntax from one form to another based on
+          configured targets and plugins.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Historically, a big use was writing newer JavaScript syntax while
+          supporting browsers that did not understand it yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It can also transform JSX and support plugin-driven syntax
+          transformations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does every Vite project use Babel?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Vite and its plugins may use other fast transformers, and the
+          exact pipeline depends on the project.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “Babel is the thing that makes modern JavaScript work” is an old
+          oversimplification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It describes an important historical role, not every current
+          toolchain.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Newer tools did not prove the older tool was stupid. The environment
+          changed, and different tradeoffs became available.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the show.</span>
+      </p>
+      <h2 id="the-entire-trip-slowly">The Entire Trip, Slowly</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let's trace it with no skipped stairs.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You type <code>npm run dev</code> in a shell.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The shell starts the npm command.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >npm reads <code>package.json</code> and finds the
+          <code>dev</code> script.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >npm configures the script environment so locally installed commands
+          are available.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The script starts Vite's Node-based command-line program.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vite reads project configuration and starts a local development
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Your browser requests the page from that server.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The page requests JavaScript modules.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite resolves, transforms, and serves those modules for
+          development.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The browser executes the resulting JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vite watches source files and coordinates updates when they
+          change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Node handles the tooling and local server side. The browser handles
+          the frontend runtime side.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the boundary between them is visible if you follow the
+          requests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nothing here was one giant action called “run the app.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It was a chain of smaller actions owned by different layers.</span
+        >
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        Okay, That's Actually Pretty Cool
+      </h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I no longer see <code>npm run dev</code> as an incantation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What do you see?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A project-defined command launching a local Node tool that prepares
+          modules for a browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the factory.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>With paperwork.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Always with paperwork.</span>
+      </p>
+      <h2 id="when-you-do-not-need-the-factory">
+        When You Do Not Need the Factory
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Final question. Does every website need this?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Louder.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. A straightforward site can use HTML, CSS, and browser JavaScript
+          directly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native modules work in modern browsers. Many projects do not need
+          framework compilation, package-heavy tooling, HMR, or a sophisticated
+          build.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tooling is worthwhile when the problems it solves apply:
+          transformations, dependency handling, optimization, framework support,
+          testing integration, a consistent workflow.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It also adds dependency risk, configuration, upgrades, build
+          failures, and another layer to understand.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The question is not “Is Vite good?”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is “What problem does this project have, and does Vite solve it
+          well enough to earn its place?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>npm runs the script named in <code>package.json</code>.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>npm scripts can find project-local package commands.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vite's development command runs in Node and starts development
+          tooling, including a local server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser requests modules and executes browser JavaScript. Tooling
+          resolves or transforms things the browser cannot consume directly in
+          source form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>import</code> and <code>export</code> are JavaScript. JSX is
+          separate syntax transformed by tooling. TypeScript syntax is removed
+          before runtime, and type checking remains a distinct job.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Perfect.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HMR coordinates targeted development updates. A production build is a
+          different workflow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Client-exposed environment variables are not secrets.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please put that on a mug.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And not every website needs a factory.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But when you do need one, you now know why Node is in the
+          building.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Series complete.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JavaScript escaped the browser, npm invited everyone over,
+          <code>node_modules</code> ate the pantry, and Vite started the
+          machinery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is upsettingly coherent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next, we find out what else happened to JavaScript while I was busy
+          making websites.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There will be arrows.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Threatening.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 1 terminal cards</footer>
+  </body>
 </html>
