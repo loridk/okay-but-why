@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 20: Incident Response &amp; Digital Forensics — Production Is on Fire, Don’t Touch Anything — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 20: Incident Response &amp; Digital Forensics — Production Is on Fire, Don’t Touch Anything</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-20.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#what-is-incident-response">What Is Incident Response?</a></li>
+<li><a href="#preparation-before-panic">Preparation Before Panic</a></li>
+<li><a href="#detection-and-analysis">Detection and Analysis</a></li>
+<li><a href="#containment">Containment</a></li>
+<li><a href="#eradication">Eradication</a></li>
+<li><a href="#recovery">Recovery</a></li>
+<li><a href="#lessons-learned">Lessons Learned</a></li>
+<li><a href="#digital-forensics">Digital Forensics</a></li>
+<li><a href="#order-of-volatility">Order of Volatility</a></li>
+<li><a href="#chain-of-custody">Chain of Custody</a></li>
+<li><a href="#don-t-work-on-the-original">Don’t Work on the Original</a></li>
+<li><a href="#developer-role-during-incident">Developer Role During Incident</a></li>
+<li><a href="#communication">Communication</a></li>
+<li><a href="#tabletop-exercises">Tabletop Exercises</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Production is compromised.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Okay.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m deleting the server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m rotating every credential.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe, but not blindly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m rebooting everything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please stop touching the crime scene.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is not a crime scene. It is AWS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Today it may be both.</span>
+        </p>
+<h2 id="what-is-incident-response">What Is Incident Response?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Incident response is the structured process for handling security incidents.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Preparation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Detection.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Analysis.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Containment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Eradication.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Recovery.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Lessons learned.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different frameworks name phases slightly differently, but same general lifecycle.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="preparation-before-panic">Preparation Before Panic</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Contacts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Runbooks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Backups.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Logging.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Forensic tooling, escalation paths, legal and communications contacts, tabletop exercises.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Incident response starts before the incident.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much.</span>
+        </p>
+<h2 id="detection-and-analysis">Detection and Analysis</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Alert fires.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Determine whether it is real.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What happened?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>When?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which systems?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which accounts?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What data?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Scope before assumptions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="containment">Containment</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Stop damage from spreading.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Isolate endpoint.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Block malicious IP.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Disable account.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Segment system.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Short-term containment may prioritize speed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Long-term containment may involve safer temporary architecture while remediation happens.</span>
+        </p>
+<h2 id="eradication">Eradication</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Remove root cause and attacker foothold.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Malware.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Persistence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Vulnerable service.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Compromised credentials.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Patch door and remove person already inside.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="recovery">Recovery</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Restore systems safely.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Validate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Monitor.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Gradually return to production.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don’t restore compromised backup into same vulnerable configuration.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="lessons-learned">Lessons Learned</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Blameless retrospective if possible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What failed?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What worked?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What detections were missing?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What controls need improvement?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not “who clicked the link?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Systems improve when people can report honestly.</span>
+        </p>
+<h2 id="digital-forensics">Digital Forensics</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Forensics preserves and analyzes evidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Disk images, memory, logs, network captures, cloud audit records, mobile data depending on incident.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Goal: reconstruct events without unnecessarily altering evidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="order-of-volatility">Order of Volatility</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some evidence disappears faster than others.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Memory and active network state are more volatile than disk data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So grabbing volatile evidence before powering off can matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, depending on response plan and expertise.</span>
+        </p>
+<h2 id="chain-of-custody">Chain of Custody</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Record who collected evidence, when, where it went, who handled it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Chain of custody</strong> supports evidence integrity and legal defensibility.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hash forensic images.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Prove copy hasn’t changed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Episode six callback.</span>
+        </p>
+<h2 id="don-t-work-on-the-original">Don’t Work on the Original</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Forensic image first.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Analyze copies where practical.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Preserve original evidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="developer-role-during-incident">Developer Role During Incident</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What can app developers contribute?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Architecture knowledge.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Log interpretation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Deploy history.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Feature behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Recent changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But follow incident command rather than improvising destructive fixes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="communication">Communication</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security incident is also communications incident.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Leadership.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Legal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Regulators.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Law enforcement in some cases.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Insurance.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Accuracy matters more than speculative speed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="tabletop-exercises">Tabletop Exercises</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Simulate incident without actual compromise.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Tabletop exercise.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Ransomware hit payroll Friday afternoon. What do we do?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Finds gaps before reality does.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Delete logs to save disk space during an incident.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reboot compromised system before capturing volatile evidence when forensics needs it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Follow your response plan.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Discuss unverified breach details in public Slack channels.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please coordinate communication.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Incident response is controlled damage reduction plus evidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Contain now, understand scope, remove cause, restore carefully, learn afterward.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And forensics helps answer what actually happened.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Know incident-response phases, containment strategies, evidence collection, order of volatility, chain of custody, forensic imaging, hashing, documentation, and lessons learned.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: governance, risk, privacy, compliance.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

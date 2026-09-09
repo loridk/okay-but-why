@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 10: Microservices — Congratulations, Your Function Call Has Weather — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 10: Microservices — Congratulations, Your Function Call Has Weather</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-10.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#what-we-hope-to-gain">What We Hope to Gain</a></li>
+<li><a href="#what-the-network-adds">What the Network Adds</a></li>
+<li><a href="#boundaries-follow-capabilities">Boundaries Follow Capabilities</a></li>
+<li><a href="#data-ownership-is-the-hard-part">Data Ownership Is the Hard Part</a></li>
+<li><a href="#commands-and-events">Commands and Events</a></li>
+<li><a href="#save-the-order-and-remember-the-message">Save the Order and Remember the Message</a></li>
+<li><a href="#sabrina-pulls-the-plug">Sabrina Pulls the Plug</a></li>
+<li><a href="#observability-is-part-of-the-cost">Observability Is Part of the Cost</a></li>
+<li><a href="#retries-can-make-an-outage-worse">Retries Can Make an Outage Worse</a></li>
+<li><a href="#sagas-and-compensation">Sagas and Compensation</a></li>
+<li><a href="#security-doesn-t-end-at-the-internal-network">Security Doesn't End at the Internal Network</a></li>
+<li><a href="#the-checkout-chain-we-should-question">The Checkout Chain We Should Question</a></li>
+<li><a href="#who-coordinates-the-workflow">Who Coordinates the Workflow?</a></li>
+<li><a href="#a-duplicate-message-is-not-necessarily-a-duplicate-effect">A Duplicate Message Is Not Necessarily a Duplicate Effect</a></li>
+<li><a href="#the-event-contract-changes-too">The Event Contract Changes Too</a></li>
+<li><a href="#testing-without-recreating-the-entire-internet">Testing Without Recreating the Entire Internet</a></li>
+<li><a href="#the-cost-of-ownership">The Cost of Ownership</a></li>
+<li><a href="#extract-one-capability-safely">Extract One Capability Safely</a></li>
+<li><a href="#is-it-worth-it-for-our-shop">Is It Worth It for Our Shop?</a></li>
+<li><a href="#the-decision-we-would-decline">The Decision We Would Decline</a></li>
+<li><a href="#closing-independence-has-an-invoice">Closing — Independence Has an Invoice</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We split the application into services.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I wanted the order module to stop borrowing my charger.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is not a deployment requirement.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now the menu works, payments are unavailable, and dispatch says the order is both cancelled and on a bicycle.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Today on <em>Okay, But Why?</em>: distributed systems, but with dinner.</span>
+        </p>
+<h2 id="what-we-hope-to-gain">What We Hope to Gain</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Microservices organize capabilities into separately deployable services with defined interfaces. The word micro doesn't prescribe an exact line count.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The meaningful promise is independence: a service can evolve, deploy, and sometimes scale with less coordination, when its boundary is well chosen.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A team might own delivery routing while another owns ordering. They can choose suitable implementation details behind stable contracts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There can also be resource or failure isolation. Heavy route calculations don't have to compete directly with checkout in one process.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those are benefits worth considering. But they depend on actual boundaries. Splitting files into separate containers doesn't automatically produce them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a small team can end up responsible for twelve deployments, twelve sets of logs, and twelve ways to have a bad evening.</span>
+        </p>
+<h2 id="what-the-network-adds">What the Network Adds</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A local call becomes a request to another process. Now it can time out, arrive late, fail independently, or return after the caller has given up.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We must serialize data, authenticate callers, authorize operations, manage versions, and observe behavior across the boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And we can't assume one shared transaction covers all services. Each may control its own data and commit separately.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The neat arrow is an agreement between independently failing participants. It's not a function call that moved to a nicer neighborhood.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Good service design tries to make those agreements coarse enough and stable enough to be worthwhile.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If one customer request needs forty tiny calls between services, we may have cut through the middle of a cohesive operation.</span>
+        </p>
+<h2 id="boundaries-follow-capabilities">Boundaries Follow Capabilities</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“One service per database table” is usually a poor starting rule. Tables aren't automatically independent business capabilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Orders and order items need to cooperate closely. Splitting them because they have different plural nouns can create constant network chatter and consistency problems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Better questions: what does this capability own? Which decisions can it make? What data is authoritative there? Can its interface remain stable while its internals change?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Delivery optimization might accept a set of deliveries and constraints, then return a proposed route. That's a clearer boundary than a service that answers one field at a time.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And its output can be a suggestion rather than an order-acceptance dependency. Staff can fall back to manual assignment if it's unavailable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A failure boundary earns its keep when the rest of the system can behave sensibly around it.</span>
+        </p>
+<h2 id="data-ownership-is-the-hard-part">Data Ownership Is the Hard Part</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If services each own data, other services should use their interfaces or published information rather than freely modifying their tables.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Otherwise changes remain tightly coupled through the database, even if the applications deploy separately.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That doesn't necessarily require separate physical database machines for every service. It does require deliberate ownership and access boundaries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But shared storage arrangements can still create coupling and failure risks. We should be honest about them rather than declaring independence because there are separate connection strings.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And once facts are copied between services, we must define how updates propagate and what stale data means.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A reporting service can tolerate being a few minutes behind under some requirements. Authorizing a refund from stale payment state is a different concern.</span>
+        </p>
+<h2 id="commands-and-events">Commands and Events</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A command asks for something to happen: reserve this delivery slot. An event says something happened: order accepted.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The names should reflect that distinction. “Please send a receipt” is a request for work. “Order accepted” can interest several independent consumers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Services can communicate synchronously, waiting for responses, or asynchronously through messages. Neither style is universally better.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Synchronous calls can be easier to follow but create waiting and availability dependencies. Asynchronous messages can decouple timing, but now we need pending states, retries, and visibility into delayed work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A queue holds work for consumers. If the email provider is slow, queued receipt work can wait without holding open the customer's checkout request.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the work has to be durably recorded. Starting an untracked background promise and returning success isn't the same as reliable queuing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a queue doesn't guarantee the work succeeds. It gives us a mechanism to manage delivery and processing under defined semantics.</span>
+        </p>
+<h2 id="save-the-order-and-remember-the-message">Save the Order and Remember the Message</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here's an awkward gap. We save the order, then publish “order accepted.” The process crashes between those steps. No message.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or we publish first, then the database write fails. Now somebody heard about an order that wasn't committed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is where an outbox pattern can help. Save the order and a record of the message to send in the same local database transaction. A separate publisher reads that durable outbox and delivers the message.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It closes the gap between local state and the intent to publish. It doesn't automatically make message delivery exactly once.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The publisher can deliver, crash before marking completion, then deliver again. Consumers need to tolerate duplicates or deduplicate based on stable identifiers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is a concrete additional responsibility. We didn't say “event-driven” and gain perfect coordination.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We gained a place to store the unfinished responsibility, which is useful and more honest.</span>
+        </p>
+<h2 id="sabrina-pulls-the-plug">Sabrina Pulls the Plug</h2>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>I have three failure cards. First: the payment service took the request, but our call timed out.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unknown outcome. Don't blindly create another charge. Use the provider's supported idempotency and status mechanisms, and reconcile the result.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The order can show payment pending while we resolve it. The customer shouldn't be told it's paid or definitely uncharged without evidence.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Second: the receipt worker receives the same message twice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The handler should avoid harmful duplicate effects. Track processing as appropriate, use stable operation identifiers, and understand the email provider's behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Deduplication records and side effects need careful coordination. “Check then send then mark” still has crash windows, so guarantees depend on the whole path.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Third: a cancellation event arrives before an older acceptance event.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Don't apply events by arrival order without considering their meaning. Versioning or a valid state-transition model can help detect stale updates.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The system mustn't resurrect the order because an older message finally found parking.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Excellent. My fourth card is that nobody knows which service failed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You said three.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Distributed counting.</span>
+        </p>
+<h2 id="observability-is-part-of-the-cost">Observability Is Part of the Cost</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We need logs, metrics, and traces that let us follow an operation across services. Otherwise every team sees its own success and the customer sees no pizza.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A trace can connect spans of work across the request path. Correlation identifiers help link related messages and logs, while avoiding unnecessary sensitive data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Metrics should include business outcomes and delays, not just whether processes are alive. Orders stuck in payment pending, queue age, failed deliveries of work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And ownership. Who responds when a message repeatedly fails? Where does it go after bounded retries? How can an operator inspect and safely replay it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A dead-letter queue is a place for problematic messages, not a retirement home where work goes to be forgotten.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The operational procedure is part of the architecture.</span>
+        </p>
+<h2 id="retries-can-make-an-outage-worse">Retries Can Make an Outage Worse</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Service is slow, so every caller retries immediately. The service now has more work because it was struggling with the original work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A retry storm. Use timeouts, bounded retries, backoff, and often jitter so clients don't synchronize their next attempts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Jitter means some random variation in timing, not a new JavaScript framework, although give it a week.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Only retry operations that are safe under the defined semantics. A circuit breaker can temporarily stop calls to a failing dependency and let the system use a fallback or fail promptly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A fallback must be honest. “Recommendations unavailable” can be fine. “Payment approved by optimistic imagination” cannot.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Bulkheads isolate resources so one failing dependency doesn't consume every worker or connection. The ship metaphor fits the containment idea, not the literal implementation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>All of these patterns have configuration and testing costs. That's the price of making independent failures manageable.</span>
+        </p>
+<h2 id="sagas-and-compensation">Sagas and Compensation</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An order workflow across services may use a sequence of local transactions, with compensating actions if later steps fail. That's often called a saga.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Compensation isn't time travel. Refunding a payment is a new business action, not erasing the fact that the charge happened.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Releasing a reservation, requesting a refund, notifying staff—each can also fail and need follow-up.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the workflow should have explicit states and recovery paths. We should be able to explain what happens if it stops halfway.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And sometimes the best answer is not to distribute that tightly coordinated transaction in the first place. Keeping related work together may be simpler.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's allowed. Learning the advanced pattern doesn't obligate us to manufacture the problem it solves.</span>
+        </p>
+<h2 id="security-doesn-t-end-at-the-internal-network">Security Doesn't End at the Internal Network</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Services need identities and appropriately limited permissions. “It's internal” doesn't mean every caller may do everything.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Especially if one compromised component could otherwise issue refunds, read all customer data, and change staff roles.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Protect service credentials, rotate them according to the platform and policy, and authorize operations. Minimize the data in messages as well as responses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Every extra service and queue can create another place customer information is stored. Data minimization and retention become coordination problems too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is a reason to include security in the design, not a reason to avoid every service architecture. The costs should be visible.</span>
+        </p>
+<h2 id="the-checkout-chain-we-should-question">The Checkout Chain We Should Question</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine checkout synchronously calls customer service, menu service, discount service, inventory service, payment service, and delivery service before it can answer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First, customer service should get a less confusing name. Second, we have made a chain of dependencies part of the critical path.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Even if each one is usually fast, the combined path can be slow. And if any required step is unavailable, checkout may fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We shouldn't multiply made-up reliability percentages and call it a forecast, because failures may be correlated. But the qualitative issue is clear: more mandatory dependencies create more ways to be unable to finish.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could we make all calls in parallel?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Only if they're actually independent. Payment may depend on the accepted amount. Delivery availability may depend on the address and time. Parallel execution isn't a way to ignore data dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could some information be local or cached?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Perhaps, if its freshness and authority requirements permit it. But copying discount rules into every service can create another consistency problem. We need to examine the capability boundary, not merely accelerate a poor split.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the first question is whether all those separate services should exist for this workflow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A tightly coordinated order operation might belong together. A recommendation system can fail independently without blocking dinner. That distinction is much more useful than “every noun gets an endpoint.”</span>
+        </p>
+<h2 id="who-coordinates-the-workflow">Who Coordinates the Workflow?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With several services, something has to connect the steps. Do we use one coordinator?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One option is orchestration: a component explicitly manages the sequence and tracks progress. It asks for payment, reservation, or cancellation according to the workflow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another is choreography, where services react to events and publish their own results.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Both can work. Orchestration can make the overall flow visible, but the coordinator can become too knowledgeable or important. Choreography can reduce central control, but the complete behavior may be harder to trace across subscriptions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So “event-driven” doesn't tell us whether the workflow is understandable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Someone should be able to explain why an order is stuck and which participant is responsible for the next step. If the answer requires interviewing six teams, the design has an operational cost.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can document the states and transitions regardless of style.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. A business process exists even if no single file contains it. Distributed implementation makes that documentation more valuable, not less.</span>
+        </p>
+<h2 id="a-duplicate-message-is-not-necessarily-a-duplicate-effect">A Duplicate Message Is Not Necessarily a Duplicate Effect</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's distinguish delivery guarantees from business outcomes. A broker may deliver a message more than once.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The consumer can aim to make repeated processing produce the same intended result. For example, recording that order 417 is accepted shouldn't create another order every time the event is received.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A unique event identifier can help recognize repeats.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, but the deduplication record and the business change need appropriate coordination. If we mark the event processed before doing the work and crash, we may skip unfinished work on retry.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If we do the work first and crash before marking it, we may repeat it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. For local database effects, a transaction can often group the deduplication record with the change. For external effects, the downstream system's supported idempotency matters too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So “exactly once” needs a scope. Exactly once in which system, during which interval, and for which effect?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Precisely. A message system's guarantee doesn't automatically cover an email or a card charge outside it. Ask where the guarantee ends before relying on it.</span>
+        </p>
+<h2 id="the-event-contract-changes-too">The Event Contract Changes Too</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We rename order_total to total_cents in an event. Is that easier than changing an HTTP response because messages are asynchronous?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not automatically. Consumers may still expect the old field. Old messages may remain in queues or be replayed later. The schema has a compatibility lifetime beyond the latest deployment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we need versioning or compatible evolution and a clear meaning for fields.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Units, currency, identifiers, event time, and version matter. And an event should communicate the necessary business fact without dumping every private field from the database.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if a consumer is offline for a day?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Its catch-up behavior must be defined. Are messages retained long enough? Can it rebuild state from another source? What happens if it misses history? The answer depends on the system's guarantees.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is a different maintenance burden from a local function call updated in the same release.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Independence is useful, but the contracts become more durable commitments.</span>
+        </p>
+<h2 id="testing-without-recreating-the-entire-internet">Testing Without Recreating the Entire Internet</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If every developer needs twelve services running locally, the development setup can become painful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good boundaries can let teams test much of a service in isolation, with realistic contract tests and selected integration tests. But a mock that always returns success won't reveal real failure behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should test timeouts, duplicates, invalid messages, and unavailable dependencies where those affect the service's responsibilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And have a smaller number of end-to-end tests for critical business paths. The goal isn't every test launching the whole fleet, nor every service passing isolated tests while the actual workflow fails.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Contract tests can catch incompatible expectations between producer and consumer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, with the same limitation we discussed for APIs: they verify the agreed contract, not every emergent behavior. Observability and controlled rollout still matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can also rehearse recovery from a failed consumer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Can it resume without losing or duplicating consequential work? That's a much more meaningful test than “the process starts.”</span>
+        </p>
+<h2 id="the-cost-of-ownership">The Cost of Ownership</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A service has an owning team. What does ownership include beyond writing its code?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Understanding its contracts, deployments, alerts, capacity, security permissions, data retention, and recovery procedures. If it fails during a critical workflow, someone must know how to respond.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So creating a service creates ongoing work even when its business logic is small.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. A forty-line service can have a substantial operational footprint. Line count is a poor proxy for total complexity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A platform team can provide common deployment and monitoring infrastructure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That can reduce repeated work, but it's another capability the organization must fund and maintain. Large organizations may benefit enormously. A two-person pizza team probably shouldn't pretend those resources already exist.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should count the humans and systems needed to keep the design healthy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Architecture diagrams often make labor invisible. The invoice eventually corrects that omission.</span>
+        </p>
+<h2 id="extract-one-capability-safely">Extract One Capability Safely</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose route optimization really deserves separation. What's a sensible migration path?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Clarify the existing module interface and data needs. Build the new service against that contract. Compare results using safe representative inputs where appropriate. Introduce the network path gradually with a fallback and monitoring.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We shouldn't let both old and new implementations independently commit conflicting assignments.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Be explicit about which path is authoritative. Shadow computation can compare suggestions, but shadow writes to real business state require much more care.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then retire the old path once the new one is proven and the rollback plan is understood.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Migration includes cleanup. Keeping both forever can preserve all the complexity and none of the clarity we wanted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if the measured benefit doesn't appear?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reconsider. Architecture isn't a loyalty program. We can decide the service boundary wasn't worth its cost and simplify again.</span>
+        </p>
+<h2 id="is-it-worth-it-for-our-shop">Is It Worth It for Our Shop?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Two developers, one neighborhood, straightforward ordering. Do we split the core into microservices now?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No convincing reason yet. A modular monolith and perhaps a durable background-work mechanism meet the needs with less operational overhead.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If we eventually have independent teams, distinct workloads, clear ownership, and mature operations, the calculation may change.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We could extract one capability at a time, preserving compatibility and observing whether the expected benefit actually arrives.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not a grand rewrite in which we replace every local call with a network incident simultaneously.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And no universal traffic threshold says “at this number, microservices.” Team structure, failure needs, data boundaries, and release demands all matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the only reason is “large companies use them,” ask which problem those companies were solving and whether we share it.</span>
+        </p>
+<h2 id="the-decision-we-would-decline">The Decision We Would Decline</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A team proposes a separate service for toppings, one for crusts, and one for sizes. What would you ask?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Whether they have independent ownership, release needs, workloads, and meaningful contracts. If every menu change must update all three together, we may have split one cohesive capability into several deployment chores.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if each is very small?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Small code isn't the goal. Useful independence is. Three tiny services can be harder to operate than one clear module containing the same rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could the right answer still be services in a much larger business?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Perhaps, under different constraints. We shouldn't ridicule a design without knowing its context. But for our stated shop, the proposal hasn't shown a benefit that pays for the network and operations.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the review can be firm without turning into “microservices are stupid.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. “This boundary doesn't solve our current problem” is a defensible conclusion. “Every organization should use my favorite architecture” is a podcast we are not making.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can leave a clear module interface and revisit if ownership changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. That's a reasonable next step, not a consolation prize.</span>
+        </p>
+<h2 id="closing-independence-has-an-invoice">Closing — Independence Has an Invoice</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Microservices can support independent deployment, ownership, scaling, and failure isolation. They introduce distributed coordination and operations work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good boundaries create benefits. Merely increasing the process count creates processes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: caching and CDNs. How doing less repeated work helps, and how to avoid serving yesterday's truth to the wrong person.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our functions will remain indoors until the forecast improves.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

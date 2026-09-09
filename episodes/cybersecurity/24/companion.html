@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 24: The Big Security Picture — Red Teams, Blue Teams &amp; Everyone Else — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 24: The Big Security Picture — Red Teams, Blue Teams &amp; Everyone Else</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-24.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#security-is-a-system-of-functions">Security Is a System of Functions</a></li>
+<li><a href="#blue-team">Blue Team</a></li>
+<li><a href="#red-team">Red Team</a></li>
+<li><a href="#purple-team">Purple Team</a></li>
+<li><a href="#application-security">Application Security</a></li>
+<li><a href="#product-security">Product Security</a></li>
+<li><a href="#cloud-security">Cloud Security</a></li>
+<li><a href="#iam">IAM</a></li>
+<li><a href="#soc-and-detection-engineering">SOC and Detection Engineering</a></li>
+<li><a href="#incident-response-and-forensics">Incident Response and Forensics</a></li>
+<li><a href="#grc">GRC</a></li>
+<li><a href="#security-architecture">Security Architecture</a></li>
+<li><a href="#vulnerability-management">Vulnerability Management</a></li>
+<li><a href="#threat-intelligence">Threat Intelligence</a></li>
+<li><a href="#security-engineering">Security Engineering</a></li>
+<li><a href="#security-and-developer-experience">Security and Developer Experience</a></li>
+<li><a href="#careers-are-not-a-ladder">Careers Are Not a Ladder</a></li>
+<li><a href="#security-is-interdisciplinary">Security Is Interdisciplinary</a></li>
+<li><a href="#the-defender-s-advantage-exists-too">The Defender’s Advantage Exists Too</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So cybersecurity is a job.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Many jobs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SOC analyst.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Pentester.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>AppSec.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>IAM engineer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cloud security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>GRC.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Incident response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This industry reproduced while we were recording.</span>
+        </p>
+<h2 id="security-is-a-system-of-functions">Security Is a System of Functions</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Organizations need several security capabilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Prevent.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Detect.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Respond.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Recover.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Govern.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Build securely.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Test defenses.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Manage identity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Understand risk.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No one person can deeply specialize in all of it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="blue-team">Blue Team</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Defensive security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Monitoring, detection, hardening, incident response, vulnerability management, security engineering.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keep systems safe and catch attackers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Broadly.</span>
+        </p>
+<h2 id="red-team">Red Team</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Authorized offensive security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Emulate attackers to test controls and detection.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Goal-oriented rather than merely scan-and-report.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Often, yes.</span>
+        </p>
+<h2 id="purple-team">Purple Team</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Collaboration.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Red shares attack methods.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Blue builds detections and defenses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Less “gotcha,” more improvement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="application-security">Application Security</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My neighborhood.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Secure design, code review, threat modeling, testing, developer tooling, vulnerability remediation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser security, APIs, auth, dependencies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="product-security">Product Security</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Broader than AppSec?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Often includes application security plus product architecture, embedded systems, abuse prevention, security features, response, and lifecycle depending on company.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Titles are fuzzy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very.</span>
+        </p>
+<h2 id="cloud-security">Cloud Security</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>IAM, cloud configuration, network architecture, workload protection.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CSPM, cloud detections, governance, container security.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Crosses AppSec and infrastructure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security domains overlap constantly.</span>
+        </p>
+<h2 id="iam">IAM</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Identity lifecycle, SSO, MFA, privileged access, policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One of the most central modern security areas.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because credentials are how attackers become “legitimate.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="soc-and-detection-engineering">SOC and Detection Engineering</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SOC handles monitoring and triage.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Detection engineers design logic that identifies suspicious behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SIEM queries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Telemetry pipelines.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Threat-informed detections.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="incident-response-and-forensics">Incident Response and Forensics</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Contain compromise, understand scope, preserve evidence, restore.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>High-pressure investigative work.</span>
+        </p>
+<h2 id="grc">GRC</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Governance, Risk, and Compliance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Policies, audits, risk assessments, controls, regulatory requirements, vendor risk.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security translated into organizational accountability.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="security-architecture">Security Architecture</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Design systems and controls across the organization.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Identity, network, data, cloud, trust boundaries, resilience.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Big-picture technical security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="vulnerability-management">Vulnerability Management</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inventory, scanning, prioritization, remediation coordination.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Huge operational discipline.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not “send developer a CSV of 4,000 CVEs and disappear.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Preferably not.</span>
+        </p>
+<h2 id="threat-intelligence">Threat Intelligence</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Understand adversaries and campaigns.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Feed useful context into defenses and leadership decisions.</span>
+        </p>
+<h2 id="security-engineering">Security Engineering</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Build the systems security teams use.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Automation, identity platforms, logging pipelines, policy tooling, security services.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Very developer-adjacent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extremely.</span>
+        </p>
+<h2 id="security-and-developer-experience">Security and Developer Experience</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I keep noticing security work can be a UX problem for developers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Secret scanning with clear fix: useful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Scanner dumps unexplained warnings: ignored.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Secure paved roads matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Make correct behavior easier than insecure workaround.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One of the best security-platform goals.</span>
+        </p>
+<h2 id="careers-are-not-a-ladder">Careers Are Not a Ladder</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do you have to start in help desk, then SOC, then pentest, then security engineer?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers can move into AppSec, product security, security tooling, cloud security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Systems admins may move into infrastructure security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Auditors into GRC.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Analysts into detection or incident response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Existing technical background matters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much.</span>
+        </p>
+<h2 id="security-is-interdisciplinary">Security Is Interdisciplinary</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Networking.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Operating systems.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Web development.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cloud.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Databases.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Human behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Law.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Business risk.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security sits across all of them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which explains why no one “knows cybersecurity.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They know parts deeply and enough adjacent context to collaborate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s healthy.</span>
+        </p>
+<h2 id="the-defender-s-advantage-exists-too">The Defender’s Advantage Exists Too</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security often sounds hopeless because attackers only need one way in.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But defenders can design architecture, collect telemetry, rotate credentials, isolate workloads, patch globally, automate controls, learn from every incident.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attackers also make mistakes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Constantly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security is not guaranteed defeat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat security team as department of “no.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat developers as reckless children.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat compliance as security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat offensive security as inherently smarter than defensive work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very please don’t.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The whole series connects now.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security isn’t a pile of unrelated acronyms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It’s managing risk across systems, identities, software, people, infrastructure, and organizations.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different security jobs focus on different layers of the same problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And collaborate when things are working well.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This episode is the map.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use it to connect operations, architecture, IAM, risk, incident response, vulnerability management, secure development, and governance.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next episode: the actual exam.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security+.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fine. We earned the acronym review.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

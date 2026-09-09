@@ -1,1528 +1,1735 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 1: Node.js — Who Let JavaScript Out of the Browser? — Listening Companion</title>
-  <link rel="stylesheet" href="../../styles.css">
-</head>
-<body class="companion-page">
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p><a href="../index.html">← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a></p>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 1: Node.js — Who Let JavaScript Out of the Browser?</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <audio controls preload="metadata"><source src="node-npm-01.wav" type="audio/wav">Your browser does not support the audio player.</audio>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-this">Who Asked for This?</a></li>
-<li><a href="#there-s-an-engine-in-my-browser">There's an Engine in My Browser</a></li>
-<li><a href="#so-what-is-node">So What Is Node?</a></li>
-<li><a href="#what-the-hell-is-a-runtime">What the Hell Is a Runtime?</a></li>
-<li><a href="#let-s-do-something-extremely-unimpressive">Let's Do Something Extremely Unimpressive</a></li>
-<li><a href="#javascript-touches-the-computer">JavaScript Touches the Computer</a></li>
-<li><a href="#why-did-anyone-want-server-side-javascript">Why Did Anyone Want Server-Side JavaScript?</a></li>
-<li><a href="#the-restaurant-that-stares-at-your-burger">The Restaurant That Stares at Your Burger</a></li>
-<li><a href="#one-language-everywhere">One Language Everywhere</a></li>
-<li><a href="#but-i-m-not-building-a-node-server">But I'm Not Building a Node Server</a></li>
-<li><a href="#so-why-does-vite-need-node">So Why Does Vite Need Node?</a></li>
-<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
-  <main id="script"><h1 id="episode-1-node-js-who-let-javascript-out-of-the-browser">Episode 1: Node.js — Who Let JavaScript Out of the Browser?</h1>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I know I have it installed.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Strong start.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I know I need it for approximately everything now.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Also true.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And I know it's JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Mmm. Careful.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Oh, for fuck's sake.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We're nine seconds in.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Fine. I know it has <em>something to do with</em> JavaScript. And every tutorial on Earth eventually tells me to install Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So what is it?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It's a JavaScript runtime.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Great. Thanks everybody.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Welcome to <em>Okay, But Why?</em>, the show where developers are allowed to ask the questions we're apparently supposed to already know the answers to.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And I'm Jules. I started later, when JavaScript had already escaped the browser and started touching everything.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which brings us to Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Very professional.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Thank you.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Reasonable.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And then leave.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>To answer that, we have to go back to when JavaScript knew its place.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Finally. Respect for tradition.</span>
-        </p>
-<h2 id="who-asked-for-this">Who Asked for This?</h2>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>What's your original mental model of JavaScript?</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Easy.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's actually a useful starting point.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Actually.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I didn't mean—</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Continue while I write this down for HR.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>In the traditional web model, JavaScript really was primarily associated with the browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Badly.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Sometimes badly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Your password must contain one number.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The web was young.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The web was drunk.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>But your server-side code was usually something else.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>ColdFusion.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I was trying to keep this family-friendly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>You sweet summer child.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>So JavaScript is running in the browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And here's my first obvious question.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's the misconception we need to break.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Already?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Already.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A JavaScript engine.</span>
-        </p>
-<h2 id="there-s-an-engine-in-my-browser">There's an Engine in My Browser</h2>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Chrome uses a JavaScript engine called *<em>V8</em>*.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Like the engine?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's intentionally the vibe of the name, yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Does my JavaScript have horsepower?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Depends how many React dependencies you've installed.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We're not there yet.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Sorry.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Like the DOM.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Nope.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Excuse me?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>document</code> comes from the browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Wait.</span>
-        </p>
-<h3 id="wait-that-s-just-javascript">WAIT, THAT'S JUST JAVASCRIPT</h3>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Except apparently it fucking isn't.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>document</code> isn't JavaScript?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It's an object the browser makes available to JavaScript.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>window</code>?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>DOM?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>querySelector</code>?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>DOM API.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So JavaScript the <em>language</em> doesn't inherently know what a webpage is.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Huh.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Very.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We're doing a metaphor.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We're doing a metaphor.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The thing that makes the mozzarella sticks.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Crucial infrastructure.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>An alarming number of knives.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Sure.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript is the chef.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And Node is another kitchen.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Different equipment.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>There it is.</span>
-        </p>
-<h2 id="so-what-is-node">So What Is Node?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node.js is a runtime environment that lets you execute JavaScript outside a web browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Same engine Chrome uses.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So Node did not add file reading to JavaScript the language.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node gives JavaScript a way to ask the operating system for files.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Same chef, new kitchen.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Same chef, new kitchen.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I like this.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I can tell.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I'm going to abuse this metaphor for the next twenty minutes.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I regret everything.</span>
-        </p>
-<h2 id="what-the-hell-is-a-runtime">What the Hell Is a Runtime?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Before we continue.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Fair.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That's suspiciously simple.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It gets more complicated if we want it to.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We do not.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Then that's enough for today.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So if my JavaScript runs inside Chrome, Chrome and its JavaScript engine plus the APIs it exposes make up the environment I'm working in.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Broadly, yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And with Node, I'm still writing JavaScript, but Node is providing the environment.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So Node isn't another language.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node code is JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Don't.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I was just going to say the available APIs are different.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Fine.</span>
-        </p>
-<h2 id="let-s-do-something-extremely-unimpressive">Let's Do Something Extremely Unimpressive</h2>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Let's actually run Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Finally.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Make a file called <code>hello.js</code>.</span>
-        </p>
-
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>js</span></figcaption>
-          <pre tabindex="0"><code>console.log(&quot;Hello from outside the browser.&quot;);</code></pre>
-        </figure>
-
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>bash</span></figcaption>
-          <pre tabindex="0"><code>node hello.js</code></pre>
-        </figure>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Wow.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I know.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We installed an entire JavaScript runtime to reinvent PHP's <code>echo</code>.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>I knew you were going to say that.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I could have done this with a batch file.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>But that's not the interesting part.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>There had better be an interesting part.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Where's the browser?</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>There isn't one.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yeah.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Chrome isn't open.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The output isn't impressive.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>JavaScript has left the building.</span>
-        </p>
-<h2 id="javascript-touches-the-computer">JavaScript Touches the Computer</h2>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Now imagine our JavaScript reads a text file from disk.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which normal JavaScript running on a random webpage can't just freely do.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And thank God.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Yes.</span>
-        </p>
-<h3 id="please-don-t-do-this">Please Don't Do This</h3>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Because if every website could just casually read arbitrary files from my computer, we'd have a somewhat larger cybersecurity industry.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>“Visit our homepage! We have downloaded your tax returns.”</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Accept cookies?”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Browsers deliberately sandbox web pages and restrict what they can access.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which also means Node programs can potentially do more damage.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Absolutely.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Hold that thought for the npm episode.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Oh, we're going to hold that thought very carefully.</span>
-        </p>
-<h2 id="why-did-anyone-want-server-side-javascript">Why Did Anyone Want Server-Side JavaScript?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node wasn't solving “computers cannot run servers.”</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Important distinction.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Very.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Input/output meaning...?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Files.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Ah.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And developers.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Build running.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>“Tests running.”</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Docker image building.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>“CI running.”</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>“Maybe I'll check Slack.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Three hours later—</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Anyway.</span>
-        </p>
-<h2 id="the-restaurant-that-stares-at-your-burger">The Restaurant That Stares at Your Burger</h2>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Let's say you're running a restaurant.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We're back in food.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Different metaphor.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Same cinematic universe.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A customer orders a burger.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Intensely.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Watching it cook.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This restaurant is going out of business.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So Node doesn't want to sit there doing nothing just because a database hasn't answered yet.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And that's the event-driven part?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We're approaching it.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Uh-oh.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We're not doing the full event loop today.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Thank Christ.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The restaurant metaphor also isn't literally how Node schedules work internally.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Metaphor disclaimer.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Metaphor disclaimer.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So Node wasn't just “LOL JavaScript server.”</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-<h3 id="okay-that-s-actually-pretty-cool">OKAY, THAT'S ACTUALLY PRETTY COOL</h3>
-<h2 id="one-language-everywhere">One Language Everywhere</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And then there's the obvious selling point.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>But I'm going to ruin the marketing pitch.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Please do.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Knowing JavaScript does not make you a backend developer.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>If you can manipulate the DOM, congratulations.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Absolutely.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Because I've seen the “full-stack JavaScript means everybody can do everything” thing, and no.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Using one language reduces one kind of context switching.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You really weren't kidding about abusing the metaphor.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I warned you.</span>
-        </p>
-<h2 id="but-i-m-not-building-a-node-server">But I'm Not Building a Node Server</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Here's the part I actually care about.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>There it is.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Every modern frontend project:</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Because modern frontend development started using JavaScript programs to build and manage frontend applications.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Say more words.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your tooling can itself be written in JavaScript.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Vite.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Runs using Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>ESLint.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript tooling.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Prettier.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So when I'm building a React application—</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your browser application is still ultimately going to run in a browser.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>But the tools I'm using <em>while building it</em> can run in Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Ohhhhh.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And it's fuzzy for a lot of people because you type one command and seventeen things happen.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Usually after <code>npm install</code>.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We're getting there.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Hit me.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Your website is a car.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We've left the restaurant.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node doesn't necessarily drive the car.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Browser drives the car?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Let's not examine this metaphor too closely.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Fair.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Node might run the factory that builds the car.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So I can depend heavily on Node during development without running Node on my production server.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>THAT.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's the thing.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Because “this project uses Node” can mean wildly different things.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay.</span>
-        </p>
-<h2 id="so-why-does-vite-need-node">So Why Does Vite Need Node?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I'm going to push one step further.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Excellent question.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Thank you.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And we're not answering it yet.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>You asshole.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Because there are several layers hiding inside that one command.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Of course there are.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>npm</code>.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Dependency what now?</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And I become violent.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>So that's where this series is going.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which creates the next obvious problem.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Ah.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Because I certainly did not personally write Vite.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I downloaded it.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yep.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Along with...</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>So many dependencies.</span>
-        </p>
-<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. Before you introduce another noun, recap.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Chrome is an environment where JavaScript can run.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Chrome uses the V8 JavaScript engine to execute JavaScript.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yep.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And the browser gives JavaScript browser-specific things like the DOM.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node also uses V8, but instead of being a browser, it's a runtime designed to execute JavaScript outside the browser.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And Node provides APIs useful for that environment: files, networking, processes, operating-system stuff.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You've got it.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Node can be used to build servers.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yep.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>But that's not why every frontend developer necessarily has Node installed.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We also use Node to run development tools.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So my frontend can run in Chrome while the tools that build it run in Node.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That's it.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Huh.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>What?</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I have been using this shit for years.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And now you know why.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That's irritatingly satisfying.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Next time, apparently we're talking about npm.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yep.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The package manager.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The thing that downloads tools and their dependencies from the internet.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That sounds extremely safe.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>...next episode.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Excellent.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><em>Okay, But Why?</em> is a podcast about understanding the technology we use instead of pretending we already do.</span>
-        </p>
-
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Next episode: npm — Composer, But Make It JavaScript.</span>
-        </p>
-
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And the much more alarming question: what the fuck did <code>npm install</code> just put on my computer?</span>
-        </p></main>
-  <footer>1 code cards · 1 terminal cards</footer>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: Node.js — Who Let JavaScript Out of the Browser? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Node, npm &amp; the Modern JavaScript Toolchain episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: Node.js — Who Let JavaScript Out of the Browser?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/6d8c5e31-cf9a-4176-b9f5-3c1590b09bd3"
+      ></script>
+      <div class="redcirclePlayer-6d8c5e31-cf9a-4176-b9f5-3c1590b09bd3"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#there-s-an-engine-in-my-browser"
+            >There's an Engine in My Browser</a
+          >
+        </li>
+        <li><a href="#so-what-is-node">So What Is Node?</a></li>
+        <li>
+          <a href="#what-the-hell-is-a-runtime">What the Hell Is a Runtime?</a>
+        </li>
+        <li>
+          <a href="#let-s-do-something-extremely-unimpressive"
+            >Let's Do Something Extremely Unimpressive</a
+          >
+        </li>
+        <li>
+          <a href="#javascript-touches-the-computer"
+            >JavaScript Touches the Computer</a
+          >
+        </li>
+        <li>
+          <a href="#why-did-anyone-want-server-side-javascript"
+            >Why Did Anyone Want Server-Side JavaScript?</a
+          >
+        </li>
+        <li>
+          <a href="#the-restaurant-that-stares-at-your-burger"
+            >The Restaurant That Stares at Your Burger</a
+          >
+        </li>
+        <li><a href="#one-language-everywhere">One Language Everywhere</a></li>
+        <li>
+          <a href="#but-i-m-not-building-a-node-server"
+            >But I'm Not Building a Node Server</a
+          >
+        </li>
+        <li>
+          <a href="#so-why-does-vite-need-node">So Why Does Vite Need Node?</a>
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-1-node-js-who-let-javascript-out-of-the-browser">
+        Episode 1: Node.js — Who Let JavaScript Out of the Browser?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. Node.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I know I have it installed.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Strong start.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I know I need it for approximately everything now.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also true.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And I know it's JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Mmm. Careful.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Oh, for fuck's sake.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We're nine seconds in.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine. I know it has <em>something to do with</em> JavaScript. And
+          every tutorial on Earth eventually tells me to install Node.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So what is it?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It's a JavaScript runtime.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Great. Thanks everybody.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>, the show where developers are
+          allowed to ask the questions we're apparently supposed to already know
+          the answers to.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And I'm Jules. I started later, when JavaScript had already escaped
+          the browser and started touching everything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which brings us to Node.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Very professional.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Reasonable.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And then leave.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >To answer that, we have to go back to when JavaScript knew its
+          place.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Finally. Respect for tradition.</span>
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What's your original mental model of JavaScript?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Easy.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's actually a useful starting point.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Actually.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I didn't mean—</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Continue while I write this down for HR.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the traditional web model, JavaScript really was primarily
+          associated with the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Badly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sometimes badly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Your password must contain one number.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The web was young.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The web was drunk.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But your server-side code was usually something else.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>ColdFusion.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I was trying to keep this family-friendly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You sweet summer child.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So JavaScript is running in the browser.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And here's my first obvious question.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the misconception we need to break.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Already?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Already.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A JavaScript engine.</span>
+      </p>
+      <h2 id="there-s-an-engine-in-my-browser">
+        There's an Engine in My Browser
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Chrome uses a JavaScript engine called *<em>V8</em>*.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like the engine?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's intentionally the vibe of the name, yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does my JavaScript have horsepower?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Depends how many React dependencies you've installed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We're not there yet.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sorry.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like the DOM.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Nope.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excuse me?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span><code>document</code> comes from the browser.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wait.</span>
+      </p>
+      <h3 id="wait-that-s-just-javascript">WAIT, THAT'S JUST JAVASCRIPT</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Except apparently it fucking isn't.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>document</code> isn't JavaScript?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It's an object the browser makes available to JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>window</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Browser.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>DOM?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Browser.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>querySelector</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>DOM API.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So JavaScript the <em>language</em> doesn't inherently know what a
+          webpage is.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Huh.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Very.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We're doing a metaphor.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We're doing a metaphor.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The thing that makes the mozzarella sticks.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Crucial infrastructure.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>An alarming number of knives.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sure.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript is the chef.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And Node is another kitchen.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Different equipment.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+      <h2 id="so-what-is-node">So What Is Node?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Node.js is a runtime environment that lets you execute JavaScript
+          outside a web browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same engine Chrome uses.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Node did not add file reading to JavaScript the language.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Node gives JavaScript a way to ask the operating system for
+          files.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same chef, new kitchen.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Same chef, new kitchen.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I like this.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I can tell.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'm going to abuse this metaphor for the next twenty minutes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I regret everything.</span>
+      </p>
+      <h2 id="what-the-hell-is-a-runtime">What the Hell Is a Runtime?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Before we continue.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's suspiciously simple.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It gets more complicated if we want it to.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We do not.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then that's enough for today.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if my JavaScript runs inside Chrome, Chrome and its JavaScript
+          engine plus the APIs it exposes make up the environment I'm working
+          in.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Broadly, yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And with Node, I'm still writing JavaScript, but Node is providing
+          the environment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So Node isn't another language.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node code is JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Don't.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I was just going to say the available APIs are different.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine.</span>
+      </p>
+      <h2 id="let-s-do-something-extremely-unimpressive">
+        Let's Do Something Extremely Unimpressive
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Let's actually run Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Finally.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Make a file called <code>hello.js</code>.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>console.log(&quot;Hello from outside the browser.&quot;);</code></pre>
+      </figure>
+
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>bash</span></figcaption>
+        <pre tabindex="0"><code>node hello.js</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wow.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I know.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We installed an entire JavaScript runtime to reinvent PHP's
+          <code>echo</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I knew you were going to say that.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I could have done this with a batch file.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But that's not the interesting part.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There had better be an interesting part.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Where's the browser?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There isn't one.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yeah.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Chrome isn't open.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The output isn't impressive.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript has left the building.</span>
+      </p>
+      <h2 id="javascript-touches-the-computer">
+        JavaScript Touches the Computer
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Now imagine our JavaScript reads a text file from disk.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which normal JavaScript running on a random webpage can't just freely
+          do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And thank God.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yes.</span>
+      </p>
+      <h3 id="please-don-t-do-this">Please Don't Do This</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because if every website could just casually read arbitrary files
+          from my computer, we'd have a somewhat larger cybersecurity
+          industry.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“Visit our homepage! We have downloaded your tax returns.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Accept cookies?”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browsers deliberately sandbox web pages and restrict what they can
+          access.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which also means Node programs can potentially do more damage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Absolutely.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hold that thought for the npm episode.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Oh, we're going to hold that thought very carefully.</span>
+      </p>
+      <h2 id="why-did-anyone-want-server-side-javascript">
+        Why Did Anyone Want Server-Side JavaScript?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node wasn't solving “computers cannot run servers.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Important distinction.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Very.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Input/output meaning...?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Files.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Ah.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And developers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Build running.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“Tests running.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Docker image building.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“CI running.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Maybe I'll check Slack.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Three hours later—</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Anyway.</span>
+      </p>
+      <h2 id="the-restaurant-that-stares-at-your-burger">
+        The Restaurant That Stares at Your Burger
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Let's say you're running a restaurant.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We're back in food.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Different metaphor.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same cinematic universe.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A customer orders a burger.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Intensely.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Watching it cook.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This restaurant is going out of business.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Node doesn't want to sit there doing nothing just because a
+          database hasn't answered yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And that's the event-driven part?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We're approaching it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Uh-oh.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We're not doing the full event loop today.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank Christ.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The restaurant metaphor also isn't literally how Node schedules work
+          internally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Metaphor disclaimer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Metaphor disclaimer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So Node wasn't just “LOL JavaScript server.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        OKAY, THAT'S ACTUALLY PRETTY COOL
+      </h3>
+      <h2 id="one-language-everywhere">One Language Everywhere</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And then there's the obvious selling point.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But I'm going to ruin the marketing pitch.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please do.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Knowing JavaScript does not make you a backend developer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If you can manipulate the DOM, congratulations.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Absolutely.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because I've seen the “full-stack JavaScript means everybody can do
+          everything” thing, and no.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Using one language reduces one kind of context switching.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You really weren't kidding about abusing the metaphor.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I warned you.</span>
+      </p>
+      <h2 id="but-i-m-not-building-a-node-server">
+        But I'm Not Building a Node Server
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Here's the part I actually care about.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Every modern frontend project:</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because modern frontend development started using JavaScript programs
+          to build and manage frontend applications.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Say more words.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Your tooling can itself be written in JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Vite.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Runs using Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>ESLint.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>TypeScript tooling.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Prettier.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So when I'm building a React application—</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Your browser application is still ultimately going to run in a
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the tools I'm using <em>while building it</em> can run in
+          Node.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Ohhhhh.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And it's fuzzy for a lot of people because you type one command and
+          seventeen things happen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Usually after <code>npm install</code>.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We're getting there.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hit me.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Your website is a car.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We've left the restaurant.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node doesn't necessarily drive the car.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Browser drives the car?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Let's not examine this metaphor too closely.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fair.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Node might run the factory that builds the car.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I can depend heavily on Node during development without running
+          Node on my production server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>THAT.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the thing.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because “this project uses Node” can mean wildly different
+          things.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay.</span>
+      </p>
+      <h2 id="so-why-does-vite-need-node">So Why Does Vite Need Node?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I'm going to push one step further.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Excellent question.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And we're not answering it yet.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You asshole.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because there are several layers hiding inside that one
+          command.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Of course there are.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span><code>npm</code>.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Dependency what now?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And I become violent.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So that's where this series is going.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which creates the next obvious problem.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Ah.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because I certainly did not personally write Vite.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I downloaded it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Along with...</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So many dependencies.</span>
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. Before you introduce another noun, recap.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Chrome is an environment where JavaScript can run.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Chrome uses the V8 JavaScript engine to execute JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the browser gives JavaScript browser-specific things like the
+          DOM.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Node also uses V8, but instead of being a browser, it's a runtime
+          designed to execute JavaScript outside the browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And Node provides APIs useful for that environment: files,
+          networking, processes, operating-system stuff.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You've got it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node can be used to build servers.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But that's not why every frontend developer necessarily has Node
+          installed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We also use Node to run development tools.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So my frontend can run in Chrome while the tools that build it run in
+          Node.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Huh.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have been using this shit for years.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And now you know why.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's irritatingly satisfying.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next time, apparently we're talking about npm.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The package manager.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The thing that downloads tools and their dependencies from the
+          internet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That sounds extremely safe.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>...next episode.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><em>Okay, But Why?</em> is a podcast about understanding the
+          technology we use instead of pretending we already do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next episode: npm — Composer, But Make It JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the much more alarming question: what the fuck did
+          <code>npm install</code> just put on my computer?</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 1 terminal cards</footer>
+  </body>
 </html>

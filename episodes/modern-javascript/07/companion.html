@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 7: Okay, But How Do People Write JavaScript Now? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 7: Okay, But How Do People Write JavaScript Now?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-07.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#the-old-loop-is-fine">The Old Loop Is Fine</a></li>
+<li><a href="#map-one-in-one-out">Map: One In, One Out</a></li>
+<li><a href="#filter-keep-the-ones-that-pass">Filter: Keep the Ones That Pass</a></li>
+<li><a href="#find-some-and-every">Find, Some, and Every</a></li>
+<li><a href="#reduce-calm-down">Reduce: Calm Down</a></li>
+<li><a href="#for-of-versus-for-in">For...of Versus for...in</a></li>
+<li><a href="#object-helpers">Object Helpers</a></li>
+<li><a href="#mutation-versus-transformation">Mutation Versus Transformation</a></li>
+<li><a href="#chaining">Chaining</a></li>
+<li><a href="#modern-syntax-is-not-a-personality">Modern Syntax Is Not a Personality</a></li>
+<li><a href="#the-bridge-to-typescript">The Bridge to TypeScript</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have one final grievance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Only one?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why does nobody write loops anymore?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>People write loops.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I open modern code and everybody is mapping and filtering and reducing. I feel like JavaScript became a juice cleanse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's talk array methods.</span>
+        </p>
+<h2 id="the-old-loop-is-fine">The Old Loop Is Fine</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First: is this still legal?</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>const doubled = [];
+
+for (let i = 0; i &lt; numbers.length; i++) {
+  doubled.push(numbers[i] * 2);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Completely. A normal loop is not obsolete.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modern array methods are useful because they let you express common operations in terms of <strong>what transformation you want</strong>, rather than manually managing indexes and result arrays.</span>
+        </p>
+<h2 id="map-one-in-one-out">Map: One In, One Out</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>map</code> transforms each array element and returns a new array.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>const doubled = numbers.map(number =&gt; number * 2);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same number of items, transformed values.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the usual mental model.</span>
+        </p>
+<h2 id="filter-keep-the-ones-that-pass">Filter: Keep the Ones That Pass</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>filter</code> returns a new array containing elements whose callback returns a truthy result.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>const activeUsers = users.filter(user =&gt; user.active);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>map</code> transforms; <code>filter</code> selects.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="find-some-and-every">Find, Some, and Every</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>find</code> gives you the first matching element.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>const admin = users.find(user =&gt; user.role === &quot;admin&quot;);</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>some</code> asks whether at least one element passes a test. <code>every</code> asks whether all do.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>js</span></figcaption>
+          <pre tabindex="0"><code>const hasAdmin = users.some(user =&gt; user.role === &quot;admin&quot;);
+const allActive = users.every(user =&gt; user.active);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>These read almost like English, which is genuinely nice.</span>
+        </p>
+<h2 id="reduce-calm-down">Reduce: Calm Down</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And now the one people use to demonstrate that they have ascended.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>reduce</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have seen people use <code>reduce</code> to create objects, arrays, sums, groups, probably mortgages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>reduce</code> combines an array into an accumulated result.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>js</span></figcaption>
+          <pre tabindex="0"><code>const total = prices.reduce(
+  (sum, price) =&gt; sum + price,
+  0
+);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For a sum, gorgeous.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For complicated transformations, it can become hard to read. Use it when the accumulator model clarifies the operation, not because a <code>for</code> loop would embarrass you.</span>
+        </p>
+<h2 id="for-of-versus-for-in">For...of Versus for...in</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>for...of</code> iterates values from iterable objects like arrays.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>js</span></figcaption>
+          <pre tabindex="0"><code>for (const user of users) {
+  console.log(user.name);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>for...in</code> iterates enumerable property keys.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So for array values, <code>for...of</code> is usually the one I mean.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Don't swap them casually because both contain the word “for.”</span>
+        </p>
+<h2 id="object-helpers">Object Helpers</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Objects also have helpers that show up constantly.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>js</span></figcaption>
+          <pre tabindex="0"><code>Object.keys(user);
+Object.values(user);
+Object.entries(user);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>Object.entries</code> gives key-value pairs I can iterate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>js</span></figcaption>
+          <pre tabindex="0"><code>for (const [key, value] of Object.entries(user)) {
+  console.log(key, value);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Destructuring from episode four returns to collect its paycheck.</span>
+        </p>
+<h2 id="mutation-versus-transformation">Mutation Versus Transformation</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern JavaScript seems mildly obsessed with not mutating things.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Especially in UI frameworks and state-management patterns, creating new arrays and objects can make change detection and reasoning easier.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But mutation isn't inherently illegal JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. <code>push</code> is not a crime. The question is whether shared mutable state makes your program harder to reason about.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again: solve the problem you actually have.</span>
+        </p>
+<h2 id="chaining">Chaining</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Array methods can chain naturally.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>js</span></figcaption>
+          <pre tabindex="0"><code>const names = users
+  .filter(user =&gt; user.active)
+  .map(user =&gt; user.name);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keep active users, then turn them into names.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. When the pipeline is simple, it can be very readable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>When it's twelve chained methods and three nested ternaries?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The enter key is free.</span>
+        </p>
+<h2 id="modern-syntax-is-not-a-personality">Modern Syntax Is Not a Personality</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This feels like the real lesson of the whole series.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern JavaScript gives me more expressive tools. It does not require me to maximize the number of modern features per square inch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A clear loop can beat a clever <code>reduce</code>. A normal function can beat an arrow. A simple property access can beat destructuring gymnastics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>New syntax expands your vocabulary. It doesn't invalidate every sentence you wrote before.</span>
+        </p>
+<h2 id="the-bridge-to-typescript">The Bridge to TypeScript</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So if I now see:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>js</span></figcaption>
+          <pre tabindex="0"><code>const activeNames = users
+  .filter(user =&gt; user.active)
+  .map(({ name }) =&gt; name);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I know <code>const</code>, arrows, array methods, destructuring, and method chaining are all JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means when TypeScript adds:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 12">
+          <figcaption>Code card 12<span>ts</span></figcaption>
+          <pre tabindex="0"><code>type User = {
+  name: string;
+  active: boolean;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I can identify the <strong>new</strong> layer instead of blaming TypeScript for every piece of syntax invented after 2012.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's why this series belongs before TypeScript.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern JavaScript added better ways to express common transformations, iteration, modules, asynchronous flow, functions, scope, and data extraction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But old JavaScript knowledge didn't become worthless. The language grew around concepts you already know.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I recognize JavaScript again.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Great. Now let's add types.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fuck off.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next series!</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I JUST GOT THIS LANGUAGE BACK.</span>
+        </p></main>
+  <footer>12 code cards · 0 terminal cards</footer>
+</body>
+</html>

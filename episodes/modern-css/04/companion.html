@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: Responsive CSS Without Seventeen Breakpoints — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: Responsive CSS Without Seventeen Breakpoints</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/e2365516-7e81-4191-bfe2-d42bf8f39f04"
+      ></script>
+      <div class="redcirclePlayer-e2365516-7e81-4191-bfe2-d42bf8f39f04"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#media-queries-were-not-the-mistake"
+            >Media Queries Were Not the Mistake</a
+          >
+        </li>
+        <li>
+          <a href="#let-the-layout-negotiate-first"
+            >Let the Layout Negotiate First</a
+          >
+        </li>
+        <li>
+          <a href="#auto-fit-versus-auto-fill">auto-fit Versus auto-fill</a>
+        </li>
+        <li><a href="#min-max-and-clamp">min, max, and clamp</a></li>
+        <li>
+          <a href="#rem-vw-and-accessibility">rem, vw, and Accessibility</a>
+        </li>
+        <li><a href="#intrinsic-sizing">Intrinsic Sizing</a></li>
+        <li><a href="#better-viewport-units">Better Viewport Units</a></li>
+        <li>
+          <a href="#media-queries-still-have-jobs"
+            >Media Queries Still Have Jobs</a
+          >
+        </li>
+        <li><a href="#content-breakpoints">Content Breakpoints</a></li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-4-responsive-css-without-seventeen-breakpoints">
+        Episode 4: Responsive CSS Without Seventeen Breakpoints
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is 768 pixels still a tablet?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Is a hot dog still a sandwich?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Your answer has made the question worse.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then we're ready to discuss breakpoints.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Responsive design taught us to stop building one fixed-width
+          page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then many of us replaced one rigid layout with six rigid layouts
+          separated by media queries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Progress is a spiral.</span>
+      </p>
+      <h2 id="media-queries-were-not-the-mistake">
+        Media Queries Were Not the Mistake
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Media queries let styles respond to characteristics of the viewport
+          or output environment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>They remain essential.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The mistake is treating popular device widths as natural laws.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A breakpoint should usually occur where the content or layout needs
+          one, not where last year's phone chart says “tablet.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Devices rotate, resize, zoom, split-screen, embed pages, and refuse
+          our taxonomy.</span
+        >
+      </p>
+      <h2 id="let-the-layout-negotiate-first">
+        Let the Layout Negotiate First
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modern CSS can often respond continuously before a breakpoint becomes
+          necessary.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.layout {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 18rem), 1fr)
+  );
+  gap: 1rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>repeat()</code> describes repeated tracks.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>auto-fit</code> creates as many tracks as fit and collapses
+          empty ones.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>minmax()</code> says each track has a lower and upper
+          bound.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And <code>min(100%, 18rem)</code> prevents the minimum from
+          overflowing a container narrower than eighteen rem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>No device names. The cards respond to available space.</span>
+      </p>
+      <h2 id="auto-fit-versus-auto-fill">auto-fit Versus auto-fill</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>These names were designed by someone who disliked memory.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Both calculate how many tracks can fit.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>auto-fill</code> can preserve empty tracks.
+          <code>auto-fit</code> collapses empty tracks so existing items can
+          stretch into the room.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If the row is full, they may look identical.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The difference becomes visible when there are fewer items than
+          possible columns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is a DevTools-grid-overlay problem, not a vibes problem.</span
+        >
+      </p>
+      <h2 id="min-max-and-clamp">min, max, and clamp</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>These functions let a value be fluid within constraints.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>h1 {
+  font-size: clamp(2rem, 1.25rem + 3vw, 4.5rem);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Preferred value in the middle, minimum on the left, maximum on the
+          right.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The heading grows with viewport width but never below or above the
+          readable bounds we chose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That can replace several tiny font-size breakpoints.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But fluid type still needs testing with zoom, long words, translated
+          text, and user font settings.</span
+        >
+      </p>
+      <h2 id="rem-vw-and-accessibility">rem, vw, and Accessibility</h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pure viewport units for font size can ignore the user's text-size
+          preference.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Combining a relative unit like <code>rem</code> with a viewport
+          component can preserve responsiveness to both contexts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A clever formula is not automatically readable.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Test at 200 percent zoom and with actual content.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the heading overlaps the button, the algebra does not receive
+          partial credit.</span
+        >
+      </p>
+      <h2 id="intrinsic-sizing">Intrinsic Sizing</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Intrinsic” means the content contributes to sizing decisions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. <code>min-content</code>, <code>max-content</code>, and
+          <code>fit-content()</code> expose useful content-based sizes.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>.label {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The element can fit its content without being allowed to escape its
+          container.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Constraints compose. That is the theme.</span>
+      </p>
+      <h2 id="better-viewport-units">Better Viewport Units</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Mobile browsers made <code>100vh</code> exciting in all the wrong
+          ways.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser interface bars expand and collapse, changing the visible
+          area.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So we now have small, large, and dynamic viewport units.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>svh</code> uses the smaller viewport assumption,
+          <code>lvh</code> the larger, and <code>dvh</code> follows the dynamic
+          viewport.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>.app-shell {
+  min-block-size: 100svh;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choosing one is a design decision. Dynamic movement is not always
+          desirable merely because it tracks the bars.</span
+        >
+      </p>
+      <h2 id="media-queries-still-have-jobs">Media Queries Still Have Jobs</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Viewport breakpoints remain useful when the overall page composition
+          genuinely changes.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>@media (width &gt;= 64rem) {
+  .page {
+    grid-template-columns: 18rem 1fr;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Modern range syntax reads closer to the condition.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Media queries also cover preferences and capabilities, not only
+          width.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>@media (prefers-reduced-motion: reduce) {
+  .decorative-motion {
+    animation: none;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is not responsive as in phone-versus-desktop. It is responsive
+          to the person.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which is arguably the more important meaning.</span>
+      </p>
+      <h2 id="content-breakpoints">Content Breakpoints</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>How do I choose a breakpoint now?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Start narrow. Add real content. Widen until the layout has enough
+          space to improve meaningfully—or until it begins looking
+          awkward.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Put the breakpoint there.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then test around it, not only exactly on it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are designing transitions between layout states, not collecting
+          device portraits.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Media queries are good. Arbitrary device mythology is fragile.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Intrinsic sizing and flexible layout let content and available space
+          negotiate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>min()</code>, <code>max()</code>, and
+          <code>clamp()</code> create bounded fluid values.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>auto-fit</code>, <code>auto-fill</code>, and
+          <code>minmax()</code> can build grids that adapt without a breakpoint
+          per column count.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Modern viewport units make the browser-interface problem
+          explicit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And responsive design includes user preferences, zoom, content, and
+          context—not only screen width.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, the component itself gets to ask how much room it
+          has.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Container queries.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, a card that knows it has been shoved into a sidebar.</span
+        >
+      </p>
+    </main>
+    <footer>6 code cards · 0 terminal cards</footer>
+  </body>
+</html>

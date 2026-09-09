@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 3: Why Does Everything Have an Arrow Now? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 3: Why Does Everything Have an Arrow Now?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-03.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#first-it-is-javascript">First: It Is JavaScript</a></li>
+<li><a href="#the-syntax">The Syntax</a></li>
+<li><a href="#why-callbacks-loved-them">Why Callbacks Loved Them</a></li>
+<li><a href="#the-real-difference-is-this">The Real Difference Is <code>this</code></a></li>
+<li><a href="#arrow-functions-are-not-better-functions">Arrow Functions Are Not Better Functions</a></li>
+<li><a href="#returning-objects-tiny-footgun">Returning Objects: Tiny Footgun</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>const add = (a, b) =&gt; a + b</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I know what it does now. But the first time I saw that, I thought somebody had invented algebra React.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Understandable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why did JavaScript need a second way to write functions?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Short answer: concise callbacks and different <code>this</code> behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The words “different <code>this</code> behavior” have already ruined lunch.</span>
+        </p>
+<h2 id="first-it-is-javascript">First: It Is JavaScript</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Arrow functions are—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript. ES2015.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not React.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nope.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not TypeScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nope.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Continue.</span>
+        </p>
+<h2 id="the-syntax">The Syntax</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A traditional function expression might be:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>const double = function (number) {
+  return number * 2;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An arrow version can be:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>const double = (number) =&gt; {
+  return number * 2;
+};</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And for one expression:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>const double = number =&gt; number * 2;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So parentheses can disappear for one parameter, braces can disappear for one expression, and the expression is returned implicitly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Though consistency and readability matter more than winning punctuation golf.</span>
+        </p>
+<h2 id="why-callbacks-loved-them">Why Callbacks Loved Them</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modern JavaScript uses functions as values constantly: event handlers, array methods, promises.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>const names = users.map(user =&gt; user.name);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Compared with a full <code>function</code> expression inside every callback, that's genuinely easier to scan.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a major reason arrows became visually dominant.</span>
+        </p>
+<h2 id="the-real-difference-is-this">The Real Difference Is <code>this</code></h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here comes the cursed part.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Arrow functions don't create their own <code>this</code>. They capture <code>this</code> lexically from the surrounding context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In old JavaScript, callbacks could lose the <code>this</code> you thought you had.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. People used patterns like <code>const self = this</code>, or <code>.bind(this)</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I remember <code>var that = this</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Archaeology!</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I will end this podcast.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Arrow functions made many callback cases cleaner because they keep the surrounding <code>this</code> rather than establishing a new one.</span>
+        </p>
+<h2 id="arrow-functions-are-not-better-functions">Arrow Functions Are Not Better Functions</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So replace every <code>function</code> with an arrow?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. This is important. Their behavior is different.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Arrow functions don't have their own <code>this</code>, aren't constructors, and don't have their own <code>arguments</code> object.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So if I need a method whose <code>this</code> should be determined by how the method is called, a normal function may be exactly what I want.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>js</span></figcaption>
+          <pre tabindex="0"><code>const counter = {
+  count: 0,
+  increment() {
+    this.count++;
+  }
+};</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And that concise method syntax is also just JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="returning-objects-tiny-footgun">Returning Objects: Tiny Footgun</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One syntax trap: if an implicit arrow return should return an object literal, wrap the object in parentheses.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>js</span></figcaption>
+          <pre tabindex="0"><code>const makeUser = name =&gt; ({ name });</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because otherwise the braces are interpreted as the function body.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript: “I can remove punctuation for you.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also JavaScript: “Please add punctuation so I know what the removed punctuation meant.”</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Arrow functions are JavaScript, introduced in ES2015.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They're concise and especially useful for callbacks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the important semantic difference is lexical <code>this</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which means they are not universal replacements for traditional functions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if I see <code>x =&gt; x.name</code>, I can stop looking for the React documentation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Growth.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next episode is apparently three dots doing six jobs.</span>
+        </p></main>
+  <footer>6 code cards · 0 terminal cards</footer>
+</body>
+</html>

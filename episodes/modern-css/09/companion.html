@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 9: PostCSS — Wait, This Isn't Another Sass, Right? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 9: PostCSS — Wait, This Isn't Another Sass, Right?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/4f8b7673-a83d-4bfc-b901-612f173f028b"
+      ></script>
+      <div class="redcirclePlayer-4f8b7673-a83d-4bfc-b901-612f173f028b"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#postcss-is-a-processing-pipeline"
+            >PostCSS Is a Processing Pipeline</a
+          >
+        </li>
+        <li>
+          <a href="#the-familiar-example-autoprefixer"
+            >The Familiar Example: Autoprefixer</a
+          >
+        </li>
+        <li>
+          <a href="#node-is-running-the-factory">Node Is Running the Factory</a>
+        </li>
+        <li>
+          <a href="#plugins-are-the-product-behavior"
+            >Plugins Are the Product Behavior</a
+          >
+        </li>
+        <li>
+          <a href="#postcss-is-not-automatically-future-css"
+            >PostCSS Is Not Automatically Future CSS</a
+          >
+        </li>
+        <li>
+          <a href="#configuration-can-be-invisible"
+            >Configuration Can Be Invisible</a
+          >
+        </li>
+        <li>
+          <a href="#browser-targets-are-product-requirements"
+            >Browser Targets Are Product Requirements</a
+          >
+        </li>
+        <li>
+          <a href="#please-don-t-install-a-mystery-pipeline"
+            >Please Don't Install a Mystery Pipeline</a
+          >
+        </li>
+        <li><a href="#postcss-versus-sass">PostCSS Versus Sass</a></li>
+        <li><a href="#debug-the-layers">Debug the Layers</a></li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-9-postcss-wait-this-isn-t-another-sass-right">
+        Episode 9: PostCSS — Wait, This Isn't Another Sass, Right?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I found PostCSS in my dependency tree.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did it leave tracks?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A configuration file and the sense that Vite knows more people than I
+          do.</span
+        >
+      </p>
+      <h2 id="postcss-is-a-processing-pipeline">
+        PostCSS Is a Processing Pipeline
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >PostCSS is a JavaScript tool for transforming CSS through
+          plugins.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It is not one styling language with a fixed feature list.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A parser turns CSS into a structured representation, plugins
+          inspect or modify it, and PostCSS writes CSS back out.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The behavior depends on which plugins the project configured.</span
+        >
+      </p>
+      <h2 id="the-familiar-example-autoprefixer">
+        The Familiar Example: Autoprefixer
+      </h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>::placeholder {
+  color: gray;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Autoprefixer can examine CSS and browser-support data, then add
+          needed vendor-prefixed forms for the project's target browsers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I write the standard form and automation handles supported
+          compatibility output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It can also warn about some outdated syntax.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This was a merciful improvement over copying prefix recipes from blog
+          posts.</span
+        >
+      </p>
+      <h2 id="node-is-running-the-factory">Node Is Running the Factory</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PostCSS is JavaScript, but my CSS still runs in the browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Callback to the Node series: the development tool runs in Node. It
+          reads source files and produces assets for the browser.</span
+        >
+      </p>
+
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>source CSS → PostCSS parser → configured plugins → output CSS</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Node runs the factory. The browser receives the car.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You kept the metaphor.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We paid for it.</span>
+      </p>
+      <h2 id="plugins-are-the-product-behavior">
+        Plugins Are the Product Behavior
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One plugin adds prefixes. Another might transform future-looking
+          syntax. Another could lint conventions, optimize output, or analyze
+          CSS.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Therefore “we use PostCSS” tells me almost nothing.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Ask which plugins, in what order, with what configuration
+          and browser targets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plugin order can matter because one transformation changes what the
+          next plugin sees.</span
+        >
+      </p>
+      <h2 id="postcss-is-not-automatically-future-css">
+        PostCSS Is Not Automatically Future CSS
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some setups let authors write syntax that browsers do not yet support
+          and transform it into older CSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But transformation has limits. Not every new browser capability can
+          be faithfully compiled away.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A syntax rewrite is easier than recreating a live layout capability
+          like container queries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A plugin may approximate, require a runtime, or be unable to
+          preserve the semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Read what the specific transformation guarantees.</span>
+      </p>
+      <h2 id="configuration-can-be-invisible">
+        Configuration Can Be Invisible
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Frameworks and bundlers may use PostCSS internally.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means I can have PostCSS in a project without a hand-written
+          <code>postcss.config.js</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. Tooling may supply the pipeline.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is convenient until debugging requires knowing which layer
+          changed the CSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Source maps and inspecting generated output matter.</span>
+      </p>
+      <h2 id="browser-targets-are-product-requirements">
+        Browser Targets Are Product Requirements
+      </h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>text</span></figcaption>
+        <pre tabindex="0"><code>last 2 versions
+not dead
+&gt; 0.5%</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Target queries are policy encoded as configuration.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They should reflect the project's users and requirements, not a
+          string copied forever from a starter template.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Changing targets can change output and compatibility.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Treat it like an engineering decision.</span>
+      </p>
+      <h2 id="please-don-t-install-a-mystery-pipeline">
+        Please Don't Install a Mystery Pipeline
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plugins execute during your build and arrive through the package
+          ecosystem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Evaluate maintenance, provenance, permissions, dependency risk, and
+          whether the plugin is still necessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not add five overlapping transformations because their names sound
+          modern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And do not assume generated CSS is accessible or efficient. Inspect
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A tool can produce valid CSS that still hides focus indicators and
+          ships half a megabyte of unused rules.</span
+        >
+      </p>
+      <h2 id="postcss-versus-sass">PostCSS Versus Sass</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sass defines a stylesheet language with built-in concepts like
+          variables, mixins, modules, and flow control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PostCSS provides infrastructure. Its configured plugins determine
+          transformations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They can coexist. Sass might compile SCSS to CSS, then PostCSS
+          applies compatibility or optimization plugins.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or a project may use PostCSS alone. The pipeline depends on the
+          problem.</span
+        >
+      </p>
+      <h2 id="debug-the-layers">Debug the Layers</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the CSS I wrote differs from what the browser sees, trace each
+          stage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Source file, framework processing, PostCSS plugins, minification,
+          final asset, browser cascade.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not debug generated output as if it appeared by spontaneous
+          generation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And keep source maps available in development.</span>
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PostCSS is JavaScript infrastructure for parsing and transforming CSS
+          through plugins.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It runs in the development toolchain, commonly through Node.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Autoprefixer is one famous plugin, not the definition of
+          PostCSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >“Uses PostCSS” is incomplete without the plugin list and
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some syntax can be transformed for older environments; some browser
+          capabilities cannot be recreated faithfully.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser targets and plugin dependencies are product and security
+          decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is not another Sass. It is a factory floor where several tools may
+          be working.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: Tailwind.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Intern!</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You cannot summon Sabrina like tech support.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Watch me.</span>
+      </p>
+    </main>
+    <footer>2 code cards · 1 terminal cards</footer>
+  </body>
+</html>

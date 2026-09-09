@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 12: Modern Color — CSS Learned Math and Developed Opinions About
+      Purple — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 12: Modern Color — CSS Learned Math and Developed Opinions About
+        Purple
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/6e740f70-15c4-40b4-901c-01ea2ba9216c"
+      ></script>
+      <div class="redcirclePlayer-6e740f70-15c4-40b4-901c-01ea2ba9216c"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#a-color-is-more-than-three-numbers"
+            >A Color Is More Than Three Numbers</a
+          >
+        </li>
+        <li><a href="#enter-oklch">Enter OKLCH</a></li>
+        <li><a href="#wider-gamuts">Wider Gamuts</a></li>
+        <li><a href="#color-mix">color-mix()</a></li>
+        <li><a href="#relative-colors">Relative Colors</a></li>
+        <li>
+          <a href="#gradients-have-a-color-space"
+            >Gradients Have a Color Space</a
+          >
+        </li>
+        <li><a href="#alpha-is-not-lightness">Alpha Is Not Lightness</a></li>
+        <li>
+          <a href="#please-don-t-calculate-your-way-out-of-contrast-testing"
+            >Please Don't Calculate Your Way Out of Contrast Testing</a
+          >
+        </li>
+        <li>
+          <a href="#gamut-mapping-and-fallbacks">Gamut Mapping and Fallbacks</a>
+        </li>
+        <li>
+          <a href="#tokens-should-describe-purpose"
+            >Tokens Should Describe Purpose</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-12-modern-color-css-learned-math-and-developed-opinions-about-purple"
+      >
+        Episode 12: Modern Color — CSS Learned Math and Developed Opinions About
+        Purple
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have a brand purple.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Hex?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>#6d28d9</code>.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What does changing the middle pair do?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Makes it a different purple and damages my confidence.</span>
+      </p>
+      <h2 id="a-color-is-more-than-three-numbers">
+        A Color Is More Than Three Numbers
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS supports multiple ways to describe color because color spaces
+          organize and represent colors differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hex and <code>rgb()</code> describe red, green, and blue channels in
+          an RGB space.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>hsl()</code> reorganizes familiar RGB colors around hue,
+          saturation, and lightness.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Easier to reason about in some tasks, but HSL lightness is not
+          perceptually uniform.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Two colors with the same HSL lightness can look very different in
+          brightness.</span
+        >
+      </p>
+      <h2 id="enter-oklch">Enter OKLCH</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --brand: oklch(55% 0.2 285);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >OKLCH uses lightness, chroma, and hue in a perceptual color
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Lightness aims to correspond more consistently to perceived lightness
+          than HSL's channel math.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Chroma is roughly colorfulness, and hue is an angle around the color
+          wheel.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Perceptually uniform” does not mean every person perceives every
+          color identically.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It is a model designed for more even numerical
+          relationships, not a universal human-vision emulator.</span
+        >
+      </p>
+      <h2 id="wider-gamuts">Wider Gamuts</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modern displays can show colors outside the traditional sRGB
+          gamut.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Spaces such as Display P3 can represent some more vivid colors on
+          capable devices.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>.banner {
+  background: rgb(109 40 217);
+}
+
+@media (color-gamut: p3) {
+  .banner {
+    background: color(display-p3 0.47 0.14 0.9);
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A broadly usable fallback first, then an enhancement where the
+          display and browser support it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But vivid is not synonymous with accessible.</span>
+      </p>
+      <h2 id="color-mix">color-mix()</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button:hover {
+  background: color-mix(in oklch, var(--brand) 85%, black);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>color-mix()</code> asks the browser to mix colors in a chosen
+          color space.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So component states can derive from live custom properties.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Change the brand token at runtime and the mixed hover color
+          follows.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unlike a Sass color function whose result was fixed during
+          compilation.</span
+        >
+      </p>
+      <h2 id="relative-colors">Relative Colors</h2>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>.quiet {
+  color: oklch(from var(--brand) calc(l + 10%) calc(c * 0.7) h);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The new color takes channels from an origin color and adjusts
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Support and syntax should be checked for the browsers your project
+          targets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Relative color is powerful, but a design token with a meaningful name
+          may be easier to govern than a formula repeated everywhere.</span
+        >
+      </p>
+      <h2 id="gradients-have-a-color-space">Gradients Have a Color Space</h2>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>.hero {
+  background: linear-gradient(in oklch, var(--start), var(--end));
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The interpolation space changes the colors travelled through between
+          stops.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >RGB interpolation can pass through muddy or surprising middle colors;
+          perceptual spaces may produce a more intentional transition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“May.” Designers still need eyes.</span>
+      </p>
+      <h2 id="alpha-is-not-lightness">Alpha Is Not Lightness</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Adding transparency mixes a foreground with whatever sits behind
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which means the resulting contrast depends on the background.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>.muted-text {
+  color: rgb(255 255 255 / 70%);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Seventy-percent white is not a fixed gray. It is composited over the
+          actual surface.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test the rendered combination, not the foreground token in
+          isolation.</span
+        >
+      </p>
+      <h2 id="please-don-t-calculate-your-way-out-of-contrast-testing">
+        Please Don't Calculate Your Way Out of Contrast Testing
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A generated palette is not automatically accessible.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Contrast varies by text size, weight, background, state, and the
+          standard or algorithm you evaluate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hover, focus, disabled, selected, error, and forced-color states all
+          need consideration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Color must not be the only cue for meaning.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A red border without error text is just a festive mystery.</span>
+      </p>
+      <h2 id="gamut-mapping-and-fallbacks">Gamut Mapping and Fallbacks</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A requested color may fall outside what a display can
+          reproduce.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Browsers map it into an available gamut, and the result may not
+          exactly match the authored coordinate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use fallbacks where appropriate and test on ordinary screens, not
+          only the expensive monitor that makes every purple look
+          employed.</span
+        >
+      </p>
+      <h2 id="tokens-should-describe-purpose">
+        Tokens Should Describe Purpose
+      </h2>
+
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --color-action: oklch(55% 0.2 285);
+  --color-on-action: white;
+  --color-danger: oklch(52% 0.2 28);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Semantic names describe roles. Palette names can still exist
+          underneath, but components should not need to know that danger is “red
+          700.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And token relationships need tests when themes change.</span>
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS supports several color spaces because they represent and
+          interpolate color differently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>HSL is intuitive but not perceptually uniform.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >OKLCH gives more useful perceptual relationships for many design
+          tasks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Wider-gamut colors can use capable displays, with sensible
+          fallbacks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>color-mix()</code> and relative colors can derive runtime
+          colors from custom properties.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >None of this removes contrast testing or the need for non-color
+          cues.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS learned color math. Humans still approve the purple.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: animation without making everyone sick.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The phrase “scroll-jacking experience” has already been escorted from
+          the building.</span
+        >
+      </p>
+    </main>
+    <footer>7 code cards · 0 terminal cards</footer>
+  </body>
+</html>

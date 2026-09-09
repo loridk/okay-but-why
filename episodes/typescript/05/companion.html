@@ -1,331 +1,482 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 5: Functions Have Boundaries — Listening Companion</title>
-  <link rel="stylesheet" href="../../styles.css">
-</head>
-<body class="companion-page">
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p><a href="../index.html">← Back to TypeScript episodes</a></p>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 5: Functions Have Boundaries</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <audio controls preload="metadata"><source src="typescript-05.wav" type="audio/wav">Your browser does not support the audio player.</audio>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
-<li><a href="#parameters-and-returns">Parameters and Returns</a></li>
-<li><a href="#optional-default-and-rest-parameters">Optional, Default, and Rest Parameters</a></li>
-<li><a href="#function-types">Function Types</a></li>
-<li><a href="#callbacks-carry-contracts">Callbacks Carry Contracts</a></li>
-<li><a href="#void-does-not-mean-nothing-happened">`void` Does Not Mean Nothing Happened</a></li>
-<li><a href="#methods-and-this">Methods and `this`</a></li>
-<li><a href="#overloads-briefly">Overloads, Briefly</a></li>
-<li><a href="#closing">Closing</a></li></ul></nav>
-  <main id="script"><h1 id="episode-5-functions-have-boundaries">Episode 5: Functions Have Boundaries</h1>
-<h2 id="cold-open">Cold Open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 5: Functions Have Boundaries — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to TypeScript episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: Functions Have Boundaries</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/eb92a1f2-a087-4067-945a-6785dd58e113"
+      ></script>
+      <div class="redcirclePlayer-eb92a1f2-a087-4067-945a-6785dd58e113"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold Open</a></li>
+        <li><a href="#parameters-and-returns">Parameters and Returns</a></li>
+        <li>
+          <a href="#optional-default-and-rest-parameters"
+            >Optional, Default, and Rest Parameters</a
+          >
+        </li>
+        <li><a href="#function-types">Function Types</a></li>
+        <li>
+          <a href="#callbacks-carry-contracts">Callbacks Carry Contracts</a>
+        </li>
+        <li>
+          <a href="#void-does-not-mean-nothing-happened"
+            >`void` Does Not Mean Nothing Happened</a
+          >
+        </li>
+        <li><a href="#methods-and-this">Methods and `this`</a></li>
+        <li><a href="#overloads-briefly">Overloads, Briefly</a></li>
+        <li><a href="#closing">Closing</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-5-functions-have-boundaries">
+        Episode 5: Functions Have Boundaries
+      </h1>
+      <h2 id="cold-open">Cold Open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Functions are where perfectly reasonable values go to become somebody else’s problem.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Functions are where perfectly reasonable values go to become somebody
+          else’s problem.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Inputs arrive, outputs leave, callbacks return later with consequences.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inputs arrive, outputs leave, callbacks return later with
+          consequences.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So TypeScript stations paperwork at the border.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So TypeScript stations paperwork at the border.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>More or less.</span>
-        </p>
-<h2 id="parameters-and-returns">Parameters and Returns</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>More or less.</span>
+      </p>
+      <h2 id="parameters-and-returns">Parameters and Returns</h2>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function calculateEndTime(
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function calculateEndTime(
   startMinutes: number,
   durationMinutes: number,
 ): number {
   return startMinutes + durationMinutes;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Parameter annotations describe allowed inputs. The return annotation describes the promised output.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Parameter annotations describe allowed inputs. The return annotation
+          describes the promised output.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript can infer that return, but writing it can protect an intentional public contract.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript can infer that return, but writing it can protect an
+          intentional public contract.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function calculateEndTime(
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function calculateEndTime(
   startMinutes: number,
   durationMinutes: number,
 ): number {
   return `${startMinutes + durationMinutes}`;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>text</span></figcaption>
-          <pre tabindex="0"><code>Type 'string' is not assignable to type 'number'.</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Type 'string' is not assignable to type 'number'.</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The annotation catches a change in implementation that violates the contract.</span>
-        </p>
-<h2 id="optional-default-and-rest-parameters">Optional, Default, and Rest Parameters</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The annotation catches a change in implementation that violates the
+          contract.</span
+        >
+      </p>
+      <h2 id="optional-default-and-rest-parameters">
+        Optional, Default, and Rest Parameters
+      </h2>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function greet(name: string, title?: string) {
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function greet(name: string, title?: string) {
   return title ? `Hello, ${title} ${name}` : `Hello, ${name}`;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Optional parameters may be omitted, so inside the function <code>title</code> is <code>string | undefined</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Optional parameters may be omitted, so inside the function
+          <code>title</code> is <code>string | undefined</code>.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A default value is JavaScript.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A default value is JavaScript.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 4">
-          <figcaption>Code card 4<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function greet(name: string, title = &quot;Developer&quot;) {
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>function greet(name: string, title = &quot;Developer&quot;) {
   return `Hello, ${title} ${name}`;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript infers the defaulted parameter as a string.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>TypeScript infers the defaulted parameter as a string.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And rest parameters?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And rest parameters?</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 5">
-          <figcaption>Code card 5<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function listTopics(...topics: string[]) {
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function listTopics(...topics: string[]) {
   return topics.join(&quot;, &quot;);
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Rest syntax is JavaScript. <code>string[]</code> is the TypeScript description of the collected arguments.</span>
-        </p>
-<h2 id="function-types">Function Types</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Rest syntax is JavaScript. <code>string[]</code> is the TypeScript
+          description of the collected arguments.</span
+        >
+      </p>
+      <h2 id="function-types">Function Types</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Sometimes the function itself is the value.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sometimes the function itself is the value.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 6">
-          <figcaption>Code card 6<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type Formatter = (title: string) =&gt; string;
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type Formatter = (title: string) =&gt; string;
 
 const uppercase: Formatter = (title) =&gt; title.toUpperCase();</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The arrow inside the type describes a callable contract. The arrow in the implementation is JavaScript arrow-function syntax.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The arrow inside the type describes a callable contract. The arrow in
+          the implementation is JavaScript arrow-function syntax.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Identical-looking arrows doing jobs in different layers. Excellent for beginners.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Identical-looking arrows doing jobs in different layers. Excellent
+          for beginners.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Context tells us whether we are in a type position or value position.</span>
-        </p>
-<h2 id="callbacks-carry-contracts">Callbacks Carry Contracts</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Context tells us whether we are in a type position or value
+          position.</span
+        >
+      </p>
+      <h2 id="callbacks-carry-contracts">Callbacks Carry Contracts</h2>
 
-        <figure class="card code" aria-label="Code card 7">
-          <figcaption>Code card 7<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function transformTitles(
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function transformTitles(
   titles: string[],
   formatter: (title: string) =&gt; string,
 ) {
   return titles.map(formatter);
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The callback receives a string and must return a string.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The callback receives a string and must return a string.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That lets TypeScript check both the function accepting the callback and every callback passed to it.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That lets TypeScript check both the function accepting the callback
+          and every callback passed to it.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 8">
-          <figcaption>Code card 8<span>ts</span></figcaption>
-          <pre tabindex="0"><code>transformTitles([&quot;types&quot;], (title) =&gt; title.length);</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>transformTitles([&quot;types&quot;], (title) =&gt; title.length);</code></pre>
+      </figure>
 
-        <figure class="card terminal" aria-label="Terminal output 2">
-          <figcaption>Terminal output 2<span>text</span></figcaption>
-          <pre tabindex="0"><code>Type 'number' is not assignable to type 'string'.</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 2">
+        <figcaption>Terminal output 2<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Type 'number' is not assignable to type 'string'.</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Also, TypeScript inferred <code>title</code> inside the callback from context.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, TypeScript inferred <code>title</code> inside the callback from
+          context.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Contextual typing. Information flows inward from the expected function type.</span>
-        </p>
-<h2 id="void-does-not-mean-nothing-happened"><code>void</code> Does Not Mean Nothing Happened</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Contextual typing. Information flows inward from the expected
+          function type.</span
+        >
+      </p>
+      <h2 id="void-does-not-mean-nothing-happened">
+        <code>void</code> Does Not Mean Nothing Happened
+      </h2>
 
-        <figure class="card code" aria-label="Code card 9">
-          <figcaption>Code card 9<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function logEpisode(title: string): void {
+      <figure class="card code" aria-label="Code card 9">
+        <figcaption>Code card 9<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function logEpisode(title: string): void {
   console.log(title);
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>void</code> means callers should not rely on a useful returned value.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>void</code> means callers should not rely on a useful returned
+          value.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The function may still have effects. Logging is very much something happening.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The function may still have effects. Logging is very much something
+          happening.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. <code>void</code> describes the return contract, not moral purity.</span>
-        </p>
-<h2 id="methods-and-this">Methods and <code>this</code></h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. <code>void</code> describes the return contract, not moral
+          purity.</span
+        >
+      </p>
+      <h2 id="methods-and-this">Methods and <code>this</code></h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Do methods work differently?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do methods work differently?</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 10">
-          <figcaption>Code card 10<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type Player = {
+      <figure class="card code" aria-label="Code card 10">
+        <figcaption>Code card 10<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type Player = {
   currentTime: number;
   seek(time: number): void;
 };</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Method parameters and returns are checked like other functions. JavaScript’s <code>this</code> behavior still exists underneath.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Method parameters and returns are checked like other functions.
+          JavaScript’s <code>this</code> behavior still exists underneath.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So TypeScript may describe <code>this</code>, but it does not rewrite JavaScript’s calling rules unless another transformation is involved.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So TypeScript may describe <code>this</code>, but it does not rewrite
+          JavaScript’s calling rules unless another transformation is
+          involved.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. Losing <code>this</code> remains a JavaScript problem with better editor diagnostics.</span>
-        </p>
-<h2 id="overloads-briefly">Overloads, Briefly</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Losing <code>this</code> remains a JavaScript problem with
+          better editor diagnostics.</span
+        >
+      </p>
+      <h2 id="overloads-briefly">Overloads, Briefly</h2>
 
-        <figure class="card code" aria-label="Code card 11">
-          <figcaption>Code card 11<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function findEpisode(id: number): Episode;
+      <figure class="card code" aria-label="Code card 11">
+        <figcaption>Code card 11<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function findEpisode(id: number): Episode;
 function findEpisode(slug: string): Episode;
 function findEpisode(value: number | string): Episode {
   // implementation
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Overload signatures describe several supported call shapes above one implementation.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Overload signatures describe several supported call shapes above one
+          implementation.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Why not just use a union parameter?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why not just use a union parameter?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Use a union when the return relationship is the same. Overloads help when different inputs produce meaningfully different call signatures or returns.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use a union when the return relationship is the same. Overloads help
+          when different inputs produce meaningfully different call signatures
+          or returns.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>So they are not decorative documentation for every function with options.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So they are not decorative documentation for every function with
+          options.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Please don’t do that.</span>
-        </p>
-<h2 id="closing">Closing</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please don’t do that.</span>
+      </p>
+      <h2 id="closing">Closing</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Function types describe boundaries: inputs, outputs, and callable relationships.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Function types describe boundaries: inputs, outputs, and callable
+          relationships.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Defaults, rest parameters, arrows, and callbacks are JavaScript behavior. TypeScript adds checked contracts around them.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Defaults, rest parameters, arrows, and callbacks are JavaScript
+          behavior. TypeScript adds checked contracts around them.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Contextual typing lets information flow into callback parameters.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Contextual typing lets information flow into callback
+          parameters.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And next we make those relationships reusable without replacing everything with <code>any</code>.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And next we make those relationships reusable without replacing
+          everything with <code>any</code>.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The angle brackets are approaching.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The angle brackets are approaching.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Generics.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Generics.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. But why?</span>
-        </p></main>
-  <footer>11 code cards · 2 terminal cards</footer>
-</body>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. But why?</span>
+      </p>
+    </main>
+    <footer>11 code cards · 2 terminal cards</footer>
+  </body>
 </html>

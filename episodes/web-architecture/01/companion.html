@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 1: What Even Is Web Architecture? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 1: What Even Is Web Architecture?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-01.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#a-system-begins-with-somebody-trying-to-do-something">A System Begins With Somebody Trying to Do Something</a></li>
+<li><a href="#follow-one-order">Follow One Order</a></li>
+<li><a href="#what-makes-that-architecture">What Makes That Architecture?</a></li>
+<li><a href="#a-framework-is-a-set-of-choices-not-the-entire-answer">A Framework Is a Set of Choices, Not the Entire Answer</a></li>
+<li><a href="#two-designs-that-both-deliver-pizza">Two Designs That Both Deliver Pizza</a></li>
+<li><a href="#the-unhappy-path-is-still-the-path">The Unhappy Path Is Still the Path</a></li>
+<li><a href="#what-does-simple-actually-mean">What Does Simple Actually Mean?</a></li>
+<li><a href="#read-a-diagram-without-worshipping-it">Read a Diagram Without Worshipping It</a></li>
+<li><a href="#the-napkin-review">The Napkin Review</a></li>
+<li><a href="#a-decision-is-not-a-prediction">A Decision Is Not a Prediction</a></li>
+<li><a href="#the-human-who-runs-it">The Human Who Runs It</a></li>
+<li><a href="#the-first-architecture-decision">The First Architecture Decision</a></li>
+<li><a href="#closing-questions-before-boxes">Closing — Questions Before Boxes</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have seen the architecture diagram.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There are nineteen boxes, six cylinders, and a cloud. The cloud contains another cloud. Apparently our website has weather.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Does the diagram explain what happens when somebody orders a pizza?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. But one arrow is purple, so I assume we're profitable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Excellent. Enterprise purple.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. I'm Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I'm Jules. We've talked about TypeScript, the JavaScript toolchain, modern CSS, and React and its framework friends.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have acquired parts. Some of the parts have package managers. Today I would like to know where the parts go.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's our Web Architecture series. How an application is arranged, how its parts communicate, and why we chose that arrangement.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Including the very important question: could this have been three boxes?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes two.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don't flirt with me during the introduction.</span>
+        </p>
+<h2 id="a-system-begins-with-somebody-trying-to-do-something">A System Begins With Somebody Trying to Do Something</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our recurring example is Nervous Robot Pizza Delivery. Fictional restaurant, real architectural headaches.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nervous Robot uses they and them, makes excellent pizza, and would appreciate a delivery system that does not express uncertainty by charging everybody twice.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The first version serves one neighborhood. Customers need the menu, opening hours, and a way to place an order. Staff need to see accepted orders. That's the starting problem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not global pizza dominance?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not unless somebody has secretly bought seven thousand ovens.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have not checked the expense account.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Notice we started with people and jobs. An architecture exists to support behavior. If we start by choosing a message broker, we're solving a shopping problem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For software, not customers. My first questions are wonderfully unglamorous. Can people order as guests? How do staff receive orders? What happens when the shop closes? Is online payment required?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And how much failure can we tolerate? A missing decorative image is annoying. An order the customer thinks was accepted but the kitchen never receives is a different problem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So even before the boxes, we have different promises.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Show information. Accept a request. Record a commitment. Those aren't interchangeable. Our design needs to say when each promise has actually been kept.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I can put a green checkmark on a page in approximately four seconds. That doesn't mean anybody is cooking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Architecture connects the green checkmark to something real.</span>
+        </p>
+<h2 id="follow-one-order">Follow One Order</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>All right. I'm on my phone. I open the pizza website. Walk beside me, no teleporting.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Your browser asks for the site over the network. Somewhere, a server responds with resources the browser can use: HTML, CSS, perhaps JavaScript, images.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HTML gives the document structure and meaning. CSS presents it. JavaScript can add behavior. Those are familiar jobs from earlier series.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser displays a menu. You choose a pizza. That selection might initially live only in browser memory.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A draft order. Not a business transaction yet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. You submit it. The browser sends a request to application code running on a server. That code checks the input, checks the shop's current rules, calculates the price, and records the accepted order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Usually in a database. Which is separate from the HTML and separate from the little cart object in my tab.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The application sends a response. The browser shows the confirmed order number. Staff can retrieve the order through their own interface.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the path is browser, network, application, database, then an answer back. The staff screen is another client looking at the same underlying business record.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's enough of a map to ask useful questions. Which step decided the price? Which step stored the order? Which step could fail without the others failing?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And which step is merely showing me an opinion about an order?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser view is a representation. It can be stale. The application and database enforce the business rules together, according to how we've designed them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We will get into that division later. For now, the database is not a magical truth cylinder that prevents me writing terrible application logic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The cylinder cannot save you from every decision outside the cylinder.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>Customer browser -&gt; Web application -&gt; Order database
+Customer browser &lt;- Confirmation    &lt;- Saved order
+Staff browser    -&gt; Web application -&gt; Order database</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If you can't see the card, it's just those two browsers talking to the same application, which talks to the order database. There is no secret fourth arrow you need to understand this.</span>
+        </p>
+<h2 id="what-makes-that-architecture">What Makes That Architecture?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Architecture is the consequential structure of the system: responsibilities, boundaries, communication, data ownership, and the choices that shape future work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Consequential because changing the button color and changing who owns order data are different-sized afternoons.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Architecture isn't every line of code. But it isn't entirely separate from code either. If every part of your application can directly change every table, that's a structural fact, even if the diagram says otherwise.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The code has voted against the diagram.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Repeatedly, in production.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What about folders? People say “architecture” and show me a directory named services.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Code organization can express architectural boundaries. But a folder doesn't enforce a responsibility by naming it. You need to examine dependencies and behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My payments folder imports the orders folder, which imports payments, which directly changes users, and everybody calls a file named helpers. We have categorized the spaghetti by drawer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Precisely. Conversely, a modest application can have a clear architecture without a spectacular directory tree.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And infrastructure?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The machinery supporting the software: compute, networking, storage, hosting facilities. Architecture includes decisions about using those things, but drawing a server doesn't explain what the application does.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A floor plan and a shopping list of appliances are related documents. Neither tells me whether the kitchen accepts orders after closing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's where the metaphor stops being literal. Software responsibilities can share one machine or span several. A box on our logical diagram doesn't necessarily mean a physical computer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you. Otherwise people leave with the impression that every rectangle requires a monthly subscription.</span>
+        </p>
+<h2 id="a-framework-is-a-set-of-choices-not-the-entire-answer">A Framework Is a Set of Choices, Not the Entire Answer</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Suppose someone asks our architecture and I say React.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You've told me something about the user interface. You haven't told me where orders are stored, how requests are authorized, or what happens if payment times out.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Even “a full-stack framework” doesn't answer those things by itself.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can provide conventions and mechanisms. Routing, rendering, server handlers, build output. You still choose how to use them and what promises your application makes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We covered tooling already. The build process can turn source files into browser assets. But that process isn't necessarily running whenever somebody loads the page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Great distinction. There is the system that builds and deploys the application, and the system handling visitors once it's deployed. They overlap, but they aren't the same path.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An npm package can participate in the build, run in the server application, or become code shipped to the browser. The package manager doesn't determine the destination.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is why “we use JavaScript” doesn't locate the work either. JavaScript can run in several environments. The environment gives it capabilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My browser cannot read the server's private environment variables just because both sides use the same language.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unless you accidentally include their values in the browser output. Then you have sent them to the customer, and the language was never the security boundary.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A recurring theme for next episode: where code runs matters more than the extension on the file.</span>
+        </p>
+<h2 id="two-designs-that-both-deliver-pizza">Two Designs That Both Deliver Pizza</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's compare reasonable options. First: a server-rendered application. The server prepares menu pages, accepts forms, writes orders, and returns HTML.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Something I could have built with PHP years ago, and could still build sensibly. One main application, one database, a browser doing browser things.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Second: a richer browser application. It downloads JavaScript, manages a more elaborate interface, and asks a server API for data and order operations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Both still need a trustworthy place to accept the order. Moving the interface into the browser didn't remove the backend.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And either can be accessible, secure, or horribly executed. A label like SPA doesn't decide quality.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The first might suit a simple menu and checkout. The second might suit a staff dispatch screen with lots of coordinated interactions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or the same system could use both, on different routes. We don't need to pick a religion for the entire domain name.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is going to upset the conference merchandise industry.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We'll survive. What matters is whether the choice supports the interaction and the team maintaining it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Team is architecture now?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Always was. If a system needs specialist operational knowledge that nobody on the team has, that is a constraint. It doesn't become irrelevant because the diagram is elegant.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Two developers, one kitchen, a sensible budget. Those facts should appear in the decision before “a company with fifty platform engineers does this.”</span>
+        </p>
+<h2 id="the-unhappy-path-is-still-the-path">The Unhappy Path Is Still the Path</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's break our lovely arrow. My phone sends the order, but I lose reception before the confirmation returns.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The server may have saved it. Or it may never have received it. From your phone's point of view, the outcome is uncertain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So showing “order failed” could be a lie.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. And blindly sending the order again could create a duplicate. Later we'll discuss identifiers and retries that make repeated requests safe.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For now, the architecture question is where we can find the answer. A saved order reference, some way to check its status, and a user message that admits uncertainty.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Not “we definitely failed” when all we know is “we didn't receive an answer.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Another break: email is down.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Does accepting the order depend on email succeeding? Probably it shouldn't, if staff have the order in the system and the customer has a confirmation page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then email can be separate follow-up work. We will need to remember to do it, but dinner shouldn't wait while an email provider contemplates its existence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a boundary justified by a failure scenario. We haven't installed a queue yet. We've identified a responsibility that may belong outside the immediate response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I like that ordering. Explain the problem before opening the software catalog.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Third break: somebody edits the price in their browser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The server calculates the real price. The customer can choose what they want, not what reality costs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a trust boundary. Data crosses from a place we don't control into a place responsible for enforcing our rules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fourth break: the ordering interface requires dragging tiny toppings with a mouse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then some customers cannot operate it. Accessibility affects the supported interaction, not just a final checklist. We need keyboard-operable controls and an understandable path through the order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our architecture has successfully delivered a page to somebody we prevented from ordering. Technically available, practically useless.</span>
+        </p>
+<h2 id="what-does-simple-actually-mean">What Does Simple Actually Mean?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our series principle is to start with the simplest architecture that solves the actual problem, and add complexity for an explainable reason.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Simple doesn't mean “ignore passwords, backups, errors, and everybody using a screen reader.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. That's incomplete. Simple means fewer unnecessary moving parts while meeting the requirements you actually have.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes a managed database makes the whole system simpler even though it adds a service, because we don't need to operate database hardware ourselves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes adding a dependency makes it harder because now three teams and two networks must agree for one button to work. We judge the overall burden, not just the number of boxes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And sometimes the simple answer is boring enough to make people nervous.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“What if we grow?” is reasonable. “What if we become every pizza company simultaneously next Tuesday?” is less useful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can design clear internal boundaries and collect evidence without building imaginary scale in advance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. A reversible choice doesn't need the same ceremony as an expensive data migration. Save attention for decisions that are hard to undo.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Like publicly promising thirty-second delivery.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a physics migration.</span>
+        </p>
+<h2 id="read-a-diagram-without-worshipping-it">Read a Diagram Without Worshipping It</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Suppose a listener gets handed those nineteen boxes tomorrow. What should they ask?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Pick one user action. “Place an order.” Trace only that action. What receives it? What validates it? What data changes? What response returns?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then label the arrows. A direct function call isn't the same as a network request. An asynchronous message isn't an immediate answer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ask which box owns each important fact. If two boxes disagree about whether an order is paid, which one wins, and how do the others catch up?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ask what the boxes represent. Modules? Running processes? Entire third-party companies? I have seen all three on the same slide with identical rectangles.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ask what happens when each arrow fails. And ask who operates each piece. Some boxes are managed services; others are a team member's weekend disappearing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally, ask what the diagram leaves out. A diagram is a view, not a complete replica of the universe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You might need one view of responsibilities, another of deployment, another of data flow. Trying to show all of them at once can make the diagram less useful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the goal isn't memorizing symbols. It's learning enough about the system to predict behavior.</span>
+        </p>
+<h2 id="the-napkin-review">The Napkin Review</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before we commit to our napkin, let's test whether the picture helps us answer a change request. Nervous Robot wants customers to schedule a delivery for tomorrow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ah. A request that sounds like one extra field and is secretly several meetings.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Where do you start?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>With the meaning. Are tomorrow's hours known? Are prices locked when ordered? Can we reserve kitchen capacity? Can the customer cancel? When does payment happen?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>None of those is “which date-picker library.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The date picker matters, including whether people can operate it. But it represents a policy we need to define first. A beautiful calendar can't decide whether tomorrow's kitchen is open.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the architecture map tells us which responsibilities might change. Browser interaction, server acceptance rules, durable order data, staff views, perhaps payment timing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. It also tells us where not to put the rule. The browser shouldn't independently decide that every future date is available because a calendar can display it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What would make this change harder?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If pricing logic is duplicated in three places. If the database only stores a boolean called done. If the staff screen assumes every order is for the next twenty minutes. Those are structural constraints hiding in code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a useful definition of architecture in practice: the existing design makes some changes easy and others expensive.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And we don't fix that by anticipating every imaginable feature. We make the current concepts clear enough to evolve. An explicit fulfillment time is easier to reason about than a string called miscellaneous that everyone interprets differently.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Would you introduce a scheduling service immediately?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. First understand and implement the responsibility within the application. Separate deployment needs a separate reason. A new business concept isn't automatically a new server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's try another requirement. Customers should be able to download an invoice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Who may download which invoice? Is it generated from the accepted historical order, or today's menu? How long should it remain available? Can generating it delay ordering?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Again, the questions locate ownership, privacy, durability, and workload.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The diagram is useful because it gives those questions somewhere to land. If all I can say is “React talks to cloud,” I haven't explained enough.</span>
+        </p>
+<h2 id="a-decision-is-not-a-prediction">A Decision Is Not a Prediction</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I worry that choosing a small design means we'll be blamed later if we need something larger.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Only if we promised the small design would solve every future problem. We can state the assumptions and revisit them. “One shop, two developers, modest traffic” is a context, not a vow of eternal smallness.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we record why the choice fits now and what evidence would challenge it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. If the application becomes slow, we measure what is slow. If teams block one another, we examine ownership and deployment. Different evidence leads to different changes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It sounds less exciting than designing for hypothetical global domination.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is more exciting when the hypothetical global system's bill arrives before the first customer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Fair. What do we do with uncertainty we can't resolve yet?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Name it. Maybe we don't know peak demand. Build a modest load test or measure early traffic. Maybe we don't know whether staff need a live map. Observe their workflow. Don't replace missing information with an expensive assumption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That makes experiments part of architecture.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Small experiments can be extremely useful. They should answer a question. “Can this order query meet our needs with representative data?” is a question. “Let's rewrite everything to learn what happens” is a lifestyle choice.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the answer can be that the simpler design is sufficient.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's a successful experiment. We are not disappointed when evidence saves us work.</span>
+        </p>
+<h2 id="the-human-who-runs-it">The Human Who Runs It</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>One more box people forget: the operator. Someone must know when orders are stuck.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The system needs a way to reveal problems and support recovery. Who checks failed receipt work? Who can correct a mistaken cancellation? What information helps them do that safely?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That could be a modest staff view and clear logs, not necessarily a gigantic operations platform.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But “we'll look in the database manually” shouldn't become the only routine workflow by accident. Direct data edits bypass the rules the application normally enforces.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So administrative capabilities deserve deliberate design too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Especially because they are powerful. Clear permissions, clear action labels, and enough history to understand consequential changes. The customer isn't the only person using the architecture.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our napkin now has a note beside it: who notices, who responds, and how we recover.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Still no purple arrow required.</span>
+        </p>
+<h2 id="the-first-architecture-decision">The First Architecture Decision</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's make our first decision out loud. For our fictional small pizza shop, start with one web application, clear internal responsibilities, and one primary order database. Use ordinary pages and forms where they satisfy the experience.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keep prices and order acceptance on the server. Give staff an authenticated view. Make the interface usable with a keyboard. Make failures understandable. Have a recovery plan for the data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And write down why. Small team, straightforward workflow, one business, no evidence yet that independently deployed services solve a real problem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also write down what would make us revisit it. Maybe dispatch becomes a complex interactive application. Maybe measured traffic overwhelms a specific operation. Maybe a team needs a genuinely independent release boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those are triggers for investigation, not automatic instructions to buy microservices.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our diagram fits on a napkin. It is not unserious because the napkin lacks a vendor logo.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Can you explain where the order goes and what success means?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Can you identify its biggest risks?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Also olives, but that's a separate meeting.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then we have the beginning of an architecture.</span>
+        </p>
+<h2 id="closing-questions-before-boxes">Closing — Questions Before Boxes</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Architecture is how the pieces cooperate to do something useful, under constraints. It includes where work happens, who owns information, and how failure behaves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The framework, folder tree, and hosting platform contribute to that story. None tells the whole story alone.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This series will move through the browser and server, HTTP, rendering, APIs, identity, data, monoliths, services, caching, and scaling. Then we'll design a system with reasons instead of collecting nouns.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: client versus server. Same JavaScript, very different access privileges.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And eventually, Cybersecurity follows this series. We will raise relevant security decisions here, because a trustworthy architecture cannot postpone them, but the dedicated series is its own conversation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For today, take one site you know and trace one action. Name where the work runs, where the result is stored, and what could fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If you get stuck, that's a useful question, not a personal deficiency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ohhh. That's why the boxes exist.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some of them. The purple arrow remains under investigation.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

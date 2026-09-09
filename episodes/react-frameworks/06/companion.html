@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Vue and Angular — React Is Not the Only Answer — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Vue and Angular — React Is Not the Only Answer</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/2b1feacf-008c-4e13-ad54-6ba1b50cf381"
+      ></script>
+      <div class="redcirclePlayer-2b1feacf-008c-4e13-ad54-6ba1b50cf381"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#same-problem-family-different-contracts"
+            >Same Problem Family, Different Contracts</a
+          >
+        </li>
+        <li>
+          <a href="#vue-the-progressive-framework"
+            >Vue: The Progressive Framework</a
+          >
+        </li>
+        <li>
+          <a href="#vue-syntax-label-everything"
+            >Vue Syntax: Label Everything</a
+          >
+        </li>
+        <li><a href="#options-and-composition">Options and Composition</a></li>
+        <li><a href="#vue-s-ecosystem-shape">Vue’s Ecosystem Shape</a></li>
+        <li><a href="#why-teams-like-vue">Why Teams Like Vue</a></li>
+        <li>
+          <a href="#angular-a-broad-platform">Angular: A Broad Platform</a>
+        </li>
+        <li><a href="#angular-components">Angular Components</a></li>
+        <li>
+          <a href="#dependency-injection-without-incense"
+            >Dependency Injection Without Incense</a
+          >
+        </li>
+        <li><a href="#signals">Signals</a></li>
+        <li><a href="#why-teams-like-angular">Why Teams Like Angular</a></li>
+        <li><a href="#react-s-place">React’s Place</a></li>
+        <li>
+          <a href="#accessibility-comparison-without-marketing"
+            >Accessibility Comparison Without Marketing</a
+          >
+        </li>
+        <li>
+          <a href="#security-comparison-without-marketing"
+            >Security Comparison Without Marketing</a
+          >
+        </li>
+        <li><a href="#migration-and-hiring">Migration and Hiring</a></li>
+        <li>
+          <a href="#the-decision-table-spoken">The Decision Table, Spoken</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-6-vue-and-angular-react-is-not-the-only-answer">
+        Episode 6: Vue and Angular — React Is Not the Only Answer
+      </h1>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Welcome to Framework Fight Night.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>In the red corner—</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We specifically said no cage match.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>I made graphics.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Today we are asking why Vue and Angular exist, what philosophies they
+          offer, and what kinds of teams might choose them.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Fine. The graphics were inaccessible anyway.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Then we have already improved the episode.</span>
+      </p>
+      <h2 id="same-problem-family-different-contracts">
+        Same Problem Family, Different Contracts
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React, Vue, and Angular all help build component-based, reactive
+          interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They do not expose the same authoring model or include the same
+          application features.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And “best” without a project, team, and constraints is mostly fandom
+          wearing a benchmark.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The intern may remain.</span>
+      </p>
+      <h2 id="vue-the-progressive-framework">Vue: The Progressive Framework</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vue describes itself as a JavaScript framework built on standard
+          HTML, CSS, and JavaScript. It uses declarative rendering and
+          reactivity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Progressive” means?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Incrementally adoptable. Vue can enhance static HTML without a build
+          step, power part of a page, build a single-page application, or work
+          through a full-stack Vue framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is attractive to somebody who does not want to demolish the
+          house to add a porch light.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >For build-tool projects, Vue commonly uses single-file components
+          ending in dot-vue.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which contain a script section, template section, and style
+          section.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Logic, markup-like templates, and component styling can be
+          colocated while remaining visibly distinct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React colocates through JavaScript and JSX. Vue’s single-file
+          component puts the languages in labeled rooms.</span
+        >
+      </p>
+      <h2 id="vue-syntax-label-everything">Vue Syntax: Label Everything</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>vue</span></figcaption>
+        <pre tabindex="0"><code>&lt;script setup&gt;
+import { ref } from &quot;vue&quot;;
+const count = ref(0);
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button type=&quot;button&quot; @click=&quot;count++&quot;&gt;Count is: {{ count }}&lt;/button&gt;
+&lt;/template&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>import, const, and the call are JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >ref is Vue’s reactivity API. Script setup is Vue
+          single-file-component syntax with compile-time behavior.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The template is Vue template syntax built on HTML. At-click is Vue’s
+          event-binding shorthand. Double curly braces interpolate a
+          value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >count plus-plus is JavaScript expression syntax appearing inside the
+          Vue template.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. This is not JSX and not React.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But ref returns a wrapper. Why does the template say count plus-plus
+          instead of count dot value plus-plus?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vue templates automatically unwrap refs in supported template
+          contexts. In ordinary JavaScript inside the script block, you
+          generally read or update this ref through count dot value. The shorter
+          template expression is Vue compiler behavior, not a new rule of
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >That is exactly the kind of convenience that becomes confusing when a
+          tutorial calls the whole file JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The rendered button is still a real HTML button with native
+          semantics.</span
+        >
+      </p>
+      <h2 id="options-and-composition">Options and Composition</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vue supports two API styles. Options API organizes component behavior
+          into named options such as data, methods, computed, and lifecycle
+          hooks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Structured buckets and this referring to the component
+          instance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Composition API uses imported functions such as ref, computed, and
+          lifecycle APIs, often inside script setup.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Both are powered by the same underlying system. Vue’s current
+          guidance allows either for learning; Composition API plus single-file
+          components is commonly recommended for full applications.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Composition API resembles React Hooks?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They both enable composing stateful logic, but their reactivity
+          models and rules differ. Similar problem, not interchangeable
+          machinery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Vue tracks reactive dependencies more directly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. React generally re-runs a component to calculate UI from state.
+          Vue’s reactivity system tracks which computations and render work
+          depend on reactive values.</span
+        >
+      </p>
+      <h2 id="vue-s-ecosystem-shape">Vue’s Ecosystem Shape</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does Vue include routing?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The core framework does not bake every application concern into one
+          package, but the project maintains official ecosystem libraries such
+          as Vue Router and Pinia for state management.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Nuxt is a prominent full-stack framework in the Vue world, providing
+          routing, rendering choices, server features, and conventions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Vue lives between “tiny library only” and “one giant box,” with an
+          official progressive path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is a fair characterization, with the usual project-specific
+          nuance.</span
+        >
+      </p>
+      <h2 id="why-teams-like-vue">Why Teams Like Vue</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The HTML-ish template can be approachable for teams with strong web
+          fundamentals.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The single-file structure makes language boundaries visible. Its
+          incremental adoption story is strong. Its reactivity and computed
+          values can feel direct.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And the documentation treats standard HTML, CSS, and JavaScript as
+          prerequisites, not obsolete debris.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Bless.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tradeoffs include learning Vue-specific template directives and
+          reactivity behavior, choosing between API styles, ecosystem size
+          relative to project needs, and migration considerations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>No framework grants freedom from framework concepts.</span>
+      </p>
+      <h2 id="angular-a-broad-platform">Angular: A Broad Platform</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Angular calls itself a web framework and provides a broad suite of
+          first-party tools and APIs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Components, routing, forms, dependency injection, server rendering,
+          build tooling, update tooling.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Current Angular also emphasizes Signals for fine-grained reactivity,
+          standalone components, modern control flow, and a build pipeline using
+          Vite and esbuild under the hood.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This is not the AngularJS I remember.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Essential distinction. AngularJS was the older one-dot-x framework.
+          Modern Angular was a major rewrite and is a different framework
+          lineage. Do not use the names as synonyms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Historical naming chose violence.</span>
+      </p>
+      <h2 id="angular-components">Angular Components</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An Angular component typically has a TypeScript class, an HTML
+          template, and a selector, connected through Angular component
+          metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>TypeScript is central rather than optional flavoring.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Decorators and metadata tell Angular how the class participates
+          in the framework.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Templates use Angular-specific binding and control-flow syntax.
+          Inputs accept data; outputs communicate events. Dependency injection
+          supplies services.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again: TypeScript class syntax and types are TypeScript. The
+          Component decorator contract, template bindings, Signals, and
+          dependency injection system are Angular.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="dependency-injection-without-incense">
+        Dependency Injection Without Incense
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Explain dependency injection in one breath.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Instead of a component constructing every service it needs, it
+          declares dependencies and Angular provides configured instances.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful for shared services, testing substitutions, and consistent
+          lifetimes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It is also another framework concept and can obscure where
+          values originate if used without discipline.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Angular chooses more architecture for you than core React does.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which can reduce decision fatigue.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And require the team to learn Angular’s chosen system.</span>
+      </p>
+      <h2 id="signals">Signals</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What is a Signal?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In Angular, a Signal is a reactive value wrapper. Reading it lets
+          Angular track consumers; updating it notifies dependent work.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Computed Signals derive values, and effects can synchronize with
+          imperative systems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same warning as React: “effect” is not a miscellaneous-code
+          drawer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Eternal truth.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Are Angular Signals the same as Vue refs?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Both participate in fine-grained reactive systems, but their APIs
+          and framework integration differ.</span
+        >
+      </p>
+      <h2 id="why-teams-like-angular">Why Teams Like Angular</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Large team, long-lived enterprise application, desire for common
+          conventions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Angular’s breadth can help. Routing, forms, dependency injection,
+          testing support, CLI workflows, update tooling, and release policy
+          give teams an integrated platform.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A new developer may face more framework-specific concepts upfront,
+          but encounter fewer “choose one of nine routers” meetings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tradeoff: steeper learning curve, more prescribed architecture,
+          framework-specific templates and APIs, and potentially more machinery
+          than a small project needs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="react-s-place">React’s Place</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compared with those, React’s focused core gives flexibility and a
+          huge ecosystem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Teams can compose their own stack or use a React framework that
+          chooses more.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >That flexibility is a strength when requirements are unusual or teams
+          have established preferences.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And a cost when the team needs coherent defaults.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React uses JavaScript functions and usually JSX. Vue commonly uses
+          single-file components and a template compiler. Angular centers
+          TypeScript classes, templates, metadata, dependency injection, and a
+          larger first-party platform.</span
+        >
+      </p>
+      <h2 id="accessibility-comparison-without-marketing">
+        Accessibility Comparison Without Marketing
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which framework is accessible?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >None automatically. All can render semantic HTML. All can render
+          inaccessible garbage.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The important questions are component-library quality, router
+          behavior, focus management, form semantics, error messaging, testing,
+          and team practice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Angular and Vue providing a template does not guarantee correct HTML.
+          JSX resembling HTML does not guarantee it either.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Framework abstractions can make good patterns reusable and bad
+          patterns systemic.</span
+        >
+      </p>
+      <h2 id="security-comparison-without-marketing">
+        Security Comparison Without Marketing
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They all escape interpolated text by default?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Their normal rendering paths provide protections against common
+          injection mistakes, but every framework has escape hatches and
+          security guidance.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Raw HTML injection, unsafe URLs, exposed client secrets, vulnerable
+          dependencies, insecure APIs, and missing server authorization remain
+          dangerous.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Framework choice is not a threat model.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+      <h2 id="migration-and-hiring">Migration and Hiring</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Should a team pick whichever has the most job listings?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Labor-market fit matters, but it is one constraint. Consider existing
+          skills, product lifetime, ecosystem requirements, upgrade policy,
+          library availability, performance needs, and maintainability.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Also distinguish “many developers have heard of it” from “many
+          developers can maintain this architecture well.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Rewriting a stable application solely because another framework is
+          fashionable is expensive cosplay.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Migrations should solve measured problems.</span>
+      </p>
+      <h2 id="the-decision-table-spoken">The Decision Table, Spoken</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Want incremental adoption, visible template-script-style sections,
+          and a cohesive official ecosystem?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Evaluate Vue.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Want a broad, opinionated platform with TypeScript, routing, forms,
+          dependency injection, and strong organizational conventions?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Evaluate Angular.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Want a focused UI library, a vast ecosystem, and freedom to assemble
+          or choose a React framework?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Evaluate React.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Need a mostly static site with a modest interaction?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Evaluate the web platform.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>My fight graphic now says “it depends.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Finally accurate.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next: frameworks built on React. How did a UI library acquire a
+          server, a router, file conventions, and several different meanings of
+          the word render?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next.js has entered the chat with a boundary.</span>
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

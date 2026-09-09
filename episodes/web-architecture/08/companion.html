@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 8: Databases and Application State — Where Does the Truth Live? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 8: Databases and Application State — Where Does the Truth Live?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-08.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#state-means-what-is-true-right-now">State Means What Is True Right Now</a></li>
+<li><a href="#a-database-solves-coordination-not-just-saving">A Database Solves Coordination, Not Just Saving</a></li>
+<li><a href="#relational-doesn-t-mean-ancient">Relational Doesn't Mean Ancient</a></li>
+<li><a href="#the-order-remembers-what-was-bought">The Order Remembers What Was Bought</a></li>
+<li><a href="#transactions-these-changes-belong-together">Transactions: These Changes Belong Together</a></li>
+<li><a href="#two-customers-one-last-dough-ball">Two Customers, One Last Dough Ball</a></li>
+<li><a href="#read-models-can-be-behind">Read Models Can Be Behind</a></li>
+<li><a href="#indexes-are-a-tradeoff">Indexes Are a Tradeoff</a></li>
+<li><a href="#migrations-change-the-shape-over-time">Migrations Change the Shape Over Time</a></li>
+<li><a href="#backups-are-only-useful-if-we-can-restore">Backups Are Only Useful If We Can Restore</a></li>
+<li><a href="#model-the-order-as-a-state-machine">Model the Order as a State Machine</a></li>
+<li><a href="#a-concrete-concurrency-story">A Concrete Concurrency Story</a></li>
+<li><a href="#the-database-sees-different-work-than-the-interface">The Database Sees Different Work Than the Interface</a></li>
+<li><a href="#when-data-grows-questions-change">When Data Grows, Questions Change</a></li>
+<li><a href="#delete-archive-or-keep">Delete, Archive, or Keep?</a></li>
+<li><a href="#a-restore-rehearsal">A Restore Rehearsal</a></li>
+<li><a href="#what-belongs-where">What Belongs Where?</a></li>
+<li><a href="#a-data-ownership-review">A Data Ownership Review</a></li>
+<li><a href="#closing-the-cylinder-has-responsibilities">Closing — The Cylinder Has Responsibilities</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I saved the order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In an object.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where is the object?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In memory.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And where is the process?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It restarted.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the pizza exists in our hearts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. Today: state, persistence, and why a database isn't just an unusually serious array.</span>
+        </p>
+<h2 id="state-means-what-is-true-right-now">State Means What Is True Right Now</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State is the information that describes the system at a particular moment. Which panel is open, what's in a draft cart, whether an order is paid.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But those facts have different owners and lifetimes. An open panel may disappear when the tab closes. An accepted order must survive a process restart.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>From the React series, component state helps the interface remember things between renders. It doesn't automatically persist them across page loads or synchronize them with the server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Browser memory, browser storage, server process memory, and durable database storage are different places with different behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser storage can keep a draft between visits, subject to browser policies and user clearing. It isn't our authoritative business ledger.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server memory can hold temporary calculations or caches. If there are several instances, each may have its own copy. If one restarts, its memory changes or disappears.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A database offers durable storage and coordinated access, under its configuration and guarantees. We still need to understand those guarantees and operate it correctly.</span>
+        </p>
+<h2 id="a-database-solves-coordination-not-just-saving">A Database Solves Coordination, Not Just Saving</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why not write orders to a JSON file?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For a small local experiment, maybe. For concurrent real transactions, you soon need to coordinate writes, query efficiently, enforce constraints, recover from interruption, and control access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Two requests can try to write at once. A partial write can damage the file. Finding all pending deliveries can require scanning everything.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A database gives us mechanisms for those problems. Not because files are bad, but because building our own database accidentally is usually an expensive hobby.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the data model expresses relationships. Orders have line items. A customer may have several orders. A payment has a relationship to an order without being the same thing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The model should reflect the business facts we need to preserve. We don't simply store whatever shape the UI happened to use this week.</span>
+        </p>
+<h2 id="relational-doesn-t-mean-ancient">Relational Doesn't Mean Ancient</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A relational database organizes data in relations, commonly represented as tables with rows and columns. Keys connect related records. Constraints help enforce rules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For a pizza shop, that can be wonderfully appropriate. Orders, order items, payments, staff accounts. SQL lets us ask questions about those relationships.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>SQL is a database query language, not JavaScript or TypeScript. An ORM may let application code express queries through objects, but the database still has its own execution and rules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An ORM is a library that maps between application objects and database operations. Useful, but it doesn't make slow queries or incorrect relationships disappear.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And not every database is relational. Document databases organize records differently; key-value stores provide other access patterns. Choose based on data and operations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“NoSQL” is a broad family label, not a promise of no schema, infinite scale, or fewer decisions. The application still assumes some structure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A flexible representation can be useful when the data actually varies. It can also move validation and consistency work into application code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For our baseline, a relational database is an explainable starting point. We have relationships and transactional operations. We don't need three database types to store mozzarella.</span>
+        </p>
+<h2 id="the-order-remembers-what-was-bought">The Order Remembers What Was Bought</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Here's a subtle modeling issue. An order line refers to menu item 12. Later, item 12 gets renamed and its price changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The old receipt shouldn't rewrite history. We need to preserve the description and accepted price relevant to that order, not recalculate the past from today's menu.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the order may store a snapshot of important purchase details alongside the reference to the menu item.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's deliberate duplication with a purpose. Normalization helps reduce unintended redundancy, but historical facts are not always the same fact as the current catalog entry.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. “Price now” and “price accepted then” are different facts. Treating them as one field creates bugs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Money also needs a defined representation, precision, and currency. Don't casually rely on floating-point arithmetic for financial amounts just because JavaScript's default number is convenient.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Integer minor units can work where appropriate; database decimal types can be useful. The choice needs consistent handling across the system and the currencies involved.</span>
+        </p>
+<h2 id="transactions-these-changes-belong-together">Transactions: These Changes Belong Together</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Accepting an order may require creating the order record and its line items. What if only half succeeds?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We don't want a confirmed order with no items. A transaction groups database work so it can commit together or be rolled back together.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's atomicity: the group is treated as a unit. Database systems provide additional guarantees about isolation and durability, with details that depend on configuration and transaction level.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The important thing is that transactions let us express a boundary around related changes. They don't automatically know which changes the business intended to group.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nor do they automatically include an external payment service. A transaction in our database can't roll back a charge at another company by reversing a SQL statement.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That requires a workflow: track payment state, handle notifications, reconcile uncertain results, and perform compensating actions when appropriate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We'll revisit that when we discuss services. For now, local database atomicity and an entire distributed business transaction are not the same promise.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>sql</span></figcaption>
+          <pre tabindex="0"><code>BEGIN;
+-- Insert an order and its required line items.
+-- If a required operation fails, roll back the transaction.
+COMMIT;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In spoken terms: start a group of database work, perform the related changes, commit if they succeed, otherwise roll back. Actual statements use validated data and parameterized queries.</span>
+        </p>
+<h2 id="two-customers-one-last-dough-ball">Two Customers, One Last Dough Ball</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Two requests each read that one pizza remains. Both decide they can buy it. What happens?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If each independently checks and then updates without coordination, both may succeed. That's a race condition.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A transaction alone doesn't mean every possible race is prevented at every isolation level. We need the correct operation and concurrency strategy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe an atomic conditional update: reserve stock only if enough remains, then inspect whether the update succeeded. Maybe locking or a stronger isolation level, depending on the system.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Constraints can enforce invariants such as uniqueness. The database should help protect rules that must remain true under concurrent requests.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Invariant means a condition we require to hold, not a decorative math word. For example, an operation key should identify one accepted creation attempt within its scope.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if two staff members edit the same order, we may use a version number to detect that one edited an outdated version.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then the interface can say another person changed the order and ask for reconciliation. Silently overwriting the newer change is a policy too, usually one nobody meant to choose.</span>
+        </p>
+<h2 id="read-models-can-be-behind">Read Models Can Be Behind</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The customer sees “accepted.” The staff dashboard still shows the old list. Is the database wrong?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not necessarily. The dashboard may be displaying cached or previously fetched data. There could also be a read replica that hasn't caught up.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A replica is another copy of data maintained from a source. Depending on the replication design, it may lag.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So read-after-write expectations matter. If I just placed an order and immediately request its confirmation, I shouldn't see “not found” merely because we routed the read to a lagging copy without handling that possibility.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. We choose where authoritative reads need to go or how the interface handles expected delay.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The phrase eventual consistency describes convergence under the system's assumptions; it doesn't mean we may ignore lost updates and hope they feel better later.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There needs to be a mechanism that actually propagates the changes and a plan when that mechanism fails.</span>
+        </p>
+<h2 id="indexes-are-a-tradeoff">Indexes Are a Tradeoff</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff need all unfulfilled orders for tonight. The query slows as data grows. What might help?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An appropriate index can help locate relevant rows without scanning everything. Like an organized route to the data, though the database structures are more precise than a book index.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But indexes take storage and must be maintained as data changes. Adding one to every column isn't free performance.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We inspect the actual query plan and workload. Maybe the problem is an unnecessary query per order—the classic N-plus-one pattern—rather than missing raw server power.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An ORM can accidentally produce that pattern. One query for the list, then one additional query for every row's related data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The fix could be a better query or data-loading strategy. We don't immediately split the restaurant into twelve microservices because a page made two hundred database calls.</span>
+        </p>
+<h2 id="migrations-change-the-shape-over-time">Migrations Change the Shape Over Time</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We add pickup times to orders. The database schema needs to evolve.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A migration records a change to the schema or data. We should plan how existing rows behave, how deployment overlaps with old code, and how to recover if it fails.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For example, adding a required field immediately can break older application instances that don't supply it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A staged approach may add the field compatibly, populate it, update writers and readers, then enforce the stricter requirement. Details depend on the database and deployment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is why data changes can be harder to reverse than code changes. A rollback of the application doesn't automatically restore transformed data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And “we have Git” is not a database backup strategy. Git remembers source code, not every order placed during dinner.</span>
+        </p>
+<h2 id="backups-are-only-useful-if-we-can-restore">Backups Are Only Useful If We Can Restore</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What does the business need after a failure?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Define how much data loss is tolerable and how long recovery may take. Then choose backups and recovery procedures that support those expectations.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A backup job reporting success isn't proof the restore works. Test recovery in a suitable environment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Replication isn't automatically a backup either. An accidental deletion may replicate very efficiently to every copy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And protect the backups. They can contain the same sensitive information as the primary database.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also minimize what we store. We need delivery details to fulfill an order, but keeping every detail forever is not an architecture requirement by default.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Retention and access policies belong to the data design. The fewer unnecessary secrets and personal records we accumulate, the less we must protect and explain later.</span>
+        </p>
+<h2 id="model-the-order-as-a-state-machine">Model the Order as a State Machine</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We have used the word status a lot. Could we just store paid true and done true?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>You can, but combinations become ambiguous. What does done true and paid false mean? Cancelled? Complimentary? Failed payment after fulfillment? A couple of booleans can hide several business states.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A state machine gives explicit states and permitted transitions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. For a simplified order: draft, awaiting payment, accepted, preparing, dispatched, completed, perhaps cancelled. The actual model depends on the business and payment flow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should avoid implying every order must pass through all those states. Pickup doesn't dispatch to a driver.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. The model can branch. The important part is that transitions have rules. A completed order shouldn't quietly return to awaiting payment because an old message arrived.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And payment state may be separate from fulfillment state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Often useful. A refund can happen after delivery. If one status field tries to represent every combination, it can become a confusing list of compound names.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So model related but distinct dimensions, then define valid combinations and operations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. We don't need a state-machine library to begin thinking clearly. Start by saying which transitions are allowed and why.</span>
+        </p>
+<h2 id="a-concrete-concurrency-story">A Concrete Concurrency Story</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff member A opens order 417. Staff member B opens the same order. Both see version three. A changes the pickup time and saves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The record becomes version four. B then tries to save an old copy with a changed note. If the application overwrites the entire record without checking, A's pickup-time change may disappear.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a lost update.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. With an optimistic concurrency check, B's request includes the version it was based on. The server updates only if that version is still current, otherwise returns a conflict.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then B can reload the current record and reconcile the note.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or the application can merge independent fields if that's a deliberate safe policy. But “last request wins” shouldn't be an accidental consequence of a convenient save function.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why call it optimistic?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It proceeds assuming conflicts are uncommon and checks before committing the change, rather than holding a lock while someone spends five minutes reading a form.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The human pause is much longer than a database transaction should casually remain open.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Don't hold scarce database resources hostage while I decide whether “extra crispy” needs an exclamation point.</span>
+        </p>
+<h2 id="the-database-sees-different-work-than-the-interface">The Database Sees Different Work Than the Interface</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The UI displays one order card. Does that mean one database operation?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not necessarily. It may combine order fields, item rows, payment information, and current fulfillment status. Conversely, one database query can return information for many cards.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the visual component tree isn't a good automatic database schema.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A component is organized around rendering and interaction. A data model is organized around facts, relationships, constraints, and queries. They communicate, but they solve different problems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The server can build a view model suited to the page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. That can keep the browser from doing unnecessary joins across multiple endpoints and prevent internal storage details from leaking into every client.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>View model here is a general design term, not necessarily a particular framework class.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. It's simply the representation useful for that view. The naming is less important than the deliberate transformation.</span>
+        </p>
+<h2 id="when-data-grows-questions-change">When Data Grows, Questions Change</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We want a monthly report of the most popular pizzas. Should that run against the same database as checkout?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It might be fine initially. Measure the query and its impact. If reporting becomes expensive, we can schedule it, optimize it, or use a separate read-oriented system when justified.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That separate system might contain copied or transformed data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, and then freshness and lineage matter. Where did the data come from? When was it updated? Does the report include cancelled orders or refunds? Those are semantic questions, not just infrastructure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Lineage means the path from source facts to the derived result.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. If the report says mushroom pizza is winning, we should know whether it's counting ordered items, paid items, or fulfilled items. Those can differ.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The database can't decide the business definition of popularity for us.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nor can an analytics platform. It can calculate the wrong definition at impressive speed.</span>
+        </p>
+<h2 id="delete-archive-or-keep">Delete, Archive, or Keep?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customer cancels an order. Do we delete the row?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Usually we need to preserve the fact that it existed and was cancelled, especially for payment reconciliation and support. But the precise retention policy depends on the business and applicable obligations.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So deletion and cancellation are different operations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. And retaining a business record doesn't necessarily require retaining every personal detail forever. We can separate the necessary historical facts from information whose purpose has ended.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That affects schema design and cleanup jobs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. If personal data is copied into ten loosely tracked tables, retention becomes harder. Data minimization helps operations as well as privacy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We also shouldn't promise deletion from every backup instantly if the system can't do that.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Policies need to match implementation. We can discuss requirements and choose mechanisms, but not invent guarantees because they sound comforting.</span>
+        </p>
+<h2 id="a-restore-rehearsal">A Restore Rehearsal</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's imagine our backup exists. We restore it to a test environment. What do we verify?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That the restored data is readable, structurally valid, and recent enough for the recovery objective. Then that the application can actually use it, including required configuration and compatible schema.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not just that a file decompressed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Also check that the test environment won't send real receipts or contact live payment services while replaying data. A recovery rehearsal shouldn't create a second dinner rush.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And document the steps, permissions, and time involved.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. If only one person knows the recovery ritual and they are unavailable, the system has a human single point of failure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is a good place to spend effort before exotic scaling work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely. A modest database with a tested restore can be more trustworthy than a grand diagram with no recovery evidence.</span>
+        </p>
+<h2 id="what-belongs-where">What Belongs Where?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's place the facts. The toppings I'm currently considering?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browser state, possibly a persisted draft if that helps. Still tentative.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The accepted price and order contents?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Durable order records, written through the authoritative application operation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A cached public menu?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A replaceable copy derived from the current menu source, with a freshness policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The session we discussed last time?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In the chosen session store or credential design, with expiry and revocation behavior. Don't confuse it with component state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A downloaded receipt image on one staff server?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If it must survive instance replacement or be available to multiple instances, use suitable shared durable storage rather than assuming that local disk is permanent.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. “Where does it live?” now includes “who owns it, how long must it survive, and can it be reconstructed?”</span>
+        </p>
+<h2 id="a-data-ownership-review">A Data Ownership Review</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's review a proposed field: current delivery estimate. Is that a durable fact or a computed value?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It depends on what we mean. A live estimate may be derived from current conditions. The estimate shown when the order was accepted may need to be preserved if it represents a promise. Those are different facts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Like current menu price versus accepted price.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Ask whether changing the source should change the historical value. If not, preserve the relevant snapshot deliberately.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another field: customer display name on the staff ticket.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We need enough information to fulfill the order, with appropriate access and retention. We don't necessarily need to synchronize every later account-profile change into old tickets.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another: number of pending orders.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Could be derived by a query. If we maintain a separate counter for performance, now we need to keep it consistent and repair it if it drifts. Don't introduce that extra copy without a reason.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the recurring question: can we calculate it, or must we store it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, and if stored, is it authoritative or derived? A derived summary should have a way to be rebuilt from the facts it summarizes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about a payment provider's transaction reference?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Store the reference needed for reconciliation, with the payment state and necessary audit information. Don't confuse the reference with proof that the payment succeeded. The state must come from a verified provider result and our workflow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Every field gets a meaning and a source.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ideally. That may sound slower than adding columns casually, but it prevents a lot of later confusion. A database full of vaguely named values is a very durable misunderstanding.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Durable misunderstanding sounds like the title of an enterprise memoir.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Volume one is called status_two.</span>
+        </p>
+<h2 id="closing-the-cylinder-has-responsibilities">Closing — The Cylinder Has Responsibilities</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Databases provide persistence, querying, constraints, and coordination. We still design the data model and the business operations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State in a browser, cache, process, session, and database has different authority and lifetime. A current-looking screen is not proof of a current record.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: monoliths. One deployable application doesn't have to mean one undifferentiated blob.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Our order has survived a restart. It deserves a sensible home.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

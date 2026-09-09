@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: Who Asked for This? Why the Fuck Did We Need React? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: Who Asked for This? Why the Fuck Did We Need React?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/252b1fbb-7eae-48de-8cb6-8d1e46edf3af"
+      ></script>
+      <div class="redcirclePlayer-252b1fbb-7eae-48de-8cb6-8d1e46edf3af"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#before-react-websites-were-not-rocks"
+            >Before React, Websites Were Not Rocks</a
+          >
+        </li>
+        <li>
+          <a href="#old-person-yells-at-cloud-jquery-was-useful"
+            >Old Person Yells at Cloud: jQuery Was Useful</a
+          >
+        </li>
+        <li>
+          <a href="#when-a-page-becomes-an-application"
+            >When a Page Becomes an Application</a
+          >
+        </li>
+        <li>
+          <a href="#the-restaurant-whiteboards">The Restaurant Whiteboards</a>
+        </li>
+        <li><a href="#declarative-ui">Declarative UI</a></li>
+        <li>
+          <a href="#ui-as-a-function-of-state">UI as a Function of State</a>
+        </li>
+        <li>
+          <a href="#components-enter-the-chat">Components Enter the Chat</a>
+        </li>
+        <li>
+          <a href="#wait-that-s-just-javascript"
+            >Wait, That’s Just JavaScript</a
+          >
+        </li>
+        <li><a href="#is-react-a-framework">Is React a Framework?</a></li>
+        <li><a href="#where-react-came-from">Where React Came From</a></li>
+        <li>
+          <a href="#what-react-does-not-solve">What React Does Not Solve</a>
+        </li>
+        <li><a href="#the-cost-of-the-model">The Cost of the Model</a></li>
+        <li><a href="#the-actual-answer">The Actual Answer</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-1-who-asked-for-this-why-the-fuck-did-we-need-react">
+        Episode 1: Who Asked for This? Why the Fuck Did We Need React?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. React.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You sound thrilled.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have complicated feelings.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have used React.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have voluntarily built things in React.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let us not start making accusations.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I am establishing the record.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine. I have made components. I have passed props. I have used hooks.
+          I have installed seventeen thousand npm packages and stared into the
+          middle distance while npm informed me that three were spiritually
+          unwell.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So basically you are a React developer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Absolutely not.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I was making websites for a long time before React showed up. Those
+          websites worked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Some even had JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fuck off.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Animated GIFs?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Essential user experience.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We had server-rendered pages. PHP. Databases. JavaScript. AJAX.
+          jQuery. We could make interactive interfaces. Then everybody
+          apparently decided websites needed JavaScript fucking
+          everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And you want to know who asked for this.</span>
+      </p>
+      <h2 id="before-react-websites-were-not-rocks">
+        Before React, Websites Were Not Rocks
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I need this on the record: React did not invent interactive
+          websites.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nor reusable server templates.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nor updating part of a page without a full reload.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you. We may continue.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A traditional site often let the server assemble HTML for a request.
+          Click a link, submit a form, the server handles it, and the browser
+          receives another document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which is still an excellent architecture.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Often, yes. The browser already understands links, forms, history,
+          loading, and documents. You get a lot of behavior without building a
+          tiny operating system in the tab.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Then JavaScript added local interactions.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Menus. Validation. Tabs. Calculators. Later, XMLHttpRequest and then
+          AJAX-style techniques let pages request data and update without
+          replacing the whole document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which felt like sorcery.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Useful sorcery.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the DOM APIs and browser differences could be obnoxious.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Enter jQuery.</span>
+      </p>
+      <h2 id="old-person-yells-at-cloud-jquery-was-useful">
+        Old Person Yells at Cloud: jQuery Was Useful
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Developers sometimes discuss jQuery like we all hallucinated it
+          during a gas leak.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It solved real problems.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Browser inconsistencies were brutal. Selecting elements, handling
+          events, and making requests were less pleasant. jQuery said, “What if
+          this sucked less?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And the web said yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Very loudly. The dollar sign became forty percent of the
+          internet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Citation needed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Emotionally true.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But jQuery mostly made imperative DOM work easier.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Meaning I tell the browser the steps. Find this element. Change that
+          class. Replace this text. Add a row.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. React proposed a different model, but we need enough pain
+          before the proposed cure makes sense.</span
+        >
+      </p>
+      <h2 id="when-a-page-becomes-an-application">
+        When a Page Becomes an Application
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Imagine a product page with a cart.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Add-to-cart button. A little cart count in the header.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then a mini-cart drawer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A subtotal. Inventory status. A free-shipping progress bar.
+          Recommendations based on cart contents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You are making the page needy.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A coupon changes the total. Signing in changes prices. Another
+          browser tab changes the cart. The request can fail. An item sells
+          out.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fuck this store.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is the point. None of those features is impossible with ordinary
+          JavaScript. The problem is coordination.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The data changes, and I must remember every piece of interface that
+          reflects it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>In every path that can cause the change.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Add an item: update six things. Remove an item: update them
+          differently. Request fails: undo some changes, show an error, restore
+          the button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >As the number of states and dependent UI pieces grows, those
+          instructions become difficult to reason about.</span
+        >
+      </p>
+      <h2 id="the-restaurant-whiteboards">The Restaurant Whiteboards</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I need a metaphor.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Naturally.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The kitchen has one real list of current orders. But five whiteboards
+          around the restaurant display information derived from it: cooks,
+          pickup counter, manager, customer status, delivery drivers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Every time an order changes, Steve runs around updating boards with a
+          marker.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If Steve misses one, the boards disagree. Kitchen says order 42 is
+          ready. Customer screen says cooking. Delivery driver says waiting.
+          Manager board says fourteen tacos.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There are no tacos.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There were never tacos.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is UI synchronization. The application data says one thing, but
+          part of the interface reflects an older reality.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React fires Steve?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React says: stop treating every board update as a separate
+          handwritten procedure. Describe what each board should show for the
+          current order data.</span
+        >
+      </p>
+      <h2 id="declarative-ui">Declarative UI</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is the declarative idea. Instead of listing every DOM operation
+          required to move from state A to state B, describe the UI for the
+          current state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Current state goes in. UI description comes out.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Simplified, yes. When state changes, React renders again and works
+          out what needs to be committed to the browser DOM.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Render again” sounds like rebuilding the entire page every time I
+          click.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It does not mean replacing the whole document. React builds a
+          representation of the desired UI, compares it with the prior result,
+          and commits necessary changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Reconciliation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. People often invoke the virtual DOM as if it were enchanted
+          performance dust. The more important mental model is consistency:
+          describe UI from state, and let React coordinate updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Performance is not automatically better because a virtual thing
+          exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Direct DOM code can be extremely fast. Framework overhead is
+          real. React’s value is not “JavaScript could not change a span quickly
+          enough.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is “humans get bad at keeping twelve spans, three buttons, and a
+          modal synchronized across every transition.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay, that is actually pretty cool.</span>
+      </p>
+      <h2 id="ui-as-a-function-of-state">UI as a Function of State</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So my first impression—“we put HTML in JavaScript because God
+          abandoned us”—missed the design goal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We will litigate JSX next episode.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>With exhibits.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The core appeal is that the interface becomes a predictable result of
+          data. If the cart contains four items, describe the four-item
+          interface. If loading is true, describe loading. If an error exists,
+          describe the error.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fewer scattered instructions about transitions.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>More declarations about possible results.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not zero complexity.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely not. React moves and structures complexity. It does not
+          repeal it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Important sentence.</span>
+      </p>
+      <h2 id="components-enter-the-chat">Components Enter the Chat</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React also organizes UI into components: reusable pieces that can
+          receive data and return UI descriptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Header. Product card. Cart.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Reasonable candidates.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Button?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Maybe.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Every div?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>WrapperContainerInnerContent.jsx. Seven lines. Used once.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I have taken psychic damage.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Components help us name meaningful interface pieces, reuse them, and
+          keep related rendering logic together.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They also create boundaries. Data flows into parts of the tree,
+          events flow out, and each component describes its piece.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That sounds useful when the page has become an application.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="wait-that-s-just-javascript">Wait, That’s Just JavaScript</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React tutorials throw five syntaxes into a trench coat and call the
+          entire person React.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So we are labeling everything.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Arrow functions?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Destructuring?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Import and export?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JavaScript modules.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Array map?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JSX?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A syntax extension commonly used with React. It looks markup-like,
+          but it is not HTML and browsers do not execute JSX directly. Tooling
+          transforms it into JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Components?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A React concept, commonly represented by JavaScript functions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>useState and useEffect?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>React APIs called Hooks.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you. If somebody learned JavaScript before ES6, they can
+          otherwise mistake modern JavaScript for React magic.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And then learning React feels like learning three languages at
+          once.</span
+        >
+      </p>
+      <h2 id="is-react-a-framework">Is React a Framework?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>All right. React framework.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Library.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Here we fucking go.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React describes itself as a library for web and native user
+          interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yet everybody groups it with frameworks.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Colloquially, yes. React focuses on the UI layer. Core React does not
+          provide every piece of a full web application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Routing?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Not built into core React.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A complete data layer?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Backend?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So React gives me a UI model and the ecosystem says,
+          “Congratulations. Select seventeen additional opinions.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Then people built frameworks around React.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next.js, Remix—now React Router’s framework features—and others. They
+          add routing, server rendering, data loading, build behavior, and
+          deployment conventions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A framework around the framework-ish library.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Front-end naming remains calm and helpful.</span>
+      </p>
+      <h2 id="where-react-came-from">Where React Came From</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Facebook.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Developed internally there, open-sourced in 2013.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I was having a nice time.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Think about the interface problem: notifications, messages, comments,
+          likes, feeds, chat, many regions depending on changing data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not a five-page landscaping site.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. React’s origin helps explain both its strengths and a common
+          mistake.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Technology useful for Facebook does not automatically belong on
+          Linda’s Landscaping.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Put it on a shirt.</span>
+      </p>
+      <h2 id="what-react-does-not-solve">What React Does Not Solve</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let us puncture the hype before it reproduces.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>React does not make a bad data model good.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not automatically make an interface accessible.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A div with a click handler is still not a button. JSX does not excuse
+          broken semantics, missing labels, keyboard traps, or chaotic
+          focus.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not make security disappear.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client-side code remains visible and untrusted. React escaping
+          rendered text helps against some injection mistakes, but unsafe HTML
+          APIs, bad authentication assumptions, vulnerable dependencies, and
+          insecure servers remain problems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not guarantee speed.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Poor component boundaries, unnecessary effects, oversized bundles,
+          and too much client-side work can produce a slow React
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And it does not mean the whole site must become a single-page
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React can enhance parts of a page, render on a server through a
+          framework, or power a fully client-side application. Architecture is a
+          choice.</span
+        >
+      </p>
+      <h2 id="the-cost-of-the-model">The Cost of the Model</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What do we pay?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A dependency and its update lifecycle. A component and state model to
+          learn. Usually build tooling. More JavaScript sent to the browser if
+          you are not careful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Debugging through an abstraction.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. And an ecosystem with many choices and changing
+          recommendations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which means the question is not “Is React good?”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is “Does React’s model help with the complexity this product
+          actually has?”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the main problem is coordinating a stateful interface, React can
+          earn its keep.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the problem is displaying six pages of mostly stable information,
+          the framework may create more machinery than value.</span
+        >
+      </p>
+      <h2 id="the-actual-answer">The Actual Answer</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why did we need React?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >“Need” is strong. The web could build applications without it. React
+          offered a scalable mental model for a growing problem: keeping
+          complex, stateful interfaces consistent.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It made UI declarative.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It encouraged meaningful components.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It connected rendered output to current state.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And it let developers reason about what the interface should be,
+          instead of manually coordinating every DOM transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It did not replace HTML, CSS, JavaScript, the browser, the server,
+          judgment, or Linda’s landscaping site.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Linda remains framework-agnostic.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time: components, props, and the alleged HTML inside
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JSX court is now in session.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have documents.</span>
+      </p>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

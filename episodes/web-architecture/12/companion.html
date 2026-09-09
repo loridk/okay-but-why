@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 12: Scaling — More Pizza, Not Automatically More Services — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 12: Scaling — More Pizza, Not Automatically More Services</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-12.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#scale-what-exactly">Scale What, Exactly?</a></li>
+<li><a href="#measure-the-bottleneck">Measure the Bottleneck</a></li>
+<li><a href="#first-do-less-unnecessary-work">First, Do Less Unnecessary Work</a></li>
+<li><a href="#vertical-scaling">Vertical Scaling</a></li>
+<li><a href="#horizontal-scaling">Horizontal Scaling</a></li>
+<li><a href="#state-is-what-makes-copies-interesting">State Is What Makes Copies Interesting</a></li>
+<li><a href="#the-database-doesn-t-multiply-by-accident">The Database Doesn't Multiply by Accident</a></li>
+<li><a href="#queues-absorb-bursts-not-infinity">Queues Absorb Bursts, Not Infinity</a></li>
+<li><a href="#autoscaling-isn-t-instant">Autoscaling Isn't Instant</a></li>
+<li><a href="#capacity-and-availability-are-different">Capacity and Availability Are Different</a></li>
+<li><a href="#load-testing-with-a-purpose">Load Testing With a Purpose</a></li>
+<li><a href="#degrade-deliberately">Degrade Deliberately</a></li>
+<li><a href="#a-small-capacity-exercise">A Small Capacity Exercise</a></li>
+<li><a href="#concurrency-isn-t-the-same-as-speed">Concurrency Isn't the Same as Speed</a></li>
+<li><a href="#a-slow-dependency-uses-local-resources-too">A Slow Dependency Uses Local Resources Too</a></li>
+<li><a href="#the-cost-model-belongs-on-the-whiteboard">The Cost Model Belongs on the Whiteboard</a></li>
+<li><a href="#the-deployment-is-part-of-the-workload">The Deployment Is Part of the Workload</a></li>
+<li><a href="#decide-what-to-shed-first">Decide What to Shed First</a></li>
+<li><a href="#a-scaling-decision-we-can-revisit">A Scaling Decision We Can Revisit</a></li>
+<li><a href="#the-decision-for-nervous-robot">The Decision for Nervous Robot</a></li>
+<li><a href="#the-performance-report-we-would-believe">The Performance Report We Would Believe</a></li>
+<li><a href="#the-human-limit">The Human Limit</a></li>
+<li><a href="#closing-more-of-the-right-thing">Closing — More of the Right Thing</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nervous Robot Pizza Delivery went viral.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How viral?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The website is slow, the kitchen is full, and someone has requested a pizza shaped like a database.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A cylinder would be a calzone.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Can we scale?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First tell me which part is struggling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. The least glamorous and most useful scaling question.</span>
+        </p>
+<h2 id="scale-what-exactly">Scale What, Exactly?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>More visitors, more orders, more stored data, more staff, more regions—those aren't the same workload.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. A million people viewing a cached menu differs from a million people simultaneously submitting orders. Reads, writes, computation, and external calls stress different resources.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the kitchen's physical capacity is separate from the website's throughput. We can accept orders faster than humans can cook them, which is not a success story.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So define the workload and the promise. How many requests? Which operations? What response time matters? How much failure is acceptable? What does the business actually need?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can invent numbers for an exercise, but don't present them as benchmarks. Real capacity depends on the code, hardware, database, network, and workload mix.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good. There isn't a universal “Node handles this many pizzas” number.</span>
+        </p>
+<h2 id="measure-the-bottleneck">Measure the Bottleneck</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The site is slow. What do we inspect?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Request latency, error rate, CPU, memory, database timings, connection usage, external-service waits, and queue delays. Then follow the slow operation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Averages can hide bad experiences. A high percentile tells us about slower requests in the distribution, such as the threshold below which ninety-five percent fall.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That doesn't mean the ninety-fifth customer is cursed. It's a description of a set of measurements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And percentiles need context: which route, time window, and workload? Mixing logo requests with checkout can make the whole site look healthy while purchases fail.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Measure the thing the customer cares about. Time to accepted order, not just time until some proxy returns bytes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also trace dependencies. If the app spends most of its time waiting on a payment provider, adding application CPU may not help.</span>
+        </p>
+<h2 id="first-do-less-unnecessary-work">First, Do Less Unnecessary Work</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The staff list makes one query for orders and one query per order for items. Fix that before ordering more servers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The N-plus-one example from the database episode. A better data-loading strategy can remove substantial repeated work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Appropriate indexes, bounded lists, smaller responses, avoiding serial independent calls, and caching eligible public content can all help.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But verify improvements with representative measurements. An optimization can move the bottleneck or create correctness risks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And don't make the page inaccessible to shave a few bytes. The goal is people completing tasks reliably, not a synthetic score with no customers attached.</span>
+        </p>
+<h2 id="vertical-scaling">Vertical Scaling</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Vertical scaling gives a component more resources: more CPU, memory, or other capacity on a larger machine or service tier.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Often straightforward. If memory pressure is the problem, more memory may be the simplest practical fix while we investigate or improve the workload.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It has limits, costs, and sometimes restart or migration implications. One large instance can still be one failure point.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But we shouldn't dismiss it because horizontal scaling sounds more impressive. The least complex solution that meets the requirement may be a larger database instance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Especially when the alternative is premature partitioning of data and every query becoming an expedition.</span>
+        </p>
+<h2 id="horizontal-scaling">Horizontal Scaling</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Horizontal scaling adds instances and distributes work across them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Several copies of the same application can handle requests behind a load balancer. That's compatible with a monolith.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The load balancer routes requests to available instances according to its policy. Health checks help determine whether an instance should receive traffic.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A process answering a basic health check isn't necessarily able to accept orders. Readiness checks need to reflect whether it can serve the relevant work, without becoming dangerously expensive themselves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And deployment can stop sending new traffic to an instance while existing requests finish, where the platform supports graceful draining.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The diagram grows from one application box to several equivalent copies. It doesn't create separate owners for menu and orders.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>Browsers -&gt; Load balancer -&gt; App instance A -&gt; Shared database
+                         -&gt; App instance B -&gt; Shared database</code></pre>
+        </figure>
+<h2 id="state-is-what-makes-copies-interesting">State Is What Makes Copies Interesting</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if the cart or session lives only in instance A's memory?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A request sent to B may not find it. We need a deliberate shared-state or credential design, or accept and manage that limitation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if uploads are on A's local disk?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>B may not see them, and replacement of A may lose them. Durable shared storage can be appropriate for files that must survive and be available across instances.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if every instance starts the same scheduled job?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We may send seven nightly receipts or run the same reconciliation seven times. Job coordination needs a design too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Stateless application instances means important persistent state isn't tied to one replaceable process. It doesn't mean the system has no state anywhere.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The state has a home we must still operate. Usually more than one: database, session store, durable work queue, object storage where needed.</span>
+        </p>
+<h2 id="the-database-doesn-t-multiply-by-accident">The Database Doesn't Multiply by Accident</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Add ten app instances, each with a large connection pool. What happens?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can exhaust database connections or overload the database. More callers can make the bottleneck worse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So pool sizes and overall limits need coordination. Autoscaling the application isn't permission to create unlimited database demand.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Read replicas can help some read workloads, with the lag considerations from Episode 8. They don't automatically distribute writes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Partitioning or sharding divides data across boundaries. That can support certain scale requirements but makes cross-partition queries and transactions more complex.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before sharding the pizza shop, ask whether query improvements, a suitable index, better connection management, or vertical capacity solve the actual problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Advanced techniques aren't bad. They are expensive enough to deserve evidence.</span>
+        </p>
+<h2 id="queues-absorb-bursts-not-infinity">Queues Absorb Bursts, Not Infinity</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can move receipt sending out of the immediate request and into durable background work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Workers process it at a manageable rate. A queue can smooth bursts when work can wait.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But if work arrives faster than workers can finish indefinitely, the queue grows indefinitely. We haven't solved capacity; we've relocated the waiting room.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Monitor queue age as well as length. Ten slow jobs can be worse than a hundred tiny ones. Define acceptable delay and what happens when limits are reached.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Backpressure means downstream capacity affects how much work we accept or send. We may slow producers, reject nonessential work, or limit concurrency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For orders, capacity is also a product policy. If the kitchen is full, stop promising immediate delivery. Offer a later slot or an honest unavailable state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The queue cannot bake bread. We have tested this conceptually and declined the live experiment.</span>
+        </p>
+<h2 id="autoscaling-isn-t-instant">Autoscaling Isn't Instant</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Autoscaling changes capacity based on signals and policy. Useful, but new instances may take time to become ready.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The signal may lag the demand. And scaling down too quickly can interrupt work if shutdown isn't handled well.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Choose metrics that reflect the workload. CPU isn't always the right signal for an application waiting on database or network resources.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Set limits and consider cost. A broken loop can generate demand too. We don't want the system to interpret a bug as permission to spend without bounds.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also test the full path. If app instances scale but the payment provider rate limit stays fixed, checkout still hits a ceiling.</span>
+        </p>
+<h2 id="capacity-and-availability-are-different">Capacity and Availability Are Different</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We added a second instance. Are we highly available now?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe more resilient to one instance failing, but not necessarily to a shared database failure, network outage, or a bad deployment affecting both.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Redundancy helps only against failures the copies don't share. Two servers on one failed dependency are two witnesses, not a recovery plan.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Multi-zone or multi-region designs can address some failure modes but introduce cost and data-coordination issues. Choose based on actual recovery requirements.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Geographic distribution also changes latency and data handling. It's not a checkbox labeled globally good.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We don't need worldwide active-active writes for a neighborhood pizza shop. We do need a tested way to restore service and know when orders aren't being accepted.</span>
+        </p>
+<h2 id="load-testing-with-a-purpose">Load Testing With a Purpose</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How would we test scaling without making up a reassuring number?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use a representative mix of operations in a safe environment. Include reads, submissions, realistic data size, and think time where relevant. Watch latency, errors, resource use, and correctness.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Don't send test purchases to real customers or live payment systems accidentally. Use the appropriate test integrations and data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Increase load to understand the knee where performance degrades. Then inspect the limiting resource. A successful test should tell us something actionable, not merely print a large requests-per-second figure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Include failure and recovery where practical. What happens when one instance stops? Does the system recover after the burst? Does queued work drain?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And verify no duplicate orders or corrupted state. A fast system that accepts every order three times is not performing well.</span>
+        </p>
+<h2 id="degrade-deliberately">Degrade Deliberately</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Under pressure, what can we turn off?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nonessential recommendations, expensive reports, decorative live updates. Keep the critical ordering and staff workflows prioritized where possible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But don't hide failure behind fake success. If order acceptance is unavailable, say so and provide a useful alternative if the business supports one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Accessible error communication matters more under failure, not less. A tiny red dot without text is not an outage policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Rate limiting can protect capacity and fairness. The response should make clear when retrying later is appropriate, without encouraging a retry storm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And distinguish abusive traffic from a legitimate customer who clicked twice because we never gave feedback.</span>
+        </p>
+<h2 id="a-small-capacity-exercise">A Small Capacity Exercise</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's use invented numbers strictly as a thought experiment. Suppose a worker takes about one second per job and processes one at a time. Roughly sixty jobs arrive each minute.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then we're already near its simple theoretical throughput, before variability and overhead. If some jobs take longer, waiting can grow. Running a system at its absolute limit leaves little room for bursts or failures.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If a hundred jobs arrive each minute, adding a queue doesn't make the worker process a hundred.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. The backlog grows because arrival exceeds completion. We need more effective processing capacity, less incoming work, or a different promise about delay and acceptance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could two workers solve it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe, if jobs can run independently and the downstream service permits that concurrency. If both wait on one rate-limited provider, the bottleneck may remain.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we don't infer real capacity from the worker count alone.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. The arithmetic helps identify the question. Measurement in the actual system answers it. These numbers aren't benchmarks or restaurant forecasts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And variability matters because averages can hide bursts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. A restaurant doesn't receive one perfectly spaced order every few seconds because our spreadsheet would prefer that. People order when they get hungry, often together.</span>
+        </p>
+<h2 id="concurrency-isn-t-the-same-as-speed">Concurrency Isn't the Same as Speed</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In Node, asynchronous I/O can let the process handle other work while waiting. Does that mean it scales CPU-heavy work automatically?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. JavaScript's async syntax doesn't make an expensive calculation free or automatically move it to another core. CPU-heavy work can still block the event loop if performed there.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So async and await are JavaScript syntax for promise-based flow, not a universal parallel-computation switch.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. If route optimization is computationally expensive, we may need worker threads, separate processes, or a dedicated execution environment, depending on the implementation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if the application mostly waits on database calls, adding CPU may have limited benefit.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Identify whether the workload is constrained by computation, memory, I/O, locks, external limits, or something else. “Slow” isn't a resource category.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This connects to our Node series without requiring a runtime internals lecture.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The portable principle is to match the remedy to the bottleneck, not to the programming language's reputation.</span>
+        </p>
+<h2 id="a-slow-dependency-uses-local-resources-too">A Slow Dependency Uses Local Resources Too</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The payment provider gets slow. Our app CPU is low, but requests pile up. Why does that still hurt?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Pending requests consume memory, connections, and other resources. If we allow unlimited concurrent waits, we can exhaust capacity even without heavy computation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Timeouts and concurrency limits bound that exposure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, with a sensible outcome policy. A timeout doesn't undo a payment attempt, so we must preserve enough state to reconcile it. Resource protection and business correctness need to cooperate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if every layer retries? Browser retries, web app retries, service client retries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The effective load can multiply. Coordinate retries at an appropriate layer, bound them, and avoid repeating consequential operations without idempotency support.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Scaling the callers could actually worsen the provider overload.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. More capacity upstream isn't always kindness downstream.</span>
+        </p>
+<h2 id="the-cost-model-belongs-on-the-whiteboard">The Cost Model Belongs on the Whiteboard</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We rarely draw money on architecture diagrams.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yet the bill is one of the most reliable outputs. Compute, storage, data transfer, managed services, and staff time all contribute.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A managed service may cost more per unit but reduce operational work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or a complicated self-managed system may look cheap until we count maintenance and incidents. We need the total cost under the actual team's constraints.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We shouldn't recommend a provider based on imaginary current prices in this episode.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. The principle is to measure expected usage and verify current pricing and limits when making a real purchase decision. The show is teaching the questions, not issuing a hosting quote.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also put bounds on automatic growth.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Budgets, alerts, and capacity limits can prevent a bug from becoming an enormous surprise. But a cost cap that shuts down ordering also has a business consequence. Agree on the policy.</span>
+        </p>
+<h2 id="the-deployment-is-part-of-the-workload">The Deployment Is Part of the Workload</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A new release starts all instances at once. They all open connections and warm caches. Could deployment cause a capacity spike?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely. Startup behavior can create bursts against shared dependencies. A staged rollout and bounded initialization can help, depending on the platform.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And replacing every instance simultaneously can remove capacity briefly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Graceful rollout policies, health checks, and enough temporary headroom can reduce disruption. But verify the platform's actual behavior rather than assuming a button labeled rolling guarantees no interruption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Database migrations can also compete with normal traffic.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Some schema changes lock or rewrite data in ways that matter. Review them against the database and data size. Deployment is an operational event, not merely a file copy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can keep the architecture modest and still take releases seriously.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We should. Simplicity makes those events easier to understand; it doesn't make them irrelevant.</span>
+        </p>
+<h2 id="decide-what-to-shed-first">Decide What to Shed First</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The system is overloaded. What work can we refuse or postpone?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Start with business priorities. Public menu reads can be cached. Reports can wait. Recommendations can disappear gracefully. Order acceptance and staff fulfillment deserve protected capacity if possible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about polling the order status every second?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe the interval can be longer or adapt to state. A completed order doesn't need constant refresh. Better update design can reduce load without harming the task.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could server-sent events or WebSockets help?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They can support ongoing updates, but they introduce connection and operational considerations. Choose based on latency needs and scale, not because polling sounds old. We can explore the mechanisms separately later.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So even communication style is a workload decision.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A kitchen list that can be a few seconds behind has different needs from collaborative cursor movement in an editor.</span>
+        </p>
+<h2 id="a-scaling-decision-we-can-revisit">A Scaling Decision We Can Revisit</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose we add a second application instance and latency improves. Are we done?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Verify correctness and the intended performance under representative load. Then document the limit and watch the relevant signals. Don't keep adding architecture once the requirement is met.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's surprisingly hard. Once you start optimizing, every possible improvement looks urgent.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, but opportunity cost is real. Maybe the next useful work is a clearer checkout error, not another ten percent of throughput we don't need.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can retain the measurements and revisit when demand changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A capacity plan is a living estimate based on evidence. It doesn't need to become a monument to hypothetical traffic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if the next measurement shows the database is limiting us, we investigate that specific path.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. Scaling is iterative diagnosis, not a one-way march toward more distributed everything.</span>
+        </p>
+<h2 id="the-decision-for-nervous-robot">The Decision for Nervous Robot</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We measure first. Improve obvious repeated work. Cache eligible content. Keep the application modular. Add resources or replicas when the observed bottleneck justifies them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Put persistent state somewhere suitable for multiple instances before relying on them. Bound background work. Respect downstream limits. Test recovery.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No microservice requirement appears merely because traffic increased. Service separation might help a specific workload later, but it isn't the definition of scaling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And once the bottleneck is the oven, update the delivery promise. Architecture includes saying no before customers pay for imaginary capacity.</span>
+        </p>
+<h2 id="the-performance-report-we-would-believe">The Performance Report We Would Believe</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The team says, “We doubled capacity.” What evidence would make that statement meaningful?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Define the workload, environment, success criteria, and before-and-after measurements. Did accepted order throughput improve while latency and error rates stayed within the requirement? Was correctness preserved?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If they only doubled the number of instances, that's a resource change, not proof of doubled capacity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Shared dependencies, contention, and uneven traffic can prevent linear improvement. We should report what we measured rather than infer a flattering result from the architecture diagram.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And distinguish a controlled test from real production observation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Both are useful, but they have different limits. A test may omit real data patterns or third-party behavior. Production measurements may include changing workloads. State the context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if the requirement was already met before the change?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then ask whether the cost was justified by headroom, resilience, or another explicit need. More capacity can be useful, but we shouldn't spend effort only to make a graph look more heroic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The restaurant wants reliable dinner, not a benchmark trophy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Precisely. A clear capacity margin and a recovery plan are worth more than an impressive number nobody can reproduce.</span>
+        </p>
+<h2 id="the-human-limit">The Human Limit</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We improved the software, but staff still can't process the queue fast enough.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then examine the actual work. Maybe the interface hides urgent orders. Maybe assignment takes too many steps. Maybe the kitchen is simply at capacity. Those require different remedies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A faster page can still present a terrible workflow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Observe people using it. An automatic refresh that reorders rows while someone clicks can reduce throughput and create mistakes, even if every request is fast.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So performance includes task completion and error recovery, not merely network timings.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The technical metrics help diagnose part of the system. They don't replace understanding the people and physical process the software supports.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if capacity is genuinely exhausted, stop accepting impossible promises.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Offer a later slot, limit orders, or explain unavailability according to the business policy. Honest backpressure at the product level is better than a very scalable apology generator.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I suspect the apology generator already has venture funding.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can wait in the queue.</span>
+        </p>
+<h2 id="closing-more-of-the-right-thing">Closing — More of the Right Thing</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Scaling is matching resources and design to increased work. Vertical adds capacity to a component; horizontal adds cooperating instances.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Caching, query design, queues, state management, and limits determine whether that extra capacity helps.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: SSR, CSR, SSG, and hydration. We'll finally organize the rendering alphabet soup into questions you can answer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the database-shaped pizza?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sold out.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. The inventory constraint works.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

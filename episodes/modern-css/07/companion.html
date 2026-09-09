@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 7: The Cascade Strikes Back — Specificity, Layers, Scope and
+      Nesting — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 7: The Cascade Strikes Back — Specificity, Layers, Scope and
+        Nesting
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/1209ab56-a0d5-4383-b2b7-eb8aad871b86"
+      ></script>
+      <div class="redcirclePlayer-1209ab56-a0d5-4383-b2b7-eb8aad871b86"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#what-the-cascade-actually-decides"
+            >What the Cascade Actually Decides</a
+          >
+        </li>
+        <li>
+          <a href="#specificity-in-plain-language"
+            >Specificity in Plain Language</a
+          >
+        </li>
+        <li>
+          <a href="#why-important-feels-necessary"
+            >Why !important Feels Necessary</a
+          >
+        </li>
+        <li>
+          <a href="#cascade-layers-name-the-precedence"
+            >Cascade Layers Name the Precedence</a
+          >
+        </li>
+        <li>
+          <a href="#third-party-css-gets-a-room">Third-Party CSS Gets a Room</a>
+        </li>
+        <li><a href="#native-nesting">Native Nesting</a></li>
+        <li><a href="#scope-sets-boundaries">Scope Sets Boundaries</a></li>
+        <li>
+          <a href="#layers-scope-and-nesting-do-different-jobs"
+            >Layers, Scope, and Nesting Do Different Jobs</a
+          >
+        </li>
+        <li>
+          <a href="#please-don-t-build-a-new-maze"
+            >Please Don't Build a New Maze</a
+          >
+        </li>
+        <li><a href="#a-maintainable-shape">A Maintainable Shape</a></li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-7-the-cascade-strikes-back-specificity-layers-scope-and-nesting"
+      >
+        Episode 7: The Cascade Strikes Back — Specificity, Layers, Scope and
+        Nesting
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The cascade has retained counsel.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Against whom?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Everyone who called it broken after writing
+          <code>.sidebar main div.card#featured h2.title</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The prosecution would like to withdraw.</span>
+      </p>
+      <h2 id="what-the-cascade-actually-decides">
+        What the Cascade Actually Decides
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Multiple declarations can target the same property on the same
+          element.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The cascade decides which declaration wins.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It considers relevance, origin and importance, layers, specificity,
+          scoping proximity where applicable, and source order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Specificity is only one stage, not the whole system.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yet developers often keep adding selectors because they think the
+          biggest number always wins.</span
+        >
+      </p>
+      <h2 id="specificity-in-plain-language">Specificity in Plain Language</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button { color: blue; }
+.toolbar .button { color: purple; }
+#checkout .button { color: red; }</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >IDs outweigh classes; classes outweigh type selectors within the
+          specificity comparison.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>If specificity ties, later source order wins.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inline styles and important declarations involve other cascade
+          stages. Do not flatten the whole algorithm into a points game.</span
+        >
+      </p>
+      <h2 id="why-important-feels-necessary">Why !important Feels Necessary</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A project accumulates third-party CSS, old utilities, component
+          rules, overrides, and emergency fixes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Someone cannot override a selector, so they add
+          <code>!important</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then the next override needs another <code>!important</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We have started an arms race in a cardigan.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Important declarations have legitimate uses, especially user-origin
+          accessibility styles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But an author stylesheet full of them usually signals unmanaged
+          precedence.</span
+        >
+      </p>
+      <h2 id="cascade-layers-name-the-precedence">
+        Cascade Layers Name the Precedence
+      </h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>@layer reset, base, components, utilities;
+
+@layer components {
+  .button { background: navy; }
+}
+
+@layer utilities {
+  .bg-red { background: red; }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Layer order is decided before specificity within those layers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a low-specificity utility in a later layer can beat a more
+          specific component rule in an earlier layer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We make category precedence explicit instead of
+          manufacturing selector weight.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unlayered normal author styles outrank layered normal author styles,
+          which matters when adopting layers gradually.</span
+        >
+      </p>
+      <h2 id="third-party-css-gets-a-room">Third-Party CSS Gets a Room</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>@import url(&quot;vendor.css&quot;) layer(vendor);
+
+@layer vendor, app;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Put vendor styles in an earlier layer, then override them with
+          ordinary low-specificity app rules in a later layer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No archaeological selector copying.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That alone may prevent three meetings.</span>
+      </p>
+      <h2 id="native-nesting">Native Nesting</h2>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card {
+  padding: 1rem;
+
+  &amp; h2 {
+    margin-block-start: 0;
+  }
+
+  &amp;:hover {
+    border-color: currentColor;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native nesting keeps related rules together without requiring
+          Sass.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The ampersand represents the nesting selector. Syntax and edge cases
+          are not identical to every Sass pattern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And nesting does not automatically reduce specificity.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can hide how long a final selector becomes. If you cannot
+          understand the compiled relationship, nesting is not organization
+          anymore.</span
+        >
+      </p>
+      <h2 id="scope-sets-boundaries">Scope Sets Boundaries</h2>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>@scope (.article) to (.comments) {
+  a {
+    text-decoration-thickness: 0.12em;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >These styles apply inside <code>.article</code> but stop before
+          descendants inside <code>.comments</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A scope root and optional lower boundary describe where rules are
+          allowed to match.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Scoping proximity can also break otherwise tied declarations: the
+          closer scope can win.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is not Shadow DOM. The markup is not encapsulated and the
+          cascade still exists.</span
+        >
+      </p>
+      <h2 id="layers-scope-and-nesting-do-different-jobs">
+        Layers, Scope, and Nesting Do Different Jobs
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Layers organize precedence between categories.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Scope limits where a group of rules applies and can influence tied
+          rules by proximity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nesting organizes authoring around selector relationships.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They can work together, but none is a universal replacement for the
+          others.</span
+        >
+      </p>
+      <h2 id="please-don-t-build-a-new-maze">Please Don't Build a New Maze</h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not create thirty layers because names feel architectural.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Do not nest six levels deep because the syntax permits it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not scope every component without deciding what should inherit and
+          what should be overrideable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And do not use low specificity as a religion. Use it to keep intended
+          overrides understandable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The goal is predictable change, not winning CSS golf.</span>
+      </p>
+      <h2 id="a-maintainable-shape">A Maintainable Shape</h2>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>@layer reset, base, components, utilities;
+
+@layer components {
+  @scope (.profile-card) {
+    :scope {
+      padding: var(--space-card);
+    }
+
+    &amp; h2 {
+      font-size: var(--step-2);
+    }
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The layer says how this category competes. The scope says where it
+          applies. Nesting keeps the local relationships together.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And custom properties allow controlled variation without rewriting
+          selectors.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cascade resolves competing declarations through several ordered
+          criteria.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Specificity matters, but it is not the entire cascade.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Layers let us declare precedence between groups of styles.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Scope creates matching boundaries and introduces scoping
+          proximity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nesting is an authoring feature, not automatic encapsulation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >These tools help when their architecture is small enough for humans
+          to understand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The cascade was not broken. Our treaty was undocumented.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next: Sass in 2026.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The tool that gave us half these conveniences before browsers
+          could.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are not holding a retirement party until we check what it still
+          does.</span
+        >
+      </p>
+    </main>
+    <footer>6 code cards · 0 terminal cards</footer>
+  </body>
+</html>

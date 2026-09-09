@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 11: Logical Properties — CSS That Stops Assuming Everyone Reads
+      Like You — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 11: Logical Properties — CSS That Stops Assuming Everyone Reads
+        Like You
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/8fe4c8b7-8ef1-45cb-87bc-31f80a554dcc"
+      ></script>
+      <div class="redcirclePlayer-8fe4c8b7-8ef1-45cb-87bc-31f80a554dcc"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#physical-versus-logical">Physical Versus Logical</a></li>
+        <li><a href="#inline-and-block">Inline and Block</a></li>
+        <li><a href="#the-direct-mappings">The Direct Mappings</a></li>
+        <li><a href="#sizing-is-logical-too">Sizing Is Logical Too</a></li>
+        <li>
+          <a href="#positioning-without-left">Positioning Without Left</a>
+        </li>
+        <li>
+          <a href="#direction-is-not-alignment">Direction Is Not Alignment</a>
+        </li>
+        <li>
+          <a href="#icons-have-semantics-too">Icons Have Semantics Too</a>
+        </li>
+        <li>
+          <a href="#shorthands-reduce-assumptions"
+            >Shorthands Reduce Assumptions</a
+          >
+        </li>
+        <li><a href="#migration-without-chaos">Migration Without Chaos</a></li>
+        <li>
+          <a href="#internationalization-is-more-than-css"
+            >Internationalization Is More Than CSS</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-11-logical-properties-css-that-stops-assuming-everyone-reads-like-you"
+      >
+        Episode 11: Logical Properties — CSS That Stops Assuming Everyone Reads
+        Like You
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>margin-left</code> is lying to me.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It is accurately describing a physical side.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is the lie. I usually meant “space before this thing in the
+          reading direction.”</span
+        >
+      </p>
+      <h2 id="physical-versus-logical">Physical Versus Logical</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Physical properties use top, right, bottom, and left.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Logical properties use block and inline axes, with start and end
+          positions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Those axes adapt to writing mode and text direction.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser maps intent to physical sides for the document
+          context.</span
+        >
+      </p>
+      <h2 id="inline-and-block">Inline and Block</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In English's usual horizontal writing mode, the inline axis runs
+          along a line of text from left to right.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The block axis runs from one line or block to the next, usually top
+          to bottom.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>In a right-to-left language, inline start is on the right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>In vertical writing modes, the axes map differently again.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is not merely “flip left and right for Arabic.” It is a general
+          flow-relative model.</span
+        >
+      </p>
+      <h2 id="the-direct-mappings">The Direct Mappings</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card {
+  margin-inline: auto;
+  padding-block: 1rem;
+  padding-inline: 1.5rem;
+  border-inline-start: 0.25rem solid currentColor;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>margin-inline</code> covers both inline sides.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>padding-block</code> covers block start and block end.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>border-inline-start</code> follows the start edge of the inline
+          flow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We express why the edge matters, not where it happened to be in one
+          language.</span
+        >
+      </p>
+      <h2 id="sizing-is-logical-too">Sizing Is Logical Too</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>.prose {
+  max-inline-size: 68ch;
+  min-block-size: 20rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>inline-size</code> corresponds to the dimension along text
+          flow; <code>block-size</code> to the perpendicular dimension.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In common English layout they resemble width and height, but the
+          intent survives other writing modes.</span
+        >
+      </p>
+      <h2 id="positioning-without-left">Positioning Without Left</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>.badge {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Place the badge near the start of the block axis and end of the
+          inline axis.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That may be top-right in one context and somewhere else in
+          another.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the design genuinely means physical top-right—like a map
+          compass—physical properties may be correct.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Logical is not automatically morally superior. It should match the
+          intent.</span
+        >
+      </p>
+      <h2 id="direction-is-not-alignment">Direction Is Not Alignment</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Developers sometimes set <code>direction: rtl</code> to make a
+          component appear mirrored.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That property affects text direction and bidi behavior. It is not a
+          generic layout-flipping utility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use correct document language and direction metadata. Then let
+          logical properties respond.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And test with real right-to-left content, including mixed scripts,
+          numbers, punctuation, and icons.</span
+        >
+      </p>
+      <h2 id="icons-have-semantics-too">Icons Have Semantics Too</h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A back arrow may need to mirror with direction. A phone icon probably
+          does not. A play icon depends on convention.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>CSS cannot infer icon meaning.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do not mirror every image because the page is RTL.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And do not reverse DOM order just to make a row look right. Reading
+          and focus order still matter.</span
+        >
+      </p>
+      <h2 id="shorthands-reduce-assumptions">Shorthands Reduce Assumptions</h2>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>.stack &gt; * + * {
+  margin-block-start: 1rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That means spacing between stacked items in the block flow.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It works without declaring that “next” must mean physically
+          down.</span
+        >
+      </p>
+      <h2 id="migration-without-chaos">Migration Without Chaos</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do we search-and-replace every left with inline-start?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No. Audit intent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Start with reusable components, spacing systems, and code touched by
+          current work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test supported browsers and fallbacks if your project includes older
+          engines.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Mixing physical and logical declarations can create confusing
+          overrides, so document the convention.</span
+        >
+      </p>
+      <h2 id="internationalization-is-more-than-css">
+        Internationalization Is More Than CSS
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Logical properties help layout adapt.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They do not translate text, choose culturally appropriate imagery,
+          format dates, solve bidi isolation, or make a product usable in
+          another locale.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is one platform tool in a larger internationalization
+          practice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Still, removing needless directional assumptions from components is
+          real progress.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Physical properties describe screen sides.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Logical properties describe flow-relative axes and edges.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inline follows text within a line; block follows the progression of
+          blocks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Start and end adapt to writing direction and writing mode.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use logical properties when the design intent is relative to content
+          flow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep physical properties when the requirement is genuinely
+          physical.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And test real content. Internationalization is not a transform that
+          flips the screenshot.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: modern color.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS learned math and developed opinions about purple.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You already had opinions about purple.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Now they are perceptually uniform.</span>
+      </p>
+    </main>
+    <footer>4 code cards · 0 terminal cards</footer>
+  </body>
+</html>

@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 14: So… Do We Even Need a CSS Framework? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 14: So… Do We Even Need a CSS Framework?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/5e3cb707-3f7a-4d13-ac81-8af1fb3ccb20"
+      ></script>
+      <div class="redcirclePlayer-5e3cb707-3f7a-4d13-ac81-8af1fb3ccb20"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#framework-is-an-overloaded-word"
+            >Framework Is an Overloaded Word</a
+          >
+        </li>
+        <li><a href="#start-with-the-problem">Start With the Problem</a></li>
+        <li>
+          <a href="#plain-css-is-a-real-architecture"
+            >Plain CSS Is a Real Architecture</a
+          >
+        </li>
+        <li>
+          <a href="#bootstrap-and-component-systems"
+            >Bootstrap and Component Systems</a
+          >
+        </li>
+        <li><a href="#utility-first-systems">Utility-First Systems</a></li>
+        <li><a href="#css-modules">CSS Modules</a></li>
+        <li><a href="#css-in-js">CSS-in-JS</a></li>
+        <li>
+          <a href="#sass-and-postcss-are-not-component-frameworks"
+            >Sass and PostCSS Are Not Component Frameworks</a
+          >
+        </li>
+        <li><a href="#the-cost-columns">The Cost Columns</a></li>
+        <li>
+          <a href="#please-don-t-rewrite-for-resume-decoration"
+            >Please Don't Rewrite for Resume Decoration</a
+          >
+        </li>
+        <li>
+          <a href="#a-practical-decision-sequence"
+            >A Practical Decision Sequence</a
+          >
+        </li>
+        <li><a href="#three-honest-examples">Three Honest Examples</a></li>
+        <li>
+          <a href="#the-platform-keeps-moving">The Platform Keeps Moving</a>
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-14-so-do-we-even-need-a-css-framework">
+        Episode 14: So… Do We Even Need a CSS Framework?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We have reached the final boss.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Choosing a CSS framework?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Admitting the answer is “it depends” and then making “depends”
+          useful.</span
+        >
+      </p>
+      <h2 id="framework-is-an-overloaded-word">
+        Framework Is an Overloaded Word
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Bootstrap, Tailwind, component libraries, CSS Modules, CSS-in-JS,
+          Sass, and PostCSS are often thrown into one comparison.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But they operate at different layers and solve different
+          problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A component library may supply behavior and accessible patterns. A
+          utility framework supplies a styling vocabulary. CSS Modules scope
+          class names. Sass is a preprocessor. PostCSS is transformation
+          infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Comparing them as if only one may survive is category soup.</span>
+      </p>
+      <h2 id="start-with-the-problem">Start With the Problem</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What hurts today?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inconsistent design choices? Slow implementation? Naming collisions?
+          Difficult theming? Browser compatibility? Repeated components? Poor
+          documentation? Team onboarding?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Each pain suggests different tools.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“Everyone uses it” is not a requirement.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Neither is “I prefer writing everything myself.” Preferences matter,
+          but systems serve teams and users.</span
+        >
+      </p>
+      <h2 id="plain-css-is-a-real-architecture">
+        Plain CSS Is a Real Architecture
+      </h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>@layer reset, base, components, utilities;
+
+:root {
+  --color-action: oklch(55% 0.18 285);
+  --space-card: clamp(1rem, 2cqi, 1.5rem);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native CSS now has serious primitives for tokens, layout, components,
+          responsive behavior, and cascade control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plain CSS does not mean one global file with improvised class
+          names.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It still needs naming conventions, ownership, file organization,
+          tests, documentation, and review.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“No framework” removes one abstraction. It does not remove
+          architecture.</span
+        >
+      </p>
+      <h2 id="bootstrap-and-component-systems">
+        Bootstrap and Component Systems
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A broad framework can provide layout conventions, components,
+          utilities, and cross-browser knowledge.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Valuable when a team needs a coherent interface quickly and accepts
+          the framework's design assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Costs include payload, customization complexity, upgrade work, and
+          markup tied to the framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A component library can also contain accessibility behavior that is
+          expensive to reinvent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But “accessible component” is not permanent certification.
+          Integration, content, states, and updates still matter.</span
+        >
+      </p>
+      <h2 id="utility-first-systems">Utility-First Systems</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tailwind offers constrained utilities, local composition, and strong
+          component-tooling fit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Costs include class-heavy markup, framework vocabulary, build
+          integration, and the need for disciplined component boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We did the episode. No retrial.</span>
+      </p>
+      <h2 id="css-modules">CSS Modules</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>/* Card.module.css */
+.title {
+  color: var(--card-title);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tooling transforms local class names into unique identifiers and
+          exposes mappings to the component code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It helps prevent accidental global collisions.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It does not solve design tokens, component quality, specificity
+          inside the module, or runtime behavior by itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Scoping is one problem, not all problems.</span>
+      </p>
+      <h2 id="css-in-js">CSS-in-JS</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS-in-JS covers several different approaches: runtime style
+          generation, compile-time extraction, colocated style objects, tagged
+          templates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Benefits can include component colocation, typed props, dynamic
+          styles, and package-level isolation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Costs may include runtime work, generated complexity, framework
+          coupling, server-rendering concerns, and debugging indirection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Evaluate the specific library and mode. The category name is too
+          broad for a verdict.</span
+        >
+      </p>
+      <h2 id="sass-and-postcss-are-not-component-frameworks">
+        Sass and PostCSS Are Not Component Frameworks
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sass can improve authoring and generate CSS. PostCSS can transform
+          the pipeline.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Neither supplies your product's component model merely by being
+          installed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>They may be ingredients underneath another architecture.</span>
+      </p>
+      <h2 id="the-cost-columns">The Cost Columns</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Every abstraction has acquisition cost, learning cost, build cost,
+          runtime cost, migration cost, and escape-hatch cost.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also staffing fit. Can the team understand and maintain it?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessibility risk. Does the tool provide sound behavior, or merely
+          beautiful examples?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Security and supply-chain risk. What executes during installation and
+          builds? How many dependencies and maintainers are involved?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Longevity. Can the output survive if the tool stops being
+          fashionable?</span
+        >
+      </p>
+      <h2 id="please-don-t-rewrite-for-resume-decoration">
+        Please Don't Rewrite for Resume Decoration
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Replacing stable CSS with a framework is not automatically
+          modernization.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Removing a framework is not automatically simplification.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Measure the problem, create a small representative trial, compare
+          output and workflow, and plan migration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep user-facing behavior stable, especially keyboard interaction,
+          focus, contrast, zoom, motion preferences, and content order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A migration that makes the repository trendier and the product worse
+          has failed.</span
+        >
+      </p>
+      <h2 id="a-practical-decision-sequence">A Practical Decision Sequence</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First: can native CSS solve the technical requirement within the
+          browser policy?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Second: what team-scale problem remains?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Third: which smallest tool directly addresses it?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fourth: what does that tool cost during development, production,
+          upgrades, and eventual removal?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fifth: can we test it on one real component with ugly content and
+          real states?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sixth: can the team explain the choice without saying “best practice”
+          as a magic spell?</span
+        >
+      </p>
+      <h2 id="three-honest-examples">Three Honest Examples</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A five-page portfolio maintained by one CSS-experienced
+          developer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Plain modern CSS may be perfect. A framework could add more
+          vocabulary than value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A product team shipping hundreds of consistent screens from shared
+          components.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A utility system or component library may pay for itself through
+          coordination and constraints.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A legacy application with ten years of Sass and reliable
+          releases.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Audit before changing. Native CSS may improve new work incrementally
+          without a total rewrite.</span
+        >
+      </p>
+      <h2 id="the-platform-keeps-moving">The Platform Keeps Moving</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The decision is not permanent.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native capabilities grow. Frameworks evolve. Browser support changes.
+          Team needs change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Record why the tool was chosen and what assumptions would cause a
+          reevaluation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Architecture decisions age better when they include an expiration
+          question.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“CSS framework” describes several different categories of
+          abstraction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Start with the actual problem and select the smallest tool that
+          solves it at the needed scale.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Plain CSS is capable, but it still requires architecture.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Frameworks can provide coordination, constraints, components, and
+          tooling; they also impose vocabulary, dependencies, and migration
+          costs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessibility, security, performance, team comprehension, and
+          longevity belong in the decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Newer is not automatically better. Older is not automatically
+          safer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What problem does this solve, and does that problem apply here?</span
+        >
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        OKAY, THAT'S ACTUALLY PRETTY COOL
+      </h3>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So after fourteen episodes, what happened to CSS?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It became much better at expressing the systems we were already
+          trying to build.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And did it replace every tool?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. It gave us enough native power to ask harder questions about why
+          each tool is present.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That sounds like the series.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Ohhh. That's why this exists.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This has been <em>Wait, CSS Does That Now?</em></span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We learned that yes, frequently CSS does that now.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And sometimes it still needs a build tool, a framework, JavaScript,
+          or three browser tabs of compatibility data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Nuance: the least marketable feature of the web platform.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><em>Okay, But Why?</em> is a podcast about understanding the
+          technology we use instead of pretending we already do.</span
+        >
+      </p>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

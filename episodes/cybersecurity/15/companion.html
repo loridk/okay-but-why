@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 15: OWASP &amp; Threat Modeling — Please Imagine the Worst — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 15: OWASP &amp; Threat Modeling — Please Imagine the Worst</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-15.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#what-is-owasp">What Is OWASP?</a></li>
+<li><a href="#why-lists-help-and-hurt">Why Lists Help and Hurt</a></li>
+<li><a href="#threat-modeling">Threat Modeling</a></li>
+<li><a href="#assets">Assets</a></li>
+<li><a href="#trust-boundaries">Trust Boundaries</a></li>
+<li><a href="#data-flow-diagrams">Data Flow Diagrams</a></li>
+<li><a href="#stride">STRIDE</a></li>
+<li><a href="#abuse-cases">Abuse Cases</a></li>
+<li><a href="#attack-trees">Attack Trees</a></li>
+<li><a href="#risk-ranking">Risk Ranking</a></li>
+<li><a href="#threat-modeling-during-design">Threat Modeling During Design</a></li>
+<li><a href="#developer-threat-model-example">Developer Threat Model Example</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Threat modeling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Structured pessimism.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do I need a template?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A workshop?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A giant architecture diagram nobody updates?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ideally no.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Great start.</span>
+        </p>
+<h2 id="what-is-owasp">What Is OWASP?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>OWASP is the Open Worldwide Application Security Project.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nonprofit community producing security projects, guidance, tools, and educational resources.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Most developers know OWASP Top 10.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A widely used awareness document for major web application security risk categories.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important: Top 10 is not the complete universe of application security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is a useful prioritization and awareness tool.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="why-lists-help-and-hurt">Why Lists Help and Hurt</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Lists are great because they give developers a starting point.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Broken access control. Cryptographic failures. Injection. Insecure design.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But bad if teams turn them into “we checked ten boxes, application secure.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Real threat profile depends on the application.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A medical system, public blog, payment platform, browser extension, and internal dashboard have different risks.</span>
+        </p>
+<h2 id="threat-modeling">Threat Modeling</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Threat modeling asks questions before or during design.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What are we building?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What do we need to protect?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Who might attack it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How could they do that?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What controls do we have?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What should we change?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That sounds refreshingly normal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It should be.</span>
+        </p>
+<h2 id="assets">Assets</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Start with assets.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Things that matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Customer data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Authentication credentials.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Money.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Source code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Availability.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reputation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Admin capability. Cryptographic keys. Business processes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not every asset is data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="trust-boundaries">Trust Boundaries</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where does trust change?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browser to API.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>API to database.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Public internet to private network.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Third-party webhook into our service.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CI pipeline to cloud account.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Those boundaries deserve attention because untrusted or differently trusted data crosses them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="data-flow-diagrams">Data Flow Diagrams</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>DFD.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Data Flow Diagram.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Processes, data stores, external entities, flows, trust boundaries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Enough detail to understand how data moves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not UML Olympics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please no.</span>
+        </p>
+<h2 id="stride">STRIDE</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security loves mnemonics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>STRIDE is one threat-modeling framework.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Spoofing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Tampering.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Repudiation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Information disclosure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Denial of service.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Elevation of privilege.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Conveniently maps to identity, integrity, accountability, confidentiality, availability, authorization.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use it as prompts, not commandments.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="abuse-cases">Abuse Cases</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Product team writes user stories.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security can write abuse cases.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“As an attacker, I want to change another user’s shipping address.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“As a malicious user, I want to upload a file that executes on another user’s device.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Great.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This makes threats concrete for developers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very.</span>
+        </p>
+<h2 id="attack-trees">Attack Trees</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Attack trees start with an attacker goal and branch into ways to achieve it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Goal: steal admin account.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Phish admin.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Steal session.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exploit password reset.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Compromise identity provider.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then defenses can target multiple branches.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Defense in depth.</span>
+        </p>
+<h2 id="risk-ranking">Risk Ranking</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We cannot fix everything simultaneously.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So assess likelihood and impact.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also exposure, exploitability, business importance, existing controls.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Numbers can help prioritization but should not create fake precision.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very important.</span>
+        </p>
+<h2 id="threat-modeling-during-design">Threat Modeling During Design</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cheapest time to discover “the public API should not have admin access to the database” is before deployment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security design review can change architecture while change is still cheap.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s one reason “shift left” became popular.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Though security should not only shift left and abandon production.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Shift everywhere.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Less catchy, more accurate.</span>
+        </p>
+<h2 id="developer-threat-model-example">Developer Threat Model Example</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser extension.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Assets?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>User snippets. Local storage. Extension permissions. Potential page access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Threat actors?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Malicious website. Compromised dependency. Malicious extension update. Local attacker.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Trust boundaries?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Extension to webpage. Extension to browser storage. Build pipeline to published package.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Controls?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Minimal permissions. Validate messages. Local storage safety. CSP. Dependency review. Signed store distribution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s threat modeling.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Threat model once before launch, save PDF, never update it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Architecture changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>New integrations appear.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Threats change.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Threat models should evolve with meaningful system changes.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Threat modeling is security asking architecture questions early.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not “predict every hacker.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Understand assets, boundaries, abuse paths, and controls.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s it.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Know threat modeling, attack surface, risk assessment, secure design, vulnerability categories, and prioritization.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developer depth: OWASP resources are guides, not certification stamps.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>OWASP gives developers practical security resources.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Threat modeling identifies what matters, where trust changes, how abuse could happen, and what controls reduce risk.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>STRIDE, abuse cases, and attack trees are tools for asking better questions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next: dependencies, supply chains, and secrets.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ah. npm enters cybersecurity.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

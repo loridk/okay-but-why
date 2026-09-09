@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 13: Animation Without Making Everyone Sick — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 13: Animation Without Making Everyone Sick</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/88bc21d6-f21b-4d65-b814-bf4fe66ac9a9"
+      ></script>
+      <div class="redcirclePlayer-88bc21d6-f21b-4d65-b814-bf4fe66ac9a9"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#motion-has-a-job">Motion Has a Job</a></li>
+        <li>
+          <a href="#transitions-connect-two-states"
+            >Transitions Connect Two States</a
+          >
+        </li>
+        <li>
+          <a href="#keyframes-describe-a-sequence"
+            >Keyframes Describe a Sequence</a
+          >
+        </li>
+        <li><a href="#transform-and-opacity">Transform and Opacity</a></li>
+        <li>
+          <a href="#reduced-motion-is-a-preference-not-no-fun-allowed"
+            >Reduced Motion Is a Preference, Not No Fun Allowed</a
+          >
+        </li>
+        <li>
+          <a href="#motion-cannot-be-the-only-message"
+            >Motion Cannot Be the Only Message</a
+          >
+        </li>
+        <li><a href="#view-transitions">View Transitions</a></li>
+        <li><a href="#scroll-driven-animation">Scroll-Driven Animation</a></li>
+        <li>
+          <a href="#css-versus-javascript-animation"
+            >CSS Versus JavaScript Animation</a
+          >
+        </li>
+        <li>
+          <a href="#timing-is-interface-design">Timing Is Interface Design</a>
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-13-animation-without-making-everyone-sick">
+        Episode 13: Animation Without Making Everyone Sick
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The button moved.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did it help?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It moved because someone learned keyframes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then probably not.</span>
+      </p>
+      <h2 id="motion-has-a-job">Motion Has a Job</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Animation can explain change, preserve spatial context, direct
+          attention, and confirm an action.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can show that a panel came from the side, that an item joined a
+          list, or that a control responded.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can also delay work, trigger symptoms, distract from content, and
+          make an interface feel unstable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The question is not “Can CSS animate this?” It is “What does this
+          motion communicate?”</span
+        >
+      </p>
+      <h2 id="transitions-connect-two-states">
+        Transitions Connect Two States
+      </h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button {
+  background: var(--button-bg);
+  transition: background-color 160ms ease-out;
+}
+
+.button:hover {
+  background: var(--button-bg-hover);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A transition interpolates a property's value when it changes between
+          states.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Declare the property intentionally. <code>transition: all</code> can
+          animate changes you never meant to animate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Including layout or focus-state changes that should be
+          immediate.</span
+        >
+      </p>
+      <h2 id="keyframes-describe-a-sequence">Keyframes Describe a Sequence</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>@keyframes status-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status {
+  animation: status-enter 180ms ease-out;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keyframes define intermediate states and timing when two-state
+          interpolation is not enough.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But the status also needs live-region semantics if users must be
+          notified.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Motion draws visual attention. It does not announce content to
+          assistive technology.</span
+        >
+      </p>
+      <h2 id="transform-and-opacity">Transform and Opacity</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Transform and opacity are often smoother choices because browsers can
+          frequently animate them without recalculating document layout on every
+          frame.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Often” is doing work. Measure actual performance.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And do not add <code>will-change</code> to the entire site as a
+          superstition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is a targeted performance hint with resource costs, not a
+          blessing.</span
+        >
+      </p>
+      <h2 id="reduced-motion-is-a-preference-not-no-fun-allowed">
+        Reduced Motion Is a Preference, Not No Fun Allowed
+      </h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto;
+  }
+
+  .status {
+    animation: none;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The media feature reports a user preference to minimize non-essential
+          motion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should design a reduced-motion experience, not merely set every
+          duration to <code>0.001ms</code> and declare victory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some functional feedback may remain useful with a fade, color change,
+          or immediate state transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Large movement, zooming, parallax, and vestibular triggers deserve
+          particular care.</span
+        >
+      </p>
+      <h2 id="motion-cannot-be-the-only-message">
+        Motion Cannot Be the Only Message
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If invalid fields shake but have no error text, the interface is
+          inaccessible and vaguely judgmental.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >State changes need text, semantics, and programmatic relationships
+          where appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pausing or stopping moving content matters too. People need control
+          over animations that start automatically and persist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And focus should never chase an element that is still flying across
+          the screen.</span
+        >
+      </p>
+      <h2 id="view-transitions">View Transitions</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The View Transition API can capture old and new visual states and
+          animate between them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS styles generated transition pseudo-elements, while JavaScript may
+          coordinate a same-document DOM update.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>js</span></figcaption>
+        <pre tabindex="0"><code>document.startViewTransition(() =&gt; {
+  updateThePage();
+});</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cross-document transitions can also be enabled for eligible
+          navigations in supporting browsers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Support, navigation behavior, and reduced-motion design all need
+          checking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is progressive enhancement, not permission to turn every route
+          into a movie trailer.</span
+        >
+      </p>
+      <h2 id="scroll-driven-animation">Scroll-Driven Animation</h2>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>.reading-progress {
+  animation: grow-progress linear;
+  animation-timeline: scroll();
+  transform-origin: left;
+}
+
+@keyframes grow-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The animation's progress follows a scroll timeline instead of elapsed
+          clock time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That can replace JavaScript scroll listeners for some visual
+          effects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Browser support and fallback behavior need verification. And the
+          scroll itself must remain under the user's control.</span
+        >
+      </p>
+      <h2 id="css-versus-javascript-animation">
+        CSS Versus JavaScript Animation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS is excellent for state-based transitions and declarative
+          timelines.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JavaScript is useful when animation depends on complex application
+          state, sequencing, physics, or imperative control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The Web Animations API also exposes browser animation machinery to
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choose based on coordination needs, not a belief that one language is
+          more artistically pure.</span
+        >
+      </p>
+      <h2 id="timing-is-interface-design">Timing Is Interface Design</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fast feedback should feel immediate. Longer motion should earn the
+          delay.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Easing communicates physical character and priority.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Repeated bouncing communicates that your notification would like to
+          be thrown into the sea.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test on lower-powered devices and while the main thread is
+          busy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And test with people, including people who use reduced-motion
+          settings.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Transitions interpolate property changes between states.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Keyframes define a sequence.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Transform and opacity are often performant, but profiling beats
+          folklore.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>prefers-reduced-motion</code> lets CSS respond to a user
+          preference and requires thoughtful alternatives.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >View transitions and scroll-driven animations add powerful newer
+          timelines.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They should progressively enhance an interface that remains
+          understandable without motion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Animation is communication. If it communicates nothing, it is
+          furniture falling down stairs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: the finale. Do we even need a CSS framework?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have prepared a decision tree and several grudges.</span>
+      </p>
+    </main>
+    <footer>6 code cards · 0 terminal cards</footer>
+  </body>
+</html>

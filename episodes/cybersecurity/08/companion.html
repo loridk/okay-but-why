@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 8: Social Engineering &amp; Credential Attacks — Hacking the Squishy Humans — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 8: Social Engineering &amp; Credential Attacks — Hacking the Squishy Humans</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-08.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-social-engineering">Who Asked for Social Engineering?</a></li>
+<li><a href="#phishing">Phishing</a></li>
+<li><a href="#whaling-smishing-vishing">Whaling, Smishing, Vishing</a></li>
+<li><a href="#pretexting">Pretexting</a></li>
+<li><a href="#authority-and-urgency">Authority and Urgency</a></li>
+<li><a href="#business-email-compromise">Business Email Compromise</a></li>
+<li><a href="#mfa-fatigue">MFA Fatigue</a></li>
+<li><a href="#help-desk-attacks">Help Desk Attacks</a></li>
+<li><a href="#tailgating-and-physical-social-engineering">Tailgating and Physical Social Engineering</a></li>
+<li><a href="#baiting">Baiting</a></li>
+<li><a href="#credential-harvesting">Credential Harvesting</a></li>
+<li><a href="#typosquatting-and-lookalike-domains">Typosquatting and Lookalike Domains</a></li>
+<li><a href="#deepfakes-and-ai">Deepfakes and AI</a></li>
+<li><a href="#security-awareness-training-that-doesn-t-suck">Security Awareness Training That Doesn’t Suck</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Hi Parisa, this is the CEO. I’m in a meeting and I need you to buy twelve hundred dollars in Apple gift cards.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Seems legitimate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Also send me the codes immediately and do not call me because this is confidential.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Definitely the CEO.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The CEO has never spoken to me in my life.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Details.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Social engineering.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Hacking the squishy humans.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I object to “squishy.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Biologically accurate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em></span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I’m Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have spent seven episodes talking about networks, identity, permissions, cryptography, certificates—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And now the attacker says, “What if I just ask nicely?”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That feels unfair.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security is not graded on elegance.</span>
+        </p>
+<h2 id="who-asked-for-social-engineering">Who Asked for Social Engineering?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Technical controls create friction for attackers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Strong passwords. MFA. Encryption. Firewalls.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So attackers look for another path.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Humans with legitimate access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Social engineering manipulates people into doing something that benefits the attacker.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reveal information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Approve a login.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Open a file.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Visit a site.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reset an account.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Change payment details.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or simply trust the wrong person.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is not “people are stupid.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very important.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good social engineering exploits ordinary human behavior: urgency, authority, curiosity, fear, helpfulness, routine, distraction.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In other words, being a normal person with a job.</span>
+        </p>
+<h2 id="phishing">Phishing</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Phishing</strong> is fraudulent messaging designed to trick people into revealing information or taking unsafe actions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Usually email in the classic version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But the principle isn’t limited to email.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fake Microsoft login page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fake shipping notice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fake password-expiration warning.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <strong>spear phishing</strong> is targeted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Instead of sending the same message to a million people, the attacker researches a person or organization and makes the message more convincing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Hey Parisa, here’s the Figma file for the Miles project.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Much more believable than “Dear Valuable Customer.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why public information can be reconnaissance fuel.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>LinkedIn, company websites, social media, conference talks, breach data.</span>
+        </p>
+<h2 id="whaling-smishing-vishing">Whaling, Smishing, Vishing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security loves naming every delivery mechanism.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Whaling</strong> targets executives or other high-value people.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Big fish.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Smishing</strong> is phishing by SMS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Vishing</strong> is voice phishing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And QR-code phishing exists because apparently the square can betray us too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Quishing” is a term you’ll hear for malicious QR-code phishing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cybersecurity naming is unstoppable.</span>
+        </p>
+<h2 id="pretexting">Pretexting</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Pretexting</strong> means creating a believable story or identity to manipulate someone.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“I’m from IT. We’re troubleshooting your account.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“I’m the new contractor and my manager said you could give me access.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“I’m calling from the bank fraud department.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The attacker establishes a context that makes the request seem reasonable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Humans interpret requests through context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And attackers manufacture the context.</span>
+        </p>
+<h2 id="authority-and-urgency">Authority and Urgency</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why does “CEO needs this now” work so well?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Authority plus urgency.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>People are less likely to stop and verify when they believe a powerful person expects immediate action.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Add secrecy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Don’t tell anyone.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Add fear.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Your account will be suspended.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Add scarcity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“This expires in ten minutes.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is basically evil UX writing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Honestly, yes.</span>
+        </p>
+<h2 id="business-email-compromise">Business Email Compromise</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>BEC.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Business Email Compromise</strong> involves abusing or impersonating business communication to cause fraudulent actions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Change wire-transfer destination.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Classic example.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fake vendor invoice.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Compromised executive mailbox asks finance to send money.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes the email account is truly compromised rather than spoofed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which makes the message dramatically harder to detect.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same email thread. Same signature. Legitimate account.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="mfa-fatigue">MFA Fatigue</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We mentioned push fatigue last episode.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Attacker has the password and repeatedly triggers MFA prompts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>User sees “Approve sign-in?” over and over.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Eventually they may approve one just to make it stop.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why number matching and phishing-resistant MFA are improvements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And why “we have MFA” is not the end of authentication security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="help-desk-attacks">Help Desk Attacks</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I think help desks deserve sympathy here.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Their job is literally to help people regain access.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means attackers can impersonate locked-out employees and manipulate support into resetting credentials or MFA.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If recovery is weaker than login, recovery becomes the attack path.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We said it last episode and it keeps being true.</span>
+        </p>
+<h2 id="tailgating-and-physical-social-engineering">Tailgating and Physical Social Engineering</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Social engineering can be physical too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><strong>Tailgating</strong>: follow an authorized person through a secure door.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Carry a stack of boxes and people hold doors for you.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Humans are helpful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security: please stop being kind.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More like: design controls that don’t rely on people violating normal social behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Better framing.</span>
+        </p>
+<h2 id="baiting">Baiting</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Baiting</strong> offers something enticing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>USB drive labeled “Layoff Plan.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You know exactly what humans are going to do.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Plug it into a computer while whispering “I’m only checking.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And now we have malware.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Please do not make curiosity part of your incident response plan.</span>
+        </p>
+<h2 id="credential-harvesting">Credential Harvesting</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Many phishing campaigns are specifically designed to steal credentials.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fake login page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>User types username, password, maybe MFA code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker forwards them to the real site in real time.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means OTP MFA can still be phished.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again, phishing-resistant cryptographic authentication is better because the fake domain can’t just reuse the credential.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="typosquatting-and-lookalike-domains">Typosquatting and Lookalike Domains</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>micros0ft-login.example</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Lookalike domain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unicode characters that resemble other letters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Homograph attacks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Typosquatting catches common misspellings.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why “look at the URL” is useful but not a complete anti-phishing strategy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Attackers are very good at making URLs visually plausible.</span>
+        </p>
+<h2 id="deepfakes-and-ai">Deepfakes and AI</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We need the 2026 version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>AI makes impersonation cheaper and more convincing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Voice cloning.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Synthetic video.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Personalized phishing copy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the defense is still not “become a human lie detector.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use verification processes that don’t depend only on whether a message sounds like the person.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Call back on a known number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use an established approval workflow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Require multiple approvers for high-risk financial changes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Strong process beats vibes.</span>
+        </p>
+<h2 id="security-awareness-training-that-doesn-t-suck">Security Awareness Training That Doesn’t Suck</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Annual training where the cartoon hacker says “Don’t click suspicious links.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not enough.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>People need realistic, contextual training.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And reporting needs to be safe and easy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If someone thinks they clicked phishing, we want them to tell security immediately.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not hide it because they’re afraid of being humiliated.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Blaming victims makes detection slower.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Only idiots fall for phishing.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t do this.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attackers test messages professionally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They exploit timing, trust, authority, and context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And even experts get tired, rushed, distracted, or unlucky.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Build systems assuming humans occasionally make mistakes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Defense in depth, but for people.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Social engineering is basically adversarial product design.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s a strong way to frame it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker studies the user.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Creates a believable flow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Removes friction.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Adds urgency.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Designs a conversion funnel.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Except the conversion event is “steal your account.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Evil growth hacking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please never say that in a pitch deck.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No promises.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Recognize phishing, spear phishing, whaling, smishing, vishing, pretexting, baiting, impersonation, tailgating, business email compromise, credential harvesting, typosquatting, and MFA fatigue.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>More importantly, understand the human mechanism.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Authority, urgency, fear, curiosity, familiarity, trust.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And controls can be technical, procedural, and cultural.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Social engineering attacks legitimate human behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Phishing is broad. Spear phishing is targeted. Smishing uses SMS. Vishing uses voice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Pretexting manufactures a believable scenario.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>BEC abuses trusted business communication.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>MFA can still be attacked through fatigue, phishing, and recovery flows.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Strong verification procedures matter more as AI-generated impersonation improves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And reporting culture matters because rapid detection limits damage.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Malware and ransomware.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Great. The humans clicked the thing and now the computers are haunted.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

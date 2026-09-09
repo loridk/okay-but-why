@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 6: APIs — A Boundary With a Job Description — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 6: APIs — A Boundary With a Job Description</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-06.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#an-interface-between-programs">An Interface Between Programs</a></li>
+<li><a href="#why-separate-frontend-and-backend">Why Separate Frontend and Backend?</a></li>
+<li><a href="#resources-endpoints-and-methods">Resources, Endpoints, and Methods</a></li>
+<li><a href="#a-contract-includes-the-awkward-parts">A Contract Includes the Awkward Parts</a></li>
+<li><a href="#typescript-isn-t-a-border-guard">TypeScript Isn't a Border Guard</a></li>
+<li><a href="#compatibility-is-a-promise-over-time">Compatibility Is a Promise Over Time</a></li>
+<li><a href="#lists-need-boundaries-too">Lists Need Boundaries Too</a></li>
+<li><a href="#cors-the-misunderstood-bouncer">CORS, the Misunderstood Bouncer</a></li>
+<li><a href="#a-backend-for-this-frontend">A Backend for This Frontend</a></li>
+<li><a href="#alternatives-have-reasons">Alternatives Have Reasons</a></li>
+<li><a href="#retrying-without-ordering-dinner-twice">Retrying Without Ordering Dinner Twice</a></li>
+<li><a href="#design-the-error-before-the-success-demo">Design the Error Before the Success Demo</a></li>
+<li><a href="#authentication-and-authorization-in-the-contract">Authentication and Authorization in the Contract</a></li>
+<li><a href="#evolving-an-order-status">Evolving an Order Status</a></li>
+<li><a href="#the-cost-of-a-chatty-interface">The Cost of a Chatty Interface</a></li>
+<li><a href="#rate-limits-and-fairness">Rate Limits and Fairness</a></li>
+<li><a href="#what-makes-an-api-pleasant-to-use">What Makes an API Pleasant to Use?</a></li>
+<li><a href="#a-contract-review-at-the-restaurant">A Contract Review at the Restaurant</a></li>
+<li><a href="#closing-ask-what-it-promises">Closing — Ask What It Promises</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have made an API.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What does it promise?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Curly braces.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And beyond that?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A field named data. Inside it, more data. I am considering data two.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. Today, why an API is more than a URL that spits out JSON.</span>
+        </p>
+<h2 id="an-interface-between-programs">An Interface Between Programs</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>API stands for application programming interface. It's a defined way for software to interact with other software.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A library's functions can be an API. The browser's DOM interface is an API. Today we're mainly discussing web APIs across a network.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. They expose operations or resources through an agreed request and response model.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Agreed” is doing work. The caller needs to know what it can ask, which inputs are accepted, what success means, and how failure is represented.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And what it isn't allowed to do. For Nervous Robot, customers can create orders and view their own permitted information. Staff have other operations. Neither should receive unrestricted database access.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The interface lets us offer meaningful business actions while keeping internal storage and implementation details behind a boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which can change independently, within compatibility limits. The database table can be reorganized without every client learning the new column layout.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unless we made the API an accidental photocopy of the tables. Then we've exported our remodeling problem to everybody.</span>
+        </p>
+<h2 id="why-separate-frontend-and-backend">Why Separate Frontend and Backend?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A browser application can use an API to retrieve data and request operations. A mobile application might use the same capabilities. An authorized partner might use a carefully scoped interface too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So multiple clients can share business rules. The rule “don't accept orders after closing” shouldn't have separate authoritative versions in three interfaces.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Separate teams may also need a stable contract. But separation adds a network boundary, versioning concerns, and coordination.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For one modest server-rendered site, we don't have to create a public JSON API solely to call it from our own server code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Internal functions may be enough. An API becomes useful when there's a consumer or boundary that benefits from it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public, partner, and internal APIs can have different audiences and commitments. “We have an endpoint” doesn't mean we promised to support strangers integrating with it forever.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But once clients depend on it, even internally, compatibility matters.</span>
+        </p>
+<h2 id="resources-endpoints-and-methods">Resources, Endpoints, and Methods</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's read a small resource-oriented design.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>GET slash menu retrieves a menu representation. POST slash orders requests a new order. GET slash orders slash 417 retrieves an authorized representation of that order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The endpoint is the address and operation we can call. The resource is the thing the interface models, such as an order. The response is a representation of it, not the physical pizza.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>REST is an architectural style with constraints, including a uniform interface and stateless interactions. Many APIs described as REST are more loosely resource-oriented HTTP APIs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So using GET and JSON doesn't by itself prove full REST compliance. We can be precise without turning lunch into a certification exam.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The practical lesson is to use HTTP semantics consistently and make the interface understandable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And not every business action is a trivial create-read-update-delete operation. Cancelling an order has rules. It might be allowed before preparation starts and forbidden after dispatch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The API should express that operation deliberately, whether through a status transition or an action-oriented endpoint. The important part is clear semantics and server enforcement.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>GET  /menu          -&gt; available menu representation
+POST /orders        -&gt; validated order creation request
+GET  /orders/417    -&gt; authorized order representation
+POST /orders/417/cancellation -&gt; request a permitted cancellation</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That card is interface notation, not JavaScript, TypeScript, or a framework's routing syntax. And the numbers are examples, not access credentials.</span>
+        </p>
+<h2 id="a-contract-includes-the-awkward-parts">A Contract Includes the Awkward Parts</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What does POST slash orders accept?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Item identifiers, quantities, delivery or pickup choice, required contact details, maybe an agreed quote reference and an operation key. Not an arbitrary trusted price from the browser.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What does it return?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A stable order identifier and a clearly defined state. If it only queued work, don't call the order complete. If validation failed, identify the problems in a form the client can map to fields.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about a sold-out item?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A business conflict with enough information to let the customer revise the order. Avoid dumping internal stack traces or database errors into the response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about a server outage?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A distinguishable failure, with a retry policy that respects whether the operation could already have happened.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the contract. Inputs, outputs, authorization, errors, timing, and side effects. Documentation needs examples of failure as well as the attractive success response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An API that only documents sunny weather is a holiday brochure.</span>
+        </p>
+<h2 id="typescript-isn-t-a-border-guard">TypeScript Isn't a Border Guard</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose both frontend and backend share a TypeScript type for an order request.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Helpful for catching mistakes while writing code. But the server can receive a request from anything. The type declaration isn't carried across the network as an enforcement officer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Parse and validate actual input at runtime. Check quantities, allowed fields, formats, and business constraints.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And check authorization separately. “This is a valid order identifier” doesn't mean “this user may view that order.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JSON itself has strings, numbers, booleans, null, arrays, and objects. A date often arrives as a string under an agreed format. It doesn't turn into a JavaScript Date object by wishing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nor does naming a field cents guarantee it's an integer or the correct currency. The contract should state units and meaning.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good example. A total without currency is an argument scheduled for later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a field named status with undocumented possible values is a scavenger hunt.</span>
+        </p>
+<h2 id="compatibility-is-a-promise-over-time">Compatibility Is a Promise Over Time</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We add a new optional response field. Often compatible. We rename an existing field or change its meaning. Potentially breaking.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Even adding a value to a status enumeration can surprise clients that assume they've seen every possible value.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So compatibility isn't just whether JSON parses. It's whether existing consumers can still behave correctly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can document change policy, test important consumers, and use versioning where needed. A version number doesn't rescue an undocumented semantic change inside the same version.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nor does changing every endpoint to version two solve the migration. Old clients may remain active, particularly installed mobile apps.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why public APIs create an ongoing maintenance obligation. We should choose that scope deliberately.</span>
+        </p>
+<h2 id="lists-need-boundaries-too">Lists Need Boundaries Too</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>GET all orders sounds convenient until there are several million.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or until it accidentally includes other customers' orders. Start by defining whose list it is and what they may see.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then pagination, filtering, and sorting. Limit the amount returned and document how to request more.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cursor-based pagination can be useful for changing datasets; offset pagination can be simpler for some uses. Neither is automatically the correct answer for every list.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Stable ordering matters. If new orders appear while paging, clients need a coherent way to move through results.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And performance controls aren't merely defensive. A bounded list is easier to display accessibly and less likely to freeze a phone while it renders every pizza ordered since civilization began.</span>
+        </p>
+<h2 id="cors-the-misunderstood-bouncer">CORS, the Misunderstood Bouncer</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now the inevitable question. My API works from a command-line client but the browser complains about CORS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cross-Origin Resource Sharing is a browser-enforced mechanism. It lets a server indicate which other origins may read its responses through browser scripts, under specific conditions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Origin is scheme, host, and port. Our frontend on one origin and API on another means those browser rules apply.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some requests trigger a preflight, an OPTIONS request asking whether the proposed method and headers are allowed before the browser sends the actual request.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But not every cross-origin request is preflighted. Some can be sent even when the calling script isn't allowed to read the response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. That is why CORS isn't a general authorization system and isn't a complete CSRF defense. Non-browser clients don't have to enforce it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the API contains private orders, it needs real authentication and authorization, regardless of allowed origins.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For credentialed cross-origin browser requests, configure the intended origin and credentials behavior carefully. A wildcard origin is not compatible with exposing credentialed responses in the ordinary CORS model.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And don't use no-cors as a magic repair. An opaque response you can't read doesn't solve an API integration that needs the data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes a same-origin deployment or backend-for-frontend reduces browser integration complexity. But don't add a proxy without understanding what responsibility it will own.</span>
+        </p>
+<h2 id="a-backend-for-this-frontend">A Backend for This Frontend</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Explain that phrase before it breeds another acronym.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A backend-for-frontend is a server layer shaped around a particular client's needs. It can aggregate calls, keep credentials server-side, and return a response suited to the interface.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For our small shop, the existing web application might already do that job. We don't need a separately deployed service just to earn the abbreviation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The pattern is a responsibility, not necessarily another machine. At larger scale, separate client needs can justify separate implementations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It also creates a place to avoid exposing every downstream service directly to the browser. But it can become a bottleneck or an overgrown coordinator if we aren't careful.</span>
+        </p>
+<h2 id="alternatives-have-reasons">Alternatives Have Reasons</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>GraphQL lets clients ask for data through a typed schema and select fields. That can help when clients need different combinations of related information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It still needs authorization, query-cost controls, caching strategy, and runtime handling. A schema doesn't make every request cheap or permitted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>RPC-style APIs focus on named operations. They can be natural for commands that don't fit neatly into resource editing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again, network calls remain network calls. Convenient generated clients don't remove timeouts or compatibility concerns.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Webhooks reverse the direction: a service sends a notification to an endpoint you provide when an event happens.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Such as a payment provider telling our server that a payment changed state. Verify the notification's authenticity, handle duplicates, and don't assume delivery order is perfect.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We won't implement those protocols here. The lesson is to choose an interface style based on consumers and operations, not because one acronym is newer.</span>
+        </p>
+<h2 id="retrying-without-ordering-dinner-twice">Retrying Without Ordering Dinner Twice</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our recurring missing confirmation. What's the API-level solution?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Give the creation attempt a stable key and define how repeated requests with that key behave. The server records the operation and its outcome so a retry can retrieve the same result rather than create another order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It must scope that key appropriately, handle simultaneous retries, and reject or otherwise define reuse with different input. Just attaching a UUID to the request doesn't implement the policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The durable server-side handling is what matters. And the client needs to keep the same key for the same attempt, not generate a fresh one every time it retries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The API contract can also provide status lookup. Then uncertain delivery of a response doesn't leave the human guessing forever.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is a good example of interface design shaping reliability. The endpoint isn't just a path; it's an agreement about repeated actions and outcomes.</span>
+        </p>
+<h2 id="design-the-error-before-the-success-demo">Design the Error Before the Success Demo</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's pretend I'm implementing the frontend and you're defining the endpoint. I submit an order with two unavailable items. What do you give me?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A structured result that identifies the unavailable items and what the client may do next. Maybe the customer needs to revise the order. The exact status and fields are contract choices, but the meaning should be stable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could you just return a sentence?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A human-readable message is useful, but the client may also need stable machine-readable identifiers to associate errors with controls. Don't make the frontend parse English prose to discover which field failed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the code might be item_unavailable while the displayed wording can improve or be translated.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. That's an application-defined error code, not JavaScript syntax. Keep the categories meaningful. We don't need seven hundred codes that differ only in punctuation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about unexpected internal errors?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Return a safe message and a reference that support can use where appropriate. Keep sensitive internal detail in controlled diagnostics, not the public response. A customer doesn't need a database hostname to learn that ordering is temporarily unavailable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I should preserve their input and offer a recovery action consistent with the outcome.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The API and UI should agree on whether retrying is safe, whether revision is required, or whether we must check an uncertain operation first.</span>
+        </p>
+<h2 id="authentication-and-authorization-in-the-contract">Authentication and Authorization in the Contract</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Do we document permission requirements per endpoint?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely. “Authenticated” is too broad if customers and staff have different capabilities. Say which identities may perform which operations and what object-level checks apply.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose the client sends a customer ID in the request body.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We don't automatically accept it as the identity of the requester. Derive or verify the relevant identity through the authenticated context and policy. Otherwise a perfectly valid field can become an impersonation mechanism.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if the endpoint is public, like the menu?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public means the information is intended for that audience. It doesn't mean inputs are unbounded or every operation is permitted. Filtering and pagination still need validation and resource limits.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So even unauthenticated endpoints have contracts and constraints.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. An API isn't either completely locked or completely lawless. Scope the capability to the actual need.</span>
+        </p>
+<h2 id="evolving-an-order-status">Evolving an Order Status</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our first version has pending, accepted, and completed. Later we add preparing and out-for-delivery. What breaks?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A client that assumes every unknown value means completed could lie. A client with an exhaustive local mapping may crash or show nothing. We need a compatibility plan.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe a stable coarse status plus more detailed optional progress information?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That could work if the semantics are clear. Or version the contract and support a transition. The design depends on what consumers need and how independently they update.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should test older consumers against the changed response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Contract tests can verify agreed examples and constraints. They don't prove every business behavior, but they catch certain integration breaks before deployment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Generated client code can help too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, when generated from a maintained schema. But code generation doesn't resolve semantic ambiguity. If status means something different after deployment, the types may still compile beautifully.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Type-safe misunderstanding.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Very fashionable. Still a misunderstanding.</span>
+        </p>
+<h2 id="the-cost-of-a-chatty-interface">The Cost of a Chatty Interface</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>My frontend makes a request for the order, another for each item's description, another for prices, another for delivery details, and another for permissions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some separation may be useful, but examine the request chain. If calls depend on previous results, latency accumulates. If permissions are merely displayed client-side, the server still needs to enforce them independently.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could the API return the information needed for the view in one response?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Often, yes. A representation designed around the consumer's task can reduce round trips without exposing internal tables. Don't make the client reconstruct a business record from twenty tiny fragments for no reason.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But returning everything for every screen wastes bandwidth and exposes unnecessary data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Coarse enough to be useful, limited enough to be appropriate. That's an interface design tradeoff, not a universal one-request rule.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A backend-for-frontend can shape that response if several downstream systems exist.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, though our baseline application can often do it directly. Introduce a separate layer only when it has a clear responsibility that outweighs its overhead.</span>
+        </p>
+<h2 id="rate-limits-and-fairness">Rate Limits and Fairness</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The API limits requests. Is that just to stop attackers?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can protect capacity, control cost, and keep one consumer from starving others. Legitimate clients can also accidentally generate excessive traffic through bugs or aggressive polling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The contract should explain limits and how to respond when they're reached.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where practical, yes. A client should back off appropriately, not immediately retry in a tight loop. And limits should fit the operation—reading a menu and creating a payment attempt have different consequences.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can also avoid sending requests that aren't useful. Debounce a search, stop polling when the view isn't active where appropriate, and don't refetch unchanged data constantly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Debouncing is a programming technique that waits for a pause in repeated activity before acting. It isn't built into HTTP, and it isn't a security boundary. The server still enforces its own limits.</span>
+        </p>
+<h2 id="what-makes-an-api-pleasant-to-use">What Makes an API Pleasant to Use?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If you were the consumer, what would you appreciate most?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Predictable naming, clear examples, stable meaning, explicit units, useful errors, and a way to try the intended flow without risking real transactions. Also documentation that says what happens on retries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not just a list of fields.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fields are necessary, but a worked sequence is often what makes the system understandable. Create an attempt, follow payment, retrieve status, handle cancellation. Show how operations connect.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's our series pattern again: thing, problem, mechanism, example, tradeoff.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Good API documentation should let another developer form a correct mental model. Curly braces are merely the packaging.</span>
+        </p>
+<h2 id="a-contract-review-at-the-restaurant">A Contract Review at the Restaurant</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before we call the API finished, can we read one operation as a complete promise?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Create an order from these items and this fulfillment choice, for this authorized context, using the agreed pricing policy. If accepted, return a durable identifier and explicit state. If rejected, return a reason the client can handle. If the caller retries the same attempt, follow the documented duplicate policy.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That includes much more than the schema.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. The schema says what values look like. The contract says what the operation means. Both matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if the server starts asynchronous work and immediately returns an identifier?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then the promise is that work was durably accepted for processing, if that's what we've implemented. The client needs a status endpoint or notification mechanism and a definition of terminal outcomes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Terminal meaning no more automatic progress is expected, not something involving a command line.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Completed, rejected, or requiring human attention could be distinct outcomes. Don't leave consumers polling forever because no one defined failure after acceptance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And cancellation of pending work?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Another explicit operation with rules. The server may not be able to cancel once a downstream action has begun. Explain whether cancellation is requested, accepted, or completed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those distinctions seem fussy until the action costs money.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or affects someone's dinner plans. Precision is useful even at modest stakes. The UI can only be honest if the API gives it an honest state.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What would you leave out of the first API?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Bulk export, arbitrary query languages, partner integrations, and administrative operations nobody currently needs. Each one creates validation, permissions, documentation, and support work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can add them when a consumer has a real use case.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A small API with clear behavior is a better foundation than a huge API whose endpoints all mean “we'll see what happens.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I withdraw data two.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The contract thanks you.</span>
+        </p>
+<h2 id="closing-ask-what-it-promises">Closing — Ask What It Promises</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A useful API exposes meaningful capabilities, validates inputs, checks permission, defines outcomes, and stays understandable as it changes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can separate clients from internal implementation. That flexibility costs documentation, compatibility work, and careful boundary handling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our pizza API is small because our needs are small. It has enough rules to be trustworthy, not enough endpoints to impress a diagram.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: identity. How the server connects a request to a session, and why cookies, tokens, and authentication aren't synonyms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have renamed data two to contractual uncertainty.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Finally, an honest field name.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

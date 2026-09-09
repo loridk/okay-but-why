@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 6: Cryptography Without the Wizard Robes — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 6: Cryptography Without the Wizard Robes</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-06.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#what-problem-does-cryptography-solve">What Problem Does Cryptography Solve?</a></li>
+<li><a href="#encryption-keep-the-contents-secret">Encryption: Keep the Contents Secret</a></li>
+<li><a href="#symmetric-encryption-same-secret-on-both-sides">Symmetric Encryption: Same Secret on Both Sides</a></li>
+<li><a href="#asymmetric-encryption-a-key-pair">Asymmetric Encryption: A Key Pair</a></li>
+<li><a href="#the-locked-box-metaphor">The Locked Box Metaphor</a></li>
+<li><a href="#hashing-fingerprint-not-encryption">Hashing: Fingerprint, Not Encryption</a></li>
+<li><a href="#what-are-hashes-good-for">What Are Hashes Good For?</a></li>
+<li><a href="#collision-resistance">Collision Resistance</a></li>
+<li><a href="#password-hashing-is-special">Password Hashing Is Special</a></li>
+<li><a href="#message-authentication-codes">Message Authentication Codes</a></li>
+<li><a href="#digital-signatures-prove-who-signed-it">Digital Signatures: Prove Who Signed It</a></li>
+<li><a href="#signing-software">Signing Software</a></li>
+<li><a href="#key-management-the-actual-hard-part">Key Management: The Actual Hard Part</a></li>
+<li><a href="#key-length-and-algorithm-choice">Key Length and Algorithm Choice</a></li>
+<li><a href="#randomness-is-security-critical">Randomness Is Security-Critical</a></li>
+<li><a href="#nonces-and-ivs">Nonces and IVs</a></li>
+<li><a href="#encryption-at-rest-and-in-transit">Encryption at Rest and in Transit</a></li>
+<li><a href="#encryption-in-use">Encryption in Use?</a></li>
+<li><a href="#tokenization-and-data-masking">Tokenization and Data Masking</a></li>
+<li><a href="#obfuscation-is-not-encryption">Obfuscation Is Not Encryption</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#cryptographic-agility">Cryptographic Agility</a></li>
+<li><a href="#quantum-computing-briefly-and-calmly">Quantum Computing, Briefly and Calmly</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Base64 is not encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Strong opening.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have seen too much.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Base64 is encoding.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>You can decode it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Without a key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Therefore not encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. Episode complete.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unfortunately cryptography has more than one concept.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I was afraid of that.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em></span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I’m Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Today we’re talking cryptography.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encryption.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hashing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Signatures.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keys.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And most importantly, what problem each one solves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because developers hear “crypto” and start throwing SHA-256 at unrelated problems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or worse, writing their own algorithm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Please don’t do this is going to be busy today.</span>
+        </p>
+<h2 id="what-problem-does-cryptography-solve">What Problem Does Cryptography Solve?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cryptography gives us mathematical tools for protecting information and proving things about it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Confidentiality.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Encryption.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Integrity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Hashes and message authentication can help.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Authenticity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Digital signatures and MACs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Non-repudiation?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Digital signatures can support that in certain systems and legal contexts, though real-world non-repudiation is more than “a signature exists.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. No magical promises.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cryptography doesn’t secure everything by itself. It gives us primitives.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Building blocks.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And using the right building block incorrectly can still fail.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extremely.</span>
+        </p>
+<h2 id="encryption-keep-the-contents-secret">Encryption: Keep the Contents Secret</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Start with encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Encryption transforms plaintext into ciphertext using an algorithm and key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Plaintext is readable input.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ciphertext is the scrambled output.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Decryption reverses it with the appropriate key.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The important property is that someone without the key should not feasibly recover the plaintext.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="symmetric-encryption-same-secret-on-both-sides">Symmetric Encryption: Same Secret on Both Sides</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In <strong>symmetric encryption</strong>, the same secret key—or closely related shared secret—is used for encryption and decryption.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fast.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Generally very fast.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>AES.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The major modern example.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Problem: how do both parties get the same secret key without exposing it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s the key-distribution problem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is where asymmetric cryptography becomes useful.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="asymmetric-encryption-a-key-pair">Asymmetric Encryption: A Key Pair</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Asymmetric cryptography</strong> uses a key pair.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Public key.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Private key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public key can be shared.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Private key must be protected.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Depending on the algorithm and use case, one side can encrypt or verify using the public key, while the private key decrypts or signs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>RSA and elliptic-curve cryptography.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Common families.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Slower than symmetric crypto.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Typically much slower for bulk data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why protocols often use asymmetric crypto to establish trust or shared secrets, then switch to symmetric encryption for the actual conversation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That hybrid model is everywhere.</span>
+        </p>
+<h2 id="the-locked-box-metaphor">The Locked Box Metaphor</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Give me a metaphor that does not lie too badly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine everyone has a special padlock they can hand out publicly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Anyone can put something in a box and lock it with your public padlock.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Only your private key can open it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good for encryption intuition.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But real asymmetric cryptography has mathematical properties the padlock metaphor doesn’t capture.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Metaphor warning label accepted.</span>
+        </p>
+<h2 id="hashing-fingerprint-not-encryption">Hashing: Fingerprint, Not Encryption</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hashing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A cryptographic hash function takes input of arbitrary size and produces fixed-size output.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same input, same hash.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Tiny input change, very different output.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ideally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And it is designed to be one-way.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Meaning you should not feasibly recover the original input from the hash alone.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why hashing is not encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encryption is reversible with a key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hashing is not supposed to be reversible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="what-are-hashes-good-for">What Are Hashes Good For?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Integrity checking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If you publish a file and its hash, users can compute the hash of what they downloaded.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the values differ, the file changed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But a plain hash doesn’t prove who published it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Important.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An attacker who can replace both the file and the posted hash can fool you.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So for authenticity, we need signatures or some trusted channel.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="collision-resistance">Collision Resistance</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good cryptographic hashes aim for properties including collision resistance.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hard to find two different inputs with the same hash.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because collisions must mathematically exist when arbitrary input maps to fixed output.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The security goal is that finding one intentionally is computationally infeasible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>MD5 and SHA-1 are considered broken for collision-resistant security use.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SHA-2 and SHA-3 families are modern options for appropriate use cases.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="password-hashing-is-special">Password Hashing Is Special</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We touched this last episode.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Password storage uses specialized password hashing because ordinary cryptographic hashes are too fast.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fast is usually good.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unless the attacker is trying billions of guesses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then fast helps the attacker.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So Argon2id, bcrypt, scrypt, PBKDF2.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Appropriate options depending on system requirements.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Salt each password.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Optional pepper, handled carefully.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are not designing our own scheme.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not.</span>
+        </p>
+<h2 id="message-authentication-codes">Message Authentication Codes</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>MAC.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unfortunately this acronym is overloaded.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not Mandatory Access Control this time.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A <strong>Message Authentication Code</strong> uses a secret key to produce a tag that helps verify integrity and authenticity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HMAC.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A common construction using a cryptographic hash and secret key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a plain hash can tell me “this changed,” but HMAC can tell me “this changed or it wasn’t produced by someone with the shared secret.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Shared-secret authenticity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good phrase.</span>
+        </p>
+<h2 id="digital-signatures-prove-who-signed-it">Digital Signatures: Prove Who Signed It</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Digital signatures use asymmetric cryptography.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sign with the private key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Verify with the public key.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So anyone with the public key can verify that the signature corresponds to the private key.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And that the signed data hasn’t changed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is not encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very important.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A signature does not inherently make the content secret.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public signed document can still be public.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="signing-software">Signing Software</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This matters for software distribution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A developer or vendor can sign a release.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Users or systems verify the signature.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If malware modifies the package, signature verification should fail.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Assuming the signing key is protected and the verifier trusts the right public key.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cryptography always drags key management behind it.</span>
+        </p>
+<h2 id="key-management-the-actual-hard-part">Key Management: The Actual Hard Part</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There it is.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cryptographic algorithms are often the easy part compared with managing keys safely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Generate them securely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Store them securely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Distribute them securely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Rotate them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Revoke them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Back them up where appropriate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Destroy them when needed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the AES key is sitting in the same public GitHub repo as the encrypted database dump—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You have performed decorative encryption.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Beautiful phrase.</span>
+        </p>
+<h2 id="key-length-and-algorithm-choice">Key Length and Algorithm Choice</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security depends on using algorithms and key sizes appropriate for the threat model.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Bigger isn’t universally better.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Different algorithms have different security properties.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You can’t directly compare a 256-bit symmetric key to a 256-bit RSA key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because the underlying mathematical problems differ.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use established standards and libraries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Always.</span>
+        </p>
+<h2 id="randomness-is-security-critical">Randomness Is Security-Critical</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Random numbers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cryptography needs unpredictable randomness for keys, nonces, salts, tokens, initialization vectors, and more.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>Math.random()</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not for cryptographic secrets.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In browsers, Web Crypto.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In Node, cryptographic random APIs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Predictable randomness can destroy otherwise good crypto.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="nonces-and-ivs">Nonces and IVs</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nonce.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Number used once,” conceptually.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Initialization vector.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another parameter used by certain encryption modes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do I need to memorize implementation details?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not for this episode.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The important idea: many encryption schemes require unique or unpredictable auxiliary values.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Reusing them incorrectly can catastrophically weaken security.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So library says “give me a nonce,” I do not just hard-code <code>1234</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+<h2 id="encryption-at-rest-and-in-transit">Encryption at Rest and in Transit</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Common security phrase.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Data at rest</strong> is stored data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Disk.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Database.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Backup.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><strong>Data in transit</strong> is moving between systems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TLS protects data in transit.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Disk or database encryption can protect data at rest.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But encryption at rest does not stop an authorized compromised application from reading decrypted data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Important.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the application has the key and the attacker controls the application, encryption may not save you at that layer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Control has a scope.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Always.</span>
+        </p>
+<h2 id="encryption-in-use">Encryption in Use?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And data in use?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Data actively being processed is harder to protect because systems generally need plaintext or usable representation to compute on it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There are technologies like trusted execution environments and homomorphic encryption for specialized cases.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, but they’re not magic universal answers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. We will not accidentally turn this into a graduate cryptography course.</span>
+        </p>
+<h2 id="tokenization-and-data-masking">Tokenization and Data Masking</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security+ also distinguishes other data-protection techniques.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Tokenization.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Replace sensitive data with a non-sensitive token that maps back to the original through a controlled system.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Credit-card systems use this.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Often.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Masking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Hide part of the value for display.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>•••• 1234</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not cryptography in the same sense, but useful data-minimization controls.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="obfuscation-is-not-encryption">Obfuscation Is Not Encryption</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Minified JavaScript is not encrypted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Rot13 is not secure encryption.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>XOR with a hard-coded key in the source is not a miracle.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Base64—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Still not encryption.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Just checking.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Roll your own crypto.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t do this.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Invent an algorithm because AES “looks complicated.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reuse nonces because “it worked in testing.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Put encryption keys in source control.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encrypt passwords instead of hashing them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use MD5 because “it’s just internal.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We are going to lose sponsors we do not have.</span>
+        </p>
+<h2 id="cryptographic-agility">Cryptographic Agility</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What happens when an algorithm becomes weak?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Systems need <strong>cryptographic agility</strong>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ability to replace algorithms, keys, certificates, or protocols without rebuilding everything from scratch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hard-code one algorithm forever and future-you suffers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This matters especially with long-lived systems and post-quantum transitions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="quantum-computing-briefly-and-calmly">Quantum Computing, Briefly and Calmly</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have to mention quantum, don’t we?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Briefly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Large fault-tolerant quantum computers could break some widely used public-key algorithms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>RSA, traditional elliptic-curve systems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not “all encryption becomes useless tomorrow.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Symmetric cryptography is affected differently, and post-quantum algorithms are being standardized and deployed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the practical lesson is cryptographic agility and paying attention to standards.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No quantum panic bunker.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not required.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The click is that “cryptography” is not one operation called <code>secure()</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encryption protects confidentiality.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hashing gives a one-way digest useful for integrity and other constructions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HMAC gives integrity and authenticity using a shared secret.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Digital signatures give integrity and authenticity using asymmetric keys.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different primitive, different problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And key management is part of the security, not administrative cleanup after the math.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Arguably one of the hardest parts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which explains why good developers use established protocols and libraries instead of becoming amateur cryptographers on a Friday night.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Beautiful.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For Security+, know symmetric versus asymmetric cryptography, hashing, salting, key exchange, digital signatures, certificates, PKI concepts, tokenization, masking, key management, cryptographic attacks, and data states.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Recognize common algorithm families.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>AES, RSA, ECC, SHA families, and password hashing concepts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And know what each tool is for.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That matters more than memorizing a name in isolation.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encryption is reversible with the proper key.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hashing is designed to be one-way.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Symmetric crypto uses a shared secret and is efficient for bulk data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Asymmetric crypto uses public/private key pairs and helps with key exchange, encryption, and signatures depending on the algorithm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Digital signatures provide integrity and authenticity, not secrecy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>HMAC uses a shared secret to authenticate data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Passwords need specialized slow hashing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Randomness, nonces, IVs, and key management are security-critical.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Encryption at rest and in transit protect different stages of data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And established cryptographic libraries beat clever homemade algorithms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next time?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>HTTPS, TLS, certificates, and PKI.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So now we take all these primitives and build the little lock icon.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Basically.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally. The browser has been smug about that lock for years.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><em>Okay, But Why?</em> is the show where Base64 has been formally denied admission to the encryption club.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: how your browser decides it’s really talking to the site you asked for.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

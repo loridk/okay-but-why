@@ -37,7 +37,41 @@ const SILENCE_BETWEEN_CHUNKS_MS = 400;
 const CAST = {
   PARISA: "Pulcherrima",
   JULES: "Erinome",
+  SABRINA: "Leda",
 };
+
+function getSpeakers(dialogue) {
+  return [...new Set(dialogue.map((line) => line.match(/^([A-Z]+):/)?.[1]).filter(Boolean))];
+}
+
+function createSpeechConfig(dialogue) {
+  const speakers = getSpeakers(dialogue);
+
+  if (speakers.length === 0 || speakers.length > 2) {
+    throw new Error(
+      `Each audio chunk must contain one or two speakers; found ${speakers.length}.`,
+    );
+  }
+
+  if (speakers.length === 1) {
+    return {
+      voiceConfig: {
+        prebuiltVoiceConfig: { voiceName: CAST[speakers[0]] },
+      },
+    };
+  }
+
+  return {
+    multiSpeakerVoiceConfig: {
+      speakerVoiceConfigs: speakers.map((speaker) => ({
+        speaker,
+        voiceConfig: {
+          prebuiltVoiceConfig: { voiceName: CAST[speaker] },
+        },
+      })),
+    },
+  };
+}
 
 function removeMarkdown(text) {
   return text.replace(/`([^`]+)`/g, "$1").replace(/\*([^*]+)\*/g, "$1");
@@ -101,32 +135,16 @@ function buildChunks(sections) {
   }
 
   for (const section of sections) {
-    const sectionLength = section.dialogue.join("\n").length;
-    const currentLength = current.dialogue.join("\n").length;
-    const combinedLength =
-      currentLength + (current.dialogue.length ? 1 : 0) + sectionLength;
-
-    if (sectionLength <= MAX_CHUNK_CHARACTERS) {
-      if (
-        current.dialogue.length > 0 &&
-        combinedLength > MAX_CHUNK_CHARACTERS
-      ) {
-        flush();
-      }
-
-      current.titles.push(section.title);
-      current.dialogue.push(...section.dialogue);
-      continue;
-    }
-
-    flush();
-
     for (const line of section.dialogue) {
       const splitLength = current.dialogue.join("\n").length;
       const nextLength =
         splitLength + (current.dialogue.length ? 1 : 0) + line.length;
+      const nextSpeakers = getSpeakers([...current.dialogue, line]);
 
-      if (nextLength > MAX_CHUNK_CHARACTERS) {
+      if (
+        current.dialogue.length > 0 &&
+        (nextLength > MAX_CHUNK_CHARACTERS || nextSpeakers.length > 2)
+      ) {
         flush();
       }
 
@@ -137,7 +155,6 @@ function buildChunks(sections) {
       current.dialogue.push(line);
     }
 
-    flush();
   }
 
   flush();
@@ -209,8 +226,9 @@ async function fileExists(filePath) {
   }
 }
 
-async function generateConversation(transcript, apiKey) {
+async function generateConversation(dialogue, apiKey) {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+  const transcript = dialogue.join("\n");
   const prompt = `
 Generate speech for the exact transcript below. Do not add, remove, or paraphrase words.
 
@@ -224,6 +242,9 @@ and understated. Measured but not slow. Her jokes are tossed off, not performed.
 
 Jules: Parisa's knowledgeable adult peer. Slightly brighter and quicker, with
 genuine enthusiasm, but never bubbly, childish, or announcer-like.
+
+Sabrina: A competent, enthusiastic developer in her early twenties. Current,
+quick, and confident, but never childish, frantic, or a caricature of Gen Z.
 
 TRANSCRIPT
 ${transcript}
@@ -239,24 +260,7 @@ ${transcript}
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         responseModalities: ["AUDIO"],
-        speechConfig: {
-          multiSpeakerVoiceConfig: {
-            speakerVoiceConfigs: [
-              {
-                speaker: "PARISA",
-                voiceConfig: {
-                  prebuiltVoiceConfig: { voiceName: CAST.PARISA },
-                },
-              },
-              {
-                speaker: "JULES",
-                voiceConfig: {
-                  prebuiltVoiceConfig: { voiceName: CAST.JULES },
-                },
-              },
-            ],
-          },
-        },
+        speechConfig: createSpeechConfig(dialogue),
       },
     }),
   });
@@ -335,7 +339,7 @@ async function main() {
         `[${index + 1}/${chunks.length}] Generating ${chunk.titles.join(" / ")}...`,
       );
       const { audio } = await generateConversation(
-        chunk.dialogue.join("\n"),
+        chunk.dialogue,
         apiKey,
       );
       wav =

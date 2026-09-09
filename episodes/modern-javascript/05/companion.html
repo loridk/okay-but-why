@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 5: JavaScript Finally Learned How to Wait — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 5: JavaScript Finally Learned How to Wait</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-05.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+<li><a href="#callbacks-the-original-arrangement">Callbacks: The Original Arrangement</a></li>
+<li><a href="#promises-give-the-future-a-container">Promises Give the Future a Container</a></li>
+<li><a href="#async-and-await">Async and Await</a></li>
+<li><a href="#the-event-loop-without-a-phd">The Event Loop Without a PhD</a></li>
+<li><a href="#fetch-is-not-the-same-thing-as-async">Fetch Is Not the Same Thing as Async</a></li>
+<li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#parallel-work-don-t-await-too-early">Parallel Work: Don't Await Too Early</a></li>
+<li><a href="#please-don-t-do-this-floating-promises">Please Don't Do This: Floating Promises</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JavaScript has one thread.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Generally, your main JavaScript execution context runs one call stack, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then explain how it can wait for a network request without freezing the entire universe.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The environment helps.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I knew there was staff.</span>
+        </p>
+<h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Web applications constantly deal with things that take time: timers, network requests, user events, file operations in some environments.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And you cannot stop the main thread until the internet feels ready.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The browser provides asynchronous capabilities, and JavaScript schedules what should happen when those operations complete.</span>
+        </p>
+<h2 id="callbacks-the-original-arrangement">Callbacks: The Original Arrangement</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Callbacks are just functions passed to be called later.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>button.addEventListener(&quot;click&quot;, function () {
+  console.log(&quot;clicked&quot;);
+});</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nothing wrong with callbacks themselves.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. The trouble came when complex asynchronous workflows became deeply nested or difficult to coordinate and handle errors across.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Callback hell wasn't “callbacks bad.” It was “our control flow now resembles a haunted staircase.”</span>
+        </p>
+<h2 id="promises-give-the-future-a-container">Promises Give the Future a Container</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A Promise represents the eventual result of an asynchronous operation: pending, then fulfilled or rejected.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>fetch(&quot;/api/user&quot;)
+  .then(response =&gt; response.json())
+  .then(user =&gt; console.log(user))
+  .catch(error =&gt; console.error(error));</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So instead of handing every function another callback, we get an object representing the future outcome and attach reactions to it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="async-and-await">Async and Await</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>async</code> and <code>await</code> arrived after ES2015 and let promise-based code read more like sequential code.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>async function loadUser() {
+  const response = await fetch(&quot;/api/user&quot;);
+  const user = await response.json();
+  return user;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important question. Does <code>await</code> block JavaScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It pauses <strong>that async function's continuation</strong> until the promise settles. It doesn't freeze the browser's whole event loop.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “await makes asynchronous code synchronous” is a useful-looking lie.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Better to say it gives asynchronous code sequential-looking control flow.</span>
+        </p>
+<h2 id="the-event-loop-without-a-phd">The Event Loop Without a PhD</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Give me the event loop version I can keep in my head.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript runs work on the call stack. The host environment handles things like timers and network activity. When asynchronous work is ready, callbacks or promise reactions become eligible to run. The event loop coordinates getting queued work onto the stack when the stack is available.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So JavaScript isn't secretly doing five things on one stack.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. The environment and scheduling model are doing a lot of the work around it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One cashier, kitchen staff in back, and a system for telling the cashier when an order is ready.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good enough until we start discussing workers and runtime internals.</span>
+        </p>
+<h2 id="fetch-is-not-the-same-thing-as-async">Fetch Is Not the Same Thing as Async</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>fetch</code> is JavaScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Careful. <code>fetch</code> is a Web API in browsers and is also provided by modern Node environments. <code>async</code> and <code>await</code> are JavaScript language syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There it is. Language versus environment again.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="error-handling">Error Handling</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With <code>async</code>/<code>await</code>, rejected promises can be handled with <code>try</code>/<code>catch</code>.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>try {
+  const response = await fetch(&quot;/api/user&quot;);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const user = await response.json();
+} catch (error) {
+  console.error(error);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>fetch</code> doesn't reject merely because the server returned a 404 or 500.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Network failure and HTTP error status are different things. Check <code>response.ok</code> when HTTP status matters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is exactly the kind of tiny fact that eats an afternoon.</span>
+        </p>
+<h2 id="parallel-work-don-t-await-too-early">Parallel Work: Don't Await Too Early</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If two operations don't depend on each other, awaiting the first before starting the second can unnecessarily serialize them.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>js</span></figcaption>
+          <pre tabindex="0"><code>const userPromise = fetch(&quot;/api/user&quot;);
+const postsPromise = fetch(&quot;/api/posts&quot;);
+
+const [userResponse, postsResponse] =
+  await Promise.all([userPromise, postsPromise]);</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Start both, then wait for both.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. <code>await</code> is readable, but placement still affects behavior.</span>
+        </p>
+<h2 id="please-don-t-do-this-floating-promises">Please Don't Do This: Floating Promises</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I call an async function and ignore the promise?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes that's intentional, but unhandled rejection paths can become bugs. Know who owns the error.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Fire and forget” should not mean “fire and become emotionally unavailable.”</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Callbacks didn't disappear. Promises gave asynchronous outcomes a standard abstraction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>async</code>/<code>await</code> is syntax built on promises.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>await</code> pauses the async function's continuation, not the entire JavaScript runtime.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the host environment plus event loop are essential to understanding how asynchronous work fits around JavaScript's call stack.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: modules. Because apparently we eventually decided one enormous global script file was bad.</span>
+        </p></main>
+  <footer>5 code cards · 0 terminal cards</footer>
+</body>
+</html>

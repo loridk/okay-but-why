@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 3: Flexbox and Grid — We Can Stop Abusing Floats Now — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern CSS — Wait, CSS Does That Now? episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 3: Flexbox and Grid — We Can Stop Abusing Floats Now</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <script async defer onload="redcircleIframe();" src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/ea71071a-059d-4024-b24d-2f823dd6c005"></script>
+        <div class="redcirclePlayer-ea71071a-059d-4024-b24d-2f823dd6c005"></div>
+        <style>
+        .redcircle-link:link {
+            color: #ea404d;
+            text-decoration: none;
+        }
+        .redcircle-link:hover {
+            color: #ea404d;
+        }
+        .redcircle-link:active {
+            color: #ea404d;
+        }
+        .redcircle-link:visited {
+            color: #ea404d;
+        }
+    </style>
+    <p style="margin-top:3px;margin-left:11px;font-family: sans-serif;font-size: 10px; color: gray;">Powered by <a class="redcircle-link" href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1">RedCircle</a></p>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#the-float-years">The Float Years</a></li>
+<li><a href="#flexbox-solves-relationships-along-an-axis">Flexbox Solves Relationships Along an Axis</a></li>
+<li><a href="#main-axis-cross-axis-and-human-confusion">Main Axis, Cross Axis, and Human Confusion</a></li>
+<li><a href="#flexibility-is-negotiation">Flexibility Is Negotiation</a></li>
+<li><a href="#grid-solves-the-whole-arrangement">Grid Solves the Whole Arrangement</a></li>
+<li><a href="#one-dimension-versus-two-is-a-heuristic">One Dimension Versus Two Is a Heuristic</a></li>
+<li><a href="#the-card-row-test">The Card Row Test</a></li>
+<li><a href="#they-are-teammates">They Are Teammates</a></li>
+<li><a href="#start-with-normal-flow">Start With Normal Flow</a></li>
+<li><a href="#what-becomes-a-flex-item">What Becomes a Flex Item?</a></li>
+<li><a href="#flex-basis-is-the-opening-bid">flex-basis Is the Opening Bid</a></li>
+<li><a href="#why-does-my-text-refuse-to-shrink">Why Does My Text Refuse to Shrink?</a></li>
+<li><a href="#wrapping-does-not-create-a-grid">Wrapping Does Not Create a Grid</a></li>
+<li><a href="#explicit-and-implicit-grid">Explicit and Implicit Grid</a></li>
+<li><a href="#fr-means-a-share-of-leftover-space">fr Means a Share of Leftover Space</a></li>
+<li><a href="#named-lines-and-areas">Named Lines and Areas</a></li>
+<li><a href="#auto-placement-is-helpful-not-psychic">Auto-Placement Is Helpful, Not Psychic</a></li>
+<li><a href="#alignment-has-two-perspectives">Alignment Has Two Perspectives</a></li>
+<li><a href="#gap-belongs-to-the-layout">Gap Belongs to the Layout</a></li>
+<li><a href="#devtools-is-part-of-learning-layout">DevTools Is Part of Learning Layout</a></li>
+<li><a href="#source-order-still-matters">Source Order Still Matters</a></li>
+<li><a href="#subgrid-alignment-without-lying">Subgrid: Alignment Without Lying</a></li>
+<li><a href="#centering-was-a-symptom">Centering Was a Symptom</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script"><h1 id="episode-3-flexbox-and-grid-we-can-stop-abusing-floats-now">Episode 3: Flexbox and Grid — We Can Stop Abusing Floats Now</h1>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I centered a thing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Congratulations?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Two declarations. No positioning. No transform. No table cell. No mysterious line height.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>display: grid; place-items: center;</code>?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not steal my moment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Today: why CSS has both Flexbox and Grid, and why neither is “the newer one that replaces the other.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also why floats were never a layout system even though an entire industry made them wear the uniform.</span>
+        </p>
+<h2 id="the-float-years">The Float Years</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A float takes an element partly out of normal flow so inline content can wrap around it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Great for a picture in an article.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We used it for three-column websites.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Less great.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Width math, gutters, clearfixes, source-order compromises, equal-height illusions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then frameworks packaged the pain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Bootstrap's grid was genuinely valuable. It offered a shared, tested convention when native layout primitives were limited and browsers disagreed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The twelve columns were not divine law.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They were a coordination strategy.</span>
+        </p>
+<h2 id="flexbox-solves-relationships-along-an-axis">Flexbox Solves Relationships Along an Axis</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Flexbox asks how items should share and align space in one dimension at a time.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A row or a column.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>css</span></figcaption>
+          <pre tabindex="0"><code>.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toolbar__actions {
+  margin-inline-start: auto;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Items align as a group, <code>gap</code> creates spacing, and the actions move to the far inline edge.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The content can be unknown. Flexbox distributes the available space at runtime.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is what older layout recipes were trying to fake with widths and margins.</span>
+        </p>
+<h2 id="main-axis-cross-axis-and-human-confusion">Main Axis, Cross Axis, and Human Confusion</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In a flex row, the main axis follows the row and the cross axis runs perpendicular.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>justify-content</code> works on the main axis. <code>align-items</code> works on the cross axis.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Change <code>flex-direction</code> to column and the physical directions change.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why memorizing “justify means horizontal” eventually betrays you.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Think in axes, not screen directions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is CSS teaching us geometry through consequences.</span>
+        </p>
+<h2 id="flexibility-is-negotiation">Flexibility Is Negotiation</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Explain <code>flex: 1</code> without chanting three numbers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The shorthand controls whether an item can grow, whether it can shrink, and its starting basis for distributing space.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So it is not secretly “width: one third.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. Flexible items negotiate based on available space, basis, and constraints.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>min-width: auto</code> can keep an item from shrinking past its content.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is why <code>min-width: 0</code> sometimes fixes the item that refuses to fit.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not magic. An explicit permission to shrink below the automatic content-based minimum.</span>
+        </p>
+<h2 id="grid-solves-the-whole-arrangement">Grid Solves the Whole Arrangement</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Grid defines rows and columns together.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>css</span></figcaption>
+          <pre tabindex="0"><code>.page {
+  display: grid;
+  grid-template-columns: minmax(14rem, 20rem) minmax(0, 1fr);
+  gap: 2rem;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That describes the relationship between the page tracks.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Children become grid items and can occupy cells or span tracks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The parent owns the arrangement. That is fundamentally different from making every child calculate a percentage width.</span>
+        </p>
+<h2 id="one-dimension-versus-two-is-a-heuristic">One Dimension Versus Two Is a Heuristic</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>People say Flexbox is one-dimensional and Grid is two-dimensional.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Useful, but not a courtroom oath.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Flex items can wrap into multiple lines.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But each flex line distributes its space independently. Columns across different lines do not automatically align.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid coordinates rows and columns as one system.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ask whether you care mainly about the sequence along one axis or about alignment across both axes.</span>
+        </p>
+<h2 id="the-card-row-test">The Card Row Test</h2>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>css</span></figcaption>
+          <pre tabindex="0"><code>.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is Grid because I want card columns to align across rows.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If you had one navigation row whose items should size around their labels, Flexbox might be the natural choice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I want the final card to stretch across empty space?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe Flexbox. If I want it to stay aligned to established columns, Grid.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The design requirement chooses the tool.</span>
+        </p>
+<h2 id="they-are-teammates">They Are Teammates</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A page can be Grid, its header Flexbox, and a button itself inline-flex.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely. Layout modes nest.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>css</span></figcaption>
+          <pre tabindex="0"><code>.dashboard {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+}
+
+.dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid handles regions. Flexbox handles a relationship inside one region.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No cage match required.</span>
+        </p>
+<h2 id="start-with-normal-flow">Start With Normal Flow</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before people leave here setting <code>display: flex</code> on every element, we need to defend normal flow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Block content stacking and inline content flowing within lines already solve a huge number of layouts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A readable article does not need Grid merely because Grid exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Changing the display mode creates a formatting context with new rules. It should answer a layout requirement.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If ordinary flow already produces the relationship, leave it alone.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Boring CSS is often resilient CSS.</span>
+        </p>
+<h2 id="what-becomes-a-flex-item">What Becomes a Flex Item?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>When I put <code>display: flex</code> on a container, its direct children become flex items.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not every descendant.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>html</span></figcaption>
+          <pre tabindex="0"><code>&lt;nav class=&quot;nav&quot;&gt;
+  &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+  &lt;div class=&quot;account&quot;&gt;
+    &lt;a href=&quot;/profile&quot;&gt;Profile&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>Home</code> and <code>.account</code> are flex items. The Profile link is inside one of those items.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If <code>.account</code> also needs flex behavior, give that element its own layout context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This direct-child rule explains a lot of “why didn't Flexbox touch this?” questions.</span>
+        </p>
+<h2 id="flex-basis-is-the-opening-bid">flex-basis Is the Opening Bid</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before free space is distributed, each flex item has a flex basis.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The basis is the item's starting size along the main axis for the flex calculation.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>css</span></figcaption>
+          <pre tabindex="0"><code>.sidebar {
+  flex: 0 0 18rem;
+}
+
+.content {
+  flex: 1 1 30rem;
+  min-inline-size: 0;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The sidebar neither grows nor shrinks and starts at eighteen rem.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The content can grow, can shrink, and brings a thirty-rem basis into the negotiation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>flex-basis</code> is not always the final rendered width.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because Flexbox is resolving all the items against the container's available space.</span>
+        </p>
+<h2 id="why-does-my-text-refuse-to-shrink">Why Does My Text Refuse to Shrink?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This one deserves a tiny crime-scene reconstruction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A flex item defaults to an automatic minimum size, often based on its content.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A long unbreakable string or nested element can keep the item wider than the available space.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>css</span></figcaption>
+          <pre tabindex="0"><code>.content {
+  min-inline-size: 0;
+}
+
+.content__title {
+  overflow-wrap: anywhere;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The first line allows the flex item to shrink below that automatic content minimum.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The second gives the text an emergency breaking opportunity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Different problems, often seen together.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>overflow: hidden</code> sometimes appears to fix it because it changes sizing behavior, but it may also hide content and focus indicators.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use the rule that expresses the requirement you actually have.</span>
+        </p>
+<h2 id="wrapping-does-not-create-a-grid">Wrapping Does Not Create a Grid</h2>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>css</span></figcaption>
+          <pre tabindex="0"><code>.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent for tags that size to their content and wrap naturally.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But the items on row two do not inherit column widths from row one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Each flex line runs its own distribution calculation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If aligned columns across rows are the requirement, that is evidence for Grid.</span>
+        </p>
+<h2 id="explicit-and-implicit-grid">Explicit and Implicit Grid</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid has tracks I declare and tracks the browser creates when content needs somewhere else to go.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The declared tracks form the explicit grid. Automatically created tracks form the implicit grid.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>css</span></figcaption>
+          <pre tabindex="0"><code>.schedule {
+  display: grid;
+  grid-template-columns: 8rem repeat(5, 1fr);
+  grid-auto-rows: minmax(3rem, auto);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We explicitly define six columns. Additional rows can be created implicitly with the specified minimum and automatic maximum.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If an item appears in an unexpected place, inspect both explicit and implicit tracks in DevTools.</span>
+        </p>
+<h2 id="fr-means-a-share-of-leftover-space">fr Means a Share of Leftover Space</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>1fr</code> is often described as one fraction of the container.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More precisely, it represents a fraction of the leftover space in the grid sizing algorithm.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Content minimums and fixed tracks get considered too.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>css</span></figcaption>
+          <pre tabindex="0"><code>.page {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>minmax(0, 1fr)</code> explicitly permits the flexible track to shrink below its automatic minimum.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The Grid cousin of our flex-item <code>min-inline-size: 0</code> problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Long content remains capable of causing overflow, so we still need a content strategy.</span>
+        </p>
+<h2 id="named-lines-and-areas">Named Lines and Areas</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid placement does not have to be a pile of mysterious numbers.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>css</span></figcaption>
+          <pre tabindex="0"><code>.page {
+  display: grid;
+  grid-template-areas:
+    &quot;header header&quot;
+    &quot;sidebar main&quot;
+    &quot;footer footer&quot;;
+  grid-template-columns: 16rem 1fr;
+}
+
+header { grid-area: header; }
+aside { grid-area: sidebar; }
+main { grid-area: main; }
+footer { grid-area: footer; }</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Areas can make a relatively stable page arrangement readable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They can also become cumbersome for highly dynamic placement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Named lines offer another option when track boundaries matter more than rectangular area names.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use whichever makes the relationship easiest to maintain, not whichever looks most impressive in a demo.</span>
+        </p>
+<h2 id="auto-placement-is-helpful-not-psychic">Auto-Placement Is Helpful, Not Psychic</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Grid can place unpositioned items automatically.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>By default it follows source order and fills available cells according to the auto-flow rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>grid-auto-flow: dense</code> may backfill earlier holes visually.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which can make visual order diverge from document order.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the dense packing that makes a screenshot tidy can make keyboard and reading order confusing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Accessibility is not wasted whitespace elimination.</span>
+        </p>
+<h2 id="alignment-has-two-perspectives">Alignment Has Two Perspectives</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid and Flexbox alignment names become easier when we ask two questions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Are we aligning the items inside their allocated areas, or distributing the tracks and items as a group inside the container?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>align-items</code> and <code>justify-items</code> set defaults for items where the layout mode supports them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>align-content</code> and <code>justify-content</code> distribute the layout tracks or flex lines when extra space exists.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Flexbox does not use <code>justify-items</code> because main-axis distribution works through the flex algorithm.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is why copying alignment declarations until one works teaches nothing.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 12">
+          <figcaption>Code card 12<span>css</span></figcaption>
+          <pre tabindex="0"><code>.gallery {
+  display: grid;
+  place-items: center;
+  place-content: space-evenly;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>place-items</code> combines align-items and justify-items. <code>place-content</code> combines the content-distribution pair.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Similar words, different target.</span>
+        </p>
+<h2 id="gap-belongs-to-the-layout">Gap Belongs to the Layout</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Margins attach spacing to items. <code>gap</code> belongs to the relationship created by the layout container.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That means no special rule to remove the final child's margin.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 13">
+          <figcaption>Code card 13<span>css</span></figcaption>
+          <pre tabindex="0"><code>.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Row gap and column gap can differ.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Gap now works in multiple layout modes, though percentage gaps can have context-dependent behavior worth testing.</span>
+        </p>
+<h2 id="devtools-is-part-of-learning-layout">DevTools Is Part of Learning Layout</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern browser tools can overlay grid lines, track numbers, area names, gaps, and flex information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use them. Layout algorithms are easier to learn when the browser draws what it calculated.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inspect an item's final size, basis, growth, shrinkage, and alignment instead of changing random widths.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Professionals look at the computed layout. We do not receive extra points for debugging from memory.</span>
+        </p>
+<h2 id="source-order-still-matters">Source Order Still Matters</h2>
+<h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid and Flexbox can visually reorder items.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But visual order may differ from DOM order, keyboard focus order, and screen-reader reading order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not use <code>order</code> to repair bad HTML structure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Keep the source meaningful, then use layout to present it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A keyboard user should not tab through your interface like a time traveler.</span>
+        </p>
+<h2 id="subgrid-alignment-without-lying">Subgrid: Alignment Without Lying</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A nested grid normally creates its own tracks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means card headings, text, and footers may not align across cards.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With <code>subgrid</code>, a nested grid can use tracks established by its parent.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 14">
+          <figcaption>Code card 14<span>css</span></figcaption>
+          <pre tabindex="0"><code>.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful, but it needs markup and spanning that match the relationship.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Subgrid is shared track alignment, not “make every card equal somehow.”</span>
+        </p>
+<h2 id="centering-was-a-symptom">Centering Was a Symptom</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Why was vertical centering historically so ridiculous?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because older layout modes did not expose the alignment relationship you wanted.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Flexbox and Grid have a shared box-alignment vocabulary: <code>justify-<em></code>, <code>align-</em></code>, <code>place-*</code>, and <code>gap</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Once the browser knows the container and items are a layout system, centering becomes an ordinary instruction.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 15">
+          <figcaption>Code card 15<span>css</span></figcaption>
+          <pre tabindex="0"><code>.dialog {
+  display: grid;
+  place-items: center;
+  min-block-size: 100dvb;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The miracle was not a center keyword. It was giving CSS a model that could answer the question.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Floats wrap content. We used them for layouts because purpose-built tools were missing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Flexbox distributes and aligns items mainly along one axis.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Grid coordinates rows and columns as a two-dimensional system.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The one-versus-two distinction guides the choice, but real requirements matter more than slogans.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They nest and work together constantly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Source order remains important for accessibility.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And centering got easy because CSS finally understood the layout relationship.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: responsive CSS without seventeen breakpoints.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We are going to let content and available space make more decisions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My spreadsheet of device widths is nervous.</span>
+        </p></main>
+  <footer>15 code cards · 0 terminal cards</footer>
+</body>
+</html>

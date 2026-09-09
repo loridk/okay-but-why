@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: Container Queries — The Component Finally Knows Where It Lives
+      — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 5: Container Queries — The Component Finally Knows Where It
+        Lives
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/a236c49e-e393-406e-b32a-6436c1b27df6"
+      ></script>
+      <div class="redcirclePlayer-a236c49e-e393-406e-b32a-6436c1b27df6"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-viewport-is-not-the-component"
+            >The Viewport Is Not the Component</a
+          >
+        </li>
+        <li>
+          <a href="#establishing-a-query-container"
+            >Establishing a Query Container</a
+          >
+        </li>
+        <li><a href="#writing-the-query">Writing the Query</a></li>
+        <li><a href="#naming-containers">Naming Containers</a></li>
+        <li><a href="#container-query-units">Container Query Units</a></li>
+        <li>
+          <a href="#size-queries-versus-style-queries"
+            >Size Queries Versus Style Queries</a
+          >
+        </li>
+        <li>
+          <a href="#container-queries-do-not-replace-media-queries"
+            >Container Queries Do Not Replace Media Queries</a
+          >
+        </li>
+        <li><a href="#the-architecture-shift">The Architecture Shift</a></li>
+        <li>
+          <a href="#please-don-t-forget-the-content"
+            >Please Don't Forget the Content</a
+          >
+        </li>
+        <li>
+          <a href="#a-progressive-enhancement-shape"
+            >A Progressive Enhancement Shape</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-5-container-queries-the-component-finally-knows-where-it-lives"
+      >
+        Episode 5: Container Queries — The Component Finally Knows Where It
+        Lives
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My card is on a desktop.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Congratulations to the card.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is also twelve rem wide because someone put it in a sidebar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Ah.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My desktop media query has opinions that are no longer
+          relevant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Media queries ask about the viewport or device environment.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Container queries let descendants respond to a containing
+          ancestor.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That difference changes component architecture.</span>
+      </p>
+      <h2 id="the-viewport-is-not-the-component">
+        The Viewport Is Not the Component
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A media query can tell me the browser is wider than sixty rem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It cannot tell a card how much space its parent gave it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same component might appear in main content, a sidebar, a modal,
+          or a dashboard tile.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If its internal layout depends on viewport width, it is only reusable
+          in the contexts the author predicted.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we add modifier classes like <code>.card--narrow</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which means something outside the card must know when to apply
+          them.</span
+        >
+      </p>
+      <h2 id="establishing-a-query-container">
+        Establishing a Query Container
+      </h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card-region {
+  container-type: inline-size;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This tells the browser that descendants may query the container's
+          inline size.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why not put it directly on <code>.card</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A size query cannot use the queried element's own size to style that
+          same element without creating circular layout questions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The container is usually a wrapper or parent; the query styles
+          descendants.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="writing-the-query">Writing the Query</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card {
+  display: grid;
+  gap: 1rem;
+}
+
+@container (width &gt;= 32rem) {
+  .card {
+    grid-template-columns: 12rem 1fr;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Below the threshold it stacks. Above it, image and content sit side
+          by side.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Wherever the component is placed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The breakpoint belongs to the component's design rather than the
+          page.</span
+        >
+      </p>
+      <h2 id="naming-containers">Naming Containers</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if there are several nested containers?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >By default, the browser finds an eligible ancestor. You can name
+          containers when you need a specific one.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>.results-panel {
+  container: results / inline-size;
+}
+
+@container results (width &gt;= 48rem) {
+  .result-card {
+    grid-template-columns: 10rem 1fr auto;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>container</code> is the shorthand for name and type.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. Names clarify which context owns the decision.</span>
+      </p>
+      <h2 id="container-query-units">Container Query Units</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Container query units size things relative to a query
+          container.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>cqi</code> for one percent of the container's inline
+          size.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card__title {
+  font-size: clamp(1.25rem, 4cqi, 2rem);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The title can respond to its component region rather than the whole
+          viewport.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Still bounded with <code>rem</code> values so it does not become
+          microscopic or theatrical.</span
+        >
+      </p>
+      <h2 id="size-queries-versus-style-queries">
+        Size Queries Versus Style Queries
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Container queries can inspect more than size now.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Style queries can test custom-property values on a container.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>.theme-region {
+  --surface-style: dark;
+}
+
+@container style(--surface-style: dark) {
+  .card {
+    color: white;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Support and exact capability need checking, especially for style
+          queries beyond custom properties.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Do not turn a developing feature into a blanket production
+          promise.</span
+        >
+      </p>
+      <h2 id="container-queries-do-not-replace-media-queries">
+        Container Queries Do Not Replace Media Queries
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Page navigation changing at a wide viewport is still a media-query
+          concern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A card changing because its allocated region grew is a
+          container-query concern.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>User preferences like reduced motion remain media features.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>These tools answer different environmental questions.</span>
+      </p>
+      <h2 id="the-architecture-shift">The Architecture Shift</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before, the page often controlled a component's responsive
+          variants.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now more responsive knowledge can live beside the component's own
+          styles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That improves portability, but it does not mean every wrapper becomes
+          a container.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Containment has layout and performance implications. Establish query
+          containers intentionally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And document the expected wrapper, because CSS still cannot make
+          undocumented architecture friendly.</span
+        >
+      </p>
+      <h2 id="please-don-t-forget-the-content">
+        Please Don't Forget the Content
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A component can fit geometrically and still fail semantically.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Long translated labels, 200-percent zoom, user fonts, error messages,
+          and dynamic content can expose assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Do not choose a threshold using lorem ipsum and call it
+          responsive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The container tells you how much room exists. It does not tell you
+          whether your content design is humane.</span
+        >
+      </p>
+      <h2 id="a-progressive-enhancement-shape">
+        A Progressive Enhancement Shape
+      </h2>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card {
+  display: block;
+}
+
+@supports (container-type: inline-size) {
+  .card-region {
+    container-type: inline-size;
+  }
+
+  @container (width &gt;= 32rem) {
+    .card {
+      display: grid;
+      grid-template-columns: 12rem 1fr;
+    }
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The basic card works. Supporting browsers get the contextual
+          layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Depending on your browser policy, you may not need the explicit
+          <code>@supports</code>, but the fallback design still matters.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Media queries ask about the viewport or broader environment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Container queries let descendants respond to an eligible ancestor's
+          size or supported style features.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We establish a query container, optionally name it, and write
+          <code>@container</code> rules for descendants.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Container units can make values fluid relative to that component
+          context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Components can own more of their responsive behavior.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But containers need intentional architecture, real-content testing,
+          and compatibility decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The card finally knows where it lives.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It still does not pay rent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next: selectors got weirdly powerful.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Including the one everyone calls a parent selector.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have waited twenty years to overuse this responsibly.</span>
+      </p>
+    </main>
+    <footer>6 code cards · 0 terminal cards</footer>
+  </body>
+</html>

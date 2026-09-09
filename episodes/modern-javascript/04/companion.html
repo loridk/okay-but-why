@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 4: Wait, That's Just JavaScript — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 4: Wait, That's Just JavaScript</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-04.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#destructuring-unpacking-without-the-ceremony">Destructuring: Unpacking Without the Ceremony</a></li>
+<li><a href="#destructuring-in-parameters">Destructuring in Parameters</a></li>
+<li><a href="#spread-copy-the-contents-out">Spread: Copy the Contents Out</a></li>
+<li><a href="#rest-same-dots-opposite-vibe">Rest: Same Dots, Opposite Vibe</a></li>
+<li><a href="#template-literals">Template Literals</a></li>
+<li><a href="#default-parameters-and-object-shorthand">Default Parameters and Object Shorthand</a></li>
+<li><a href="#optional-chaining">Optional Chaining</a></li>
+<li><a href="#nullish-coalescing-is-not-or">Nullish Coalescing Is Not OR</a></li>
+<li><a href="#please-don-t-do-this-cleverness">Please Don't Do This: Cleverness</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I have assembled the evidence.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why is there a corkboard?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern JavaScript syntax. Curly braces on the left. Three dots on the right. Backticks. Question marks. Tiny arrows connecting everything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Is that red string?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I need to know who did this.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript did most of it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Son of a bitch.</span>
+        </p>
+<h2 id="destructuring-unpacking-without-the-ceremony">Destructuring: Unpacking Without the Ceremony</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Destructuring lets you pull values out of arrays or objects into variables.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>const user = { name: &quot;Parisa&quot;, role: &quot;developer&quot; };
+const { name, role } = user;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Instead of <code>const name = user.name</code> and <code>const role = user.role</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>const coordinates = [42.3, -83.1];
+const [latitude, longitude] = coordinates;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same concept for arrays, positionally.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="destructuring-in-parameters">Destructuring in Parameters</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You can destructure function parameters too.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>function greet({ name }) {
+  return `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why React components can have braces directly in the parameter list.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. React didn't invent destructuring.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>WAIT, THAT'S JUST JAVASCRIPT.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There it is.</span>
+        </p>
+<h2 id="spread-copy-the-contents-out">Spread: Copy the Contents Out</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Three dots can be <strong>spread</strong> syntax.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>const oldTags = [&quot;js&quot;, &quot;web&quot;];
+const tags = [...oldTags, &quot;modern&quot;];</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Take the elements of <code>oldTags</code> and spread them into this new array.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Objects too.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>js</span></figcaption>
+          <pre tabindex="0"><code>const updated = { ...user, role: &quot;host&quot; };</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Shallow copy, then overwrite <code>role</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Emphasis on <strong>shallow</strong>. Nested objects are still references unless you copy them too.</span>
+        </p>
+<h2 id="rest-same-dots-opposite-vibe">Rest: Same Dots, Opposite Vibe</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And sometimes the dots mean rest.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Rest syntax gathers remaining values.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>js</span></figcaption>
+          <pre tabindex="0"><code>function logAll(first, ...rest) {
+  console.log(first);
+  console.log(rest);
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Spread says “take this collection apart.” Rest says “gather the leftovers.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same punctuation, context tells you the job.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Three dots, two careers. Millennials understand.</span>
+        </p>
+<h2 id="template-literals">Template Literals</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Backticks give us template literals.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>js</span></figcaption>
+          <pre tabindex="0"><code>const message = `Hello, ${name}. You have ${count} messages.`;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Instead of concatenation soup.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They also support multiline strings.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This one can stay. No complaints.</span>
+        </p>
+<h2 id="default-parameters-and-object-shorthand">Default Parameters and Object Shorthand</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Default parameters:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>js</span></figcaption>
+          <pre tabindex="0"><code>function greet(name = &quot;friend&quot;) {
+  return `Hello, ${name}`;
+}</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And object property shorthand:</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 9">
+          <figcaption>Code card 9<span>js</span></figcaption>
+          <pre tabindex="0"><code>const name = &quot;Parisa&quot;;
+const role = &quot;developer&quot;;
+
+const user = { name, role };</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because when the property name and variable name match, JavaScript can infer the property name.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+<h2 id="optional-chaining">Optional Chaining</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now the suspicious question mark.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Optional chaining came later than ES2015.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 10">
+          <figcaption>Code card 10<span>js</span></figcaption>
+          <pre tabindex="0"><code>const city = user.address?.city;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If <code>address</code> is <code>null</code> or <code>undefined</code>, the chain stops and produces <code>undefined</code> instead of throwing because you tried to access <code>.city</code> on nothing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It does <strong>not</strong> mean “ignore all errors.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. It's targeted nullish access, not bubble wrap for your application.</span>
+        </p>
+<h2 id="nullish-coalescing-is-not-or">Nullish Coalescing Is Not OR</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Double question marks are nullish coalescing.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 11">
+          <figcaption>Code card 11<span>js</span></figcaption>
+          <pre tabindex="0"><code>const label = value ?? &quot;Unknown&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The fallback is used only when <code>value</code> is <code>null</code> or <code>undefined</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unlike <code>value || &quot;Unknown&quot;</code>, which also falls back for <code>0</code>, <code>false</code>, and an empty string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That distinction matters a lot if zero is a perfectly valid value.</span>
+        </p>
+<h2 id="please-don-t-do-this-cleverness">Please Don't Do This: Cleverness</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I can now destructure nested objects, rename properties, provide defaults, use rest, and do it all in one line.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You can.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Should I?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the line requires a documentary companion, probably not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. Syntax exists to communicate, not to prove you've unlocked it.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Destructuring pulls values out. Spread expands values into a new context. Rest gathers remaining values.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Template literals improve string interpolation. Default parameters and shorthand remove boilerplate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Optional chaining safely stops on <code>null</code> or <code>undefined</code>, and nullish coalescing gives a fallback specifically for those values.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And none of that requires React or TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I would like the record to show that approximately forty percent of what I thought was React was JavaScript wearing skinny jeans.</span>
+        </p></main>
+  <footer>11 code cards · 0 terminal cards</footer>
+</body>
+</html>

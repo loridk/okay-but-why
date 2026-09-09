@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 2: Client vs Server — Whose Computer Is This? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 2: Client vs Server — Whose Computer Is This?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-02.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#roles-not-species-of-computer">Roles, Not Species of Computer</a></li>
+<li><a href="#a-useful-division-of-labor">A Useful Division of Labor</a></li>
+<li><a href="#the-price-is-an-estimate-until-the-server-confirms-it">The Price Is an Estimate Until the Server Confirms It</a></li>
+<li><a href="#same-language-different-environment">Same Language, Different Environment</a></li>
+<li><a href="#the-file-is-not-the-boundary">The File Is Not the Boundary</a></li>
+<li><a href="#private-operations-need-a-trustworthy-door">Private Operations Need a Trustworthy Door</a></li>
+<li><a href="#latency-is-part-of-the-experience">Latency Is Part of the Experience</a></li>
+<li><a href="#a-request-is-not-a-remote-function-call-with-perfect-manners">A Request Is Not a Remote Function Call With Perfect Manners</a></li>
+<li><a href="#development-can-hide-the-distance">Development Can Hide the Distance</a></li>
+<li><a href="#a-cart-in-two-tabs">A Cart in Two Tabs</a></li>
+<li><a href="#validation-has-more-than-one-layer">Validation Has More Than One Layer</a></li>
+<li><a href="#the-boundary-during-a-deployment">The Boundary During a Deployment</a></li>
+<li><a href="#the-convenient-public-key-question">The Convenient Public Key Question</a></li>
+<li><a href="#divide-the-pizza-work">Divide the Pizza Work</a></li>
+<li><a href="#when-more-client-work-helps-and-when-it-doesn-t">When More Client Work Helps, and When It Doesn't</a></li>
+<li><a href="#closing-follow-the-value">Closing — Follow the Value</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good news. I used the browser developer tools and made every pizza cost one cent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>On your screen.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An important market.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Does the server agree?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The server has declined my economic reforms.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Today on <em>Okay, But Why?</em>: why your browser isn't in charge of the restaurant.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I'm Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I'm Jules. Last time we mapped Nervous Robot Pizza Delivery. Now we're drawing the line between the client and the server.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A line that got visually confusing when everybody started writing JavaScript on both sides.</span>
+        </p>
+<h2 id="roles-not-species-of-computer">Roles, Not Species of Computer</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A client requests something from a service. A server provides the service. For our website, the browser is a client of the web application.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Those are roles. A server doesn't have to be a particular shape of metal box. My laptop can run a development server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And our application server can itself be a client when it asks a payment provider to do something.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a single program can answer requests in one relationship and make requests in another. It's not born into the server caste.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Also, people use “server” to mean the program, the machine running it, or an entire hosted service. Ask which meaning matters in the conversation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“The server is down” is often the beginning of an investigation masquerading as the conclusion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We have a browser on the customer's device, application code in our controlled environment, and a database service. For today's purposes, that's the main division.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Controlled doesn't mean invulnerable. It means we deploy that code, configure its permissions, and decide what it is supposed to enforce.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Meanwhile the customer's browser belongs to the customer. They can change code, send different requests, use a different client, or never load our interface at all.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is normal. The interface isn't a security checkpoint everybody must politely walk through.</span>
+        </p>
+<h2 id="a-useful-division-of-labor">A Useful Division of Labor</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser is very good at reacting to a human. Focus, typing, opening menus, showing a selected topping immediately.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. It has the document, input events, and local display. Sending every keystroke to a server just to decide whether a help panel should open would be unnecessary work and delay.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The server is the right place for authoritative rules. Is this item available? Is the shop accepting orders? What does it cost? May this person view order 417?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It can access resources the browser shouldn't have, like database credentials and private service keys. Its answers still depend on correct code and configuration.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then some work happens in both places. Input validation, for example.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser can immediately say a delivery address is missing. That saves a trip over the network and helps the customer correct it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The server must check too, because a request can arrive without our browser checks ever running.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same business rule, different purpose. Client validation helps interaction. Server validation protects the operation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And server-side validation isn't automatically accessible feedback. We still have to return the errors in a form people can understand and associate with the fields.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Keep entered values where appropriate, identify the specific problem, and make the errors discoverable. Don't erase the entire form because someone forgot an apartment number.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Incorrect form” is not feedback. It's a disappointed fortune cookie.</span>
+        </p>
+<h2 id="the-price-is-an-estimate-until-the-server-confirms-it">The Price Is an Estimate Until the Server Confirms It</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine the browser displays a subtotal as toppings change. That's useful local calculation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the request should describe what I'm buying, not demand that the server accept the total my tab invented.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Send the item identifiers and quantities. The server looks up current prices and rules, calculates the accepted amount, and returns it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What if the price changed while the customer was deciding?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then the product needs a policy. Maybe the server returns the revised quote and asks for confirmation. Maybe there is a time-limited quote identifier. The important thing is to avoid silently charging an amount the customer didn't agree to.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “the server decides” doesn't excuse bad communication. We need agreement between the human and the system, not merely agreement between two machines.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's why architecture and user experience meet at boundaries. What is a preview? What is an accepted commitment? What happens if those differ?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I used to do this in PHP. Validate the form, look up prices, write the order, render a result. The shape isn't new.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser might now update more of the interface locally. The authority question is still the same.</span>
+        </p>
+<h2 id="same-language-different-environment">Same Language, Different Environment</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's make the modern JavaScript confusion explicit. If I see an async function, have I crossed into Node?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No. <code>async</code> and <code>await</code> are JavaScript language syntax. They can appear in browser code and server code. They describe how a function works with promises, not where it's running.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The promise represents an eventual result or failure. Await pauses that async function's continuation until the promise settles; it doesn't freeze the whole browser while pizza travels across the internet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. <code>fetch</code> is an API for making requests, available in modern browsers and also in environments such as Node. Seeing it doesn't locate the program either.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But <code>document.querySelector</code> points toward a browser document environment. Node doesn't normally have the browser's document object.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And access to the server filesystem is an environment capability. A browser page can't simply import a Node filesystem module and read arbitrary files on the hosting machine.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript annotations don't change any of that. They help the development-time checker reason about values. They don't provide runtime authority or magically make network data trustworthy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's look at a tiny function as a reading aid. No one needs to memorize it.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>javascript</span></figcaption>
+          <pre tabindex="0"><code>async function readMenu() {
+  const response = await fetch('/api/menu');
+  if (!response.ok) {
+    throw new Error('The menu could not be loaded.');
+  }
+  return response.json();
+}</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In words, request the menu, check whether the HTTP response reports success, and parse the body as JSON. The caller still needs to handle failures and validate the returned data before relying on its shape.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. <code>const</code> declares a binding we won't reassign. The dot calls and function declaration are JavaScript. JSON is a data format. The URL names an application endpoint. None of this is JSX or TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a successful HTTP status doesn't mean the parsed data is what we expected. That check belongs at the boundary too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The short example illustrates the request, not an entire resilient data layer.</span>
+        </p>
+<h2 id="the-file-is-not-the-boundary">The File Is Not the Boundary</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here's where modern frameworks make me suspicious. A file looks like a component, but apparently some of it runs on the server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Frameworks can arrange for different modules or functions to execute in different environments. Their conventions vary. You need the framework's actual rules, not a guess based on whether the file contains JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So a server-only function may read a secret. But if it returns that secret as part of the data sent to a component in the browser, we still leaked it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. “It ran on the server” doesn't mean “nothing it produces is public.” HTML, JSON, serialized component data, and browser bundles can all carry information to the client.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same with environment variables in frontend tooling. Some are deliberately substituted into the browser bundle during a build. Calling a value an environment variable doesn't promise secrecy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The practical check is: does this value end up in anything sent to the browser? If yes, assume the recipient can inspect it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Minification isn't encryption. It's just code with a bad haircut.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a private API key doesn't become safe because the variable name contains SECRET in capital letters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is merely shouting during the incident.</span>
+        </p>
+<h2 id="private-operations-need-a-trustworthy-door">Private Operations Need a Trustworthy Door</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why not let the browser talk directly to the order database?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some platforms support carefully constrained client access through a service with access rules. But shipping broad database credentials to a browser is a disaster.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. If you choose a client-access platform, the service and its policies still enforce the boundary. The browser didn't become trusted. You moved where the enforcement happens.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For our baseline, the application receives the operation, validates it, checks the current user's permission, and uses limited database access to perform it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That also gives us somewhere to enforce cross-field rules. A delivery order needs a deliverable address. A pickup order shouldn't require one just because the form had a field.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It gives us a place to decide what data comes back, too. The staff view might include delivery details. The public menu certainly shouldn't.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A response should include what that recipient needs, not an entire database record because serialization was convenient.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“The frontend doesn't display that field” does not mean the field wasn't disclosed. The network response is already on the customer's computer.</span>
+        </p>
+<h2 id="latency-is-part-of-the-experience">Latency Is Part of the Experience</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Suppose every topping click waits for the server before the interface reacts. We have technically centralized all the logic and emotionally lost the customer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Network round trips take time and can fail. Local interaction can be immediate. That's a reason to keep some state and behavior in the browser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But not a reason to pretend the server has accepted something before it has.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can show a tentative update. For example, the cart can display the chosen topping immediately, then reconcile with the server's quote.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Optimistic interface behavior. We predict success to make the interaction feel responsive, with a plan if the prediction is wrong.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Appropriate for some reversible changes. More delicate for payments or scarce inventory. You wouldn't announce “paid” merely because the button was clicked.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a pending state should say what's happening. Not lock the screen in a spinner with no explanation and no recovery.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Status updates should be available to assistive technology without announcing every tiny change. The user needs to know that submission started, succeeded, or needs attention.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Architecture decides whether we even have those states to communicate. The interface can't explain a distinction the backend refuses to represent.</span>
+        </p>
+<h2 id="a-request-is-not-a-remote-function-call-with-perfect-manners">A Request Is Not a Remote Function Call With Perfect Manners</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Within one process, a function call has certain expectations. Across a network, we gain new uncertainty.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The request can disappear. The response can disappear. The service can be slow. The client can give up while the server keeps working.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And cancelling a browser request doesn't necessarily undo work already started on the server.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That one deserves a second. I close the tab after pressing order. The restaurant doesn't necessarily unmake the pizza.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. A transport cancellation and a business cancellation are different operations. Cancelling an order needs an explicit rule and server-side handling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is where remote-procedure-call abstractions can be pleasant but dangerous if they hide the network in our mental model.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You may write code that resembles calling a local function. It still crosses a boundary with latency, authorization, serialization, and failure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We can use convenient tools and still remember what they are doing. That's the whole show, frankly.</span>
+        </p>
+<h2 id="development-can-hide-the-distance">Development Can Hide the Distance</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>On my laptop, the browser, development server, application, and database might all be nearby. Everything feels instant.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then production puts the customer on a slow phone and the server across a continent. Assumptions change.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A development proxy might also make browser requests look same-origin while the deployed frontend and API have different origins. Suddenly we meet CORS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which we'll explain properly in the API episode. For now, origin means the scheme, host, and port combination. Browser rules care about that boundary.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the deployment needs to match the intended request path. “It worked through my development proxy” isn't proof that the production URLs and credentials behave the same way.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Test the actual interaction in something representative. Slow the connection. Refresh a route. Expire a session. Use the keyboard. Read the resulting messages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not as punishment. As a way to expose assumptions while they are still cheap to change.</span>
+        </p>
+<h2 id="a-cart-in-two-tabs">A Cart in Two Tabs</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's test the boundary with a situation that feels mundane. The customer opens two tabs. In one, they add mushrooms. In the other, they remove cheese.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First question: are these two independent drafts or two views of one shared cart? The product must decide. Otherwise each developer invents an answer locally.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose it's one account cart shared across tabs and devices.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then browser memory alone isn't enough. Each tab has a local representation, and some server-side operation coordinates the shared cart. Updates can conflict or arrive in an unexpected order.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We could send the entire cart every time.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then an old tab might overwrite newer changes. Or we could send operations like add this item, but those need well-defined behavior too. Repeating “add one” is different from repeating “set quantity to two.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's idempotence showing up before the final purchase.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. The right design depends on the experience. We might use versions to reject stale changes, or merge certain operations. But we should not accidentally pretend two computers share one memory object.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if the cart is only local to this device?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's simpler and can be acceptable if the product says so. Persisting a draft in browser storage can help survive refresh, but people may clear it and it doesn't automatically appear on another device.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So even “save my cart” needs a definition.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Save where, for whom, for how long, and with what conflict rules? The verb is doing an unreasonable amount of unpaid work.</span>
+        </p>
+<h2 id="validation-has-more-than-one-layer">Validation Has More Than One Layer</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You said basic shape validation and business validation. Can we separate those with a quantity example?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A request says quantity is the string banana. That's the wrong kind of value for our operation. Another says quantity is negative three. It may be numeric but outside the allowed range.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another asks for three pizzas when only two can be accepted.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's a current business constraint. It may require coordinated access to server-side state, not merely checking a static schema.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And another asks to change a completed order belonging to someone else.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Authorization and state-transition rules. A request can be perfectly well shaped and still be forbidden or no longer valid.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So runtime schemas can help with structure, but they don't magically answer every business question.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. TypeScript helps us write the code. Runtime validation checks actual values. Authorization checks permission. Business rules check whether the operation is allowed in the current situation. They cooperate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Can we share validation code between client and server?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes, if it's pure and suitable for both environments. But the server remains responsible, and browser bundles should not include private dependencies or rules that expose secrets. Shared source isn't the same as shared trust.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also the client may be running an older deployed version.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important. A tab can stay open across a server deployment. The server can't assume every request was created by today's frontend code.</span>
+        </p>
+<h2 id="the-boundary-during-a-deployment">The Boundary During a Deployment</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We changed the order form yesterday, but someone has an old tab open. They submit today.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The backend should handle compatible old input or return a clear recoverable response. If we removed a required option without planning, the customer can lose work or hit a confusing failure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That sounds like API compatibility, even for our own frontend.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It is. Browser code is distributed to users. We don't get to replace every copy simultaneously just because we clicked deploy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So a simple server-rendered flow may reduce some long-lived client-code concerns, while a rich client needs deliberate version transitions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Though server-rendered forms can also be old when submitted. The general rule is that inputs may reflect an earlier view of the world.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can return a message explaining that the menu changed and let the customer review, rather than crashing because a field disappeared.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. It's another reason to represent business outcomes explicitly. “This quote expired” is more useful than “undefined is not a function.”</span>
+        </p>
+<h2 id="the-convenient-public-key-question">The Convenient Public Key Question</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some services give us a key they explicitly call publishable. Doesn't that contradict keeping keys out of the browser?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. The important distinction is the authority the value grants. Some identifiers or narrowly scoped public keys are designed to be exposed. A private credential is not.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So don't infer secrecy from the word key alone. Read the provider's intended usage and restrictions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And don't infer safety from seeing somebody else's tutorial put a key in a component. We need to know what that value can do, not whether it has attractive naming.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser may need public configuration such as an endpoint URL. Hiding that URL doesn't secure the endpoint.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Precisely. The server protects operations through real controls. Security by hoping nobody opens the Network panel is a very short-lived strategy.</span>
+        </p>
+<h2 id="divide-the-pizza-work">Divide the Pizza Work</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's do a classification round. Open and close the topping selector.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser. Native controls where possible. No request needed just to reveal some options.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Determine whether this customer may view an order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server-side authorization for every relevant request. Hiding the link in the browser is helpful interface behavior, not enforcement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Check that the address field isn't empty.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Both. Browser for immediate feedback, server because requests are untrusted. And whether an address is required depends on pickup versus delivery.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Send a receipt using a private email-service credential.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server environment. Probably follow-up work after the order is safely recorded, as we discussed last time.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Remember which accordion was open.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Probably client state. Unless the product has a real reason to synchronize that preference across devices, don't put every twitch in the database.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Calculate the final payable amount.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server authority. Browser can preview it, but the accepted quote and payment must agree.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Render the menu HTML.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Could happen before deployment, at request time on a server, or in the browser. We need the freshness and experience requirements before choosing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the interesting answer. Client-versus-server isn't a universal rule assigning all presentation to one side.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It's a set of tradeoffs under a very firm trust distinction.</span>
+        </p>
+<h2 id="when-more-client-work-helps-and-when-it-doesn-t">When More Client Work Helps, and When It Doesn't</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Rich local interaction helps when people manipulate substantial temporary state: maps, editors, complex filtering, dispatch planning.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can reduce repeated full-page navigation and keep work responsive. But it also means downloading and running code on devices we don't control.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More server work can reduce browser code and keep data access close to the database. But requests introduce waiting, and server capacity isn't infinite.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Neither “everything in the browser” nor “everything on the server” is a virtue by itself. We choose where each responsibility belongs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our customer ordering flow may be mostly server-rendered, with small browser enhancements. Our dispatch screen may justify more client state. Both can talk to the same application.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which avoids rebuilding the business rules twice merely because one page is more interactive.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a shared language can help with some shared data descriptions or pure calculations, but it doesn't eliminate runtime validation or different security responsibilities.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>TypeScript can help us agree on what we expect. The server still needs to verify what actually arrived.</span>
+        </p>
+<h2 id="closing-follow-the-value">Closing — Follow the Value</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>When code looks confusing, ask where it runs, what capabilities it has, what information it sends out, and who can change its inputs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser manages the human interaction. The server enforces the authoritative operation. Some calculations and validation happen in both places for different reasons.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the same language on both sides doesn't dissolve the network into a pleasant JavaScript soup.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time, we follow an actual request: URL, DNS, connection, HTTP, response, and all the places your page load can take an unexpected lunch break.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>My one-cent pizza experiment has been rejected, but I now understand the appeal process.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There isn't one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Terrible API design.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

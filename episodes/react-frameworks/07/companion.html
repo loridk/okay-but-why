@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 7: React Frameworks — Why Is Next.js Standing Behind React? —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 7: React Frameworks — Why Is Next.js Standing Behind React?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/ac1a0bc2-8eda-458a-99a7-ddcbd518907c"
+      ></script>
+      <div class="redcirclePlayer-ac1a0bc2-8eda-458a-99a7-ddcbd518907c"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#where-does-the-page-get-built"
+            >Where Does the Page Get Built?</a
+          >
+        </li>
+        <li>
+          <a href="#hydration-is-not-downloading-water"
+            >Hydration Is Not Downloading Water</a
+          >
+        </li>
+        <li>
+          <a href="#server-components-are-a-different-axis"
+            >Server Components Are a Different Axis</a
+          >
+        </li>
+        <li>
+          <a href="#next-js-and-the-app-router">Next.js and the App Router</a>
+        </li>
+        <li>
+          <a href="#what-use-client-actually-means"
+            >What use client Actually Means</a
+          >
+        </li>
+        <li>
+          <a href="#one-product-page-followed-across-the-boundary"
+            >One Product Page, Followed Across the Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#server-does-not-mean-secret-output"
+            >Server Does Not Mean Secret Output</a
+          >
+        </li>
+        <li>
+          <a href="#server-functions-still-have-requests-underneath"
+            >Server Functions Still Have Requests Underneath</a
+          >
+        </li>
+        <li>
+          <a href="#caching-and-streaming-without-magic"
+            >Caching and Streaming Without Magic</a
+          >
+        </li>
+        <li>
+          <a href="#hosting-is-part-of-the-choice"
+            >Hosting Is Part of the Choice</a
+          >
+        </li>
+        <li><a href="#what-we-bought">What We Bought</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-7-react-frameworks-why-is-next-js-standing-behind-react">
+        Episode 7: React Frameworks — Why Is Next.js Standing Behind React?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React is a library.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And now I need a framework around the library people keep calling a
+          framework.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You do not automatically need one. But there are reasons people built
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. Because my architectural diagram currently looks like
+          nesting dolls having an argument.</span
+        >
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine we have finished the component part of an online store.
+          Product cards, filters, cart controls. What happens when someone opens
+          a product URL directly?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Something has to recognize the URL, load the product, produce the
+          page, and handle the product not existing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then we need loading feedback, errors, page metadata, navigation,
+          caching, and a deployment plan.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React does not decide all of that.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A React framework coordinates those application concerns with
+          React rendering. Next.js is one example. React Router also has a
+          framework mode. They are not identical packages with different
+          logos.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the framework buys integration. Instead of independently wiring a
+          router, data loading, server rendering, and build behavior, I learn an
+          architecture that connects them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And accept its conventions and constraints. Less assembly does not
+          mean less to understand.</span
+        >
+      </p>
+      <h2 id="where-does-the-page-get-built">Where Does the Page Get Built?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before Server Components enter, I want ordinary server rendering
+          explained. We did it with PHP without naming every breath
+          hydration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client-side rendering means JavaScript in the browser calculates the
+          interface. A minimal client-rendered app might initially receive an
+          HTML shell, then download JavaScript, run it, fetch data, and display
+          content.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those steps can form a waterfall. We cannot start the next one until
+          something earlier arrives.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server-side rendering can produce useful HTML before sending
+          the response. Static generation does that work ahead of visits, often
+          at build time.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server rendering: make the meal when the order arrives. Static
+          generation: prepare it beforehand.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Useful, except HTML does not spoil like shrimp. It becomes stale when
+          the underlying information changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Still do not serve last week's inventory.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A static page can contain working links, forms, and
+          JavaScript. Static describes when the output was prepared, not whether
+          users may touch it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And these strategies can coexist. Product information prepared ahead
+          of time, account information generated per request, cart interactions
+          running in the browser.</span
+        >
+      </p>
+      <h2 id="hydration-is-not-downloading-water">
+        Hydration Is Not Downloading Water
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If React sends HTML for an interactive component, the browser can
+          display it before the component's JavaScript is ready. Hydration
+          connects React's client behavior to that existing HTML.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have a visible Add button before its React handler is ready.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Potentially. Native HTML behavior and framework handling vary, but
+          visible does not automatically mean fully interactive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So server rendering improves one part of loading. It does not
+          eliminate client work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. React also expects the initial client result to agree with
+          the server HTML. If the server prints one random number and the client
+          independently prints another, they disagree.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hydration mismatch. Not a mystical network problem; two environments
+          produced different initial output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Dates, locale differences, browser-only conditions, and invalid HTML
+          nesting can cause problems too. Fix the cause rather than casually
+          suppressing warnings.</span
+        >
+      </p>
+      <h2 id="server-components-are-a-different-axis">
+        Server Components Are a Different Axis
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now explain why a Server Component is not just a component with
+          server-rendered HTML.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server rendering describes HTML production. Server Components
+          describe where component code executes and how its result is
+          transported. A Server Component runs in the server environment,
+          potentially at build time or during a request. Its component
+          implementation does not need to ship to the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It produces a React representation that can include references to
+          interactive client pieces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Think product description assembled near the database, with an
+          interactive quantity selector nested inside the resulting page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is not merely returning an HTML string from every
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Frameworks coordinate a serialized React result, HTML
+          production, and client JavaScript. We do not need the wire format to
+          understand the architectural boundary.</span
+        >
+      </p>
+      <h2 id="next-js-and-the-app-router">Next.js and the App Router</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next.js has more than one routing architecture. Today we are
+          discussing the App Router, not mixing its instructions with older
+          Pages Router examples.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Extremely important when somebody searches an error and finds a
+          confidently incompatible tutorial.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >App Router folders and special files describe routes, pages, layouts,
+          loading interfaces, and errors. A page file under a products route is
+          not an ordinary filename choice anymore; it has framework
+          meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >File conventions are Next.js. Functions and imports are JavaScript.
+          Types, if present, are TypeScript. JSX is still JSX. React provides
+          the component model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. App Router pages and layouts are Server Components by
+          default. Interactive pieces use a client boundary.</span
+        >
+      </p>
+      <h2 id="what-use-client-actually-means">
+        What use client Actually Means
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That string at the top of the file looks like JavaScript, but it has
+          special meaning to the React framework tooling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It marks an entry point in the client module graph. Use it for a
+          boundary whose components need features like state, event handlers,
+          effects, or browser capabilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do I add it to every descendant file?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Imported dependencies beneath that boundary join the client
+          graph. Put boundaries thoughtfully around interactive pieces instead
+          of declaring the entire application client-side by reflex.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Imported” is doing work there. Does every component visually nested
+          inside a Client Component automatically become client code?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Module dependency and visual nesting are not the same tree. A
+          Server Component can be rendered by a server parent and passed into a
+          Client Component through children or another prop. The client
+          component receives that rendered result without importing the Server
+          Component's implementation into its client module graph.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >So an interactive modal can be a Client Component while
+          server-rendered cart content is passed into its children slot.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Composition crosses the visual boundary without smuggling the cart's
+          server code into the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And Client Component does not mean its HTML can never be produced on
+          the server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Next.js can pre-render Client Components for the initial
+          response and hydrate them in the browser. Browser-only work must still
+          happen where browser APIs are actually available, not carelessly at
+          module scope or during server rendering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So window does not suddenly exist on the server because I wrote use
+          client.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="one-product-page-followed-across-the-boundary">
+        One Product Page, Followed Across the Boundary
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let us walk a request rather than accumulate nouns.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >User opens Product 42. The framework matches the route. Server-side
+          code loads public product data and handles missing or unauthorized
+          access as appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server component describes the title, price, and product details.
+          It includes an interactive quantity control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Only the data that control needs crosses to it. Next.js prepares the
+          initial HTML and the React information needed to connect server and
+          client pieces. The browser displays the response, then hydrates the
+          interactive part.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Clicking Plus updates local React state. We do not need a server
+          request for each visual increment unless the application specifically
+          requires one.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then Add to Cart submits a mutation. The server independently
+          validates the product, quantity, user permissions, and current
+          price.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because a user can edit browser data. The displayed price is not a
+          purchase contract with my JavaScript variable.</span
+        >
+      </p>
+      <h2 id="server-does-not-mean-secret-output">
+        Server Does Not Mean Secret Output
+      </h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Can I interrupt with the footgun?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We saved you a chair.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Server Components can use private credentials without shipping those
+          credentials as client code. But their output and props can still
+          expose data. Passing the entire database user record to a client
+          component can send fields the browser should never receive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Shape the data deliberately. Server execution is not automatic output
+          filtering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And props crossing this boundary must be values React can serialize.
+          An ordinary callback does not teleport across the network.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>A database connection is not a prop. It is a cry for help.</span>
+      </p>
+      <h2 id="server-functions-still-have-requests-underneath">
+        Server Functions Still Have Requests Underneath
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server Functions provide a framework-supported way for client
+          interactions to request server work. The use server directive marks
+          these functions; it is not the directive for making a normal Server
+          Component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The syntax can make a remote call look local.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But the trust boundary remains. Treat exposed functions as server
+          endpoints. Validate input, authenticate, authorize the specific
+          operation, handle failures, and consider duplicate submissions.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >If TypeScript says quantity is a number, an attacker has not agreed
+          to your type annotation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compile-time checks are not runtime validation. A returning
+          favorite.</span
+        >
+      </p>
+      <h2 id="caching-and-streaming-without-magic">
+        Caching and Streaming Without Magic
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Caching avoids repeating expensive work. But ask what is cached, who
+          can reuse it, when it expires, and what invalidates it after a
+          change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially whether a personalized result could be reused for another
+          user.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Next.js caching defaults and APIs have evolved. Verify your
+          actual version and configuration rather than importing an old
+          tutorial's assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Streaming lets ready content arrive while slower sections are still
+          being prepared. A Suspense boundary can give a region a fallback
+          instead of making the whole page wait.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That fallback needs meaning. Loading order history is better than
+          twelve mysterious shimmering rectangles.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Preserve layout where practical, provide understandable status,
+          respect reduced motion, and do not unexpectedly steal focus as content
+          arrives.</span
+        >
+      </p>
+      <h2 id="hosting-is-part-of-the-choice">Hosting Is Part of the Choice</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can I upload the output to ordinary static hosting?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the application uses a supported static-export configuration and
+          avoids features requiring a running server. Dynamic rendering and
+          server mutations need compatible runtime infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A framework supporting static output does not mean every app built
+          with it can be exported unchanged.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And one-click deployment does not answer operating cost, logs,
+          failure recovery, caching behavior, or whether I can move
+          providers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those are architectural questions. Next.js is not synonymous with one
+          hosting provider, but feature support and operational effort differ
+          across deployments.</span
+        >
+      </p>
+      <h2 id="what-we-bought">What We Bought</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A React framework connects routing, rendering, data, server work, and
+          builds. Next.js is one implementation of that bargain, not the
+          definition of React.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server rendering, static generation, Server Components, Client
+          Components, and hydration describe different aspects of the system.
+          They are not five words for the same thing.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The useful question is where each piece of work belongs and what
+          crosses the network—not how many directives fit in a file.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, the finale. Do we actually need any of this for our
+          project?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sometimes emphatically yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And sometimes Linda's Landscaping would like its opening hours
+          displayed before we establish a distributed rendering strategy.</span
+        >
+      </p>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

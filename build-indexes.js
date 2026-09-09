@@ -2,6 +2,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 const EPISODES_DIRECTORY = path.join(__dirname, "episodes");
+const SERIES_ORDER = ["typescript", "node-npm", "modern-css", "react-frameworks", "web-architecture"];
 
 function escapeHtml(value) {
   return value
@@ -13,7 +14,9 @@ function escapeHtml(value) {
 
 function titleCase(slug) {
   const names = {
+    "modern-css": "Modern CSS — Wait, CSS Does That Now?",
     "node-npm": "Node, npm & the Modern JavaScript Toolchain",
+    "react-frameworks": "React & Modern Front-End Frameworks",
     typescript: "TypeScript",
   };
 
@@ -77,7 +80,14 @@ async function getSeries() {
     }
   }
 
-  return series.sort((a, b) => a.slug.localeCompare(b.slug));
+  return series.sort((a, b) => {
+    const aIndex = SERIES_ORDER.indexOf(a.slug);
+    const bIndex = SERIES_ORDER.indexOf(b.slug);
+    const aOrder = aIndex === -1 ? SERIES_ORDER.length : aIndex;
+    const bOrder = bIndex === -1 ? SERIES_ORDER.length : bIndex;
+
+    return aOrder - bOrder || a.slug.localeCompare(b.slug);
+  });
 }
 
 async function buildSeriesIndex(series) {
@@ -90,7 +100,7 @@ async function buildSeriesIndex(series) {
     const audioName = `${series.slug}-${episodeNumber}.wav`;
     const hasAudio = await exists(path.join(episodeDirectory, audioName));
 
-    items.push(`<li><a class="card" href="${episodeNumber}/companion.html"><strong>Episode ${Number(episodeNumber)}: ${escapeHtml(title)}</strong><span class="meta">${hasAudio ? "Audio and transcript" : "Draft transcript"}</span></a></li>`);
+    items.push(`<li><a class="card" href="${episodeNumber}/companion.html"><strong>Episode ${Number(episodeNumber)}: ${escapeHtml(title)}</strong><span class="meta">${hasAudio ? "Audio and transcript" : "Transcript · audio pending"}</span></a></li>`);
   }
 
   const seriesTitle = `${titleCase(series.slug)} Series`;

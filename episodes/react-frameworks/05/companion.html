@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: The React Ecosystem — Why Do I Need Seventeen Other Things? —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 5: The React Ecosystem — Why Do I Need Seventeen Other Things?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/5b73085f-c8d2-402e-84b4-3a568cd42198"
+      ></script>
+      <div class="redcirclePlayer-5b73085f-c8d2-402e-84b4-3a568cd42198"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#core-react-is-deliberately-focused"
+            >Core React Is Deliberately Focused</a
+          >
+        </li>
+        <li>
+          <a href="#starting-a-project-in-the-current-world"
+            >Starting a Project in the Current World</a
+          >
+        </li>
+        <li>
+          <a href="#what-the-build-tool-does">What the Build Tool Does</a>
+        </li>
+        <li><a href="#routing">Routing</a></li>
+        <li>
+          <a href="#data-fetching-and-server-state"
+            >Data Fetching and Server State</a
+          >
+        </li>
+        <li><a href="#forms">Forms</a></li>
+        <li><a href="#state-management">State Management</a></li>
+        <li><a href="#styling">Styling</a></li>
+        <li><a href="#testing">Testing</a></li>
+        <li>
+          <a href="#debugging-and-production-failures"
+            >Debugging and Production Failures</a
+          >
+        </li>
+        <li><a href="#ask-the-intern">Ask the Intern</a></li>
+        <li>
+          <a href="#package-quality-and-security"
+            >Package Quality and Security</a
+          >
+        </li>
+        <li>
+          <a href="#accessibility-is-not-a-plugin"
+            >Accessibility Is Not a Plugin</a
+          >
+        </li>
+        <li>
+          <a href="#framework-versus-pick-your-own"
+            >Framework Versus Pick-Your-Own</a
+          >
+        </li>
+        <li><a href="#avoid-stack-astrology">Avoid Stack Astrology</a></li>
+        <li><a href="#the-actual-ecosystem">The Actual Ecosystem</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-5-the-react-ecosystem-why-do-i-need-seventeen-other-things"
+      >
+        Episode 5: The React Ecosystem — Why Do I Need Seventeen Other Things?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I learned React.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Nice.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then I tried to build an application, and React asked what I planned
+          to use for routing, data fetching, forms, styling, testing, state,
+          builds, and deployment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>React is a UI library.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React handed me one Lego and revealed the instructions were for the
+          Millennium Falcon.</span
+        >
+      </p>
+      <h2 id="core-react-is-deliberately-focused">
+        Core React Is Deliberately Focused
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React gives us components, rendering, state, effects, context, refs,
+          and related UI primitives.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not give me a full web application architecture.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That flexibility helped React fit many environments. It also
+          pushed common decisions into an enormous ecosystem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Freedom.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You say that like it arrived holding a knife.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Choice has a maintenance budget.</span>
+      </p>
+      <h2 id="starting-a-project-in-the-current-world">
+        Starting a Project in the Current World
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Current React documentation recommends starting new applications with
+          a framework when one fits.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And Create React App?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Deprecated. It had a huge historical role, but it is no longer the
+          default recommendation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I am learning core React or have constraints a framework does not
+          serve?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can build from scratch using a build tool such as Vite, Parcel,
+          or Rsbuild, then deliberately choose routing and other pieces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Vite is not React.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Vite is development and build tooling. The React plugin
+          teaches that tooling how to handle React-specific transformation and
+          fast refresh integration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JSX is still transformed before the browser sees it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+      <h2 id="what-the-build-tool-does">What the Build Tool Does</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We covered this in Node and npm, but bring it home.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The development server serves modules, transforms source formats,
+          reports errors, and often provides fast refresh. The production build
+          bundles or otherwise prepares optimized assets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>npm installs and runs packages. It is not the bundler.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Node may run the tooling. React renders UI. The browser runs
+          the delivered client JavaScript. These are connected layers, not
+          synonyms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wait, That’s Just Several Different Tools.</span>
+      </p>
+      <h2 id="routing">Routing</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I want slash-products and slash-cart.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Core React does not own URL routing. A router maps locations to UI,
+          manages navigation, route parameters, nested layouts, and often
+          data-loading behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why not just show and hide components?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because the URL is valuable state. It supports bookmarks, sharing,
+          browser history, reloads, back and forward, and direct entry.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a user opens Product 42, the address should say Product 42
+          exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually. Client routers can provide smooth transitions while
+          respecting web navigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Accessibility trap?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client-side navigation must manage document titles, focus
+          expectations, loading feedback, and semantic links. A click handler on
+          a div is still not navigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Use links for navigation, buttons for actions.</span>
+      </p>
+      <h2 id="data-fetching-and-server-state">
+        Data Fetching and Server State
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fetch itself is a browser and server-runtime API, not a React
+          feature.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I can call it in an effect.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can. But application data introduces caching, stale data,
+          refetching, deduplication, retries, request cancellation, optimistic
+          updates, and mutations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hence query libraries.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or framework data-loading APIs. They solve recurring server-state
+          problems so each component does not invent a tiny unreliable
+          cache.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But installing one for a single request is not mandatory.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct. Complexity should buy something.</span>
+      </p>
+      <h2 id="forms">Forms</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The web has forms already.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It does, and native forms are powerful. React can handle controlled
+          inputs, but full form libraries may help with complex validation,
+          touched fields, repeated sections, performance, and server
+          errors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Or they can turn four inputs into a graduate seminar.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also true.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Preserve native form semantics, labels, error associations, focus,
+          and submission behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Client validation improves feedback; server validation remains
+          authoritative.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because attackers can skip my component.</span>
+      </p>
+      <h2 id="state-management">State Management</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Redux?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React has local state, reducers, and context. Many applications need
+          nothing else.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>When does an external store earn its chair?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When substantial client state is shared across distant regions,
+          updates are complex, tooling or predictable event history matters, or
+          the team benefits from a consistent state architecture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But server data should not automatically be copied into a global
+          client store.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Server-state libraries and framework loaders understand
+          freshness and caching differently. URL state belongs in the URL when
+          appropriate. Form state may stay in the form.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“Global” is not a data type.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Put that on another shirt.</span>
+      </p>
+      <h2 id="styling">Styling</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Core React does not choose styling.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plain CSS, CSS Modules, utility frameworks, component libraries,
+          CSS-in-JS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Each has tradeoffs involving scope, runtime cost, build integration,
+          theming, reuse, and server compatibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A design-system component library is not merely paint.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It may encode behavior and accessibility patterns. Evaluate
+          keyboard interaction, semantics, focus, high contrast, reduced motion,
+          localization, and maintenance—not just screenshots.</span
+        >
+      </p>
+      <h2 id="testing">Testing</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Unit test every implementation detail?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Please no. Test behavior users depend on. Render a component,
+          interact as a user would, and assert meaningful output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Query by roles and accessible names when possible.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That makes tests closer to the accessibility tree and discourages
+          brittle class-selector archaeology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But automated accessibility checks do not replace keyboard and
+          assistive-technology testing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Nor do component tests replace integration and end-to-end
+          confidence.</span
+        >
+      </p>
+      <h2 id="debugging-and-production-failures">
+        Debugging and Production Failures
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What tells me why the component is behaving strangely?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Start with the browser's developer tools for the DOM, network,
+          console, storage, and performance. React Developer Tools adds the
+          component tree, props, state, and React-specific profiling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Two views of different layers. The React component tree is not the
+          browser DOM tree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. During rendering, an error boundary can show a deliberate
+          fallback for certain failures in its child tree instead of losing that
+          whole region of UI. It does not catch every kind of error, and it is
+          not a substitute for fixing the failure.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And a fallback users can see is not an error report developers
+          automatically receive. Production monitoring can collect failures,
+          affected releases, and useful context—with privacy controls and
+          without casually recording sensitive user data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tests try to prevent regressions. Developer tools help investigate.
+          Error boundaries manage part of the user experience. Monitoring tells
+          us what happened after deployment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Different responsibilities, even when one service tries to sell all
+          four.</span
+        >
+      </p>
+      <h2 id="ask-the-intern">Ask the Intern</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Why am I entering to ominous music?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Current developer discourse. What stack are people told they
+          need?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Depends which video the algorithm served before breakfast. One
+          creator says use the full-stack framework. Another says the framework
+          is dead. A third rebuilt HTML forms and named it after a woodland
+          animal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Plausible.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The confusing part for learners is that tutorials present a stack as
+          one thing. They say “React” while using TypeScript, Vite, a router,
+          Tailwind, a component kit, a query library, an ORM, and a hosting
+          platform.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So when something breaks, the learner cannot identify the
+          layer.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Exactly. Was it JavaScript? JSX transformation? React rendering?
+          Router behavior? A server boundary? CSS? The tutorial just says React
+          app.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The antidote is naming the tools and their responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Also build one small thing before adopting the creator’s entire
+          sticker-covered laptop.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The intern may remain.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>I am an adult employee.</span>
+      </p>
+      <h2 id="package-quality-and-security">Package Quality and Security</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>How do I choose a package without reading all of npm?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Start with the problem. Then inspect maintenance activity,
+          documentation, release practices, package ownership, dependency
+          footprint, license, security history, accessibility evidence, and
+          whether the API fits.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Download count is evidence of popularity, not correctness.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor safety. A small dependency can add transitive dependencies and
+          supply-chain risk.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And copying an install command from an old article may pull a current
+          major version with a different API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Pinning exact versions solves everything?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It improves reproducibility with a lockfile, but dependencies still
+          need intentional updates and security review. Never blindly apply
+          breaking upgrades.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also never put secrets in front-end environment variables and assume
+          the name “environment” makes them private.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Anything shipped to the browser can be inspected. Public prefixes
+          often explicitly mark variables for client exposure.</span
+        >
+      </p>
+      <h2 id="accessibility-is-not-a-plugin">Accessibility Is Not a Plugin</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can I install accessibility?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can install useful lint rules, testing tools, and accessible
+          component primitives. You cannot outsource the product’s
+          meaning.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A tool can catch an image missing alt. It cannot always know whether
+          the alt text communicates the right thing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nor whether focus moves sensibly after navigation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Accessibility belongs in component APIs, routing, forms, loading
+          states, errors, animation, and testing.</span
+        >
+      </p>
+      <h2 id="framework-versus-pick-your-own">
+        Framework Versus Pick-Your-Own
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A React framework bundles many decisions.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Routing, server rendering, data loading, asset handling, and
+          deployment behavior may come integrated.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That reduces assembly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And increases commitment to the framework’s model.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Starting from scratch gives control, but you are now the framework
+          team.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>With one developer and a snack budget.</span>
+      </p>
+      <h2 id="avoid-stack-astrology">Avoid Stack Astrology</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There is no universally correct React stack.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A dashboard behind authentication has different needs from a content
+          site.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A tiny embedded widget differs from an e-commerce application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A team maintaining software for eight years values conventions
+          differently from a weekend prototype.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask: What must render where? How does navigation work? Where does
+          data live? What must work without JavaScript? What are the performance
+          and accessibility constraints? Who maintains this?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Then choose the smallest coherent set of tools.</span>
+      </p>
+      <h2 id="the-actual-ecosystem">The Actual Ecosystem</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React is the UI layer, not the whole application.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Build tools transform and prepare code. Routers connect UI to
+          locations. Data tools coordinate server state. Form libraries manage
+          complex form behavior. State stores coordinate client state. Test
+          tools provide confidence.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Frameworks package many of those decisions.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Every addition has a learning, security, performance, and maintenance
+          cost.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And can still be absolutely worthwhile when it solves a real
+          problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next: Vue and Angular. Not a cage match.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>I already made the bracket.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Shred it.</span>
+      </p>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 2: Components, Props, and JSX — Whose HTML Is This? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: Components, Props, and JSX — Whose HTML Is This?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/4c0ac7d7-5584-45a1-a513-24804646e45d"
+      ></script>
+      <div class="redcirclePlayer-4c0ac7d7-5584-45a1-a513-24804646e45d"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#start-with-the-component">Start With the Component</a>
+        </li>
+        <li>
+          <a href="#what-jsx-actually-becomes">What JSX Actually Becomes</a>
+        </li>
+        <li>
+          <a href="#separation-of-concerns-not-file-extensions"
+            >Separation of Concerns, Not File Extensions</a
+          >
+        </li>
+        <li><a href="#jsx-is-not-html">JSX Is Not HTML</a></li>
+        <li>
+          <a href="#expressions-not-statements">Expressions, Not Statements</a>
+        </li>
+        <li>
+          <a href="#props-inputs-to-a-component"
+            >Props: Inputs to a Component</a
+          >
+        </li>
+        <li>
+          <a href="#pass-the-function-do-not-call-it-during-render"
+            >Pass the Function; Do Not Call It During Render</a
+          >
+        </li>
+        <li><a href="#props-are-read-only">Props Are Read-Only</a></li>
+        <li><a href="#children">Children</a></li>
+        <li>
+          <a href="#reuse-is-not-the-only-point">Reuse Is Not the Only Point</a>
+        </li>
+        <li><a href="#component-trees">Component Trees</a></li>
+        <li><a href="#lists-and-keys">Lists and Keys</a></li>
+        <li>
+          <a href="#accessibility-lives-inside-components"
+            >Accessibility Lives Inside Components</a
+          >
+        </li>
+        <li>
+          <a href="#styling-is-a-separate-decision"
+            >Styling Is a Separate Decision</a
+          >
+        </li>
+        <li>
+          <a href="#the-parent-is-not-a-god-object"
+            >The Parent Is Not a God Object</a
+          >
+        </li>
+        <li>
+          <a href="#what-a-component-really-is">What a Component Really Is</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-2-components-props-and-jsx-whose-html-is-this">
+        Episode 2: Components, Props, and JSX — Whose HTML Is This?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Last time, React survived the question “why do you exist?”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A rigorous peer review.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Today it faces charges of putting HTML in JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JSX has retained counsel.</span>
+      </p>
+      <h2 id="start-with-the-component">Start With the Component</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A React component is commonly a JavaScript function that returns a
+          description of UI.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Label it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Function: JavaScript. Component convention: React. Markup-looking
+          return value: JSX.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Already better than most tutorials.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>function Greeting() {
+  return &lt;h1&gt;Hello, neighbor.&lt;/h1&gt;;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In audio: a function named Greeting returns an h-one-looking
+          thing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The function declaration is ordinary JavaScript. Capitalizing the
+          component name is a React convention that helps JSX distinguish a
+          component from a built-in HTML element.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Lowercase h-one means browser element. Capital-G Greeting means our
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And that angle-bracket syntax?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSX. It is not a string, not HTML pasted into a script, and not
+          syntax the browser natively runs.</span
+        >
+      </p>
+      <h2 id="what-jsx-actually-becomes">What JSX Actually Becomes</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tooling transforms JSX into JavaScript calls that create React
+          element descriptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So this:</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>jsx</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;button type=&quot;button&quot;&gt;Save&lt;/button&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Becomes JavaScript that effectively asks React to create an element
+          description for a button with a type and child text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Modern transforms may use JSX runtime helpers rather than the
+          older React.createElement spelling, but the mental model is the
+          same.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JSX is authoring syntax.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. React can be used without JSX, but JSX makes nested UI
+          easier for many people to read.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Many people who did not spend twenty years being told to separate
+          structure, presentation, and behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Here comes the prosecution.</span>
+      </p>
+      <h2 id="separation-of-concerns-not-file-extensions">
+        Separation of Concerns, Not File Extensions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We spent years pulling JavaScript out of HTML. Unobtrusive
+          JavaScript. Semantic markup. Separate concerns. Then React arrives
+          with a button and an onClick in one file.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React’s argument is that the meaningful concern is the component’s
+          behavior and UI, not whether every language occupies a separate
+          file.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So it colocates things that change together.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A component can contain the rendering rules and interaction
+          logic for one meaningful piece. CSS might still live elsewhere—or use
+          one of many other arrangements—but the boundary is the
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That can be coherent. It can also become a casserole.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. Colocation is not permission to make a thousand-line
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nor permission to forget HTML because it resembles HTML.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Especially that.</span>
+      </p>
+      <h2 id="jsx-is-not-html">JSX Is Not HTML</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Differences.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>In JSX, JavaScript expressions go inside curly braces.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Curly braces mean “evaluate JavaScript here,” not “React invented
+          variables.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Some attributes use JavaScript property-style names. class
+          becomes className. for on a label becomes htmlFor.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because class and for already mean things in JavaScript,
+          historically?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That influenced the API, and JSX maps closely to DOM property naming.
+          Event props use camelCase, like onClick.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>React-specific convention.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Tags must close. A component must return one root value, though
+          a Fragment can group siblings without adding a DOM element.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fragment syntax looks like empty angle brackets, which is very
+          considerate of nobody listening to audio.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Companion page.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, JSX escapes text values by default, which helps prevent
+          accidental HTML injection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Helps. Does not make all input safe everywhere.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. URLs, server queries, authorization, storage, and explicitly
+          injecting raw HTML have their own risks. The frighteningly named
+          dangerouslySetInnerHTML deserves the frightening name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Please Don’t Do This casually.</span>
+      </p>
+      <h2 id="expressions-not-statements">Expressions, Not Statements</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why can I put a ternary inside JSX but not an if statement
+          directly?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Curly braces accept JavaScript expressions—things that produce
+          values. A ternary produces a value. An if statement controls execution
+          but is not itself a value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript distinction, revealed by JSX.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You can use an if before the return, assign a value, call a
+          helper, use a ternary, or use logical AND carefully.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Carefully?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Rendering count &amp;&amp; SomeComponent can display a zero when
+          count is zero, because JavaScript’s AND expression returns the first
+          falsy operand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wait, that is just JavaScript.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Causing a React surprise.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Better to be explicit when zero is possible.</span>
+      </p>
+      <h2 id="props-inputs-to-a-component">Props: Inputs to a Component</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Props are values passed from a parent component to a child
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Function arguments for UI pieces.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That analogy is useful. A ProductCard component might receive a
+          product name, price, image information, and an event handler.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>function ProductCard({ name, price, onAdd }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{price}&lt;/p&gt;
+      &lt;button type=&quot;button&quot; onClick={onAdd}&gt;
+        Add to cart
+      &lt;/button&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Label the syntax pile.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Function and object destructuring in the parameter: JavaScript.
+          ProductCard as a component and props as its input contract: React’s
+          component model. Angle-bracket markup: JSX. article, h-two, paragraph,
+          and button: HTML elements represented through JSX. onClick: React
+          event prop.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>onAdd is a function value passed as a prop.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The child does not need to know how the cart works. It reports
+          the event through the callback it received.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Data down, events up.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A useful default model.</span>
+      </p>
+      <h2 id="pass-the-function-do-not-call-it-during-render">
+        Pass the Function; Do Not Call It During Render
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why does onClick get onAdd instead of onAdd with parentheses?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because we are passing React a function to call later when the click
+          happens. The function itself is a JavaScript value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I write onClick equals onAdd with parentheses, JavaScript calls
+          onAdd immediately while the component is rendering.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Then whatever onAdd returns becomes the value of onClick. That
+          is usually not what you intended, and if the call updates state it can
+          create a render loop.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So onClick is a React event prop. onAdd is our own prop name. Passing
+          a function without calling it is JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the click needs arguments, pass a new function that calls
+          your function later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The arrow function is JavaScript. React's job is deciding when to
+          invoke the event handler.</span
+        >
+      </p>
+      <h2 id="props-are-read-only">Props Are Read-Only</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can ProductCard change its name prop?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It should not. Props are read-only inputs for that render.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like a function should not secretly rewrite its arguments.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Similar principle. If data must change, the owner of that data
+          updates it, React renders again, and the child receives new
+          props.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That gives us one direction of ownership rather than components
+          grabbing each other’s whiteboard markers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can I pass objects, arrays, functions, booleans?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Any JavaScript value. But passing a giant object because it is
+          convenient can hide what the component actually depends on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Explicit props document the boundary.</span>
+      </p>
+      <h2 id="children">Children</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There is a special prop called children. It represents content nested
+          inside a component’s JSX.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like a reusable Card that wraps different content.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Composition lets components combine without one component
+          needing a prop for every conceivable arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A slot-shaped idea.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Very much. Different frameworks name and express it differently, but
+          the composition problem is common.</span
+        >
+      </p>
+      <h2 id="reuse-is-not-the-only-point">Reuse Is Not the Only Point</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >People say components are reusable. Then I make one used exactly once
+          and feel I have violated React.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Reuse is one benefit, not the entrance exam. A component can be
+          valuable because it gives a meaningful name, contains a coherent
+          responsibility, or isolates complexity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CheckoutSummary may appear once but still deserve a boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Meanwhile, extracting every wrapper div creates indirection
+          without clarity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What is the granularity test?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Does this piece have a meaningful job, repeated structure,
+          independent behavior, or enough complexity that naming it improves
+          understanding?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And can I describe it without saying “the thing around the other
+          thing”?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Strong signal.</span>
+      </p>
+      <h2 id="component-trees">Component Trees</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React applications form a tree. App renders Header and Main. Main
+          renders ProductList. ProductList renders ProductCards.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser DOM is also a tree, but these are not identical
+          trees.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Important. A React component may return several DOM elements, another
+          component, or no DOM output. Components are conceptual and rendering
+          boundaries; DOM nodes are browser objects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React Developer Tools shows the component tree. Browser tools show
+          the DOM.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If I confuse them, debugging gets weird.</span>
+      </p>
+      <h2 id="lists-and-keys">Lists and Keys</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Here comes map.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Array.prototype.map is JavaScript. It transforms each array item into
+          a value. In React, we often map data into JSX elements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And React demands a key.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A stable key helps React identify which sibling item corresponds to
+          which prior item across renders.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Database ID?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Often excellent if it is stable and unique among siblings.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Array index?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes acceptable for a static list that never reorders, inserts,
+          deletes, or carries item-specific state. Dangerous as a casual
+          default.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because React may associate the wrong prior item with the new
+          position.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The key is not displayed, and it is not automatically passed as
+          a normal prop. It is identity information for React.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do not generate a fresh random key while rendering.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That tells React everything is brand new every time,
+          defeating the identity.</span
+        >
+      </p>
+      <h2 id="accessibility-lives-inside-components">
+        Accessibility Lives Inside Components
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Components make one accessibility decision multiply.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For better or worse. A genuinely accessible Button component can
+          standardize semantics, focus styles, disabled behavior, and labeling
+          expectations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A broken fake button component can distribute inaccessible behavior
+          across the whole product.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use native elements when they match. A button is already
+          keyboard-operable and exposes button semantics. A clickable div makes
+          you rebuild all of that, usually incompletely.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Props should not create impossible combinations either.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A component API can require an accessible name where visible
+          text is absent. TypeScript may help at compile time, but runtime
+          content and rendered behavior still require testing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Compile-time guidance is not a screen-reader test.</span>
+      </p>
+      <h2 id="styling-is-a-separate-decision">
+        Styling Is a Separate Decision
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does React tell me how to write CSS?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Core React does not. Plain stylesheets, CSS Modules, utility classes,
+          CSS-in-JS, design systems—those are ecosystem choices.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So className belongs to JSX, but the CSS architecture does not belong
+          to React.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Another opinion I must select later.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Episode Five has a clipboard.</span>
+      </p>
+      <h2 id="the-parent-is-not-a-god-object">
+        The Parent Is Not a God Object
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If data flows down, do I put everything in App and pass props through
+          twelve floors?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Please do not. State should live as close as practical to the
+          components that need it. Composition can avoid some prop drilling.
+          Context can share values across a subtree. External stores can help
+          when the problem genuinely requires one.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But we have not learned state yet.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. I am placing warning cones, not opening the highway.</span
+        >
+      </p>
+      <h2 id="what-a-component-really-is">What a Component Really Is</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let me try.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Go.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A modern function component is a JavaScript function participating in
+          React’s rendering model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It receives read-only props, which are JavaScript values.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It commonly returns JSX, a nonstandard syntax extension transformed
+          into JavaScript that describes elements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HTML element names inside JSX still represent real semantic HTML
+          choices.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Very yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Components form a conceptual tree, help create boundaries, and may be
+          useful even when not reused.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have passed JSX court.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have reached a plea agreement.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: state. Why a regular variable does not make React update,
+          what causes a render, and why “render” does not mean “the DOM
+          definitely changed.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We are going back to the whiteboards.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Steve has filed an appeal.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

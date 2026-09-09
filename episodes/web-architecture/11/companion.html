@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 11: Caching and CDNs — Yesterday's Pizza, Today's Problem — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 11: Caching and CDNs — Yesterday's Pizza, Today's Problem</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-11.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#why-keep-a-copy">Why Keep a Copy?</a></li>
+<li><a href="#several-places-can-remember">Several Places Can Remember</a></li>
+<li><a href="#what-a-cdn-does">What a CDN Does</a></li>
+<li><a href="#freshness-is-permission-to-reuse">Freshness Is Permission to Reuse</a></li>
+<li><a href="#cache-control-without-the-folklore">Cache-Control Without the Folklore</a></li>
+<li><a href="#validation-can-save-the-body">Validation Can Save the Body</a></li>
+<li><a href="#version-the-asset-not-the-customer-s-patience">Version the Asset, Not the Customer's Patience</a></li>
+<li><a href="#the-wrong-customer-s-order">The Wrong Customer's Order</a></li>
+<li><a href="#invalidating-copies">Invalidating Copies</a></li>
+<li><a href="#cache-stampedes">Cache Stampedes</a></li>
+<li><a href="#a-cache-should-be-replaceable-usually">A Cache Should Be Replaceable—Usually</a></li>
+<li><a href="#a-menu-update-travels-through-the-copies">A Menu Update Travels Through the Copies</a></li>
+<li><a href="#query-parameters-and-cache-keys">Query Parameters and Cache Keys</a></li>
+<li><a href="#negative-results-can-be-remembered">Negative Results Can Be Remembered</a></li>
+<li><a href="#application-caches-have-their-own-rules">Application Caches Have Their Own Rules</a></li>
+<li><a href="#memory-is-finite">Memory Is Finite</a></li>
+<li><a href="#revalidation-versus-refetching-in-the-ui">Revalidation Versus Refetching in the UI</a></li>
+<li><a href="#test-the-policy-with-two-people-and-a-clock">Test the Policy With Two People and a Clock</a></li>
+<li><a href="#choose-policies-for-the-pizza-site">Choose Policies for the Pizza Site</a></li>
+<li><a href="#a-performance-win-we-can-trust">A Performance Win We Can Trust</a></li>
+<li><a href="#the-copy-we-shouldn-t-make">The Copy We Shouldn't Make</a></li>
+<li><a href="#closing-reuse-with-conditions">Closing — Reuse With Conditions</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The menu price is wrong.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We changed it yesterday.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser disagrees.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which cache is serving it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I miss when a difficult question contained fewer invisible copies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. Today: caching. Faster answers, with a freshness policy attached.</span>
+        </p>
+<h2 id="why-keep-a-copy">Why Keep a Copy?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A cache stores something so we can reuse it instead of repeating expensive work. That might be a response, a file, a database query result, or a computation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For Nervous Robot, every visitor doesn't need us to regenerate the same logo or recalculate the same public menu description from scratch.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A cache hit finds a usable stored result. A miss means we need to obtain or compute it. Reuse can reduce latency, server work, and bandwidth.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But a copy can become stale when the underlying information changes. So the question isn't just “can we cache this?” It's “under what conditions may we reuse this answer?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. For a logo with a versioned filename, a long lifetime may be fine. For current order status, freshness matters more. For private data, who may receive the copy matters enormously.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The cache key and policy are part of correctness. A fast answer to the wrong question is not an optimization.</span>
+        </p>
+<h2 id="several-places-can-remember">Several Places Can Remember</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser may cache HTTP responses. A CDN can cache responses near users. Our application might cache query results. The database has its own internal caching too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a service worker can implement additional browser-side behavior. We don't need all those layers just because they exist.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Each has different controls and visibility. Clearing one doesn't necessarily clear the others.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's how “I hard-refreshed” can fail to resolve a stale CDN response. The browser went back to the network, and the network enthusiastically supplied its old copy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Diagnose which layer answered. Inspect relevant response headers and configuration instead of clearing caches at random until the problem feels spiritual.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cache debugging benefits from the request-path map we built in Episode 3. Which intermediary could have answered without reaching the origin?</span>
+        </p>
+<h2 id="what-a-cdn-does">What a CDN Does</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A content delivery network provides geographically distributed infrastructure that can deliver content closer to users and offload work from an origin service.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The origin is the source service behind it. The CDN's edge locations can answer some requests from stored content, depending on policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CDNs can also provide routing and other features, but caching is the part we're focusing on. A miss may cause the edge to fetch from the origin.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It doesn't make our private order database globally consistent by standing nearby. Nor does it automatically speed up every dynamic operation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Public images and static assets are common candidates. Personalized responses need deliberate handling, often avoiding shared caching.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if the origin is down, the CDN may still serve eligible cached content, depending on configuration. That doesn't mean checkout is working.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another reason public information and transactional availability can differ.</span>
+        </p>
+<h2 id="freshness-is-permission-to-reuse">Freshness Is Permission to Reuse</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's explain time-to-live without implying it knows when the data actually changes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A freshness lifetime says how long a stored response may be treated as fresh under the caching rules. It isn't a notification from the database that nothing changed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I permit five minutes of reuse and change the menu a minute later, some people may still see the earlier version until it expires or is invalidated.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a tradeoff we've chosen. For a menu description it might be acceptable. For final pricing, the server still validates at checkout.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the interface needs a policy for a changed price. Caching doesn't excuse silently charging something different from the displayed agreement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Short lifetimes reduce potential staleness but increase requests. Long lifetimes reduce work but require confidence that reuse is acceptable or a reliable invalidation strategy.</span>
+        </p>
+<h2 id="cache-control-without-the-folklore">Cache-Control Without the Folklore</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>HTTP Cache-Control is a header carrying caching directives. <code>max-age</code> describes freshness in seconds. <code>private</code> prevents shared caches from storing a response under standard semantics while allowing a private cache, such as the browser's.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the confusing pair: <code>no-cache</code> does not mean don't store. It means the stored response must be validated before reuse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>no-store</code> instructs caches not to store the response. It doesn't retroactively erase every existing copy everywhere.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So names are not sufficient documentation. We should read the actual semantics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>s-maxage</code> can specify freshness for shared caches. Other directives support additional behaviors. We'll keep the examples narrow rather than assemble a random protective incantation.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>http</span></figcaption>
+          <pre tabindex="0"><code>Cache-Control: public, max-age=31536000, immutable
+
+Cache-Control: no-cache
+
+Cache-Control: no-store</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Those are three separate examples, not three headers to paste together. The first suits genuinely immutable versioned public assets under an appropriate deployment policy. The second requires validation before reuse. The third says don't store.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A private order page may need no-store depending on the application's requirements. Don't copy a public asset policy onto authenticated content.</span>
+        </p>
+<h2 id="validation-can-save-the-body">Validation Can Save the Body</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What does “validate before reuse” look like?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The cache can send a conditional request using a validator, such as an ETag from the earlier response. It asks whether its stored representation is still current.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If it is, the server can return 304 Not Modified, allowing reuse of the stored body. We've still made a network request, but may avoid sending the full content again.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. If it changed, the server returns the new representation. Validation and freshness are different mechanisms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And an ETag isn't necessarily a human-readable version number or a universal hash contract. Treat it as the validator the server defined.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. It can also participate in conditional updates in some API designs, but today we're using it to understand cache validation.</span>
+        </p>
+<h2 id="version-the-asset-not-the-customer-s-patience">Version the Asset, Not the Customer's Patience</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For CSS or JavaScript build output, a filename containing a content-derived fingerprint can let a new version have a new URL.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The HTML points to the new filename. The old asset can remain cached safely because its contents won't change at that URL.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's why long caching can work for immutable assets while HTML often needs a different freshness policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the HTML itself stays cached too long, it may keep pointing at old code. And if deployment deletes old assets immediately, a still-open page might later request a missing old chunk.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So asset retention and deployment consistency matter. Caching strategy and release strategy are connected.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fingerprinted files are tooling output. The filename convention isn't TypeScript syntax or a browser language feature. The browser simply requests the URL it was given.</span>
+        </p>
+<h2 id="the-wrong-customer-s-order">The Wrong Customer's Order</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's make the dangerous mistake explicit. We cache GET slash account by URL alone in a shared cache.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Customer A's response is stored. Customer B asks for the same URL. If our policy and keying are wrong, B could receive A's account information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a confidentiality failure, not just stale content. Shared caches require appropriate response policy and careful variation rules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Vary can tell caches that selected request headers affect the representation, but it isn't a universal authorization fix. Don't casually invent a cache key containing a session token and assume every privacy concern is solved.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. For our baseline, avoid shared caching of private order pages. Keep the policy simple and verify it with different sessions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same warning applies to application caches. A function called getOrders that caches only by query name may accidentally reuse one customer's result for another.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The cache key must represent every input relevant to the result and permission context, or the design must avoid that caching altogether.</span>
+        </p>
+<h2 id="invalidating-copies">Invalidating Copies</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We update the menu. How do copies learn?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Options include waiting for expiration, explicitly removing affected entries, changing versioned keys, or validating on reuse. The right choice depends on freshness requirements and control over the layers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Purging a CDN may not instantly clear every browser's private cache. So choose lifetimes and versioning with the entire path in mind.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Application-level cache invalidation can also race with writes. If we update the database and then forget to invalidate, stale data persists until some other mechanism fixes it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or one request refills the cache with old data while another is updating it. That's why caching mutable business data deserves real design, not just a decorator named fast.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes the best initial choice is not to cache that operation. Optimize the query and measure before adding another consistency mechanism.</span>
+        </p>
+<h2 id="cache-stampedes">Cache Stampedes</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The popular menu entry expires. A thousand requests arrive. All miss. All ask the database to rebuild it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A cache stampede. A cache can reduce normal load but create a sharp burst when many callers miss together.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So mechanisms like coordinating one refill, spreading expiration times, or serving stale content during refresh can help where appropriate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Stale-while-revalidate permits some stale reuse while refreshing under a defined policy. It trades freshness for responsiveness and reduced load.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Great for an eligible public description. Potentially unacceptable for a sensitive permission decision or a final inventory reservation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The policy should match the consequence of staleness. “Stale” isn't a single severity level.</span>
+        </p>
+<h2 id="a-cache-should-be-replaceable-usually">A Cache Should Be Replaceable—Usually</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We often say the cache isn't the source of truth. What does that buy us?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If it is truly derived and reconstructible, losing it should affect performance rather than destroy the only copy of important information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But if our so-called cache contains the only record of pending orders, it isn't merely a cache. The label doesn't reduce the durability requirement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also, cold-cache behavior matters. Can the origin handle traffic after a cache restart, or does the entire system collapse because it depended on every hit?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Test that before the cache has an unscheduled identity crisis.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Measure hit ratio, latency, origin load, error rates, and whether stale answers cause user problems. A high hit ratio on the wrong data is not success.</span>
+        </p>
+<h2 id="a-menu-update-travels-through-the-copies">A Menu Update Travels Through the Copies</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's follow a price change at two in the afternoon. The editor saves the new menu price in the source system.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First, does the page read that source at request time, or must a build publish a new file? That determines when the origin has a new representation to offer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then the CDN may still have an earlier response within its freshness lifetime.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a browser may have its own earlier response. We need to account for both. Purging the edge doesn't necessarily tell an already-open tab to update its in-memory menu.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So “the website has the new price” can mean several different things.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. New source value, new origin representation, new shared-cache copy, new browser response, and updated visible state. Those are stages, not synonyms.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>At checkout the server uses the current accepted pricing policy and returns a quote that the customer reviews.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. That gives us a correctness boundary despite a possibly stale browsing view. But if price changes are frequent and consequential, we may need a fresher menu display too. We shouldn't rely on checkout correction to excuse a chronically misleading page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The policy follows the product's tolerance for stale information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Five minutes isn't inherently right or wrong. Explain what could happen during those five minutes and whether that's acceptable.</span>
+        </p>
+<h2 id="query-parameters-and-cache-keys">Query Parameters and Cache Keys</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our menu can be filtered by location. Same path, different query parameter. What if the CDN ignores the query in its cache key?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then it may reuse one location's menu for another. The key no longer represents the question that produced the response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Conversely, including every irrelevant tracking parameter can create lots of separate cache entries for identical content.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. That hurts hit rate and can increase origin work. We need to decide which inputs actually affect the representation and configure the cache accordingly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Language preferences can matter too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. If a request header changes the representation, HTTP variation rules can help, but we must understand the actual cache implementation. Don't assume a default key contains every input the application uses.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So cache design begins with the function, in a conceptual sense: given these inputs, we produce this output.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. If an output also depends on hidden state, time, or identity, that needs a freshness or keying strategy—or no cache for that operation.</span>
+        </p>
+<h2 id="negative-results-can-be-remembered">Negative Results Can Be Remembered</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We publish a new menu page, but a visitor still sees not found. Could that be cached?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some negative responses can be cached under HTTP rules and configuration. If the missing response was stored before the page existed, it may remain reusable for a period.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So not-found isn't necessarily evidence the new deployment lacks the file.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Inspect where the answer came from. Again, caching can preserve errors as efficiently as success when policy allows it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That suggests we should consider lifetimes for negative results and deployment timing too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. And avoid changing rules blindly during an incident. Identify the layer and the relevant response policy, then correct the cause.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Is turning off every cache a useful diagnostic?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sometimes a controlled bypass can isolate a layer. But disabling caching globally under heavy load can overload the origin. A diagnostic action has consequences too.</span>
+        </p>
+<h2 id="application-caches-have-their-own-rules">Application Caches Have Their Own Rules</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose we store the menu query result in application memory for a minute. Is Cache-Control involved?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not automatically. That's application-level caching. Our code or library defines its lifetime and invalidation. HTTP headers control HTTP caches, not every in-memory map inside the server.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With three app instances, each might have a different cached copy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Updating one process doesn't necessarily invalidate the other two. A shared cache can centralize some behavior but adds another dependency and network call.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For a tiny menu query, the shared-cache infrastructure might cost more complexity than it saves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's why we measure. The database may already serve the query efficiently. Adding a cache because “databases are slow” is not analysis.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if the result is cheap to compute but enormous to serialize, storing it differently may not solve the bottleneck we thought we had.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Find the expensive part. Cache the right thing only when the benefit is real.</span>
+        </p>
+<h2 id="memory-is-finite">Memory Is Finite</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What happens when the cache fills up?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An eviction policy decides what to remove, depending on the implementation. Recently used entries may be favored, or other rules may apply. Expiration and eviction aren't the same event.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An entry can disappear before its freshness lifetime ends because space is needed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Code should handle misses. A cache isn't a durable promise that a value will remain available until its timestamp.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's another reason not to store the only copy of pending work there.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. If we require durable work storage, choose and configure something for that purpose. Calling it cache doesn't lower the stakes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And unbounded keys can consume memory, particularly if arbitrary user input creates a new entry every time.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Validate and bound the use. Performance features need resource limits just like endpoints do.</span>
+        </p>
+<h2 id="revalidation-versus-refetching-in-the-ui">Revalidation Versus Refetching in the UI</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A frontend data library says it revalidates. Is that always an HTTP conditional request?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not necessarily. Libraries may use that word for refreshing their own cached data. It might make a full request, use HTTP caching indirectly, or follow a custom policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the same word can describe different layers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Read the tool's behavior. Does it refetch on focus? After an interval? After a mutation? Does it share results across components? Those choices affect user experience and server load.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For the staff board, refetching when the tab becomes active could help catch up.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, but a sudden replacement shouldn't erase an in-progress edit or move focus. Fresh data and stable interaction need coordination.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And we still validate the operation on the server even if the frontend believes its cache is fresh.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Always. A fetched value can become outdated immediately after receipt. Freshness reduces uncertainty; it doesn't grant a reservation on reality.</span>
+        </p>
+<h2 id="test-the-policy-with-two-people-and-a-clock">Test the Policy With Two People and a Clock</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What's a useful verification exercise for our caching design?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Load public content, change it, and observe when each relevant layer shows the update. Then use two separate customer sessions to verify private responses don't cross between them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Test a cold cache as well as a warm one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. And test the origin unavailable if serving stale content is part of the intended behavior. Confirm which pages remain useful and which operations correctly report unavailable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should inspect headers, not just screenshots.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Both can help. Headers explain policy and provenance; the visible result tells us what the person experiences. An apparently correct header doesn't prove every application cache is correct.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So caching QA is behavioral, not merely checking whether the word max-age appears.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. We are testing an agreement about reuse, privacy, and freshness.</span>
+        </p>
+<h2 id="choose-policies-for-the-pizza-site">Choose Policies for the Pizza Site</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Logo and fingerprinted CSS: public, long-lived when immutable. Public menu descriptions: a freshness policy compatible with updates. Private orders: avoid shared caching.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Final order acceptance: validate against authoritative current rules. We don't accept an old cached “in stock” answer as a reservation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Staff board: maybe show last known information while refreshing, but make stale state visible and let the server reject conflicting actions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those are different policies because they represent different promises. One global cache setting would be convenient but wrong.</span>
+        </p>
+<h2 id="a-performance-win-we-can-trust">A Performance Win We Can Trust</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The cache reduced origin requests dramatically. What else must be true before we celebrate?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Users still receive appropriate content, private data stays private, updates become visible within the promised window, and misses or cache failure don't destroy the system.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We should also check whether the complexity is manageable. Can the next developer find the policy?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Put it somewhere understandable and document why different resource types differ. A global setting with twenty undocumented exceptions is an incident waiting for a new teammate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If a cached query no longer matters, remove it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Optimizations can become obsolete. Keeping unnecessary caches preserves invalidation work and debugging confusion for no benefit.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So simplification is part of performance maintenance too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely. Sometimes the fastest route to a reliable answer is fewer copies. Sometimes it's a carefully managed copy close to the user. We choose based on the actual cost and freshness requirement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nervous Robot's logo can live happily at the edge. Their customer's address does not need to tour the CDN.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A geographically restrained address. Excellent privacy posture for a pizza metaphor.</span>
+        </p>
+<h2 id="the-copy-we-shouldn-t-make">The Copy We Shouldn't Make</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could we cache whether a staff member is allowed to refund orders?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Potentially under a carefully designed policy, but permission changes have consequences. If access is revoked, how quickly must that revocation take effect? A cached allow decision can outlive the underlying permission.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So a performance optimization can change the security guarantee.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. That's why we shouldn't treat every repeated lookup as an obvious cache candidate. The cost of being wrong matters alongside the cost of recomputing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For our baseline, keep the authorization mechanism straightforward and use its supported behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Measure before optimizing it, and preserve the required revocation semantics if you do. “It was faster” isn't a complete justification for stale authority.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same category as stale stock versus a stock reservation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. A cached observation can inform an interface. A consequential decision may need stronger current evidence or coordination. Knowing the difference is the useful part of this episode.</span>
+        </p>
+<h2 id="closing-reuse-with-conditions">Closing — Reuse With Conditions</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A cache is a copy plus rules about reuse. A CDN can place eligible content closer to users and reduce origin work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Freshness, validation, invalidation, cache keys, privacy, and failure behavior determine whether that reuse is correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next time: scaling. When doing less isn't enough, how do we handle more work without just buying more rectangles?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Did you fix the menu price?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. I can now explain which copy was wrong. Personal growth, with headers.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

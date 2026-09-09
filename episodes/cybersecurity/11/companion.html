@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 11: XSS — You Put WHAT in My DOM? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 11: XSS — You Put WHAT in My DOM?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-11.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#what-xss-actually-is">What XSS Actually Is</a></li>
+<li><a href="#stored-xss">Stored XSS</a></li>
+<li><a href="#reflected-xss">Reflected XSS</a></li>
+<li><a href="#dom-based-xss">DOM-Based XSS</a></li>
+<li><a href="#context-matters">Context Matters</a></li>
+<li><a href="#escaping-vs-sanitizing">Escaping vs. Sanitizing</a></li>
+<li><a href="#frameworks-help-until-you-opt-out">Frameworks Help, Until You Opt Out</a></li>
+<li><a href="#cookies-and-xss">Cookies and XSS</a></li>
+<li><a href="#content-security-policy">Content Security Policy</a></li>
+<li><a href="#trusted-types">Trusted Types</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#xss-is-about-trust-boundaries-not-just-script-tags">XSS Is About Trust Boundaries, Not Just Script Tags</a></li>
+<li><a href="#sources-and-sinks">Sources and Sinks</a></li>
+<li><a href="#why-textcontent-is-boring-and-wonderful">Why <code>textContent</code> Is Boring and Wonderful</a></li>
+<li><a href="#rich-text-is-where-life-gets-complicated">Rich Text Is Where Life Gets Complicated</a></li>
+<li><a href="#url-based-xss">URL-Based XSS</a></li>
+<li><a href="#postmessage-and-cross-origin-windows"><code>postMessage</code> and Cross-Origin Windows</a></li>
+<li><a href="#what-can-xss-actually-do">What Can XSS Actually Do?</a></li>
+<li><a href="#why-httponly-matters-without-solving-xss">Why <code>HttpOnly</code> Matters Without Solving XSS</a></li>
+<li><a href="#csp-in-more-detail">CSP in More Detail</a></li>
+<li><a href="#xss-and-third-party-scripts">XSS and Third-Party Scripts</a></li>
+<li><a href="#xss-testing">XSS Testing</a></li>
+<li><a href="#old-person-yells-at-cloud">Old Person Yells at Cloud</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Someone put JavaScript in my JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is basically XSS.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cross-site scripting.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is annoyingly named because it is mostly “run attacker-controlled script in someone else’s trusted page.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Historical naming is a burden we carry.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em></span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’m Parisa.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I’m Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is finally an attack I understand in my bones.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>User input.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HTML.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Bad decisions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="what-xss-actually-is">What XSS Actually Is</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Cross-site scripting</strong>, XSS, happens when attacker-controlled content is interpreted by a browser as executable script in a trusted site’s context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the browser thinks the code belongs to my site.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means it may access things my site can access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>DOM.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Session data not protected from JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Application state.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Actions available to the user.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And because the script runs under my origin, same-origin policy may treat it as trusted code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="stored-xss">Stored XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Comment form.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>User submits <code>&lt;script&gt;evil()&lt;/script&gt;</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Site stores it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Other users load the page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser executes it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Classic <strong>stored XSS</strong>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Payload lives in persistent application data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="reflected-xss">Reflected XSS</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Reflected XSS</strong> occurs when attacker-controlled input is immediately reflected into a response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Search page says “Results for: whatever-you-typed.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If that input is inserted unsafely into HTML, a crafted URL may execute script when a victim opens it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not stored in the database.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="dom-based-xss">DOM-Based XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>DOM XSS means the dangerous transformation happens in client-side JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Maybe code reads <code>location.hash</code> and assigns it to <code>innerHTML</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server never saw the payload.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Client-side code created the vulnerability.</span>
+        </p>
+<h2 id="context-matters">Context Matters</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The hardest lesson is that output encoding is context-specific.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HTML text context is not the same as an HTML attribute.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or JavaScript string.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or CSS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or URL.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “escape angle brackets” is not a universal sanitizer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="escaping-vs-sanitizing">Escaping vs. Sanitizing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important distinction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Escaping or encoding</strong> makes special characters safe for a specific output context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat the content as text.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Sanitization</strong> allows some markup but removes or neutralizes dangerous parts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful if I intentionally allow rich text.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use a proven sanitizer, not regex.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t parse hostile HTML with vibes.</span>
+        </p>
+<h2 id="frameworks-help-until-you-opt-out">Frameworks Help, Until You Opt Out</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>React escapes interpolated text by default.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which significantly reduces many classic XSS mistakes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But <code>dangerouslySetInnerHTML</code> exists because sometimes apps need raw HTML.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the name is doing excellent documentation work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Vue, Angular, templating engines—all have safe defaults and escape hatches.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Framework does not save you if you deliberately bypass its protections.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="cookies-and-xss">Cookies and XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Can XSS steal session cookies?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the cookie is accessible to JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>HttpOnly</code> prevents script from reading it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But XSS may still perform authenticated actions in the victim’s session.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So HttpOnly reduces one impact but does not cure XSS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Defense in depth.</span>
+        </p>
+<h2 id="content-security-policy">Content Security Policy</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Content Security Policy</strong>, CSP, lets a site tell the browser what kinds of content may execute or load.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Restrict script sources.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Block inline script unless specifically permitted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CSP can reduce XSS impact.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Strongly configured CSP can be powerful, but it should not replace safe rendering.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Another layer.</span>
+        </p>
+<h2 id="trusted-types">Trusted Types</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser security has newer controls too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Trusted Types</strong> can help prevent DOM XSS by restricting dangerous DOM sinks so they only accept values produced by approved policies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Basically make unsafe <code>innerHTML</code>-style operations harder to call accidentally.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>element.innerHTML = userInput</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t do this.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unless it has gone through an appropriate trusted sanitizer and you truly need HTML.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“We strip <code>&lt;script&gt;</code> tags with regex.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely not.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“React means XSS is impossible.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also no.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>XSS is really a data-versus-code confusion bug.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker gives us data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We accidentally tell the browser it is code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s the heart of it.</span>
+        </p>
+<h2 id="xss-is-about-trust-boundaries-not-just-script-tags">XSS Is About Trust Boundaries, Not Just Script Tags</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I want to kill one mental model before it grows legs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>XSS is not “someone typed a script tag.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is one payload.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The actual problem is attacker-controlled data reaching a browser execution context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means payloads can depend on where the data lands.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If input lands inside an HTML attribute, the attacker may try to escape the attribute.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If it lands inside JavaScript, the relevant syntax is JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If it lands in a URL, URL parsing and protocol handling matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Context-specific escaping finally makes emotional sense.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are not escaping “bad characters.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We are preserving the boundary between data and the grammar of the destination context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That is the better mental model.</span>
+        </p>
+<h2 id="sources-and-sinks">Sources and Sinks</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>DOM XSS discussions often use the terms <strong>source</strong> and <strong>sink</strong>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Source is where attacker-controlled data comes from.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>URL parameters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>location.hash</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>postMessage</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Storage.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>API responses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sink is the dangerous place we put it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>innerHTML</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>outerHTML</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>insertAdjacentHTML</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Dynamic script execution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Certain URL assignments depending on context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So auditing client-side code can mean tracing untrusted values from source to sink.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is much more systematic than grepping for <code>&lt;script&gt;</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very much.</span>
+        </p>
+<h2 id="why-textcontent-is-boring-and-wonderful">Why <code>textContent</code> Is Boring and Wonderful</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I want to display user-provided text, <code>textContent</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good default.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser treats it as text rather than markup.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>&lt;img src=x onerror=evil()&gt;</code> appears literally instead of becoming an image element.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is one of those secure coding lessons where the safer API is also conceptually simpler.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Boring APIs are underrated.</span>
+        </p>
+<h2 id="rich-text-is-where-life-gets-complicated">Rich Text Is Where Life Gets Complicated</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But what if I intentionally want users to submit HTML?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then you need a sanitization policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Allow paragraphs, emphasis, links.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Reject scripts, event handlers, dangerous URLs, weird embedded objects.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And HTML is complex enough that this is not a homebrew regex project.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use a well-maintained sanitizer designed for hostile input.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>DOMPurify is a common browser-side example.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right, with configuration appropriate to your use case.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And sanitization should happen close to where trusted HTML is produced or accepted, with the trust boundary documented.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Otherwise the codebase starts passing around strings where nobody knows whether “HTML” means raw, escaped, or sanitized.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is how somebody eventually calls the wrong sink.</span>
+        </p>
+<h2 id="url-based-xss">URL-Based XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Links deserve their own warning.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I let users provide a URL, I care about more than HTML escaping.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A URL like <code>javascript:...</code> can be dangerous in contexts that execute JavaScript URLs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So validate allowed schemes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>https:</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe <code>mailto:</code> if the product needs it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again: context.</span>
+        </p>
+<h2 id="postmessage-and-cross-origin-windows"><code>postMessage</code> and Cross-Origin Windows</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern apps use <code>postMessage</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Frames and windows can communicate across origins through it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which intentionally creates an exception to normal same-origin isolation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So receivers should verify the message origin and validate the message data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>if (event.origin !== expectedOrigin) return</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That kind of check, yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And don’t blindly feed message data into an HTML sink.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser security primitives are useful right up until we write “accept everything.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A recurring theme.</span>
+        </p>
+<h2 id="what-can-xss-actually-do">What Can XSS Actually Do?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let’s be concrete.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If an attacker gets JavaScript execution in my origin, what can happen?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It depends on the application and browser protections.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They may read sensitive DOM content.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Make authenticated requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modify what the user sees.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Capture input.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Redirect users.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Call application APIs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Potentially steal non-HttpOnly tokens from storage.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or change a payment destination displayed in the page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Integrity attack.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So XSS is not merely “annoying alert box.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The alert box is a safe proof of concept.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Real impact can be account compromise or data theft.</span>
+        </p>
+<h2 id="why-httponly-matters-without-solving-xss">Why <code>HttpOnly</code> Matters Without Solving XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We said HttpOnly cookies can’t be read by JavaScript.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is useful.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But malicious script running on my site can still send requests that automatically include the cookie.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It might not know the session secret, but it can act through the victim’s browser.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the control protects credential confidentiality but not necessarily session abuse.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Scope of control.</span>
+        </p>
+<h2 id="csp-in-more-detail">CSP in More Detail</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let’s make Content Security Policy less mystical.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CSP is an HTTP response policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser reads directives like where scripts can load from.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A strong policy can avoid broad <code>'unsafe-inline'</code> execution and use nonces or hashes for scripts the page intentionally authorizes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A CSP nonce is a random value attached to approved script elements and included in the policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker-injected script does not automatically have the nonce.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unless our application stupidly exposes or copies it into attacker-controlled markup.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security controls can be undermined by implementation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Naturally.</span>
+        </p>
+<h2 id="xss-and-third-party-scripts">XSS and Third-Party Scripts</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What about analytics, chat widgets, tag managers?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If you execute a third-party script in your origin, you are granting that code significant power.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So third-party JavaScript is a supply-chain decision.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CSP can restrict script sources, but if I intentionally allow a compromised trusted vendor script—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser may execute it because your policy trusts that source.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why “trusted origin” and “trustworthy forever” are different statements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="xss-testing">XSS Testing</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How do developers test for this responsibly?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Start with code review and automated tooling, then test input paths in environments you’re authorized to test.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Look at rendering contexts.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Try harmless payloads.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inspect whether characters are encoded or markup is created.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browser developer tools help.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security scanners can help.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But scanners will not understand every custom DOM flow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Human understanding still matters.</span>
+        </p>
+<h2 id="old-person-yells-at-cloud">Old Person Yells at Cloud</h2>
+<h3 id="old-person-yells-at-cloud-2">OLD PERSON YELLS AT CLOUD</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server-rendered PHP got mocked for years, but <code>htmlspecialchars</code> used correctly in a boring template solved a very understandable problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Absolutely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern frontend complexity did not repeal output encoding.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We just moved some of the rendering and trust boundaries into the browser.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The old security lesson survived the framework migration.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A lot of old web lessons did.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Understand XSS as a web application injection attack, common delivery patterns, input/output handling, browser controls, secure coding, and defense in depth.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For developer depth, know stored, reflected, and DOM-based XSS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And contextual output encoding.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Treat untrusted content as data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Encode for the output context.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sanitize only when HTML is intentionally allowed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use safe framework defaults, CSP, HttpOnly cookies, and browser protections as layers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: injection.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Stop concatenating untrusted shit.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

@@ -7,6 +7,7 @@
   --gold: #ffd166;
   --blue: #8ecae6;
   --pink: #ffafcc;
+  --green: #9ee6a8;
   --border: #495164;
 }
 
@@ -41,6 +42,7 @@ footer { color: var(--muted); border-top: 1px solid var(--border); padding: 2rem
 .dialogue strong { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; padding-top: .25rem; }
 .dialogue.parisa strong { color: var(--pink); }
 .dialogue.jules strong { color: var(--blue); }
+.dialogue.sabrina strong { color: var(--green); }
 .dialogue span { max-width: 72ch; }
 .dialogue code { background: #292f3d; padding: .08em .3em; border-radius: .25rem; }
 .card { margin: 2rem 0; border: 2px solid var(--gold); border-radius: .8rem; overflow: hidden; background: #0a0c11; }

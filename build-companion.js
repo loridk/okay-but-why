@@ -12,9 +12,24 @@ function escapeHtml(value) {
 }
 
 function inlineMarkdown(value) {
-  return escapeHtml(value)
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  // Protect inline code before interpreting emphasis: code may contain asterisks.
+  return value.split(/(`[^`]+`)/g).map((part) => {
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return "<code>" + escapeHtml(part.slice(1, -1)) + "</code>";
+    }
+    return escapeHtml(part).replace(
+      /\*\*\*([^*]+)\*\*\*|\*\*([^*]+)\*\*|\*([^*]+)\*/g,
+      (_, both, strong, emphasis) => both !== undefined
+        ? "<strong><em>" + both + "</em></strong>"
+        : strong !== undefined
+          ? "<strong>" + strong + "</strong>"
+          : "<em>" + emphasis + "</em>",
+    );
+  }).join("");
+}
+
+function plainMarkdown(value) {
+  return inlineMarkdown(value).replace(/<\/?(?:code|strong|em)>/g, "");
 }
 
 function slugify(value) {
@@ -26,7 +41,9 @@ function slugify(value) {
 
 function formatSeriesName(slug) {
   const names = {
+    "modern-css": "Modern CSS — Wait, CSS Does That Now?",
     "node-npm": "Node, npm & the Modern JavaScript Toolchain",
+    "react-frameworks": "React & Modern Front-End Frameworks",
     typescript: "TypeScript",
   };
 
@@ -44,6 +61,8 @@ function parseMasterScript(source) {
   const lines = source.split(/\r?\n/);
   const content = [];
   const navigation = [];
+  const usedIds = new Set(["script"]);
+  let lastSpeaker = null;
   let title = "Okay, But Why?";
   let cardType = null;
   let cardCount = 0;
@@ -52,15 +71,29 @@ function parseMasterScript(source) {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
     const heading = line.match(/^(#{1,3})\s+(.+)$/);
-    const speaker = line.match(/^(PARISA|JULES):\s+(.+)$/);
+    const speaker = line.match(/^(PARISA|JULES|SABRINA):\s+(.+)$/);
 
     if (heading) {
       const level = heading[1].length;
       const text = heading[2];
-      const id = slugify(text);
+
+      if (level === 2 && /^Production (?:Notes|References)/.test(text)) {
+        break;
+      }
+
+      // Production cues are not listener-facing sections.
+      if (/^Cold Open(?:$|\s|[—–:-])/i.test(text)) continue;
+
+      const baseId = slugify(text);
+      let id = baseId;
+      let suffix = 2;
+      while (usedIds.has(id)) id = baseId + "-" + suffix++;
+      usedIds.add(id);
+      lastSpeaker = null;
 
       if (level === 1) {
         title = text;
+        continue;
       } else if (level === 2) {
         navigation.push({ id, text });
       }
@@ -69,7 +102,7 @@ function parseMasterScript(source) {
       continue;
     }
 
-    if (line === "[CODE CARD]") {
+    if (line === "[CODE CARD]" || line.startsWith("[CODE CARD:")) {
       cardType = "code";
       continue;
     }
@@ -83,12 +116,15 @@ function parseMasterScript(source) {
       continue;
     }
 
-    if (line.startsWith("```") && cardType) {
-      const language = line.slice(3) || "text";
+    const fence = line.match(/^(```|~~~)(.*)$/);
+
+    if (fence && cardType) {
+      const marker = fence[1];
+      const language = fence[2] || "text";
       const codeLines = [];
 
       index += 1;
-      while (index < lines.length && !lines[index].startsWith("```")) {
+      while (index < lines.length && !lines[index].startsWith(marker)) {
         codeLines.push(lines[index]);
         index += 1;
       }
@@ -111,11 +147,19 @@ function parseMasterScript(source) {
     }
 
     if (speaker) {
+      lastSpeaker = speaker[1];
       const speakerName = speaker[1][0] + speaker[1].slice(1).toLowerCase();
       content.push(`
         <p class="dialogue ${speaker[1].toLowerCase()}">
           <strong>${speakerName}</strong>
           <span>${inlineMarkdown(speaker[2])}</span>
+        </p>`);
+    } else if (lastSpeaker && line.trim() && !line.startsWith("[")) {
+      const speakerName = lastSpeaker[0] + lastSpeaker.slice(1).toLowerCase();
+      content.push(`
+        <p class="dialogue ${lastSpeaker.toLowerCase()}">
+          <strong>${speakerName}</strong>
+          <span>${inlineMarkdown(line)}</span>
         </p>`);
     }
   }
@@ -123,20 +167,23 @@ function parseMasterScript(source) {
   return { title, content, navigation, cardCount, terminalCount };
 }
 
-function createPage(episode, hasAudio, slug, seriesSlug) {
+function createPage(episode, slug, seriesSlug, existingAudio) {
   const navigation = episode.navigation
-    .map(({ id, text }) => `<li><a href="#${id}">${escapeHtml(text)}</a></li>`)
+    .map(({ id, text }) => `<li><a href="#${id}">${inlineMarkdown(text)}</a></li>`)
     .join("\n");
-  const audio = hasAudio
-    ? `<audio controls preload="metadata"><source src="${escapeHtml(slug)}.wav" type="audio/wav">Your browser does not support the audio player.</audio>`
-    : `<p class="notice">Audio has not been generated for this draft yet.</p>`;
+  // A comment-only placeholder is invisible; show the local player until published.
+  if (["modern-javascript", "web-architecture", "cybersecurity"].includes(seriesSlug) && !/<(?:audio|iframe|script)\b/i.test(existingAudio ?? "")) {
+    existingAudio = `<audio controls preload="metadata" aria-label="Episode audio"><source src="${escapeHtml(slug)}.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->`;
+  }
+  const audio = existingAudio ?? `<audio controls preload="metadata"><source src="${escapeHtml(slug)}.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>`;
 
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(episode.title)} — Listening Companion</title>
+  <title>${plainMarkdown(episode.title)} — Listening Companion</title>
   <link rel="stylesheet" href="../../styles.css">
 </head>
 <body class="companion-page">
@@ -144,7 +191,7 @@ function createPage(episode, hasAudio, slug, seriesSlug) {
   <header>
     <p><a href="../index.html">← Back to ${escapeHtml(formatSeriesName(seriesSlug))} episodes</a></p>
     <p>Okay, But Why? — Listening Companion</p>
-    <h1>${escapeHtml(episode.title)}</h1>
+    <h1>${inlineMarkdown(episode.title)}</h1>
     <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
     ${audio}
   </header>
@@ -163,15 +210,20 @@ async function buildEpisode(seriesSlug, episodeNumber) {
     episodeNumber,
   );
   const scriptPath = path.join(episodeDirectory, "master-script.md");
-  const audioPath = path.join(episodeDirectory, `${slug}.wav`);
   const outputPath = path.join(episodeDirectory, "companion.html");
   const source = await fs.readFile(scriptPath, "utf8");
   const episode = parseMasterScript(source);
-  const hasAudio = await fs.access(audioPath).then(() => true, () => false);
-
+  let existingAudio;
+  try {
+    const existing = await fs.readFile(outputPath, "utf8");
+    // Keep the existing embed/player/placeholder after the header description.
+    existingAudio = existing.match(/<\/h1>\s*<p>[\s\S]*?<\/p>([\s\S]*?)<\/header>/i)?.[1].trim();
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
   await fs.writeFile(
     outputPath,
-    createPage(episode, hasAudio, slug, seriesSlug),
+    createPage(episode, slug, seriesSlug, existingAudio),
     "utf8",
   );
   console.log(

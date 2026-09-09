@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 3: The Request/Response Cycle — I Pressed Enter, Now What? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 3: The Request/Response Cycle — I Pressed Enter, Now What?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-03.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#start-with-the-address">Start With the Address</a></li>
+<li><a href="#find-a-place-to-connect">Find a Place to Connect</a></li>
+<li><a href="#establish-the-conversation">Establish the Conversation</a></li>
+<li><a href="#the-request-has-a-shape">The Request Has a Shape</a></li>
+<li><a href="#through-the-front-door">Through the Front Door</a></li>
+<li><a href="#the-response-has-a-shape-too">The Response Has a Shape Too</a></li>
+<li><a href="#one-page-is-usually-many-requests">One Page Is Usually Many Requests</a></li>
+<li><a href="#stateless-protocol-stateful-application">Stateless Protocol, Stateful Application</a></li>
+<li><a href="#redirects-and-form-submissions">Redirects and Form Submissions</a></li>
+<li><a href="#the-missing-answer-problem">The Missing Answer Problem</a></li>
+<li><a href="#a-diagnostic-walk-through-the-waterfall">A Diagnostic Walk Through the Waterfall</a></li>
+<li><a href="#read-one-request-like-a-story">Read One Request Like a Story</a></li>
+<li><a href="#headers-are-not-a-secret-compartment">Headers Are Not a Secret Compartment</a></li>
+<li><a href="#reusing-connections-without-mixing-up-people">Reusing Connections Without Mixing Up People</a></li>
+<li><a href="#the-difference-between-slow-and-stuck">The Difference Between Slow and Stuck</a></li>
+<li><a href="#a-small-http-design-review">A Small HTTP Design Review</a></li>
+<li><a href="#when-this-knowledge-helps">When This Knowledge Helps</a></li>
+<li><a href="#closing-a-more-useful-spinner">Closing — A More Useful Spinner</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I pressed Enter. The browser is spinning.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which part is slow?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The internet part.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Excellent incident report. I'll notify the internet department.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why we're doing the episode, isn't it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. I'm Jules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I'm Parisa, and today we turn “the website is broken” into several more useful sentences.</span>
+        </p>
+<h2 id="start-with-the-address">Start With the Address</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our fictional address is HTTPS, pizza dot example, slash menu, question mark category equals vegetarian, hash specials.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The example domain is deliberately fictional. Please do not send it your dinner money.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The scheme is HTTPS. It tells the browser the kind of access involved, including using HTTP over a secure connection. The hostname identifies where we're trying to go. The path is menu. The query carries category equals vegetarian.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the fragment, specials, is normally for the browser. It isn't sent as part of the HTTP request target. It might identify a section of the document, or be used by client-side code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. The server sees the path and query, not that fragment. A port can also appear in the URL; if omitted, the scheme implies a default.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why two addresses can look similar but be different origins. Scheme, hostname, and port together matter. Different paths on the same origin aren't different origins.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also, a path that ends in slash menu doesn't require a physical file named menu. The server can route that path to application behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We did that long before frontend routers. A URL is an address the server interprets, not necessarily a tour of its filesystem.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>https://pizza.example/menu?category=vegetarian#specials
+scheme  hostname      path query               fragment</code></pre>
+        </figure>
+<h2 id="find-a-place-to-connect">Find a Place to Connect</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser needs a network destination for the hostname. DNS helps resolve names to records such as addresses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Often using cached information. We are not starting a fresh expedition to the root of DNS every time I click a link.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The operating system, browser, and resolver can have relevant caches. If an answer isn't cached, a resolver can work through the DNS hierarchy to find it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Like looking up a destination, with an important limitation: DNS doesn't retrieve the webpage or choose the application's menu route.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the answer may lead to a CDN or load balancer rather than directly to the machine running our application code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So DNS tells us how to reach a service endpoint, not necessarily where the pizza database lives.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. If DNS fails, we might not reach HTTP at all. The application cannot return a helpful error page for a request that never found its way there.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's already one useful diagnostic distinction. “The server returned an error” and “we couldn't find a destination” are different things.</span>
+        </p>
+<h2 id="establish-the-conversation">Establish the Conversation</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next we need a connection, unless an appropriate existing one can be reused. The exact sequence depends on the HTTP version and network state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Give us the useful version without pretending every page load is identical.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>HTTP/1.1 and HTTP/2 commonly use TCP, with TLS for HTTPS. HTTP/3 uses QUIC over UDP and integrates TLS-based security. They differ in transport mechanics, but we're still exchanging HTTP requests and responses.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “first TCP, then TLS” is a helpful description for some connections, not a universal law for all modern HTTP.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. HTTPS provides encryption in transit and authenticates the server endpoint through certificate checks. It doesn't certify that the business is honest or that the application has no bugs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An encrypted scam remains a scam. It just has excellent transport privacy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if a CDN terminates the customer's secure connection, the connection from that edge to the origin is another part of the architecture to configure securely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Terminate here means handle the end of that connection, not murder the internet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Important vocabulary clarification.</span>
+        </p>
+<h2 id="the-request-has-a-shape">The Request Has a Shape</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We've reached HTTP. What are we actually sending?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A method, a target, headers, and sometimes a body. Think of a request for the menu: GET, the menu path and query, plus metadata about the request.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HTTP method names are protocol vocabulary, not JavaScript functions. GET asks to retrieve a representation. POST commonly submits something for processing, such as creating an order.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Headers carry metadata: which formats the client accepts, credentials in appropriate cases, caching conditions, and so on. The body carries submitted data when the operation uses one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An HTML form might send form-encoded fields. A script might send JSON. Neither is automatically safer because of the format.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a GET request should not be used to perform an action like deleting an order. Links can be prefetched, crawled, and followed in ways you didn't personally click.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Safety here is an HTTP semantic idea: retrieving shouldn't be asking for a business-state change. Logging the request doesn't invalidate that intent, but “GET slash delete-everything” certainly does.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Idempotence is related but different. Repeating an operation has the same intended effect as doing it once. It doesn't mean every response must have the same bytes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Deleting an already-deleted resource may return a different status, while the final state is still that it's deleted. Creating a new order twice with a naive POST may produce two orders.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is why retries need thought. We can design an order-creation operation with a deduplication key, but POST doesn't give that to us automatically.</span>
+        </p>
+<h2 id="through-the-front-door">Through the Front Door</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The request might hit a reverse proxy before our application.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A service standing in front of the application, handling incoming requests and forwarding them. It might deal with secure connections, routing, compression, or load distribution.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can also reject or answer a request without the application seeing it. So an error response doesn't always originate in our route handler.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The application receives the request, matches the route, checks what it's allowed to do, performs the work, and constructs a response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For a menu request, maybe read current menu data and render HTML. For an order submission, validate inputs, check the shop, calculate the amount, store the result.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For a static asset, the application code might not participate at all. A file server or cache can return the CSS directly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The diagram's same arrow can hide very different handling, depending on the resource.</span>
+        </p>
+<h2 id="the-response-has-a-shape-too">The Response Has a Shape Too</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A response includes a status code, headers, and usually a body, though some responses don't have one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Two hundreds generally indicate successful handling. Three hundreds cover redirection and related cases such as cache validation. Four hundreds indicate a client-side request problem in HTTP terms. Five hundreds indicate server-side failure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>“Client error” doesn't mean blame the human. The frontend could have sent a malformed request, or the request may lack required credentials.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Four-oh-four means the resource wasn't found. Four-oh-one means authentication is required or wasn't accepted. Four-oh-three means the request is forbidden. Applications sometimes deliberately conceal whether a protected resource exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And five-oh-two or five-oh-four can come from an intermediary having trouble with an upstream service. The exact status helps narrow the problem, but it isn't the whole diagnosis.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The Content-Type header tells the recipient what kind of body it is receiving. HTML, JSON, an image. “It returned text” isn't enough to determine how it should be interpreted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A successful network transfer can carry an HTTP error. For example, browser fetch doesn't reject its promise merely because the response status is four-oh-four. Application code needs to inspect that status.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which we showed last episode with response dot ok. Fetch is the request API; HTTP status is part of its result.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>http</span></figcaption>
+          <pre tabindex="0"><code>GET /menu HTTP/1.1
+Host: pizza.example
+Accept: text/html
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+&lt;h1&gt;Menu&lt;/h1&gt;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Read that as “please retrieve the menu as HTML,” followed by “success, here's HTML.” The card shows the readable HTTP/1.1 form for teaching; newer HTTP versions encode messages differently.</span>
+        </p>
+<h2 id="one-page-is-usually-many-requests">One Page Is Usually Many Requests</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The HTML arrives. We aren't necessarily done.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser parses it and discovers stylesheets, images, scripts, fonts, and other resources. It may request those, reuse cached copies, and begin rendering while more work continues.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So that waterfall in developer tools isn't nineteen websites. It may be one document and the things it needs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the page can trigger additional requests after JavaScript starts. In a client-rendered app, meaningful content may depend on a sequence: download code, run it, request data, update the document.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The total experience isn't just “our API responded in fifty milliseconds.” The user had to reach the point where the API request could even begin.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. A slow image, render-blocking work, a long JavaScript task, or a chain of dependent requests can all delay usefulness.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why a loading investigation needs to ask what milestone we're measuring. First response? First content? Able to interact? Order confirmed?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Those are different measurements. Pick the one that corresponds to the user's problem.</span>
+        </p>
+<h2 id="stateless-protocol-stateful-application">Stateless Protocol, Stateful Application</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>People say HTTP is stateless, and then websites remember my shopping cart for six months. Explain the apparent betrayal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>HTTP doesn't inherently turn a series of requests into a persistent application session. The application uses mechanisms to connect them, such as a cookie carrying a session identifier.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The server can send Set-Cookie in a response. The browser stores the cookie according to its rules and sends it on matching later requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The application can use that identifier to look up session state. The protocol still has requests and responses; we've built continuity above it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which isn't the same as keeping one network connection alive. A reused connection is a transport optimization, not proof of who the customer is.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Great distinction. Session identity must survive normal changes in connections, and a connection isn't a substitute for authentication.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We'll spend an entire episode on cookies and sessions. For today, they are part of the metadata story, not supernatural memory.</span>
+        </p>
+<h2 id="redirects-and-form-submissions">Redirects and Form Submissions</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You submit an order form. The server creates the order and may respond with a redirect to its confirmation page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser then makes a new request for that page. That's the Post/Redirect/Get pattern, often using a 303 response to direct a GET after the POST.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It means refreshing the confirmation page normally retrieves the page rather than resubmitting the form body.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Helpful, but not a guarantee against duplicate orders. Double-clicking or losing a response can still cause retries before that neat sequence finishes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Server-side duplicate prevention addresses the operation itself. The redirect improves navigation behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And a redirect isn't a server internally calling another function. The response tells the client to go somewhere, and the client makes another request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes several times, if you've built a redirect maze.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A website with a foyer, a second foyer, and a hallway that returns you to the first foyer.</span>
+        </p>
+<h2 id="the-missing-answer-problem">The Missing Answer Problem</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's replay our unreliable phone. POST the order. The server saves it. The response vanishes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser sees a timeout or connection failure. It cannot infer whether the business operation happened.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A timeout means we stopped waiting, not that the universe rolled back.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. This is why status lookup and stable operation identifiers matter. A retry can refer to the same attempted order rather than inventing another one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The message could say we haven't confirmed the result and are checking. We shouldn't confidently say “nothing was charged” unless we know that.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nor should we display an endless spinner. If automatic checking fails, give a clear recovery path and an order reference if available.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is accessibility and reliability sharing a desk. People need a meaningful state they can perceive and act on.</span>
+        </p>
+<h2 id="a-diagnostic-walk-through-the-waterfall">A Diagnostic Walk Through the Waterfall</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's make the listener the detective. The browser says it cannot resolve the hostname.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Investigate the name and DNS path. Don't begin by rewriting the checkout component.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It reports a certificate error.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The secure connection wasn't accepted. Investigate certificates, hostnames, validity, and the environment. Don't teach people to bypass the warning as the solution.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The request returns a four-oh-four.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We reached something speaking HTTP. Check the requested path, deployment routing, and which service returned it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The HTML is fast but content appears five seconds later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inspect subsequent resources and browser work. Maybe a large bundle or a request chain. The server's first response time isn't the entire page load.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The POST returns success, but the staff screen never shows the order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now we need application-level tracing. What did success promise? Was the order saved? Is the staff view stale? Did a later handoff fail?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A correlation identifier can help connect the request to logs across relevant components. Keep sensitive customer information out of casual logs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And don't post an unredacted network capture in a public issue. Headers and bodies can contain credentials and personal data.</span>
+        </p>
+<h2 id="read-one-request-like-a-story">Read One Request Like a Story</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's imagine the listener has developer tools open. They click the order submit button and see a network entry. Where do they begin?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The requested URL and method. Did the browser contact the intended endpoint? Did it send POST, or did a form unexpectedly use GET because the markup was wrong?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then the request payload. Does it contain the expected fields and values?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Carefully, because the payload can contain private data. This is local debugging, not an invitation to paste the entire request into a public chat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next the status and response body. Maybe the server returned validation errors successfully, but the frontend treated every non-two-hundred status as the same generic failure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or it returned HTML because the session redirected to login, while our JavaScript expected JSON. The parsing error is real, but the underlying story is an expired session.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a good one. “Unexpected token” can be the last symptom in a longer chain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Read the response's content type and the actual route history. Don't start by changing JSON parsing until you know what arrived.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then timing. Was time spent establishing a connection, waiting for the first response bytes, or downloading a large body?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And be cautious about interpretation. A long wait for the first byte could include server processing and network effects. It suggests where to investigate, not a complete diagnosis from one number.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Finally, compare the network result with the visible interface.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the server returned a useful error and the page showed nothing, that's an interface-handling problem. If the request never left because client validation blocked it, the backend didn't reject it. Different locations, different fixes.</span>
+        </p>
+<h2 id="headers-are-not-a-secret-compartment">Headers Are Not a Secret Compartment</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Sometimes people move sensitive values from a URL into a header and assume they are now invisible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Headers aren't hidden from the client sending them or from the services receiving them. HTTPS protects the transport, but logs and debugging tools may still expose values at endpoints.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>URLs have additional risks because they can appear in history, logs, and sharing. So don't casually put credentials or personal details into query strings.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But choosing a body or header doesn't remove the need for secure handling. The complete path matters: collection, transmission, storage, logs, and access.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The same applies to response headers. They are metadata with defined semantics, not merely a place to stash whatever didn't fit in JSON.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if a proxy or framework sets headers for us, we should know which ones matter to our behavior. Content type, caching, cookie attributes, security policy—those can change how the browser handles the response.</span>
+        </p>
+<h2 id="reusing-connections-without-mixing-up-people">Reusing Connections Without Mixing Up People</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We said a browser can reuse connections. Does that mean one request must finish before the next begins?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The details differ by HTTP version. Modern protocols can support multiple exchanges efficiently over a connection. We don't need to reproduce the transport machinery here to understand that a connection and an application session are separate concepts.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So ten resources may share transport infrastructure without becoming one HTTP response or one business operation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. And one user action may trigger several requests. The boundary of the business task isn't necessarily the boundary of a single network message.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That matters for a checkout with a quote, payment step, and confirmation lookup.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. We should identify what each request promises and how they fit into the overall state. A trace of multiple requests can reveal the workflow; one isolated response can be misleading.</span>
+        </p>
+<h2 id="the-difference-between-slow-and-stuck">The Difference Between Slow and Stuck</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A request has been pending for a long time. Should the interface wait forever?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Usually no. Define a timeout or recovery policy appropriate to the operation. But remember that stopping the wait doesn't prove the server stopped the work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For a menu read, a retry button might be enough. For an order submission, checking the existing attempt is safer than creating another one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the message should match our knowledge. “Still checking your order” is different from “please submit again.” We should not offload an unresolved distributed-system problem onto the customer with a cheerful button.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about the browser's own loading indicator?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It tells the user something about navigation, but our application may have asynchronous work beyond that. We need our own meaningful status where the task requires it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So a page can be fully loaded while an order is still pending.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Document loaded, request completed, payment settled, and pizza delivered are four different milestones. We should avoid giving all of them a variable called done.</span>
+        </p>
+<h2 id="a-small-http-design-review">A Small HTTP Design Review</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Last exercise. The menu endpoint returns two hundred with a body saying error true whenever the server breaks. Is that useful?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can confuse monitoring and clients if the status no longer reflects the handling. Design consistent semantics. We don't need to force every business condition into a different status, but the contract should be deliberate.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The cancellation operation is a GET link.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Change the design. Retrieval semantics shouldn't request a consequential mutation. Also enforce authorization and relevant cross-site request protections.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A created order returns a reference and an explicit pending-payment state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good, if that's the actual state and the client knows how to reach a final outcome. The response should not call it confirmed merely because the database insert succeeded.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can now review behavior without implementing a web server from scratch.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which was the goal. Understanding the protocol should make our work clearer, not give us a new unpaid infrastructure project.</span>
+        </p>
+<h2 id="when-this-knowledge-helps">When This Knowledge Helps</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You don't need to implement DNS or TLS to write a pizza site. But knowing the stages lets you locate a problem and ask the right question.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It also makes performance advice less mystical. Reuse a cached resource, reduce an unnecessary round trip, avoid waiting for code that doesn't help the current task.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And it helps distinguish network success from business success. HTTP can report that a request was accepted for later processing without promising that the later work is complete.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If our API uses 202 Accepted, the interface needs a pending state and some way to learn the eventual result. The status isn't a shortcut to “done.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Protocol semantics support the design; they don't replace it.</span>
+        </p>
+<h2 id="closing-a-more-useful-spinner">Closing — A More Useful Spinner</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We started with an address, found a destination, established a connection, sent an HTTP request, ran the relevant handling, received a response, and fetched whatever else the page needed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With caches, reused connections, and different transports making the real path vary.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser spinner now contains distinguishable problems. A terrible slogan, but a useful skill.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time, we build on the document response: static sites, server rendering, and why the old web still has several good ideas.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I shall bring my PHP experience and one tasteful historical grievance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Only one?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Per request.</span>
+        </p></main>
+  <footer>2 code cards · 0 terminal cards</footer>
+</body>
+</html>

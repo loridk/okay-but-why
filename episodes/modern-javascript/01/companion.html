@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 1: Wait, JavaScript Changed? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 1: Wait, JavaScript Changed?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-01.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+<li><a href="#ecmascript-is-the-specification">ECMAScript Is the Specification</a></li>
+<li><a href="#why-2015-feels-like-a-border">Why 2015 Feels Like a Border</a></li>
+<li><a href="#javascript-started-shipping-yearly">JavaScript Started Shipping Yearly</a></li>
+<li><a href="#wait-that-s-just-javascript">Wait, That's Just JavaScript</a></li>
+<li><a href="#but-could-browsers-run-it">But Could Browsers Run It?</a></li>
+<li><a href="#do-we-still-need-transpilers">Do We Still Need Transpilers?</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. I have a complaint.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>About JavaScript?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>About JavaScript apparently changing clothes while I wasn't looking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's fair.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I learned JavaScript when a function looked like a function, variables were <code>var</code>, and if you wanted to move data around you wrote enough punctuation to qualify as light cardio.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And now?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now I open somebody's code and there are arrows, curly braces doing suspicious things, three dots everywhere, <code>import</code> at the top, question marks in the middle—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some of those are newer JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SOME?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some are tooling, some are frameworks, some are TypeScript—</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. The language has become a costume party.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Welcome to <em>Okay, But Why?</em>, the show where technically capable people are allowed to ask, “What the hell changed while I was busy maintaining production software?”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I'm Parisa. I learned JavaScript before ES6, which means modern JavaScript occasionally looks like somebody installed a DLC pack without telling me.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And I'm Jules. I learned JavaScript after a lot of that syntax was already normal.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which makes this series very simple. I point at syntax and ask, “Is that JavaScript?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And occasionally I get to say yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Great. Let's recover my language.</span>
+        </p>
+<h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>First question: why did JavaScript need a giant modernization at all?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because the web changed enormously. JavaScript started as a small scripting language for webpages. Then developers were building large applications with it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the language was still handing us <code>var</code> and saying good luck.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Pretty much. Developers built patterns and libraries around missing features: module systems, class-like inheritance helpers, callback conventions, utility libraries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So ES6 wasn't “let's make JavaScript trendy.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. A lot of it was the language absorbing solutions to problems developers were already having.</span>
+        </p>
+<h2 id="ecmascript-is-the-specification">ECMAScript Is the Specification</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before anything else: JavaScript versus ECMAScript. Why are there two names?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript is the language name people use. ECMAScript is the standardized language specification maintained through ECMA International's TC39 process.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So ECMAScript is basically the rulebook.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good mental model. Engines like V8, SpiderMonkey, and JavaScriptCore implement that specification.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And ES6?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The sixth edition of ECMAScript, standardized in 2015. That's why you'll see both <strong>ES6</strong> and <strong>ES2015</strong>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same major release, two names, because naming things is still one of computer science's unsolved problems.</span>
+        </p>
+<h2 id="why-2015-feels-like-a-border">Why 2015 Feels Like a Border</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>ES2015 was unusually large. It brought things like <code>let</code> and <code>const</code>, arrow functions, classes, template literals, destructuring, default parameters, rest and spread in several forms, promises as a standard feature, and standardized modules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which explains why code from before and after it can look weirdly different.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. But modern JavaScript is <strong>not synonymous with ES6</strong>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Optional chaining, for example, arrived much later. <code>async</code> and <code>await</code> were standardized after ES2015 too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So calling every modern feature “ES6” is like calling every PlayStation a PlayStation 2.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You understand what family somebody means, but the date is wrong.</span>
+        </p>
+<h2 id="javascript-started-shipping-yearly">JavaScript Started Shipping Yearly</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>After ES2015, ECMAScript moved to a yearly edition cadence.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So there wasn't another ten-year syntax meteor.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Features go through a proposal process. Mature proposals can become part of the standard, and engines implement them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means “modern JavaScript” is a moving window, not one release.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's already more useful than “ES6 means new JavaScript.”</span>
+        </p>
+<h2 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>New recurring survival question. Arrow functions?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Destructuring?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Optional chaining?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>interface User</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>TypeScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JSX with angle brackets inside JavaScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JSX. Usually transformed by React tooling or another JSX-aware tool.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>require()</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CommonJS module system, strongly associated with Node. Not ECMAScript module syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is the exact shit I needed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the point. Modern projects stack several languages and tools together. If nobody labels the layers, the syntax becomes soup.</span>
+        </p>
+<h2 id="but-could-browsers-run-it">But Could Browsers Run It?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I remember browser compatibility being the thing that ruined everybody's afternoon.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Still a consideration, but the situation changed. New syntax only helps if the JavaScript engine running your code understands it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Enter Babel?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Historically, Babel became a major way to transform newer JavaScript syntax into older syntax that older environments could execute.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So Babel wasn't “making JavaScript work.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More specifically, it could transform syntax and, depending on setup, help with compatibility strategies. But syntax transforms and missing runtime APIs are different problems.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Meaning changing an arrow function into an old function doesn't magically give an ancient browser a missing API.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. That's where polyfills may come in.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Transformation changes the recipe. A polyfill supplies an ingredient the kitchen doesn't have.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I like that.</span>
+        </p>
+<h2 id="do-we-still-need-transpilers">Do We Still Need Transpilers?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So in 2026, do I need Babel for ordinary modern JavaScript?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not automatically. Modern evergreen browsers support a huge amount of modern JavaScript directly. Your actual target environments decide what needs transforming.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There it is. The show's answer to everything.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It depends.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Build tools may still transform code for many reasons, and frameworks may introduce JSX or TypeScript that browsers don't directly execute as written. But “modern JavaScript exists, therefore Babel” is outdated as a universal rule.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay. Modern JavaScript isn't JavaScript 2.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>ES6 and ES2015 refer to the same giant 2015 edition, but modern JavaScript includes features standardized after that.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>ECMAScript is the specification. JavaScript engines implement it. Browsers and Node add their own environment APIs around the language.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And when modern code looks alien, my first question should be: what layer owns this syntax?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript, TypeScript, JSX, Node, framework, or tooling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Beautiful. Next episode: <code>var</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You sound ominous.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have history.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Selectors Got Weirdly Powerful — :has(), :is(), :where() and
+      Friends — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 6: Selectors Got Weirdly Powerful — :has(), :is(), :where() and
+        Friends
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/dd9510d2-b591-4755-b3ca-c6d51d770f22"
+      ></script>
+      <div class="redcirclePlayer-dd9510d2-b591-4755-b3ca-c6d51d770f22"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#why-selectors-matter">Why Selectors Matter</a></li>
+        <li><a href="#is-groups-alternatives">:is() Groups Alternatives</a></li>
+        <li><a href="#where-has-zero-weight">:where() Has Zero Weight</a></li>
+        <li><a href="#has-looks-outward">:has() Looks Outward</a></li>
+        <li>
+          <a href="#state-without-a-javascript-class"
+            >State Without a JavaScript Class</a
+          >
+        </li>
+        <li>
+          <a href="#forgiving-selector-lists">Forgiving Selector Lists</a>
+        </li>
+        <li><a href="#not-grew-up-too">:not() Grew Up Too</a></li>
+        <li>
+          <a href="#structural-selectors-are-not-semantics"
+            >Structural Selectors Are Not Semantics</a
+          >
+        </li>
+        <li>
+          <a href="#performance-without-folklore"
+            >Performance Without Folklore</a
+          >
+        </li>
+        <li>
+          <a href="#specificity-still-comes-along"
+            >Specificity Still Comes Along</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-6-selectors-got-weirdly-powerful-has-is-where-and-friends"
+      >
+        Episode 6: Selectors Got Weirdly Powerful — :has(), :is(), :where() and
+        Friends
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS has a parent selector.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sort of.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let me have this.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS has a relational pseudo-class that can select an element when
+          relative selectors match from that element.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You have made joy sound taxable.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Today: <code>:has()</code>, <code>:is()</code>,
+          <code>:where()</code>, and why powerful selectors do not excuse
+          chaotic HTML.</span
+        >
+      </p>
+      <h2 id="why-selectors-matter">Why Selectors Matter</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Selectors connect document structure and state to presentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If CSS cannot express the relationship, we often add a class in
+          markup or JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Classes are not bad. But sometimes the relationship already exists in
+          the HTML and we are duplicating it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Modern selectors can let CSS respond directly.</span>
+      </p>
+      <h2 id="is-groups-alternatives">:is() Groups Alternatives</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>:is(article, aside, section) :is(h2, h3) {
+  text-wrap: balance;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:is()</code> accepts a selector list and matches when any
+          option matches.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Less repetition than writing every combination.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Its specificity uses the most specific selector in its argument
+          list.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a surprise ID inside <code>:is()</code> can make the whole
+          selector heavier.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct. Convenience does not suspend the cascade.</span>
+      </p>
+      <h2 id="where-has-zero-weight">:where() Has Zero Weight</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>:where(article, aside, section) :where(h2, h3) {
+  margin-block-start: 0;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same grouping idea, but <code>:where()</code> itself contributes zero
+          specificity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That makes it useful for defaults that consumers should easily
+          override.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A library can be structurally precise without building a specificity
+          fortress.</span
+        >
+      </p>
+      <h2 id="has-looks-outward">:has() Looks Outward</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>.field:has(:user-invalid) {
+  border-color: crimson;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The field matches when it has a descendant matching
+          <code>:user-invalid</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We style the wrapper based on a child's state, without JavaScript
+          toggling an error class.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the famous parent-shaped use.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But “has” can describe sibling and relative relationships too.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>h2:has(+ p) {
+  margin-block-end: 0.4em;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This selects an <code>h2</code> that is immediately followed by a
+          paragraph.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The matching element is still the heading. The relative selector
+          starts from it.</span
+        >
+      </p>
+      <h2 id="state-without-a-javascript-class">
+        State Without a JavaScript Class
+      </h2>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>form:has(:focus-visible) {
+  box-shadow: 0 0 0 0.25rem Highlight;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS can respond when something inside the form has keyboard-visible
+          focus.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or a cart button can respond when the cart contains items, if that
+          state is already represented in accessible markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Important qualifier.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Selectors observe document state. They do not create application
+          state or accessible semantics.</span
+        >
+      </p>
+      <h2 id="forgiving-selector-lists">Forgiving Selector Lists</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Historically, one invalid selector could invalidate a whole
+          comma-separated selector list.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:is()</code> and <code>:where()</code> use forgiving selector
+          lists, so unsupported alternatives can be ignored while valid ones
+          continue.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Still test the result. “Forgiving” is parser behavior, not
+          relationship counseling.</span
+        >
+      </p>
+      <h2 id="not-grew-up-too">:not() Grew Up Too</h2>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>button:not(:disabled, [aria-disabled=&quot;true&quot;]) {
+  cursor: pointer;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modern <code>:not()</code> can take a complex selector list.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Though <code>aria-disabled</code> alone does not prevent clicks or
+          keyboard activation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. CSS can style the state; behavior must honor it too.</span
+        >
+      </p>
+      <h2 id="structural-selectors-are-not-semantics">
+        Structural Selectors Are Not Semantics
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not write a selector that depends on the fifth anonymous
+          <code>div</code> remaining the fifth anonymous
+          <code>div</code> forever.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Powerful structural matching can create brittle coupling to
+          markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use semantic elements and intentional classes when they communicate
+          ownership.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A shorter stylesheet is not automatically a more maintainable
+          system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And do not hide an error merely because <code>:has()</code> is
+          unsupported. Error text belongs in the document and must be
+          programmatically connected to the field.</span
+        >
+      </p>
+      <h2 id="performance-without-folklore">Performance Without Folklore</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We were told parent selectors would melt browsers.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Engines had to implement <code>:has()</code> carefully, but modern
+          support exists because the feature became practical to
+          implement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That does not mean every enormous selector is free.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep the search relationship reasonably constrained and measure real
+          pages before inventing performance rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“I heard selectors read right-to-left” is not a profiler.</span>
+      </p>
+      <h2 id="specificity-still-comes-along">Specificity Still Comes Along</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:has()</code>, <code>:is()</code>, and <code>:not()</code> take
+          specificity from the most specific selector in their arguments.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span><code>:where()</code> is deliberately zero.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>css</span></figcaption>
+        <pre tabindex="0"><code>:where(.card) :is(h2, h3) {
+  color: var(--card-heading);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use these tools intentionally: <code>:where()</code> for low-weight
+          defaults, <code>:is()</code> when ordinary specificity makes sense,
+          <code>:has()</code> for real relationships.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>:is()</code> groups alternatives and takes the strongest
+          argument specificity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:where()</code> groups alternatives with zero specificity
+          contribution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>:has()</code> selects an element based on relative matches
+          around or inside it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:not()</code> accepts richer selector lists than its older
+          form.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These selectors can remove little class-toggling scripts when the
+          state already exists in the document.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They do not replace semantics, application state, or accessible
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS got a relationship wizard. We still have to maintain the
+          relationship.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: the cascade hires a lawyer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Specificity, layers, scope, and nesting.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Four ways to make your stylesheet calmer or considerably
+          stranger.</span
+        >
+      </p>
+    </main>
+    <footer>7 code cards · 0 terminal cards</footer>
+  </body>
+</html>

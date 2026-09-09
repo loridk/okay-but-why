@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 6: Import This, Export That — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 6: Import This, Export That</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-06.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-modules">Who Asked for Modules?</a></li>
+<li><a href="#export-what-you-mean-to-share">Export What You Mean to Share</a></li>
+<li><a href="#named-versus-default-exports">Named Versus Default Exports</a></li>
+<li><a href="#modules-have-their-own-scope">Modules Have Their Own Scope</a></li>
+<li><a href="#browser-modules">Browser Modules</a></li>
+<li><a href="#then-why-did-we-have-commonjs">Then Why Did We Have CommonJS?</a></li>
+<li><a href="#the-file-extension-thing">The File Extension Thing</a></li>
+<li><a href="#dynamic-import">Dynamic Import</a></li>
+<li><a href="#please-don-t-do-this-cargo-cult-module-rules">Please Don't Do This: Cargo-Cult Module Rules</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>In the beginning, there was <code>&lt;script src=&quot;jquery.js&quot;&gt;</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And then?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>&lt;script src=&quot;plugin.js&quot;&gt;</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And then?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>&lt;script src=&quot;app.js&quot;&gt;</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And then?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Something loaded in the wrong order and we went home.</span>
+        </p>
+<h2 id="who-asked-for-modules">Who Asked for Modules?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>As applications grew, developers needed a reliable way to split code into files with explicit dependencies and controlled public interfaces.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because separate script files weren't automatically separate scopes or a dependency system.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Historically, developers used patterns like IIFEs and later module systems and bundlers to solve this before standardized ECMAScript modules were broadly available.</span>
+        </p>
+<h2 id="export-what-you-mean-to-share">Export What You Mean to Share</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In an ES module, a file can export values.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>export function add(a, b) {
+  return a + b;
+}
+
+export const version = &quot;1.0&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another module imports them.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>import { add, version } from &quot;./math.js&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Explicit dependencies. I can look at the top and see where <code>add</code> came from.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's one major benefit.</span>
+        </p>
+<h2 id="named-versus-default-exports">Named Versus Default Exports</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Named exports have names and can have several per module. A module can also have one default export.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>export default function App() {
+  // ...
+}</code></pre>
+        </figure>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>import App from &quot;./App.js&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the importer can choose a different local name for a default export.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes. Named imports must correspond to exported names unless you explicitly alias them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why teams develop opinions about default exports.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Strong opinions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We do love inventing tiny churches.</span>
+        </p>
+<h2 id="modules-have-their-own-scope">Modules Have Their Own Scope</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Module declarations don't automatically spill into the global scope.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Already worth the price of admission.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modules also have strict-mode semantics and a defined loading model. Static <code>import</code> declarations let tools understand the dependency graph before running the program.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which later helps bundlers do things like tree shaking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly, though tree shaking is a tooling optimization, not a magical behavior of <code>import</code> itself.</span>
+        </p>
+<h2 id="browser-modules">Browser Modules</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browsers can load ES modules directly.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>html</span></figcaption>
+          <pre tabindex="0"><code>&lt;script type=&quot;module&quot; src=&quot;/app.js&quot;&gt;&lt;/script&gt;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So modules aren't inherently a Node thing or a bundler thing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. ECMAScript modules are standardized JavaScript modules.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>WAIT, THAT'S JUST JAVASCRIPT.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Precisely.</span>
+        </p>
+<h2 id="then-why-did-we-have-commonjs">Then Why Did We Have CommonJS?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Enter <code>require</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before standardized ES modules were broadly usable, Node popularized CommonJS.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>js</span></figcaption>
+          <pre tabindex="0"><code>const fs = require(&quot;node:fs&quot;);
+module.exports = something;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's a different module system from ESM's <code>import</code> and <code>export</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is why Node projects sometimes contain both worlds and error messages that read like custody disputes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modern Node supports ES modules, but package configuration, file extensions, and dependencies can determine how a file is interpreted.</span>
+        </p>
+<h2 id="the-file-extension-thing">The File Extension Thing</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In browsers, relative ESM imports normally include the actual path and extension.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 7">
+          <figcaption>Code card 7<span>js</span></figcaption>
+          <pre tabindex="0"><code>import { add } from &quot;./math.js&quot;;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But build tools sometimes let us write resolution patterns that aren't literally what the browser would do.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Another reason to distinguish JavaScript's module syntax from tooling's resolver behavior.</span>
+        </p>
+<h2 id="dynamic-import">Dynamic Import</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There's also dynamic <code>import()</code>.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 8">
+          <figcaption>Code card 8<span>js</span></figcaption>
+          <pre tabindex="0"><code>const module = await import(&quot;./heavy-feature.js&quot;);</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It returns a promise and can load a module conditionally or later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful for code splitting with tooling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes, though exactly how chunks are produced is a bundler concern.</span>
+        </p>
+<h2 id="please-don-t-do-this-cargo-cult-module-rules">Please Don't Do This: Cargo-Cult Module Rules</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Default exports bad?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not universally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Barrel files bad?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not universally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One file per function?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please go outside.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. Modules solve dependency and scope problems. File organization is still design.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>ES modules give JavaScript standardized <code>import</code> and <code>export</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browsers can run them directly. Node can run them too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CommonJS is a different module system that predates standardized ESM adoption in Node.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And bundlers can analyze module graphs, but bundling is tooling, not what <code>import</code> means.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which hands us beautifully into Node and npm later.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We planned that.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Allegedly.</span>
+        </p></main>
+  <footer>8 code cards · 0 terminal cards</footer>
+</body>
+</html>

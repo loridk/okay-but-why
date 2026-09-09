@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 13: SSR, CSR, SSG, and Hydration — When Does the HTML Happen? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 13: SSR, CSR, SSG, and Hydration — When Does the HTML Happen?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-13.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#four-questions-before-four-acronyms">Four Questions Before Four Acronyms</a></li>
+<li><a href="#the-same-menu-three-journeys">The Same Menu, Three Journeys</a></li>
+<li><a href="#html-already-does-things">HTML Already Does Things</a></li>
+<li><a href="#what-hydration-actually-connects">What Hydration Actually Connects</a></li>
+<li><a href="#why-a-mismatch-matters">Why a Mismatch Matters</a></li>
+<li><a href="#sabrina-sorts-the-pages">Sabrina Sorts the Pages</a></li>
+<li><a href="#islands-and-selective-client-work">Islands and Selective Client Work</a></li>
+<li><a href="#streaming-changes-when-pieces-arrive">Streaming Changes When Pieces Arrive</a></li>
+<li><a href="#personalization-and-caching">Personalization and Caching</a></li>
+<li><a href="#security-across-the-render-boundary">Security Across the Render Boundary</a></li>
+<li><a href="#what-actually-ships-to-the-browser">What Actually Ships to the Browser?</a></li>
+<li><a href="#the-first-render-and-the-next-render">The First Render and the Next Render</a></li>
+<li><a href="#a-slow-phone-walkthrough">A Slow Phone Walkthrough</a></li>
+<li><a href="#build-time-data-can-become-a-secret-snapshot">Build-Time Data Can Become a Secret Snapshot</a></li>
+<li><a href="#the-hybrid-page-needs-a-coherent-story">The Hybrid Page Needs a Coherent Story</a></li>
+<li><a href="#server-components-don-t-make-every-operation-safe">Server Components Don't Make Every Operation Safe</a></li>
+<li><a href="#a-rendering-decision-record">A Rendering Decision Record</a></li>
+<li><a href="#measure-the-experience-you-want">Measure the Experience You Want</a></li>
+<li><a href="#choose-without-memorizing-a-ranking">Choose Without Memorizing a Ranking</a></li>
+<li><a href="#what-we-would-inspect-in-a-real-project">What We Would Inspect in a Real Project</a></li>
+<li><a href="#closing-location-time-and-behavior">Closing — Location, Time, and Behavior</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The page is dehydrated.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It's waiting for JavaScript.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I offered it a glass of water. Nothing.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Different hydration.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Web terminology remains an active threat to metaphor.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. Today we sort the rendering acronyms by when work happens and where it runs.</span>
+        </p>
+<h2 id="four-questions-before-four-acronyms">Four Questions Before Four Acronyms</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We have already met static pages, server-rendered forms, and SPAs. So we aren't pretending these ideas arrived in a framework release last Thursday.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Ask four questions. Who produces the initial useful HTML? When is it produced? Where do later interactions run? How does the displayed data stay current?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Those questions separate concepts that marketing pages often stack together like they're one feature.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CSR means client-side rendering: browser code creates or updates the interface. SSR means server-side rendering: HTML is rendered on the server, commonly at request time in this comparison.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SSG means static site generation: prepare HTML ahead of requests, usually during a build. It may use server-side rendering machinery during that build, which is why “server rendered” can sometimes be used more broadly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Hydration is a framework process connecting client-side behavior to existing server-produced HTML. In React, the initial client rendering needs to match that HTML.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>None of those acronyms tells me whether the backend is a monolith or microservices. Different axis.</span>
+        </p>
+<h2 id="the-same-menu-three-journeys">The Same Menu, Three Journeys</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With a basic client-rendered menu, the browser receives an HTML entry, downloads JavaScript, runs it, fetches menu data if necessary, and builds the interface.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful when the application is highly interactive, but the initial useful content may depend on that startup chain. An HTML shell is not the same as a completed page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With request-time server rendering, the server obtains the relevant data and produces HTML for the response. The browser can display that content as it arrives.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the server may have to wait for data before it can render. And client-side framework interactions may still need JavaScript afterward.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With static generation, the menu HTML was prepared earlier. The server or CDN returns the file. The request avoids doing that page-generation work anew.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But freshness now depends on rebuilding, regeneration, or fetching updated information later. We haven't made time stop; we picked when the snapshot was taken.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. All three can have good or bad implementations. The right choice depends on content, interaction, freshness, and operational constraints.</span>
+        </p>
+<h2 id="html-already-does-things">HTML Already Does Things</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before hydration becomes too mystical: an HTML link can navigate before framework code loads. A form can submit if it's designed for native submission.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. Saying hydration “makes a page interactive” is shorthand for framework-managed interactions. It doesn't mean HTML itself has no behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A React-specific click handler may not work until the client side is ready. But the anchor doesn't need to wait for React's permission to be an anchor.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This distinction matters when a page looks ready before its enhanced behavior is ready. The user can see a control and reasonably expect it to work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We should design that interval deliberately, not treat the user's click as inconveniently early.</span>
+        </p>
+<h2 id="what-hydration-actually-connects">What Hydration Actually Connects</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In React, the server renders an initial tree to HTML. The browser loads that HTML and the relevant React code. Hydration lets React associate its component model and behavior with the existing DOM.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Rather than always discarding the document and constructing everything fresh. But it still involves client work and downloaded code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Server rendering isn't necessarily a way to eliminate JavaScript. It may improve initial content while still shipping substantial client code.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let's show the small conceptual entry point, with the categories labeled.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>jsx</span></figcaption>
+          <pre tabindex="0"><code>import { hydrateRoot } from 'react-dom/client';
+import App from './App.js';
+
+hydrateRoot(document.getElementById('root'), &lt;App /&gt;);</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>import</code> is JavaScript module syntax. <code>document.getElementById</code> is a browser DOM API. <code>hydrateRoot</code> is a React library function. The App element is JSX, syntax transformed by tooling. No TypeScript appears here.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And this assumes matching HTML was already rendered into that root. It is not the entry point for an empty purely client-rendered page, and a framework often sets it up for you.</span>
+        </p>
+<h2 id="why-a-mismatch-matters">Why a Mismatch Matters</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose the server renders “three items,” but the first client render produces “four items.” React finds a mismatch.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or the server formats a date one way and the browser another. Or a random value changes. Or browser-only state affects the first render.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The expected initial output needs to agree. Treat mismatches as bugs, not routine warnings to suppress everywhere.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The fix depends on the cause. Use consistent initial data, defer browser-only differences appropriately, or change the design so the first render is deterministic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And don't use a suppression option as a universal broom. It can hide evidence without making behavior correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“The page looks mostly okay on my laptop” is not a hydration guarantee. Errors can affect performance and behavior in less obvious ways.</span>
+        </p>
+<h2 id="sabrina-sorts-the-pages">Sabrina Sorts the Pages</h2>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>I have three pizza pages. Public menu, private order history, and the staff dispatch board. Do I have to choose one acronym for all three?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. Please rescue us from that meeting.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Public menu descriptions could be statically generated, with current availability checked when ordering. Order history could be request-time rendered after authorization. Dispatch may benefit from substantial client rendering and ongoing data updates.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>And the same framework might support several of those choices, depending on its routing and deployment model.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct, but we verify its actual current behavior rather than assuming every framework defines “static” or “server component” identically.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>That's the part I wanted to ask. A tutorial says server component. Is that just SSR?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not exactly. React Server Components are a separate model for components executing in a server environment and sending a result that can be composed with client components. Their component code isn't shipped as client component code in the same way.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A framework may combine that model with HTML server rendering and hydration of client components. So server components and SSR can cooperate, but they aren't synonyms.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>And a client component can still participate in initial server rendering in some frameworks. “Client” doesn't always mean “never rendered on the server.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. That's why the execution rules need documentation. Labels describe a framework boundary, not every stage of the request by themselves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you. The acronym soup now has ingredients listed.</span>
+        </p>
+<h2 id="islands-and-selective-client-work">Islands and Selective Client Work</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another approach is to keep most of a page as static or server-rendered HTML and activate specific interactive regions, often called islands.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Our public menu might only need JavaScript for a small order configurator. The restaurant history doesn't need to become a live component just because it shares the page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That can reduce client work. But interactions spanning several regions may require coordination, and the framework's loading rules matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again, not universally superior. A tightly coordinated editor might be better served by a more unified client application.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Selective or partial hydration strategies differ across tools. The general question is how much behavior must activate, and when.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don't memorize the marketing term before understanding the actual shipped code and user interaction.</span>
+        </p>
+<h2 id="streaming-changes-when-pieces-arrive">Streaming Changes When Pieces Arrive</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server rendering can stream parts of a response instead of waiting for the entire page to be ready.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That can let useful content appear while slower parts are still being prepared. But a placeholder isn't a completed operation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Streaming can improve perceived progress, but it doesn't remove slow dependencies. The page needs coherent loading and error boundaries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also a region appearing later should not unexpectedly move focus or make the layout jump. The user is interacting with a changing document, not watching a progress animation for our amusement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Streaming is a delivery technique. Hydration is client attachment of framework behavior. Caching is reuse. They can coexist, but answer different questions.</span>
+        </p>
+<h2 id="personalization-and-caching">Personalization and Caching</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If we statically generate a page, can it know which customer is visiting?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Not inherently at build time. It can include generic content and later retrieve personalized data, or the system can use a different rendering path. But private data still requires authorization and safe delivery.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And request-time SSR doesn't automatically mean uncacheable. Public responses can sometimes be cached. Personalized ones need the privacy policy we discussed last episode.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Rendering time and caching policy are related but distinct. A request-time-generated public page can be reused later. A build-time page can fetch fresh private data after load.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hybrid systems are common because pages contain different kinds of information. The challenge is keeping the rules understandable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Some frameworks support regeneration after deployment. Learn when they serve stale content, when they rebuild, and what happens if regeneration fails. Don't assume the word incremental guarantees immediate freshness.</span>
+        </p>
+<h2 id="security-across-the-render-boundary">Security Across the Render Boundary</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server rendering can access private data. That doesn't mean all of it should be serialized into the page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Anything sent to the client is available to that client, whether visible text, embedded data, or a framework payload. Return only authorized necessary information.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Escape untrusted content in its context. Avoid inserting raw user HTML without an appropriate sanitization policy. And protect server-only modules from accidental client inclusion according to the framework's rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A file being called server doesn't excuse exposing a secret in its return value.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We keep returning to that because it survives every new framework. Follow the value, not the filename.</span>
+        </p>
+<h2 id="what-actually-ships-to-the-browser">What Actually Ships to the Browser?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A framework says some code runs on the server. How can a developer verify the consequence?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Inspect the built output and network responses using the framework's supported tools. Understand which modules become browser code and which values are serialized into HTML or data payloads.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we distinguish source location, execution location, and delivered output.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A server function can read a database and return a small safe summary. Or it can accidentally return the entire record, including private fields. Both ran on the server; only one respected the intended information boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And a browser bundle may contain values substituted during the build.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. We discussed environment variables in the tooling series. Public configuration is fine when intended. Private credentials must not enter client output. Don't rely on minification or an obscure filename.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is why rendering strategy doesn't replace a data-access policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. SSR, SSG, and server components all need careful selection of what gets sent to whom.</span>
+        </p>
+<h2 id="the-first-render-and-the-next-render">The First Render and the Next Render</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's unpack matching initial data. The server renders an order count of three. It also provides the initial data needed by the client. Why?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the client's first render can agree with the existing HTML. If it immediately uses unrelated local state saying zero, the outputs conflict.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then after hydration, the application can fetch newer information and update normally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Matching the initial representation doesn't mean the page can never change. It means the handoff begins from a coherent shared snapshot.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about a browser preference, like a theme stored locally?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The implementation needs a deliberate strategy. The server may have an appropriate signal, or the client may apply a later change, or another design may avoid mismatch. The right solution depends on the framework and user experience.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We shouldn't casually put browser-only APIs into code that also executes on the server.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Window and document aren't generally available there. An environment check can prevent one error while still producing mismatched output, so understand both problems.</span>
+        </p>
+<h2 id="a-slow-phone-walkthrough">A Slow Phone Walkthrough</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine a customer on a low-powered phone. The HTML appears quickly, but the JavaScript takes longer. What can they do?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Whatever native document behavior we designed to work, plus whatever client behavior is ready. If every important control relies on not-yet-loaded handlers, the screen may look more usable than it is.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We could reduce how much code is required for the critical interaction.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Smaller interactive regions, code splitting, simpler behavior, or native forms can help. But measure the actual task. Deferring a necessary script may merely move the wait to the moment the user clicks.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A loading state can communicate readiness.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Where appropriate. But don't solve excessive startup work only by adding more spinners. Sometimes the right fix is to stop shipping unnecessary work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server rendering improves initial content, but the rest of the path still needs attention.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. It's one technique with a particular benefit, not a universal performance certificate.</span>
+        </p>
+<h2 id="build-time-data-can-become-a-secret-snapshot">Build-Time Data Can Become a Secret Snapshot</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Suppose a build script has database access and generates public pages. Is that safer because it's not handling live requests?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different exposure, not automatically safe. If it includes private data in generated files, those files can be served publicly long after the build finishes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So build credentials should be limited to what publication needs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. And preview or draft content needs an appropriate access model. A URL that isn't linked from the homepage can still be reachable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Static output also needs a removal and publication workflow if content changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. If a generated file should no longer be public, updating the source alone doesn't necessarily remove every deployed copy or cached response. Follow the full publication path.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is another example of “where does the truth live?” from the data episode.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And “where do copies live?” from caching. Rendering is connected to both.</span>
+        </p>
+<h2 id="the-hybrid-page-needs-a-coherent-story">The Hybrid Page Needs a Coherent Story</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Our menu page has static descriptions, a live availability badge, and a personalized cart. That's three freshness levels on one page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which can be fine, if the interface doesn't imply they're one atomic snapshot. The server still confirms availability and price before acceptance.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The badge might say availability is being checked, then update.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes, with understandable status and no unnecessary disruption. If the live check fails, show that uncertainty rather than silently treating the old static value as current.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The personalized cart shouldn't accidentally get baked into a shared page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Keep the delivery and caching boundaries clear. Hybrid rendering can be efficient, but it gives us more rules to explain and test.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Would you avoid it for simplicity?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not automatically. If it solves real needs with manageable complexity, use it. If a straightforward server-rendered page meets the same needs more clearly, that's also valid.</span>
+        </p>
+<h2 id="server-components-don-t-make-every-operation-safe">Server Components Don't Make Every Operation Safe</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If a framework lets the browser trigger a server function, can we treat that like calling private code?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. A remotely invocable operation still needs input validation, authentication where required, authorization, and business rules. Framework plumbing doesn't make caller input trustworthy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The source syntax may look close to a local function call.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But the request crosses the same conceptual boundary we discussed in Episode 2. The framework may handle transport details; we still own the operation's meaning.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So a server-side cancellation function must check the order and actor, even if the only visible button is shown to eligible users.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Hiding the button remains interface behavior. It isn't the enforcement point, no matter how modern the invocation syntax looks.</span>
+        </p>
+<h2 id="a-rendering-decision-record">A Rendering Decision Record</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How would you document the choice for the public menu?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State that the content is mostly public and changes through an editorial workflow. Choose prepared HTML or cached server rendering because readable content and low runtime work matter. Specify how updates become visible and where live order checks occur.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For the private order history?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State that identity and current records matter. Choose an authorized request path and safe caching policy. Server rendering may give a straightforward first view; client updates can enhance it if needed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For dispatch?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State the long-lived interactive workflow, shared data conflicts, and update needs. A richer client can be justified, with route, focus, stale-data, and failure behavior specified.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The explanation uses the rendering label after the requirements.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. The acronym becomes a compact name for an understood choice, instead of the first thing we choose and the last thing we understand.</span>
+        </p>
+<h2 id="measure-the-experience-you-want">Measure the Experience You Want</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the public menu needs quick readable content, measure when that content appears and remains stable. If checkout needs responsiveness, measure interaction and completion.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If SSR gives us a fast screenshot but controls remain unusable for several seconds, we've improved one milestone and left another problem.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If CSR is fast on repeat visits but slow on a first visit from a low-powered phone, that matters too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And static generation can make requests cheap while making content publication cumbersome. The editor's workflow belongs in the evaluation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Choose representative devices, networks, and tasks. Don't optimize a rendering label in isolation.</span>
+        </p>
+<h2 id="choose-without-memorizing-a-ranking">Choose Without Memorizing a Ranking</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If a listener asks, “Which rendering approach is best?” what's the useful follow-up?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Best for which page, audience, freshness requirement, and interaction?” A static article, a private dashboard, and a collaborative editor aren't interchangeable workloads.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And team familiarity matters. A sophisticated hybrid can be worse operationally if nobody understands when its caches refresh or where code executes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Pick a design the team can explain and verify. Learn a new mechanism when its benefit is relevant, rather than stacking several unfamiliar ones because they appeared in the same tutorial.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Could a framework default be a good starting point?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Certainly. Defaults often encode sensible tradeoffs. But understand the ones that affect privacy, freshness, and user experience. A default is still a choice we're responsible for when we deploy it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So our mental model survives framework changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's the hope. The API names may change. The questions remain: what is generated, when, where, with whose data, and what must run before the person can use it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Much easier to remember than a league table of acronyms.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And less likely to expire before the episode finishes uploading.</span>
+        </p>
+<h2 id="what-we-would-inspect-in-a-real-project">What We Would Inspect in a Real Project</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Give me a practical first inspection when someone hands us an unfamiliar framework app.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Open a representative route directly. Look at the initial HTML response, the later requests, and the code required before the task works. Then inspect the framework configuration and route conventions that explain the observed behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Don't infer everything from the repository's file extensions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A JSX file tells us about source syntax, not the entire rendering path. A server directive or framework convention needs its documented meaning, including what gets serialized to the client.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Test a first visit and a later client-side navigation too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. They may follow different paths. Also test refresh, an expired session, slow code delivery, and stale data. Those scenarios reveal whether our mental model matches the implementation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the result surprises us, look up the mechanism rather than inventing a framework rule.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's <em>Jules Googles It</em> in spirit. Professional developers verify things. We don't earn competence by confidently misremembering a rendering default.</span>
+        </p>
+<h2 id="closing-location-time-and-behavior">Closing — Location, Time, and Behavior</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CSR puts interface rendering in the client. Request-time SSR prepares HTML on the server. SSG prepares it ahead. Hydration connects client framework behavior to compatible existing HTML.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then caching, streaming, islands, and server components can change particular parts of the implementation. They don't replace the basic questions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Who creates the initial HTML? When? What runs after it arrives? How does the data stay current? Who is allowed to see it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time, our finale: build an architecture in your head. We'll use requirements to choose the pieces and explain what would make us change them.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The website still doesn't want water. But I do. Fourteen acronyms is thirsty work.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

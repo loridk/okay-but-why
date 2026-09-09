@@ -1,68 +1,135 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 4: Please Describe Your Object — Listening Companion</title>
-  <link rel="stylesheet" href="../../styles.css">
-</head>
-<body class="companion-page">
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p><a href="../index.html">← Back to TypeScript episodes</a></p>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 4: Please Describe Your Object</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <audio controls preload="metadata"><source src="typescript-04.wav" type="audio/wav">Your browser does not support the audio player.</audio>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
-<li><a href="#structural-typing">Structural Typing</a></li>
-<li><a href="#object-literal-checks">Object Literal Checks</a></li>
-<li><a href="#optional-and-readonly-properties">Optional and Readonly Properties</a></li>
-<li><a href="#type-aliases">Type Aliases</a></li>
-<li><a href="#interfaces">Interfaces</a></li>
-<li><a href="#the-actual-difference-openness">The Actual Difference: Openness</a></li>
-<li><a href="#arrays-and-readonly-arrays">Arrays and Readonly Arrays</a></li>
-<li><a href="#tuples-arrays-with-assigned-seats">Tuples: Arrays With Assigned Seats</a></li>
-<li><a href="#modeling-is-the-work">Modeling Is the Work</a></li>
-<li><a href="#closing">Closing</a></li></ul></nav>
-  <main id="script"><h1 id="episode-4-please-describe-your-object">Episode 4: Please Describe Your Object</h1>
-<h2 id="cold-open">Cold Open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 4: Please Describe Your Object — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to TypeScript episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: Please Describe Your Object</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/11264ce4-4a36-453b-b852-7e0d5f79fcc5"
+      ></script>
+      <div class="redcirclePlayer-11264ce4-4a36-453b-b852-7e0d5f79fcc5"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold Open</a></li>
+        <li><a href="#structural-typing">Structural Typing</a></li>
+        <li><a href="#object-literal-checks">Object Literal Checks</a></li>
+        <li>
+          <a href="#optional-and-readonly-properties"
+            >Optional and Readonly Properties</a
+          >
+        </li>
+        <li><a href="#type-aliases">Type Aliases</a></li>
+        <li><a href="#interfaces">Interfaces</a></li>
+        <li>
+          <a href="#the-actual-difference-openness"
+            >The Actual Difference: Openness</a
+          >
+        </li>
+        <li>
+          <a href="#arrays-and-readonly-arrays">Arrays and Readonly Arrays</a>
+        </li>
+        <li>
+          <a href="#tuples-arrays-with-assigned-seats"
+            >Tuples: Arrays With Assigned Seats</a
+          >
+        </li>
+        <li><a href="#modeling-is-the-work">Modeling Is the Work</a></li>
+        <li><a href="#closing">Closing</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-4-please-describe-your-object">
+        Episode 4: Please Describe Your Object
+      </h1>
+      <h2 id="cold-open">Cold Open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript has <code>type</code> and <code>interface</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript has <code>type</code> and <code>interface</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>They both describe object shapes.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They both describe object shapes.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Often, yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Often, yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Are they meaningfully different, or did two committees arrive before lunch?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Are they meaningfully different, or did two committees arrive before
+          lunch?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Both answers contain truth.</span>
-        </p>
-<h2 id="structural-typing">Structural Typing</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Both answers contain truth.</span>
+      </p>
+      <h2 id="structural-typing">Structural Typing</h2>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type Episode = {
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type Episode = {
   title: string;
   durationMinutes: number;
 };
@@ -70,332 +137,429 @@
 function publish(episode: Episode) {
   return episode.title;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>TypeScript mostly cares about structure—what properties a value has—not the ceremonial name of its class.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript mostly cares about structure—what properties a value
+          has—not the ceremonial name of its class.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const draft = {
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>ts</span></figcaption>
+        <pre tabindex="0"><code>const draft = {
   title: &quot;Please Describe Your Object&quot;,
   durationMinutes: 27,
   notes: &quot;Needs fewer object jokes&quot;,
 };
 
 publish(draft); // okay</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The extra <code>notes</code> property does not stop the variable from matching the required shape.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The extra <code>notes</code> property does not stop the variable from
+          matching the required shape.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Right. This is structural typing: duck typing with paperwork.</span>
-        </p>
-<h2 id="object-literal-checks">Object Literal Checks</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. This is structural typing: duck typing with paperwork.</span
+        >
+      </p>
+      <h2 id="object-literal-checks">Object Literal Checks</h2>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>ts</span></figcaption>
-          <pre tabindex="0"><code>publish({
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>ts</span></figcaption>
+        <pre tabindex="0"><code>publish({
   title: &quot;Objects&quot;,
   durationMinutes: 27,
   duratonMinutes: 30,
 });</code></pre>
-        </figure>
+      </figure>
 
-        <figure class="card terminal" aria-label="Terminal output 1">
-          <figcaption>Terminal output 1<span>text</span></figcaption>
-          <pre tabindex="0"><code>Object literal may only specify known properties.</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Object literal may only specify known properties.</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A fresh object literal gets extra checking that catches the misspelling close to where I wrote it.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A fresh object literal gets extra checking that catches the
+          misspelling close to where I wrote it.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. Structural compatibility remains the model, with extra help for fresh literals.</span>
-        </p>
-<h2 id="optional-and-readonly-properties">Optional and Readonly Properties</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Structural compatibility remains the model, with extra help
+          for fresh literals.</span
+        >
+      </p>
+      <h2 id="optional-and-readonly-properties">
+        Optional and Readonly Properties
+      </h2>
 
-        <figure class="card code" aria-label="Code card 4">
-          <figcaption>Code card 4<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type Episode = {
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type Episode = {
   title: string;
   description?: string;
   readonly episodeNumber: number;
 };</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Question mark means the property may be absent.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Question mark means the property may be absent.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>And <code>readonly</code> prevents assignment through this TypeScript type.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And <code>readonly</code> prevents assignment through this TypeScript
+          type.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 5">
-          <figcaption>Code card 5<span>ts</span></figcaption>
-          <pre tabindex="0"><code>episode.episodeNumber = 12;</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>ts</span></figcaption>
+        <pre tabindex="0"><code>episode.episodeNumber = 12;</code></pre>
+      </figure>
 
-        <figure class="card terminal" aria-label="Terminal output 2">
-          <figcaption>Terminal output 2<span>text</span></figcaption>
-          <pre tabindex="0"><code>Cannot assign to 'episodeNumber' because it is a read-only property.</code></pre>
-        </figure>
+      <figure class="card terminal" aria-label="Terminal output 2">
+        <figcaption>Terminal output 2<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Cannot assign to 'episodeNumber' because it is a read-only property.</code></pre>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Does readonly freeze the JavaScript object at runtime?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does readonly freeze the JavaScript object at runtime?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No. Runtime immutability, such as <code>Object.freeze</code>, is a separate JavaScript concern.</span>
-        </p>
-<h2 id="type-aliases">Type Aliases</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Runtime immutability, such as <code>Object.freeze</code>, is a
+          separate JavaScript concern.</span
+        >
+      </p>
+      <h2 id="type-aliases">Type Aliases</h2>
 
-        <figure class="card code" aria-label="Code card 6">
-          <figcaption>Code card 6<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type EpisodeId = string | number;
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type EpisodeId = string | number;
 type Status = &quot;draft&quot; | &quot;published&quot;;
 type Topics = string[];</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A type alias gives a reusable name to any type expression—not only object shapes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A type alias gives a reusable name to any type expression—not only
+          object shapes.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Union, array, tuple, object. Fine.</span>
-        </p>
-<h2 id="interfaces">Interfaces</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Union, array, tuple, object. Fine.</span>
+      </p>
+      <h2 id="interfaces">Interfaces</h2>
 
-        <figure class="card code" aria-label="Code card 7">
-          <figcaption>Code card 7<span>ts</span></figcaption>
-          <pre tabindex="0"><code>interface Episode {
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>ts</span></figcaption>
+        <pre tabindex="0"><code>interface Episode {
   title: string;
   durationMinutes: number;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The same basic object shape.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The same basic object shape.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>For many everyday object models, either a type alias or interface works.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For many everyday object models, either a type alias or interface
+          works.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 8">
-          <figcaption>Code card 8<span>ts</span></figcaption>
-          <pre tabindex="0"><code>interface MediaItem {
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>ts</span></figcaption>
+        <pre tabindex="0"><code>interface MediaItem {
   title: string;
 }
 
 interface Episode extends MediaItem {
   durationMinutes: number;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Interfaces can extend interfaces.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Interfaces can extend interfaces.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Type aliases can combine shapes with intersections.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Type aliases can combine shapes with intersections.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 9">
-          <figcaption>Code card 9<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type Episode = MediaItem &amp; {
+      <figure class="card code" aria-label="Code card 9">
+        <figcaption>Code card 9<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type Episode = MediaItem &amp; {
   durationMinutes: number;
 };</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Two vocabularies for related outcomes. Welcome to a mature language.</span>
-        </p>
-<h2 id="the-actual-difference-openness">The Actual Difference: Openness</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Two vocabularies for related outcomes. Welcome to a mature
+          language.</span
+        >
+      </p>
+      <h2 id="the-actual-difference-openness">
+        The Actual Difference: Openness
+      </h2>
 
-        <figure class="card code" aria-label="Code card 10">
-          <figcaption>Code card 10<span>ts</span></figcaption>
-          <pre tabindex="0"><code>interface Episode {
+      <figure class="card code" aria-label="Code card 10">
+        <figcaption>Code card 10<span>ts</span></figcaption>
+        <pre tabindex="0"><code>interface Episode {
   title: string;
 }
 
 interface Episode {
   durationMinutes: number;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Interfaces can participate in declaration merging. TypeScript combines those declarations.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Interfaces can participate in declaration merging. TypeScript
+          combines those declarations.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A type alias cannot be reopened that way.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A type alias cannot be reopened that way.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. Interfaces are open; aliases are closed after declaration.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Interfaces are open; aliases are closed after
+          declaration.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Useful for deliberate library extension. Concerning when accidental.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful for deliberate library extension. Concerning when
+          accidental.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Consistency matters more than pretending one syntax is universally superior.</span>
-        </p>
-<h2 id="arrays-and-readonly-arrays">Arrays and Readonly Arrays</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Consistency matters more than pretending one syntax is universally
+          superior.</span
+        >
+      </p>
+      <h2 id="arrays-and-readonly-arrays">Arrays and Readonly Arrays</h2>
 
-        <figure class="card code" aria-label="Code card 11">
-          <figcaption>Code card 11<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const topics: string[] = [&quot;objects&quot;, &quot;interfaces&quot;];
+      <figure class="card code" aria-label="Code card 11">
+        <figcaption>Code card 11<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const topics: string[] = [&quot;objects&quot;, &quot;interfaces&quot;];
 const fixedTopics: readonly string[] = [&quot;objects&quot;, &quot;interfaces&quot;];</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A readonly array prevents mutating methods through that reference.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A readonly array prevents mutating methods through that
+          reference.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 12">
-          <figcaption>Code card 12<span>ts</span></figcaption>
-          <pre tabindex="0"><code>fixedTopics.push(&quot;tuples&quot;); // error</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 12">
+        <figcaption>Code card 12<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>fixedTopics.push(&quot;tuples&quot;); // error</code></pre>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>It still does not freeze the runtime array.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It still does not freeze the runtime array.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And <code>Array&lt;string&gt;</code> is equivalent generic syntax.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And <code>Array&lt;string&gt;</code> is equivalent generic
+          syntax.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>We will earn the angle brackets in Episode 6.</span>
-        </p>
-<h2 id="tuples-arrays-with-assigned-seats">Tuples: Arrays With Assigned Seats</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We will earn the angle brackets in Episode 6.</span>
+      </p>
+      <h2 id="tuples-arrays-with-assigned-seats">
+        Tuples: Arrays With Assigned Seats
+      </h2>
 
-        <figure class="card code" aria-label="Code card 13">
-          <figcaption>Code card 13<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type EpisodeSummary = [title: string, durationMinutes: number];
+      <figure class="card code" aria-label="Code card 13">
+        <figcaption>Code card 13<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>type EpisodeSummary = [title: string, durationMinutes: number];
 
 const summary: EpisodeSummary = [&quot;Objects&quot;, 27];</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A tuple describes an array with a fixed sequence of element types. Labels improve editor hints.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A tuple describes an array with a fixed sequence of element types.
+          Labels improve editor hints.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>At runtime it remains an ordinary array.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>At runtime it remains an ordinary array.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And an object is usually clearer when named properties matter or the data may grow.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an object is usually clearer when named properties matter or the
+          data may grow.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. Tuples suit compact position-based relationships, not every record with two fields.</span>
-        </p>
-<h2 id="modeling-is-the-work">Modeling Is the Work</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Tuples suit compact position-based relationships, not every
+          record with two fields.</span
+        >
+      </p>
+      <h2 id="modeling-is-the-work">Modeling Is the Work</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The syntax is not the hard part. Deciding what the shape should say is the hard part.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The syntax is not the hard part. Deciding what the shape should say
+          is the hard part.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Should a property be optional? Should null be explicit? Is this one object with optional fields, or a union of distinct states?</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Should a property be optional? Should null be explicit? Is this one
+          object with optional fields, or a union of distinct states?</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The compiler checks the contract. It does not design the contract.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The compiler checks the contract. It does not design the
+          contract.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Good types make valid states clear and invalid states harder to express.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good types make valid states clear and invalid states harder to
+          express.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Bad types document confusion with impressive precision.</span>
-        </p>
-<h2 id="closing">Closing</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Bad types document confusion with impressive precision.</span>
+      </p>
+      <h2 id="closing">Closing</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript compares structures, not family trees.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>TypeScript compares structures, not family trees.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Type aliases can name any type expression. Interfaces focus on object-like shapes and can merge.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Type aliases can name any type expression. Interfaces focus on
+          object-like shapes and can merge.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Optional means possibly absent. Readonly is compile-time protection, not a runtime freeze.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Optional means possibly absent. Readonly is compile-time protection,
+          not a runtime freeze.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Arrays model repeated elements. Tuples assign types to positions.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrays model repeated elements. Tuples assign types to
+          positions.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Next time: functions, where all these values cross boundaries and ruin somebody’s afternoon.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time: functions, where all these values cross boundaries and
+          ruin somebody’s afternoon.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Function contracts.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Function contracts.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. But why?</span>
-        </p></main>
-  <footer>13 code cards · 2 terminal cards</footer>
-</body>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. But why?</span>
+      </p>
+    </main>
+    <footer>13 code cards · 2 terminal cards</footer>
+  </body>
 </html>

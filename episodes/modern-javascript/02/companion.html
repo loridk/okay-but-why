@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 2: var Has Left the Building — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Modern Javascript episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 2: <code>var</code> Has Left the Building</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="modern-javascript-02.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#who-asked-for-let-and-const">Who Asked for <code>let</code> and <code>const</code>?</a></li>
+<li><a href="#so-which-one-do-i-use">So Which One Do I Use?</a></li>
+<li><a href="#const-does-not-mean-frozen">Const Does Not Mean Frozen</a></li>
+<li><a href="#hoisting-without-folklore">Hoisting Without Folklore</a></li>
+<li><a href="#the-loop-problem">The Loop Problem</a></li>
+<li><a href="#please-don-t-do-this">Please Don't Do This</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I would like to defend <code>var</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Oh no.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It served this country.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It also escaped blocks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Nobody's perfect.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It let you redeclare variables.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Youthful indiscretion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Its hoisting behavior has confused generations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Okay, we're putting Grandpa Var in assisted living.</span>
+        </p>
+<h2 id="who-asked-for-let-and-const">Who Asked for <code>let</code> and <code>const</code>?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The problem wasn't that <code>var</code> was unusable. People built enormous systems with it. The problem was that its scoping rules made some mistakes easier.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>var</code> is function-scoped, not block-scoped.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. A variable declared with <code>var</code> inside an <code>if</code> block still belongs to the surrounding function scope.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>js</span></figcaption>
+          <pre tabindex="0"><code>if (true) {
+  var message = &quot;hello&quot;;
+}
+
+console.log(message); // &quot;hello&quot;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which made sense once you knew it, but the curly braces were visually lying to you a little.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>let</code> and <code>const</code> are block-scoped.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 2">
+          <figcaption>Code card 2<span>js</span></figcaption>
+          <pre tabindex="0"><code>if (true) {
+  const message = &quot;hello&quot;;
+}
+
+console.log(message); // ReferenceError</code></pre>
+        </figure>
+<h2 id="so-which-one-do-i-use">So Which One Do I Use?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Give me the modern rule without turning it into religion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use <code>const</code> when the binding doesn't need to be reassigned. Use <code>let</code> when it does.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And <code>var</code>?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You'll absolutely encounter it in older code. You don't need to panic or mechanically rewrite every occurrence. But for new code, <code>let</code> and <code>const</code> usually express intent more clearly.</span>
+        </p>
+<h2 id="const-does-not-mean-frozen">Const Does Not Mean Frozen</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This one got me the first time. <code>const</code> means constant.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Constant <strong>binding</strong>, not deeply immutable value.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 3">
+          <figcaption>Code card 3<span>js</span></figcaption>
+          <pre tabindex="0"><code>const user = { name: &quot;Parisa&quot; };
+user.name = &quot;Jules&quot;; // allowed
+
+user = { name: &quot;Sabrina&quot; }; // TypeError</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the label <code>user</code> can't be pointed at a different object. The object itself can still be edited.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>const</code> put a parking boot on the variable assignment, not the contents of the car.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Disturbing, but accurate enough.</span>
+        </p>
+<h2 id="hoisting-without-folklore">Hoisting Without Folklore</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>People say <code>var</code> gets hoisted. Then somebody says technically everything gets hoisted. Then I close the tab.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's make it useful. Declarations are processed before execution in ways that differ by declaration type. With <code>var</code>, accessing the variable before its declaration line gives you <code>undefined</code>.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 4">
+          <figcaption>Code card 4<span>js</span></figcaption>
+          <pre tabindex="0"><code>console.log(count); // undefined
+var count = 3;</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With <code>let</code> and <code>const</code>, the binding exists for the scope but you can't access it before the declaration is initialized.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 5">
+          <figcaption>Code card 5<span>js</span></figcaption>
+          <pre tabindex="0"><code>console.log(count); // ReferenceError
+const count = 3;</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And that inaccessible period is the temporal dead zone.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A wildly dramatic name for “don't use the variable before you declare it.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript contains multitudes.</span>
+        </p>
+<h2 id="the-loop-problem">The Loop Problem</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>let</code> also fixed a famous problem with loop variables and closures.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ah, yes. Five callbacks, all mysteriously yelling five.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>With <code>var</code>, one function-scoped binding can be shared across loop iterations. <code>let</code> creates the iteration behavior developers usually expected.</span>
+        </p>
+
+        <figure class="card code" aria-label="Code card 6">
+          <figcaption>Code card 6<span>js</span></figcaption>
+          <pre tabindex="0"><code>for (let i = 0; i &lt; 3; i++) {
+  setTimeout(() =&gt; console.log(i), 0);
+}
+// 0, 1, 2</code></pre>
+        </figure>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is one of those changes where I can point directly at the scar tissue that asked for it.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don't Do This</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Should I change every <code>let</code> to <code>const</code> because a linter told me I have sinned?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>const</code> is useful because it communicates “this binding isn't reassigned.” But readability is the goal, not moral purity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also don't convert old production code casually just to make it look young.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Refactoring has risk. Change code because the change provides value, not because <code>var</code> has gray hair.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>let</code> and <code>const</code> gave JavaScript block-scoped bindings.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>const</code> prevents reassignment of the binding; it does not freeze objects.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>let</code> is for bindings that need reassignment.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And <code>var</code> remains valid JavaScript with older, function-scoped behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So <code>var</code> didn't become illegal.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It just stopped getting invited to new projects.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's unnecessarily cruel.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: arrows.</span>
+        </p></main>
+  <footer>6 code cards · 0 terminal cards</footer>
+</body>
+</html>

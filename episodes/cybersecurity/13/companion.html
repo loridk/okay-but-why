@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 13: CSRF, CORS &amp; Same-Origin Policy — Why Is the Browser Yelling at Me? — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 13: CSRF, CORS &amp; Same-Origin Policy — Why Is the Browser Yelling at Me?</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-13.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#same-origin-policy-first">Same-Origin Policy First</a></li>
+<li><a href="#why-does-this-exist">Why Does This Exist?</a></li>
+<li><a href="#cors-controlled-exceptions">CORS: Controlled Exceptions</a></li>
+<li><a href="#preflight">Preflight</a></li>
+<li><a href="#access-control-allow-origin">Access-Control-Allow-Origin</a></li>
+<li><a href="#credentials-complicate-cors">Credentials Complicate CORS</a></li>
+<li><a href="#csrf-different-problem">CSRF: Different Problem</a></li>
+<li><a href="#example">Example</a></li>
+<li><a href="#csrf-tokens">CSRF Tokens</a></li>
+<li><a href="#samesite-cookies">SameSite Cookies</a></li>
+<li><a href="#safe-http-methods">Safe HTTP Methods</a></li>
+<li><a href="#tokens-in-headers">Tokens in Headers</a></li>
+<li><a href="#cors-is-not-authentication">CORS Is Not Authentication</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#browsers-are-doing-security-on-your-behalf">Browsers Are Doing Security on Your Behalf</a></li>
+<li><a href="#simple-cross-origin-requests">“Simple” Cross-Origin Requests</a></li>
+<li><a href="#why-csrf-loves-cookies">Why CSRF Loves Cookies</a></li>
+<li><a href="#origin-and-referer-validation">Origin and Referer Validation</a></li>
+<li><a href="#double-submit-cookie-pattern">Double-Submit Cookie Pattern</a></li>
+<li><a href="#samesite-is-a-huge-improvement">SameSite Is a Huge Improvement</a></li>
+<li><a href="#cors-misconfiguration">CORS Misconfiguration</a></li>
+<li><a href="#null-origin"><code>null</code> Origin</a></li>
+<li><a href="#cors-and-apis">CORS and APIs</a></li>
+<li><a href="#preflight-caching">Preflight Caching</a></li>
+<li><a href="#cookies-secure-and-httponly">Cookies: Secure and HttpOnly</a></li>
+<li><a href="#csrf-and-json-apis">CSRF and JSON APIs</a></li>
+<li><a href="#oauth-redirects-and-origins">OAuth Redirects and Origins</a></li>
+<li><a href="#please-don-t-solve-cors-with-a-browser-extension">Please Don’t Solve CORS With a Browser Extension</a></li>
+<li><a href="#old-person-yells-at-cloud">Old Person Yells at Cloud</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CORS error.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. Bad.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser blocked something.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser blocked <em>me</em>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The browser doesn’t know you personally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It feels personal.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Today: same-origin policy, CORS, and CSRF.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Three related browser-security concepts that solve different problems.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let’s untangle them before Stack Overflow rises from the grave.</span>
+        </p>
+<h2 id="same-origin-policy-first">Same-Origin Policy First</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The <strong>same-origin policy</strong> is a browser security boundary that restricts how documents or scripts from one origin interact with resources from another.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Origin means scheme, host, and port.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>https://example.com</code> and <code>http://example.com</code> are different origins because scheme differs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>https://api.example.com</code> is different from <code>https://example.com</code> because host differs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Port can differ too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+<h2 id="why-does-this-exist">Why Does This Exist?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because I can visit multiple websites at once.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Your browser may have an authenticated banking session open while you visit a random site.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Without browser isolation, random site JavaScript could potentially read bank pages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same-origin policy prevents broad cross-origin reading and scripting.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is foundational web security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extremely.</span>
+        </p>
+<h2 id="cors-controlled-exceptions">CORS: Controlled Exceptions</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then modern applications said, “But I actually need frontend.example to call api.example.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Enter <strong>Cross-Origin Resource Sharing</strong>, CORS.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server tells the browser which cross-origin requests are permitted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CORS does not protect the server from all requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Important.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Non-browser clients can call the API without caring about browser CORS enforcement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So CORS is primarily a browser-enforced read-access policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="preflight">Preflight</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>OPTIONS request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For certain cross-origin requests, the browser sends a <strong>preflight</strong> request first.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“Would you allow this origin, method, and headers?”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server answers with CORS headers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser decides whether to proceed or expose the response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="access-control-allow-origin">Access-Control-Allow-Origin</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The famous header.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>Access-Control-Allow-Origin</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server can allow a specific origin.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or <code>*</code> for broadly public resources, subject to credential rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Dynamically reflecting any supplied Origin without validation is dangerous.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very.</span>
+        </p>
+<h2 id="credentials-complicate-cors">Credentials Complicate CORS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cookies and authorization credentials.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Cross-origin credentialed requests require explicit server configuration.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Wildcard origin is not allowed with credentials in the usual CORS model.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because “any website can read authenticated responses” would be terrible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="csrf-different-problem">CSRF: Different Problem</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now CSRF.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Cross-Site Request Forgery</strong> exploits the browser’s tendency to automatically include credentials like cookies with requests.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Evil site causes my browser to send a request to bank.example.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If you are logged into the bank, your browser may include the bank’s cookies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the bank sees a legitimately authenticated request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But you did not intend the action.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Authentication without intent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good phrase.</span>
+        </p>
+<h2 id="example">Example</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Imagine bank has a GET endpoint that transfers money.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Already terrible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Evil page embeds an image whose URL is <code>https://bank.example/transfer?to=attacker&amp;amount=1000</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Browser requests the image.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Sends bank cookies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the server performs the action without CSRF defenses, money moves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The response being blocked by same-origin policy does not undo the request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why “CORS blocks it” is not automatically a CSRF defense.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Thank you.</span>
+        </p>
+<h2 id="csrf-tokens">CSRF Tokens</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Classic defense: unpredictable CSRF token tied to the user session.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Legitimate form includes token.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker’s site cannot read the token due to same-origin policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server rejects state-changing requests without a valid token.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="samesite-cookies">SameSite Cookies</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern browsers also have SameSite cookies.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>SameSite=Lax</code> or <code>Strict</code> can reduce when cookies are included in cross-site requests.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>None</code> explicitly allows cross-site use and requires Secure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good defense layer, but understand application needs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="safe-http-methods">Safe HTTP Methods</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>GET should not mutate state.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is not just REST aesthetic.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It also reduces accidental and forged actions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>State changes belong in POST, PUT, PATCH, DELETE as appropriate, with CSRF protection when cookie authentication is involved.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="tokens-in-headers">Tokens in Headers</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If an API uses a bearer token that JavaScript must explicitly place in an Authorization header—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Classic cookie-based CSRF risk changes because the browser does not automatically attach that token cross-site.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But now XSS risk may increase if the token is accessible to script.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Tradeoffs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>There is no free auth storage.</span>
+        </p>
+<h2 id="cors-is-not-authentication">CORS Is Not Authentication</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Say it louder.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>CORS is not authentication or authorization.</strong></span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If my API returns secrets to any caller with a valid token, CORS does not replace token validation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And if the API is reachable from curl, CORS is irrelevant there.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fix CORS with <code>Access-Control-Allow-Origin: *</code> on everything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Disable browser security during development and forget why it existed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Assume a CORS error means the API endpoint itself is unreachable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It means the browser is enforcing cross-origin policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use GET for destructive actions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please absolutely don’t.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same-origin policy is the default wall.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CORS creates controlled holes in the wall for cross-origin reading.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CSRF exploits the browser automatically carrying credentials across sites.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Three concepts. Related ecosystem. Different problem statements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We have achieved browser peace.</span>
+        </p>
+<h2 id="browsers-are-doing-security-on-your-behalf">Browsers Are Doing Security on Your Behalf</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The weird emotional thing about CORS is that developers experience the browser as the thing breaking their app.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Because the browser is enforcing a boundary the server may not enforce itself.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I use curl and the request works, then use fetch and the browser blocks access to the response, that feels inconsistent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But the browser has a different responsibility.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It is simultaneously running code from many origins while holding your cookies and authenticated sessions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Curl is not logged into my bank in another tab.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="simple-cross-origin-requests">“Simple” Cross-Origin Requests</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some cross-origin requests don’t preflight.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Certain methods and content types qualify as CORS “simple requests.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which means developers cannot assume “preflight is the thing preventing CSRF.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Very important.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A cross-site form POST existed long before CORS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browsers have always allowed some cross-origin sending because the web needs links and forms.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same-origin policy mainly restricts reading and scripting across origins, not every possible outbound request.</span>
+        </p>
+<h2 id="why-csrf-loves-cookies">Why CSRF Loves Cookies</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Cookies are attached based on destination domain and cookie policy, not based on which page initiated the request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So evil.example can cause a request to bank.example, and historically the browser may attach bank.example’s cookie.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That is the whole opening CSRF exploits.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="origin-and-referer-validation">Origin and Referer Validation</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Servers can also inspect <code>Origin</code> or sometimes <code>Referer</code> headers for state-changing requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Useful CSRF defense layer.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Verify the request came from an expected site.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But design it carefully around proxies, privacy behavior, and legitimate flows.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="double-submit-cookie-pattern">Double-Submit Cookie Pattern</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Another CSRF pattern: double-submit cookie.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server or application uses a token value sent both in a cookie and separately in the request.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker can cause the cookie to be sent but cannot normally read it cross-origin to copy the matching token into the request field or header.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly, when implemented correctly.</span>
+        </p>
+<h2 id="samesite-is-a-huge-improvement">SameSite Is a Huge Improvement</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The modern web made SameSite cookies much more prominent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>SameSite=Lax</code> blocks cookies on many cross-site subrequests while allowing some top-level navigation use cases.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>Strict</code> is more restrictive.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>None</code> means cross-site use is allowed and the cookie must also be Secure.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So an embedded third-party application may genuinely need <code>None</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security policy has to match product architecture.</span>
+        </p>
+<h2 id="cors-misconfiguration">CORS Misconfiguration</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What’s a dangerous CORS pattern?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server reads the request’s <code>Origin</code> and blindly echoes it into <code>Access-Control-Allow-Origin</code>.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“You said you’re trusted, so I trust you.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Essentially.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Especially bad with credentialed requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Instead allowlist origins you actually intend to authorize.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="null-origin"><code>null</code> Origin</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I’ve seen <code>Origin: null</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Certain sandboxed contexts, local files, and other situations can produce a null origin.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So blindly allowing <code>null</code> can be dangerous if the app does not understand which contexts that admits.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="cors-and-apis">CORS and APIs</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public API.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No cookies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Data is intentionally public.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><code>Access-Control-Allow-Origin: *</code> can be totally appropriate.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why wildcard is not inherently evil.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security configuration depends on whether the resource is supposed to be public.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Context, again.</span>
+        </p>
+<h2 id="preflight-caching">Preflight Caching</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Preflights can be cached.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Servers can tell browsers how long a successful preflight result may be cached.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Performance versus policy-change responsiveness.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not usually the first security concern, but useful to know why every fetch does not necessarily produce an OPTIONS request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="cookies-secure-and-httponly">Cookies: Secure and HttpOnly</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Since CSRF is cookie-heavy, remind me.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>Secure</code> means only send over HTTPS.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>HttpOnly</code> means JavaScript can’t read it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>SameSite</code> controls cross-site sending behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different flags, different problems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="csrf-and-json-apis">CSRF and JSON APIs</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers sometimes say JSON APIs don’t need CSRF protection.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Too broad.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If authentication is cookie-based and the browser can create an accepted state-changing request cross-site, CSRF can still matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Some JSON content types trigger preflight, which can reduce certain classic attack paths.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But don’t treat incidental request formatting as your entire security model.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Explicit controls are nicer than accidents.</span>
+        </p>
+<h2 id="oauth-redirects-and-origins">OAuth Redirects and Origins</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Modern auth flows add redirects between origins.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which makes it even more important to understand exact origins, redirect URI validation, cookies, and token handling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We’ll dig further into tokens next episode.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser security has become one giant family reunion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And several relatives are arguing.</span>
+        </p>
+<h2 id="please-don-t-solve-cors-with-a-browser-extension">Please Don’t Solve CORS With a Browser Extension</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers install “disable CORS” extensions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Fine for very specific local debugging if you understand exactly what you are changing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Dangerous as a conceptual fix.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If production needs cross-origin access, configure the server correctly.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don’t teach yourself that the browser’s security model is the bug.</span>
+        </p>
+<h2 id="old-person-yells-at-cloud">Old Person Yells at Cloud</h2>
+<h3 id="old-person-yells-at-cloud-2">OLD PERSON YELLS AT CLOUD</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Old websites were mostly same-origin by accident.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>HTML, PHP, database, assets—all on one host.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Modern frontends made cross-origin architecture normal.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SPA on one origin.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>API on another.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Auth provider somewhere else.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CDN.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Analytics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which made browser security boundaries much more visible to ordinary application developers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The policy was always there. Architecture wandered into it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security+ expects broad knowledge of web attacks and secure application controls.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developer depth means understanding SOP, CORS, preflights, credentials, CSRF tokens, SameSite cookies, and safe state-changing requests.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same-origin policy restricts cross-origin interaction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CORS lets servers opt into specific cross-origin access.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>CSRF tricks an authenticated browser into performing an unintended action.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>CORS is not auth, and same-origin policy does not automatically prevent the request itself.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: sessions, cookies, tokens, and API security.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Authentication’s messy afterparty.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

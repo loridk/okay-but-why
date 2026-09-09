@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 14: Build an Architecture in Your Head — Reasons Before Rectangles — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 14: Build an Architecture in Your Head — Reasons Before Rectangles</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-14.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#the-requirements-meeting">The Requirements Meeting</a></li>
+<li><a href="#identify-the-critical-facts">Identify the Critical Facts</a></li>
+<li><a href="#choose-a-modest-baseline">Choose a Modest Baseline</a></li>
+<li><a href="#walk-the-happy-path-slowly">Walk the Happy Path Slowly</a></li>
+<li><a href="#draw-only-the-needed-boxes">Draw Only the Needed Boxes</a></li>
+<li><a href="#now-break-the-happy-path">Now Break the Happy Path</a></li>
+<li><a href="#accessibility-is-in-the-flow">Accessibility Is in the Flow</a></li>
+<li><a href="#the-first-growth-scenario">The First Growth Scenario</a></li>
+<li><a href="#the-second-growth-scenario">The Second Growth Scenario</a></li>
+<li><a href="#the-third-growth-scenario">The Third Growth Scenario</a></li>
+<li><a href="#reject-a-design-for-reasons">Reject a Design for Reasons</a></li>
+<li><a href="#a-listener-design-challenge">A Listener Design Challenge</a></li>
+<li><a href="#a-different-problem-deserves-a-different-answer">A Different Problem Deserves a Different Answer</a></li>
+<li><a href="#what-evidence-would-change-our-minds">What Evidence Would Change Our Minds?</a></li>
+<li><a href="#make-a-recovery-plan-reviewable">Make a Recovery Plan Reviewable</a></li>
+<li><a href="#the-smallest-useful-documentation-pack">The Smallest Useful Documentation Pack</a></li>
+<li><a href="#a-handoff-to-the-next-developer">A Handoff to the Next Developer</a></li>
+<li><a href="#the-complexity-budget">The Complexity Budget</a></li>
+<li><a href="#explain-it-in-an-interview-or-review">Explain It in an Interview or Review</a></li>
+<li><a href="#the-reusable-mental-checklist">The Reusable Mental Checklist</a></li>
+<li><a href="#one-last-check-before-shipping">One Last Check Before Shipping</a></li>
+<li><a href="#closing-we-know-why-the-boxes-exist">Closing — We Know Why the Boxes Exist</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I brought a blank architecture diagram.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Finally. A system with no known incidents.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We need to design Nervous Robot Pizza Delivery.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before you draw a cloud, tell me who is hungry.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to the Web Architecture finale of <em>Okay, But Why?</em>. Today we put the pieces together.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not by including all of them. That's a buffet, not a design.</span>
+        </p>
+<h2 id="the-requirements-meeting">The Requirements Meeting</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Fictional scenario. One neighborhood restaurant. Small development team. Customers browse a menu, choose pickup or delivery, review a price, and place an order. Staff accept and fulfill it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Clarify “accept.” Does submitting guarantee the kitchen will make it, or is staff approval required?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's say the system accepts only while the shop has capacity, and accepted orders become a commitment. Staff can handle exceptions through an explicit cancellation process.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. That's a business promise we can represent. Payment?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Online payment through a specialist provider, with its supported hosted or integrated payment flow. We don't store raw card details ourselves.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Accounts?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Guest ordering is allowed. Optional customer accounts for history. Staff must authenticate, with permissions appropriate to their tasks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Availability?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The business needs orders recorded reliably and clear communication when ordering is unavailable. We haven't been given a global availability target or unlimited budget.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then we shouldn't invent one. We document recovery expectations with the business before committing to an elaborate design.</span>
+        </p>
+<h2 id="identify-the-critical-facts">Identify the Critical Facts</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What must the system know?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Current menu and prices. Accepted order contents and amount. Fulfillment choice and needed contact details. Payment state. Order status. Staff permissions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which facts are temporary?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The browser's draft selections, open panels, and possibly a tentative delivery slot. They aren't accepted commitments until the server says so.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which facts need historical snapshots?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What was ordered and at what accepted price. Updating today's menu mustn't rewrite yesterday's receipt.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which data can we avoid collecting?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Anything not needed for fulfillment, support, or another justified purpose. Pickup shouldn't demand a delivery address out of habit. Retention needs a policy too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good. The data model begins with meaning, not whichever fields a checkout template included.</span>
+        </p>
+<h2 id="choose-a-modest-baseline">Choose a Modest Baseline</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One modular web application, a relational database, maintained authentication/session tooling, and the payment provider integration. Public information can be static or cached. Ordering uses server-rendered pages with useful enhancements.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why a monolith?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Small team, closely related workflow, straightforward deployment, local coordination. No demonstrated need for independent service releases yet.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why a relational database?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Orders and items have relationships, and local transactional integrity matters. It's a sensible fit, not a claim that every other database is wrong.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why not a full customer-facing SPA?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Basic browsing and checkout can work well with documents and forms. We'll add local interaction where it improves a real task. The staff dispatch area may justify more later.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why use a payment provider?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Payments are a specialist capability with requirements we shouldn't casually recreate. But we still own our integration, order state, and handling of uncertain outcomes.</span>
+        </p>
+<h2 id="walk-the-happy-path-slowly">Walk the Happy Path Slowly</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customer opens the menu.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser requests the page. Public content can come from eligible cached or prepared output. The browser gets semantic HTML and styles. Any enhancement code has a specific job.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customer chooses items and quantity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Browser keeps the draft and can show an estimate. Server checks current availability and calculates the amount used for the actual agreement.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customer proceeds to payment.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The application creates an appropriate pending order or checkout record, following the provider's supported flow. It tracks a stable identifier so retries refer to the same attempt.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The payment result returns.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We verify the provider's authoritative information. Don't trust a browser redirect alone as proof of payment. The application transitions the order according to the confirmed outcome and business rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff see an accepted order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Through an authenticated, authorized view of durable order state. We show clear statuses, useful errors, and an accessible interaction path.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Receipt email follows.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Record that follow-up durably if we promise it. A background worker can deliver it without making checkout wait for email. We don't need a whole microservice team for that responsibility.</span>
+        </p>
+<h2 id="draw-only-the-needed-boxes">Draw Only the Needed Boxes</h2>
+
+        <figure class="card code" aria-label="Code card 1">
+          <figcaption>Code card 1<span>text</span></figcaption>
+          <pre tabindex="0"><code>Customer / staff browser
+          |
+     Web application ---- Payment provider
+          |
+     Order database
+          |
+     Durable follow-up work -&gt; Receipt delivery</code></pre>
+        </figure>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For listeners, there is a browser talking to our application. The application uses the order database and payment provider. Durable follow-up work supports receipt delivery. The diagram doesn't require every line to be a separate service.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We still need hosting, secure connections, backups, logs, and deployment. We can show those in a deployment view rather than cramming them into this responsibility map.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about a CDN?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use it if the hosting arrangement provides it or measured delivery needs justify it. Public asset caching is useful, but it isn't a prerequisite for understanding the order transaction.</span>
+        </p>
+<h2 id="now-break-the-happy-path">Now Break the Happy Path</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The customer's connection drops after submission.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The outcome may be uncertain. Use the stable attempt identifier and status lookup. Don't create a fresh order automatically just because the response was lost.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Payment succeeds but our notification processing is delayed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keep a pending state and reconcile through supported provider mechanisms. Staff and customers need truthful information. Alert when orders remain stuck beyond an acceptable period.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The email provider fails.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Keep the accepted order. Retry durable receipt work within a bounded policy and expose repeated failures to an operator. Email isn't the only proof the order exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Database unavailable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don't claim to accept orders we cannot record reliably. Public information may remain available. Ordering shows an understandable unavailable state and a business-approved alternative if one exists.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customer requests another person's order identifier.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Server-side authorization denies access. Identifier obscurity and hidden UI controls are not the policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Two customers buy the last available slot.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Enforce the capacity rule atomically with appropriate database coordination. Return a meaningful conflict to the one whose request cannot be accepted.</span>
+        </p>
+<h2 id="accessibility-is-in-the-flow">Accessibility Is in the Flow</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The team says they'll add accessibility after the API is done.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then the API may already be missing the states we need. Validation errors should identify fields. Pending and uncertain outcomes need distinct representations. The interface needs to explain what happened.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use labels and semantic controls. Support keyboard operation. Manage focus when navigation or errors require it. Don't communicate status only with color.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Allow review before a consequential action. Keep the accepted price visible. If it changes, ask for renewed agreement instead of silently replacing it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff workflows matter too. A map-only interface or frantic auto-updating list can make the work difficult or impossible for some staff.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An architecture is successful when people can complete the task, not merely when the endpoint returns two hundred.</span>
+        </p>
+<h2 id="the-first-growth-scenario">The First Growth Scenario</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>More people read the menu after a local article. Ordering volume grows modestly. What's our first response?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Measure. Cache eligible public content, optimize expensive repeated queries, serve appropriately sized images, and inspect the actual bottleneck.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If the application needs more capacity?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Consider vertical resources or additional replicas. Make sure sessions, uploads, and jobs aren't tied accidentally to one process. Respect database and provider limits.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Do we split into services?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not merely because traffic increased. Replicating the monolith and improving queries may solve the problem with less change.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if the kitchen is overwhelmed?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Change capacity controls and delivery promises. Servers cannot expand oven space.</span>
+        </p>
+<h2 id="the-second-growth-scenario">The Second Growth Scenario</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The shop opens several locations. Delivery optimization becomes expensive. A dedicated team wants to improve it independently.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Now investigate that boundary. It has a distinct workload, ownership, and release cadence. Define inputs, outputs, failure behavior, and data needs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Extract it as a service?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe. First verify the benefit and make the internal interface clear. If extracted, keep ordering able to proceed with an appropriate fallback when route suggestions fail.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What does the service own?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Its optimization behavior and relevant state. It shouldn't directly rewrite orders behind the ordering module's back. Accepted assignments still need a defined authoritative operation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we add the network boundary for a reason, along with monitoring, authorization, timeouts, and compatibility work.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Complexity arrives with a job description and an owner.</span>
+        </p>
+<h2 id="the-third-growth-scenario">The Third Growth Scenario</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The public menu changes frequently, the editorial team wants fast publication, and the static build is getting slow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Revisit that rendering workflow. Maybe selective regeneration, request-time rendering with caching, or a different publication strategy fits better.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We don't have to rewrite the order system just because content publishing changed.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Rendering strategy and service decomposition are different choices. Good boundaries let us change the relevant part.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And we test freshness: how long until a published change is visible, what happens on rebuild failure, and whether private information can enter public output.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The requirement is timely accurate content, not allegiance to SSG.</span>
+        </p>
+<h2 id="reject-a-design-for-reasons">Reject a Design for Reasons</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I propose globally distributed microservices, multiple specialized databases, a message bus, and a fully client-rendered public menu.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which requirement needs each one?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Future scale.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which kind, and when?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Unspecified.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then we haven't justified the cost. We can record possible future needs without implementing all of them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What if I propose a single script that trusts browser prices, stores passwords as text, and writes orders to a temporary file?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also rejected. Simplicity must still satisfy correctness, security, durability, and accessibility. Incomplete isn't the same as simple.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So the principle has two halves: meet the actual problem, and avoid unnecessary complexity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Either half alone produces bad advice.</span>
+        </p>
+<h2 id="a-listener-design-challenge">A Listener Design Challenge</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's give listeners a fresh scenario inside the same business. Nervous Robot wants a public catering inquiry form. No payment, no instant booking. A person reviews the request and replies later.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Before we answer, think about which parts of our ordering architecture still apply and which promises are different. You can pause if you want; we're going to work through it together.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>My first instinct is a form on a server-rendered page. The submission is validated and recorded. A confirmation says the inquiry was received, not that catering is booked.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good. The distinction between receipt and acceptance matters. What data do we need?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Contact information, event date, approximate group size, and relevant details. Avoid asking for information we don't need at this stage.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How does staff learn about it?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>An authenticated inquiry list, perhaps with a notification as follow-up work. The database record remains the source of the inquiry, so email failure doesn't erase it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What if the customer submits twice after a timeout?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A stable attempt identifier and appropriate duplicate handling can help. Even though it isn't a payment, duplicates waste staff time and confuse customers.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does it need microservices or a full SPA?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No requirement we've stated demands them. Use the existing application's clear module boundary unless evidence suggests otherwise.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's the transfer we want. We didn't memorize pizza endpoints. We learned how to identify the promise and build the path around it.</span>
+        </p>
+<h2 id="a-different-problem-deserves-a-different-answer">A Different Problem Deserves a Different Answer</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Now suppose the business wants a collaborative seating planner for large events. Several staff edit a layout together, with frequent visual changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That may justify a richer client application and a real-time coordination design. The task has changed substantially.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We'd need to define concurrent editing behavior, permissions, persistence, and what happens when someone disconnects.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And an accessible alternative to purely visual dragging. The data model should support meaningful operations independent of mouse gestures.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A simple form-only flow might be awkward for the core task.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. “Start simple” doesn't mean force every problem into the first architecture we liked. It means choose the least complexity that actually meets the need.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We might still keep the authoritative backend in the same application initially.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Rich client interaction doesn't imply a distributed backend. Separate the decisions and justify each one.</span>
+        </p>
+<h2 id="what-evidence-would-change-our-minds">What Evidence Would Change Our Minds?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's make the revisit triggers more concrete. The order list is slow.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Gather query timings and request traces with representative data. If an N-plus-one query dominates, fix the query. If a resource is saturated after sensible optimization, consider capacity. Don't jump from symptom to service architecture.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Deployments are blocked by unrelated teams.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Examine module ownership, test structure, and release dependencies. If a capability has a stable boundary and genuinely needs independent deployment, extraction may help.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Customers complain that the menu is outdated.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Measure publication-to-visibility time across build, origin, CDN, and browser layers. Adjust the content workflow or caching policy. Rewriting authentication would be an unusual response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff miss orders because the screen updates unpredictably.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Observe the workflow. Improve update communication, sorting stability, and acknowledgment behavior. More frequent polling may make the problem worse if the list keeps jumping.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So evidence doesn't merely tell us that change is needed. It tells us which responsibility to change.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Otherwise every incident becomes an excuse to implement whichever technology we wanted to try anyway.</span>
+        </p>
+<h2 id="make-a-recovery-plan-reviewable">Make a Recovery Plan Reviewable</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We said we need recovery. What would a concrete review include?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A documented restore process tested in an appropriate environment, a way to identify unresolved payment attempts, a procedure for failed follow-up work, and clear ownership for incidents.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Also a way to pause new orders if fulfillment or recording is unreliable.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. A controlled unavailable state can be safer than accepting commitments we cannot honor. The business should know who may activate it and how customers are informed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What should we avoid claiming?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Don't say backups are proven unless a restore was tested. Don't say payments are exactly once without a scoped guarantee. Don't say the site is accessible because we used a framework with an accessibility page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Evidence for the actual implementation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Good architecture language is precise about what we know, what we assume, and what still needs verification.</span>
+        </p>
+<h2 id="the-smallest-useful-documentation-pack">The Smallest Useful Documentation Pack</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We don't want a hundred-page document nobody reads. What would you keep?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A responsibility map, a deployment view when needed, the critical order sequence, a short data-ownership description, and decision notes for consequential choices. Plus recovery procedures people can actually follow.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the API contract if there are consumers depending on it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Include errors and lifecycle behavior, not just happy-path fields. Keep the documentation close enough to the work that changes can update it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How do we know a diagram is too complicated?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If it can't answer its intended question. A detailed deployment view may be appropriate for operations, while a simple request path is better for onboarding. Different views aren't dishonesty; they're focus.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Label what each view leaves out.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. “Logical responsibilities, not physical machines” can prevent a surprising amount of confusion.</span>
+        </p>
+<h2 id="a-handoff-to-the-next-developer">A Handoff to the Next Developer</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine someone new joins the team. What's the first explanation?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Follow an order from browser submission to accepted record and staff display. Show where validation and authorization happen, where prices are calculated, and how uncertain payments are resolved.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Then let them make a small change?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Perhaps improve a validation message or add a clearly defined menu field. They should see how the architecture guides the change and how verification catches mistakes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That teaches the system through behavior instead of making them memorize directories.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. The directory map becomes meaningful once they know what the pieces do. The same way these fourteen episodes are supposed to make the vocabulary useful.</span>
+        </p>
+<h2 id="the-complexity-budget">The Complexity Budget</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>I like the idea that complexity has a budget, even if we can't measure it in a perfect unit.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Every extra deployment, data copy, asynchronous state, framework convention, and operational dependency asks for attention. Some of that attention buys real capability. Some buys nothing we currently need.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So we spend complexity where it protects an important promise or improves a real task.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Durable order handling earns its place. Authorization earns its place. A distributed recommendation fleet for one restaurant probably needs to make a stronger case.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And we can remove complexity too.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Absolutely. Retire unused endpoints, obsolete flags, duplicate stores, and abandoned paths. Simplifying a system after learning more is progress, not defeat.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The final architecture won't be the smallest possible drawing.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It should be the clearest workable design for the actual promises. Sometimes that needs more boxes. We just want to know why each one is there.</span>
+        </p>
+<h2 id="explain-it-in-an-interview-or-review">Explain It in an Interview or Review</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Give me the thirty-second version of our architecture.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We use one modular application and a relational database because the team and workflow are small and closely related. The browser manages interaction; the server validates and authorizes operations and records accepted orders. Public content can be cached, while private and transactional data has stricter rules. Payment uses a specialist provider, and durable follow-up work handles receipts. We would add capacity or extract a capability only after identifying a specific bottleneck or ownership need.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That explains choices, not just technologies.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Then if someone asks about failure, I can trace an uncertain payment or duplicate submission and describe recovery. That's stronger than reciting a stack list.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if you don't know an implementation detail?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Say what you need to verify. “I'd check the provider's retry guarantees” is professional. Inventing exactly-once payment semantics is not confidence; it's fiction with consequences.</span>
+        </p>
+<h2 id="the-reusable-mental-checklist">The Reusable Mental Checklist</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Before drawing, identify people, tasks, constraints, and promises. Then trace one important operation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For each fact, ask who owns it and how long it must survive. For each boundary, ask what crosses it, who is trusted, and what happens if it fails.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For each optimization, identify the measured cost it reduces and the new complexity it creates.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For each choice, write the reason and the conditions that would make you revisit it. Then verify the design through real behavior, not just diagram aesthetics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's enough to begin understanding an unfamiliar system too. You don't have to recognize every vendor logo before asking where the order goes.</span>
+        </p>
+<h2 id="one-last-check-before-shipping">One Last Check Before Shipping</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The design review ends. What makes us ready to implement rather than keep drawing?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We understand the critical workflow, the main risks, and a small first increment we can verify. We don't need every future detail, but we need enough clarity to make the next change safely.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For our example, that could be browsing the menu and submitting a validated order in a test environment, with durable storage and a clear result.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Then add the next required capability, verify it, and keep the architecture explanation current. Working behavior teaches us things a diagram can't.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And if implementation reveals an assumption was wrong?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Update the decision. That's learning, not architectural failure. The failure would be defending an unsuitable choice because we already drew it in expensive colors.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The purple arrow finally faces accountability.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It has been invited to explain its business value.</span>
+        </p>
+<h2 id="closing-we-know-why-the-boxes-exist">Closing — We Know Why the Boxes Exist</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We began with nineteen unexplained rectangles. Now we can name what they do, what they own, and whether we need them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Client and server. HTTP. Documents and SPAs. APIs. Sessions and authorization. Durable data. Monoliths and services. Caches. Scaling. Rendering.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not a ladder where each newer thing replaces the previous thing. A set of options for different problems.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Start with the simplest architecture that solves the actual problem. Add complexity only for an explainable reason.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next in the show is Cybersecurity, handled as its own series. We have already drawn trust boundaries and followed data. That gives us somewhere concrete to ask what can go wrong and how to protect people.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For now, Nervous Robot has an ordering system we can explain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And enough restraint to leave several boxes unpurchased.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Ohhh. That's why architecture exists.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So dinner arrives, the records make sense, and nobody has to debug a purple arrow at midnight.</span>
+        </p></main>
+  <footer>1 code cards · 0 terminal cards</footer>
+</body>
+</html>

@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: Hooks and useEffect — Stop Synchronizing Nothing — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to React &amp; Modern Front-End Frameworks episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: Hooks and useEffect — Stop Synchronizing Nothing</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/179dd307-377b-4d30-a6b6-599ce4def24f"
+      ></script>
+      <div class="redcirclePlayer-179dd307-377b-4d30-a6b6-599ce4def24f"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#what-is-a-hook">What Is a Hook?</a></li>
+        <li>
+          <a href="#hooks-did-not-invent-closures"
+            >Hooks Did Not Invent Closures</a
+          >
+        </li>
+        <li>
+          <a href="#effects-are-for-external-synchronization"
+            >Effects Are for External Synchronization</a
+          >
+        </li>
+        <li><a href="#anatomy-of-an-effect">Anatomy of an Effect</a></li>
+        <li>
+          <a href="#the-dependency-array-is-not-a-schedule"
+            >The Dependency Array Is Not a Schedule</a
+          >
+        </li>
+        <li><a href="#event-or-effect">Event or Effect?</a></li>
+        <li>
+          <a href="#the-derived-state-effect-trap"
+            >The Derived-State Effect Trap</a
+          >
+        </li>
+        <li>
+          <a href="#cleanup-is-part-of-setup">Cleanup Is Part of Setup</a>
+        </li>
+        <li>
+          <a href="#fetching-and-race-conditions"
+            >Fetching and Race Conditions</a
+          >
+        </li>
+        <li>
+          <a href="#dependencies-and-the-linter">Dependencies and the Linter</a>
+        </li>
+        <li><a href="#useref-a-persistent-box">useRef: A Persistent Box</a></li>
+        <li><a href="#usememo-and-usecallback">useMemo and useCallback</a></li>
+        <li><a href="#usecontext">useContext</a></li>
+        <li>
+          <a href="#custom-hooks-as-named-policies"
+            >Custom Hooks as Named Policies</a
+          >
+        </li>
+        <li>
+          <a href="#accessibility-and-effects">Accessibility and Effects</a>
+        </li>
+        <li><a href="#the-effect-decision">The Effect Decision</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-4-hooks-and-useeffect-stop-synchronizing-nothing">
+        Episode 4: Hooks and useEffect — Stop Synchronizing Nothing
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have a confession.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This feels unsafe.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >When I first learned React, I thought useEffect meant “code that runs
+          after the component.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Common.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So whenever I did not know where code belonged, I put it in an
+          effect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Extremely common.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My components became haunted.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we perform an exorcism.</span>
+      </p>
+      <h2 id="what-is-a-hook">What Is a Hook?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Hooks are React functions that let components use React features such
+          as state, context, refs, and effects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The use prefix is a convention with enforcement behind it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Hooks rely on being called consistently so React can associate
+          each call with the right stored information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Rules of Hooks: call them at the top level of a component or another
+          Hook, not inside conditions, loops, or random nested functions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React uses call order as part of matching Hook state between renders.
+          If a condition causes a Hook call to appear or disappear, later calls
+          can shift positions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The coat-check tickets all move one slot and somebody goes home
+          wearing context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Disturbing but serviceable.</span>
+      </p>
+      <h2 id="hooks-did-not-invent-closures">Hooks Did Not Invent Closures</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A custom Hook is just a function?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is a JavaScript function whose name begins with use and that may
+          call other Hooks. The function syntax, closures, arrays, objects, and
+          destructuring are JavaScript. The Hook contract is React.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Custom Hooks share logic, not one magical shared state value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Important. Each call gets its own state unless the Hook connects to
+          some shared external store or context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Extracting useWindowWidth does not make every caller share a private
+          width box by React telepathy.</span
+        >
+      </p>
+      <h2 id="effects-are-for-external-synchronization">
+        Effects Are for External Synchronization
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An effect lets a component synchronize with a system outside
+          React.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Outside means?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A browser API, network connection, timer, event subscription,
+          third-party widget, media playback, or another imperative system React
+          does not control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The DOM is not always outside, because React controls the DOM it
+          renders.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. You do not need an effect merely to calculate JSX from props
+          or state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Say that again.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If a value can be calculated during rendering, calculate it during
+          rendering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We are printing that on the wall.</span>
+      </p>
+      <h2 id="anatomy-of-an-effect">Anatomy of an Effect</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>useEffect(() =&gt; {
+  const connection = createConnection(roomId);
+  connection.connect();
+
+  return () =&gt; connection.disconnect();
+}, [roomId]);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Labels.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrow functions, block syntax, const, method calls, return, and the
+          array literal are JavaScript. useEffect and the meaning React assigns
+          to the setup function, cleanup function, and dependency list are
+          React.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >On commit, React runs the setup when needed. Before re-running due to
+          changed dependencies, it cleans up the previous synchronization. It
+          also cleans up when the component is removed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the useful model.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>roomId is a dependency because the effect reads it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Reactive values used inside the effect belong in the dependency
+          list.</span
+        >
+      </p>
+      <h2 id="the-dependency-array-is-not-a-schedule">
+        The Dependency Array Is Not a Schedule
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Empty array means run once?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It often behaves like setup on mount and cleanup on unmount in
+          production, but “run once” is a brittle mental model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because Strict Mode in development may intentionally run an extra
+          setup-cleanup cycle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>To expose effects that do not clean up correctly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if sending a payment twice would be catastrophic, the answer is
+          not “turn off Strict Mode.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A purchase belongs in an explicit user event with
+          server-side idempotency and validation, not a mount effect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Empty dependency array means the effect does not depend on changing
+          reactive values, not “please promise the universe executes this line
+          exactly once.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Excellent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give me all three versions before the brackets become folklore.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With no dependency array, the effect runs after every committed
+          render of that component. With an empty array, it sets up when the
+          component is added and cleans up when it is removed—plus the extra
+          development Strict Mode check we just discussed. With dependencies in
+          the array, React re-synchronizes when one of those values differs from
+          the previous render.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compared using Object.is, which is why a newly created object or
+          function can count as different even when its contents look
+          familiar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The array does not let us choose our favorite schedule. It
+          describes which reactive values the synchronization depends on.</span
+        >
+      </p>
+      <h2 id="event-or-effect">Event or Effect?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>User clicked Buy.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Event handler.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Component is visible and must maintain a chat connection for the
+          selected room.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Effect.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>User submitted a form.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Event handler.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Page title should reflect the current document name.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Effect, because you are synchronizing an external browser API with
+          React state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Filtered list from items and query.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Calculate during render.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Save first name plus last name into fullName state.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No effect. Derive it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fetch search results every time query changes?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Possibly an effect in a simple client-only example, but real data
+          frameworks or query libraries may handle cancellation, caching,
+          deduplication, server rendering, and race conditions more
+          robustly.</span
+        >
+      </p>
+      <h2 id="the-derived-state-effect-trap">The Derived-State Effect Trap</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>useEffect(() =&gt; {
+  setFullName(firstName + &quot; &quot; + lastName);
+}, [firstName, lastName]);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why is this bad?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React renders with the old fullName, commits, runs the effect,
+          updates state, and renders again—just to calculate a value already
+          available during the first render.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Extra state, extra render, temporary inconsistency.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Instead:</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>jsx</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const fullName = firstName + &quot; &quot; + lastName;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Just JavaScript.</span>
+      </p>
+      <h2 id="cleanup-is-part-of-setup">Cleanup Is Part of Setup</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If setup subscribes, cleanup unsubscribes. If setup starts a timer,
+          cleanup clears it. If setup opens a connection, cleanup closes
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Cleanup is not merely “when the component dies.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It also runs before an effect re-synchronizes with changed
+          dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Room A connection closes before Room B becomes the current
+          connection.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Missing cleanup causes duplicate listeners, stale connections, memory
+          leaks, and updates from work nobody wants anymore.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And development Strict Mode makes some of those bugs obvious
+          sooner.</span
+        >
+      </p>
+      <h2 id="fetching-and-race-conditions">Fetching and Race Conditions</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The classic effect fetch:</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Query changes from cats to caterpillars. The cats request is slow.
+          Caterpillars returns first. Then cats arrives and overwrites the newer
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The interface confidently answers the wrong question.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cleanup can ignore stale results or abort a request where supported.
+          But fetching has more concerns: errors, loading, caching, retries,
+          duplicate requests, navigation, server rendering, and request
+          waterfalls.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So useEffect can fetch; that does not mean hand-written effect
+          fetching is the best architecture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. Modern React frameworks often provide route-level data
+          loading. Client query libraries offer cache and synchronization
+          primitives.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choose those because the problem exists, not because Episode Five
+          sells accessories.</span
+        >
+      </p>
+      <h2 id="dependencies-and-the-linter">Dependencies and the Linter</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I removed a dependency to stop the effect running.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have not fixed the dependency. You have lied about it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Harsh.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the effect reads a reactive value, omitting it can make the effect
+          use a stale snapshot. The Hooks linter is pointing at a design
+          mismatch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Better questions: Should this be an effect? Can the work happen in an
+          event? Can I derive the value? Should the function be declared inside
+          the effect? Is the object recreated every render?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Restructure before suppressing.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But dependency equality uses Object.is, so freshly created object and
+          function references can trigger re-runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Sometimes move creation inside the effect. Sometimes stabilize a
+          value with useMemo or useCallback when there is a demonstrated need.
+          Sometimes the effect itself is unnecessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Memoization is not holy water.</span>
+      </p>
+      <h2 id="useref-a-persistent-box">useRef: A Persistent Box</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >useRef returns an object whose current property persists across
+          renders.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Updating current does not request a render.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Useful for DOM references, timer IDs, or mutable values that
+          do not affect visible output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the UI should update, state. If React does not need to re-render
+          for it, maybe a ref.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good default distinction.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Direct DOM manipulation?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use refs for legitimate imperative actions like focusing an input or
+          integrating a third-party widget. Avoid fighting React by manually
+          rewriting DOM it owns.</span
+        >
+      </p>
+      <h2 id="usememo-and-usecallback">useMemo and useCallback</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hooks tutorial speed round.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >useMemo caches a calculated value between renders subject to
+          dependencies. useCallback caches a function reference.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Performance tools, not semantic requirements.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Generally. They add complexity and are not free. Use them when
+          referential stability is required by an integration or when
+          measurement shows useful optimization.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not around every array map because a blog post looked stern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. React’s compiler-era tooling may reduce some manual
+          memoization needs in supported setups, but understanding identity and
+          renders still matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Current-tech footnote without pretending every project has the newest
+          compiler configured.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="usecontext">useContext</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >useContext reads a value provided above the component in the
+          tree.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful for themes, current user presentation data, localization,
+          shared services.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Potentially. But context is not automatically a complete
+          state-management solution, and broad frequently changing context can
+          re-render many consumers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, putting an authorization flag in context still does not enforce
+          authorization.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The server remains employed.</span>
+      </p>
+      <h2 id="custom-hooks-as-named-policies">
+        Custom Hooks as Named Policies
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What makes a good custom Hook?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A repeated or complex piece of stateful behavior with a meaningful
+          name and a clear interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >useOnlineStatus can hide subscription details and expose a
+          boolean.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It packages the synchronization policy. Components remain
+          focused on what they render.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But a custom Hook can still contain terrible effects.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Abstraction can hide a mess; it cannot redeem one.</span>
+      </p>
+      <h2 id="accessibility-and-effects">Accessibility and Effects</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Effects sometimes manage focus.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, for example focusing a dialog’s initial control after it opens
+          or restoring focus when it closes. But use a robust accessible dialog
+          pattern rather than inventing one from three effects and
+          optimism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Announcing asynchronous status may use a live region in the rendered
+          HTML, not an effect that yells through a random API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct. Prefer semantic output first.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And do not move focus on every render because a dependency array got
+          creative.</span
+        >
+      </p>
+      <h2 id="the-effect-decision">The Effect Decision</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before writing useEffect, ask whether I am synchronizing with
+          something outside React.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>If no, you probably do not need an effect.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the work is caused by a specific user action, it probably belongs
+          in that event.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If a value can be calculated from current props and state, calculate
+          it during render.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I do need an effect, list its real dependencies and provide
+          symmetrical cleanup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Design it so setup, cleanup, and setup again are safe.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hooks are React APIs. Closures and destructuring are JavaScript. The
+          weirdness often lives at their border.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have completed the exorcism.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My component is still making a noise.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the ecosystem approaching.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It has seventeen packages.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

@@ -1,345 +1,499 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Episode 6: The Reusable Type Machine — Listening Companion</title>
-  <link rel="stylesheet" href="../../styles.css">
-</head>
-<body class="companion-page">
-  <a class="skip-link" href="#script">Skip to script</a>
-  <header>
-    <p><a href="../index.html">← Back to TypeScript episodes</a></p>
-    <p>Okay, But Why? — Listening Companion</p>
-    <h1>Episode 6: The Reusable Type Machine</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
-    <audio controls preload="metadata"><source src="typescript-06.wav" type="audio/wav">Your browser does not support the audio player.</audio>
-  </header>
-  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#cold-open">Cold Open</a></li>
-<li><a href="#the-any-non-solution">The `any` Non-Solution</a></li>
-<li><a href="#a-type-parameter">A Type Parameter</a></li>
-<li><a href="#naming-the-relationship">Naming the Relationship</a></li>
-<li><a href="#more-than-one-parameter">More Than One Parameter</a></li>
-<li><a href="#constraints">Constraints</a></li>
-<li><a href="#generic-types">Generic Types</a></li>
-<li><a href="#built-in-generics-were-already-here">Built-In Generics Were Already Here</a></li>
-<li><a href="#when-generics-are-too-much">When Generics Are Too Much</a></li>
-<li><a href="#closing">Closing</a></li></ul></nav>
-  <main id="script"><h1 id="episode-6-the-reusable-type-machine">Episode 6: The Reusable Type Machine</h1>
-<h2 id="cold-open">Cold Open</h2>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 6: The Reusable Type Machine — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to TypeScript episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: The Reusable Type Machine</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/18c3c94d-9fd9-40d6-825e-0990b7a500a7"
+      ></script>
+      <div class="redcirclePlayer-18c3c94d-9fd9-40d6-825e-0990b7a500a7"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#cold-open">Cold Open</a></li>
+        <li><a href="#the-any-non-solution">The `any` Non-Solution</a></li>
+        <li><a href="#a-type-parameter">A Type Parameter</a></li>
+        <li><a href="#naming-the-relationship">Naming the Relationship</a></li>
+        <li><a href="#more-than-one-parameter">More Than One Parameter</a></li>
+        <li><a href="#constraints">Constraints</a></li>
+        <li><a href="#generic-types">Generic Types</a></li>
+        <li>
+          <a href="#built-in-generics-were-already-here"
+            >Built-In Generics Were Already Here</a
+          >
+        </li>
+        <li>
+          <a href="#when-generics-are-too-much">When Generics Are Too Much</a>
+        </li>
+        <li><a href="#closing">Closing</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-6-the-reusable-type-machine">
+        Episode 6: The Reusable Type Machine
+      </h1>
+      <h2 id="cold-open">Cold Open</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>I have seen TypeScript code where the angle brackets appear to contain algebra.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have seen TypeScript code where the angle brackets appear to
+          contain algebra.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Generics can look worse than they are.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Generics can look worse than they are.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>That is also what people say before explaining mortgages.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is also what people say before explaining mortgages.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>A generic preserves a relationship without choosing one concrete type in advance.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A generic preserves a relationship without choosing one concrete type
+          in advance.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Better start with the problem.</span>
-        </p>
-<h2 id="the-any-non-solution">The <code>any</code> Non-Solution</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Better start with the problem.</span>
+      </p>
+      <h2 id="the-any-non-solution">The <code>any</code> Non-Solution</h2>
 
-        <figure class="card code" aria-label="Code card 1">
-          <figcaption>Code card 1<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function first(items: any[]): any {
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function first(items: any[]): any {
   return items[0];
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>It works with every array because we stopped checking the interesting part.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It works with every array because we stopped checking the interesting
+          part.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>If we pass strings, the result should be a string. If we pass episodes, it should be an episode. <code>any</code> forgets that relationship.</span>
-        </p>
-<h2 id="a-type-parameter">A Type Parameter</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If we pass strings, the result should be a string. If we pass
+          episodes, it should be an episode. <code>any</code> forgets that
+          relationship.</span
+        >
+      </p>
+      <h2 id="a-type-parameter">A Type Parameter</h2>
 
-        <figure class="card code" aria-label="Code card 2">
-          <figcaption>Code card 2<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function first&lt;T&gt;(items: T[]): T {
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>ts</span></figcaption>
+        <pre tabindex="0"><code>function first&lt;T&gt;(items: T[]): T {
   return items[0];
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>T</code> is a type parameter—a placeholder for a type chosen when the function is used.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>T</code> is a type parameter—a placeholder for a type chosen
+          when the function is used.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Not a runtime variable.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not a runtime variable.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct. It exists in TypeScript’s type system and is erased.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It exists in TypeScript’s type system and is erased.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 3">
-          <figcaption>Code card 3<span>ts</span></figcaption>
-          <pre tabindex="0"><code>const firstTopic = first([&quot;types&quot;, &quot;functions&quot;]);
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const firstTopic = first([&quot;types&quot;, &quot;functions&quot;]);
 const firstNumber = first([10, 20]);</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript infers <code>T</code> as string in the first call and number in the second.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript infers <code>T</code> as string in the first call and
+          number in the second.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The output retains the element type of the input.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The output retains the element type of the input.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A generic is not “accept anything.” It is “accept many types while preserving a relationship.”</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A generic is not “accept anything.” It is “accept many types while
+          preserving a relationship.”</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly.</span>
-        </p>
-<h2 id="naming-the-relationship">Naming the Relationship</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="naming-the-relationship">Naming the Relationship</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Must the parameter be called <code>T</code>?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Must the parameter be called <code>T</code>?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No. Short names are conventional for simple cases; descriptive names help when relationships grow.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Short names are conventional for simple cases; descriptive names
+          help when relationships grow.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 4">
-          <figcaption>Code card 4<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function wrap&lt;Value&gt;(value: Value): { value: Value } {
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>function wrap&lt;Value&gt;(value: Value): { value: Value } {
   return { value };
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>Value</code> enters and the same <code>Value</code> appears inside the returned object.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>Value</code> enters and the same <code>Value</code> appears
+          inside the returned object.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That is the contract.</span>
-        </p>
-<h2 id="more-than-one-parameter">More Than One Parameter</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the contract.</span>
+      </p>
+      <h2 id="more-than-one-parameter">More Than One Parameter</h2>
 
-        <figure class="card code" aria-label="Code card 5">
-          <figcaption>Code card 5<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function pair&lt;Key, Value&gt;(key: Key, value: Value) {
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>function pair&lt;Key, Value&gt;(key: Key, value: Value) {
   return { key, value };
 }
 
 const entry = pair(&quot;episode&quot;, 6);</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>TypeScript infers string for <code>Key</code> and number for <code>Value</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript infers string for <code>Key</code> and number for
+          <code>Value</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Multiple parameters describe multiple connected unknowns.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Multiple parameters describe multiple connected unknowns.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>And if they are not actually connected to inputs or outputs?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if they are not actually connected to inputs or outputs?</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The generic may be unnecessary.</span>
-        </p>
-<h2 id="constraints">Constraints</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The generic may be unnecessary.</span>
+      </p>
+      <h2 id="constraints">Constraints</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Inside <code>first</code>, we know almost nothing about <code>T</code>. What if the function needs a property?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inside <code>first</code>, we know almost nothing about
+          <code>T</code>. What if the function needs a property?</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 6">
-          <figcaption>Code card 6<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function printTitle&lt;Item extends { title: string }&gt;(item: Item) {
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>function printTitle&lt;Item extends { title: string }&gt;(item: Item) {
   return item.title.toUpperCase();
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span><code>extends</code> constrains the type parameter. <code>Item</code> may be any type that has a string title.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>extends</code> constrains the type parameter.
+          <code>Item</code> may be any type that has a string title.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We preserve the specific item type while guaranteeing the property the implementation needs.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We preserve the specific item type while guaranteeing the property
+          the implementation needs.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Correct.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span><code>extends</code> here is TypeScript constraint syntax, not JavaScript class inheritance.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>extends</code> here is TypeScript constraint syntax, not
+          JavaScript class inheritance.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Same word, different type-system job.</span>
-        </p>
-<h2 id="generic-types">Generic Types</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Same word, different type-system job.</span>
+      </p>
+      <h2 id="generic-types">Generic Types</h2>
 
-        <figure class="card code" aria-label="Code card 7">
-          <figcaption>Code card 7<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type ApiResult&lt;Data&gt; =
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>ts</span></figcaption>
+        <pre tabindex="0"><code>type ApiResult&lt;Data&gt; =
   | { ok: true; data: Data }
   | { ok: false; error: string };</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>We can reuse the success-and-failure structure for episodes, users, or anything else.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can reuse the success-and-failure structure for episodes, users,
+          or anything else.</span
+        >
+      </p>
 
-        <figure class="card code" aria-label="Code card 8">
-          <figcaption>Code card 8<span>ts</span></figcaption>
-          <pre tabindex="0"><code>type EpisodeResult = ApiResult&lt;Episode[]&gt;;</code></pre>
-        </figure>
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>type EpisodeResult = ApiResult&lt;Episode[]&gt;;</code></pre>
+      </figure>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The type argument fills the placeholder.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The type argument fills the placeholder.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>This resembles calling a function with a value argument, except it happens entirely in the type system.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This resembles calling a function with a value argument, except it
+          happens entirely in the type system.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>That analogy is useful as long as we remember no generic object is created at runtime.</span>
-        </p>
-<h2 id="built-in-generics-were-already-here">Built-In Generics Were Already Here</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That analogy is useful as long as we remember no generic object is
+          created at runtime.</span
+        >
+      </p>
+      <h2 id="built-in-generics-were-already-here">
+        Built-In Generics Were Already Here
+      </h2>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>You have used generic types already.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You have used generic types already.</span>
+      </p>
 
-        <figure class="card code" aria-label="Code card 9">
-          <figcaption>Code card 9<span>ts</span></figcaption>
-          <pre tabindex="0"><code>Array&lt;string&gt;
+      <figure class="card code" aria-label="Code card 9">
+        <figcaption>Code card 9<span>ts</span></figcaption>
+        <pre tabindex="0"><code>Array&lt;string&gt;
 Promise&lt;Episode&gt;
 Map&lt;string, Episode&gt;</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The container stays the same while the contained or resolved type changes.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The container stays the same while the contained or resolved type
+          changes.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Exactly. <code>string[]</code> is convenient syntax for <code>Array&lt;string&gt;</code>.</span>
-        </p>
-<h2 id="when-generics-are-too-much">When Generics Are Too Much</h2>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. <code>string[]</code> is convenient syntax for
+          <code>Array&lt;string&gt;</code>.</span
+        >
+      </p>
+      <h2 id="when-generics-are-too-much">When Generics Are Too Much</h2>
 
-        <figure class="card code" aria-label="Code card 10">
-          <figcaption>Code card 10<span>ts</span></figcaption>
-          <pre tabindex="0"><code>function greet&lt;T extends string&gt;(name: T): string {
+      <figure class="card code" aria-label="Code card 10">
+        <figcaption>Code card 10<span>ts</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>function greet&lt;T extends string&gt;(name: T): string {
   return `Hello, ${name}`;
 }</code></pre>
-        </figure>
+      </figure>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Does this generic preserve anything callers need?</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does this generic preserve anything callers need?</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>No. A plain <code>name: string</code> communicates the contract better.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. A plain <code>name: string</code> communicates the contract
+          better.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Generic code is justified by a reusable relationship, not by the presence of angle brackets in the language.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Generic code is justified by a reusable relationship, not by the
+          presence of angle brackets in the language.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Yes. If one concrete type solves the actual problem, use it.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. If one concrete type solves the actual problem, use it.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Please Don’t Do This: build a type-level cathedral around a function that uppercases a name.</span>
-        </p>
-<h2 id="closing">Closing</h2>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Please Don’t Do This: build a type-level cathedral around a function
+          that uppercases a name.</span
+        >
+      </p>
+      <h2 id="closing">Closing</h2>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>A generic introduces a type placeholder.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A generic introduces a type placeholder.</span>
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Inference often fills it from the call. Constraints guarantee capabilities the implementation needs.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inference often fills it from the call. Constraints guarantee
+          capabilities the implementation needs.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>The important part is the relationship: input to output, key to value, container to contents.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important part is the relationship: input to output, key to
+          value, container to contents.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>Generics preserve information that <code>any</code> discards.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Generics preserve information that <code>any</code> discards.</span
+        >
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Which means next we need to meet <code>any</code> properly—and the two other ominous words, <code>unknown</code> and <code>never</code>.</span>
-        </p>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means next we need to meet <code>any</code> properly—and the
+          two other ominous words, <code>unknown</code> and
+          <code>never</code>.</span
+        >
+      </p>
 
-        <p class="dialogue jules">
-          <strong>Jules</strong>
-          <span>The escape hatches department.</span>
-        </p>
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The escape hatches department.</span>
+      </p>
 
-        <p class="dialogue parisa">
-          <strong>Parisa</strong>
-          <span>Okay. But why?</span>
-        </p></main>
-  <footer>10 code cards · 0 terminal cards</footer>
-</body>
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. But why?</span>
+      </p>
+    </main>
+    <footer>10 code cards · 0 terminal cards</footer>
+  </body>
 </html>

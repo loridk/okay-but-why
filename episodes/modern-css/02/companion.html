@@ -1,0 +1,1802 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 2: CSS Variables — Oh, So Sass Variables Aren't the Same Thing —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 2: CSS Variables — Oh, So Sass Variables Aren't the Same Thing
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/0ca47c03-8aa9-413f-b650-78f08d266293"
+      ></script>
+      <div class="redcirclePlayer-0ca47c03-8aa9-413f-b650-78f08d266293"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-sass-version-disappears">The Sass Version Disappears</a>
+        </li>
+        <li>
+          <a href="#the-css-version-stays-alive">The CSS Version Stays Alive</a>
+        </li>
+        <li>
+          <a href="#scope-is-the-element-not-the-file"
+            >Scope Is the Element, Not the File</a
+          >
+        </li>
+        <li>
+          <a href="#fallback-does-not-mean-polyfill"
+            >Fallback Does Not Mean Polyfill</a
+          >
+        </li>
+        <li><a href="#the-computed-value-trap">The Computed-Value Trap</a></li>
+        <li>
+          <a href="#wait-when-does-the-browser-resolve-this"
+            >Wait, When Does the Browser Resolve This?</a
+          >
+        </li>
+        <li>
+          <a href="#the-fallback-trap-has-a-basement"
+            >The Fallback Trap Has a Basement</a
+          >
+        </li>
+        <li>
+          <a href="#custom-properties-can-contain-more-than-one-little-value"
+            >Custom Properties Can Contain More Than One Little Value</a
+          >
+        </li>
+        <li>
+          <a href="#inheritance-is-the-delivery-system"
+            >Inheritance Is the Delivery System</a
+          >
+        </li>
+        <li>
+          <a href="#the-component-api-pattern">The Component API Pattern</a>
+        </li>
+        <li>
+          <a href="#local-values-can-be-more-useful-than-global-values"
+            >Local Values Can Be More Useful Than Global Values</a
+          >
+        </li>
+        <li>
+          <a href="#the-cascade-gives-us-state-without-rewriting-consumers"
+            >The Cascade Gives Us State Without Rewriting Consumers</a
+          >
+        </li>
+        <li>
+          <a href="#themes-are-just-cascaded-contexts"
+            >Themes Are Just Cascaded Contexts</a
+          >
+        </li>
+        <li>
+          <a href="#javascript-reads-the-computed-result-differently"
+            >JavaScript Reads the Computed Result Differently</a
+          >
+        </li>
+        <li><a href="#cycles-are-still-cycles">Cycles Are Still Cycles</a></li>
+        <li>
+          <a href="#property-is-runtime-validation-not-typescript"
+            >@property Is Runtime Validation, Not TypeScript</a
+          >
+        </li>
+        <li>
+          <a href="#animating-a-registered-property"
+            >Animating a Registered Property</a
+          >
+        </li>
+        <li>
+          <a href="#when-sass-and-custom-properties-work-together"
+            >When Sass and Custom Properties Work Together</a
+          >
+        </li>
+        <li><a href="#naming-is-architecture">Naming Is Architecture</a></li>
+        <li>
+          <a href="#debugging-the-value-chain">Debugging the Value Chain</a>
+        </li>
+        <li><a href="#registering-a-property">Registering a Property</a></li>
+        <li>
+          <a href="#javascript-can-touch-it-but-should-it"
+            >JavaScript Can Touch It, But Should It?</a
+          >
+        </li>
+        <li>
+          <a href="#design-tokens-without-magical-thinking"
+            >Design Tokens Without Magical Thinking</a
+          >
+        </li>
+        <li>
+          <a href="#please-don-t-theme-away-accessibility"
+            >Please Don't Theme Away Accessibility</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1
+        id="episode-2-css-variables-oh-so-sass-variables-aren-t-the-same-thing"
+      >
+        Episode 2: CSS Variables — Oh, So Sass Variables Aren't the Same Thing
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS variables.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Custom properties.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You corrected me before we reached the theme music.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >“CSS variable” is common and useful. “Custom property” tells us what
+          the thing actually is.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does this distinction matter, or are we polishing a noun?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It matters because a Sass variable and a CSS custom property live at
+          different times in different systems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. Two things with similar names and different physics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>, where today I learn that CSS
+          borrowed the word “variable” and brought its own definition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I'm Jules.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I'm Parisa, and I have used Sass variables for years.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which makes you exactly qualified to be suspicious.</span>
+      </p>
+      <h2 id="the-sass-version-disappears">The Sass Version Disappears</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Start with what I know.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>scss</span></figcaption>
+        <pre tabindex="0"><code>$brand: #6d28d9;
+
+.button {
+  background: $brand;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sass evaluates <code>$brand</code> while it compiles your SCSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser receives ordinary CSS with the value already
+          substituted.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button {
+  background: #6d28d9;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The dollar-sign variable is gone.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Completely. DevTools cannot inspect it. The cascade cannot override
+          it. JavaScript cannot change it because it no longer exists.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It was an authoring convenience.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Powerful at build time, absent at runtime.</span>
+      </p>
+      <h2 id="the-css-version-stays-alive">The CSS Version Stays Alive</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --brand: #6d28d9;
+}
+
+.button {
+  background: var(--brand);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Two hyphens declare the custom property, and <code>var()</code> asks
+          for its value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The browser keeps <code>--brand</code> as part of the live CSS
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So DevTools can show it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Another rule can override it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>JavaScript can update it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And it participates in the cascade.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the enormous difference.</span>
+      </p>
+      <h2 id="scope-is-the-element-not-the-file">
+        Scope Is the Element, Not the File
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass variables have lexical scope. What does scope mean here?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A custom property is declared on an element through a matching CSS
+          rule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Descendants normally inherit custom properties from their
+          parents.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --surface: white;
+  --text: #171717;
+}
+
+.dark-panel {
+  --surface: #171717;
+  --text: white;
+}
+
+.card {
+  color: var(--text);
+  background: var(--surface);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A card outside the dark panel gets the root values.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A card inside <code>.dark-panel</code> inherits the local
+          values.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same card CSS. Different environment.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The component exposes a tiny styling API through the cascade.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay, that's actually pretty cool.</span>
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        OKAY, THAT'S ACTUALLY PRETTY COOL
+      </h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass could generate two theme classes, but the Sass variable itself
+          would not change after compilation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Custom properties let the browser resolve the value where
+          the component actually lives.</span
+        >
+      </p>
+      <h2 id="fallback-does-not-mean-polyfill">
+        Fallback Does Not Mean Polyfill
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Explain the comma in <code>var(--brand, purple)</code>.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The second argument is a fallback when <code>--brand</code> has no
+          usable value.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button {
+  background: var(--button-background, var(--brand, rebeccapurple));
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Component value, then brand value, then a literal emergency
+          purple.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. But that fallback does not help a browser that does not
+          understand custom properties at all.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because that browser cannot understand <code>var()</code> enough to
+          use its fallback.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. This is a missing-value fallback, not a compatibility
+          polyfill.</span
+        >
+      </p>
+      <h2 id="the-computed-value-trap">The Computed-Value Trap</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Custom properties accept nearly any token stream, right?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which means this declaration can look valid initially.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --brand: 2rem;
+}
+
+.button {
+  color: red;
+  color: var(--brand);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But <code>2rem</code> is not a color.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser may not discover the mismatch until it substitutes the
+          value at computed-value time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The later <code>color</code> declaration becomes invalid then; it
+          does not simply rewind to the earlier red declaration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is subtle and unpleasant.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Welcome to values that stay dynamic.</span>
+      </p>
+      <h2 id="wait-when-does-the-browser-resolve-this">
+        Wait, When Does the Browser Resolve This?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want to slow down there, because “computed-value time” sounds like
+          a phrase people use when they want the room to stop asking
+          questions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair. CSS values move through stages.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We are not doing the entire value-processing specification.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We are not. The useful version is that the browser first parses
+          declarations, then combines the cascade and inheritance, then resolves
+          values in the context of the actual element.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a custom property can survive the first stage because its
+          contents are deliberately flexible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The browser cannot always know whether those contents make
+          sense until <code>var()</code> substitutes them into a real
+          property.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So <code>--thing: 2rem</code> is not inherently wrong.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It could be perfect for padding.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It becomes wrong when I use it as a color.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>css</span></figcaption>
+        <pre tabindex="0"><code>.example {
+  --thing: 2rem;
+  padding: var(--thing);
+  color: var(--thing);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same token. Valid padding. Invalid color.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The custom property itself does not know which job you will give
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like hiring someone called Alex and assuming that tells you whether
+          they are the accountant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That metaphor is doing human resources now.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The point is: custom properties are reusable token containers, and
+          the consuming property provides the grammar.</span
+        >
+      </p>
+      <h2 id="the-fallback-trap-has-a-basement">
+        The Fallback Trap Has a Basement
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let me try to protect the color.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>css</span></figcaption>
+        <pre tabindex="0"><code>.example {
+  --thing: 2rem;
+  color: var(--thing, rebeccapurple);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Surely I get purple because <code>2rem</code> is not a color.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I dislike the speed of that answer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The fallback belongs to <code>var()</code>. It is used when the
+          referenced custom property is missing or otherwise has no usable
+          custom-property value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here, <code>--thing</code> exists and its value is a perfectly valid
+          token sequence for a custom property.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The failure happens later, when <code>color</code> tries to consume
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right. By then the fallback branch was not selected.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So fallbacks are not type guards.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is the sort of detail a five-line tutorial skips and a
+          production design system eventually discovers at 2 a.m.</span
+        >
+      </p>
+      <h2 id="custom-properties-can-contain-more-than-one-little-value">
+        Custom Properties Can Contain More Than One Little Value
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A custom property can hold pieces of a larger declaration too.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 9">
+        <figcaption>Code card 9<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card {
+  --card-shadow: 0 0.25rem 1rem rgb(0 0 0 / 18%);
+  box-shadow: var(--card-shadow);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Or a comma-separated font stack.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or part of a transform list, a gradient stop, a grid track list, even
+          an empty value in some composition patterns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is powerful and also why names need to reveal expected
+          shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>--space-card</code> communicates more than
+          <code>--medium</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>--button-background-hover</code> communicates more than
+          <code>--purple-7</code>, at least at the component boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can have primitive palette tokens underneath and semantic tokens
+          above them.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 10">
+        <figcaption>Code card 10<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --violet-700: #6d28d9;
+  --violet-800: #5b21b6;
+  --color-action: var(--violet-700);
+  --color-action-hover: var(--violet-800);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The component asks for a role. The theme decides which palette value
+          serves that role.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That indirection makes theme changes possible without teaching every
+          component a new color name.</span
+        >
+      </p>
+      <h2 id="inheritance-is-the-delivery-system">
+        Inheritance Is the Delivery System
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let's make inheritance concrete.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 11">
+        <figcaption>Code card 11<span>html</span></figcaption>
+        <pre tabindex="0"><code>&lt;section class=&quot;promo&quot;&gt;
+  &lt;article class=&quot;card&quot;&gt;
+    &lt;h2&gt;One weird trick involving the cascade&lt;/h2&gt;
+  &lt;/article&gt;
+&lt;/section&gt;</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 12">
+        <figcaption>Code card 12<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  --card-accent: navy;
+}
+
+.promo {
+  --card-accent: darkorange;
+}
+
+.card h2 {
+  color: var(--card-accent);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The heading does not match <code>.promo</code> directly, but it
+          inherits <code>--card-accent</code> through its ancestors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does <code>.card</code> need to redeclare it?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No. It inherits too.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if <code>.card</code> provides its own value?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then descendants inherit the card's local value instead.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why scope is not “which CSS file contains the
+          declaration.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Files disappear as an organizational concern after CSS is
+          loaded. The cascade operates on declarations matched to
+          elements.</span
+        >
+      </p>
+      <h2 id="the-component-api-pattern">The Component API Pattern</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Show me a component that deliberately accepts values from
+          outside.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 13">
+        <figcaption>Code card 13<span>css</span></figcaption>
+        <pre tabindex="0"><code>.alert {
+  --alert-surface: #eef6ff;
+  --alert-border: #2563eb;
+
+  color: var(--alert-text, #172554);
+  background: var(--alert-surface);
+  border-inline-start: 0.3rem solid var(--alert-border);
+}
+
+.danger-zone {
+  --alert-surface: #fff1f2;
+  --alert-border: #be123c;
+  --alert-text: #881337;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The alert owns safe defaults. An ancestor can customize documented
+          hooks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And internal variables can stay internal by convention.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS does not enforce private visibility, so naming and documentation
+          matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A double hyphen is not encapsulation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It is a custom-property naming requirement, not a privacy
+          curtain.</span
+        >
+      </p>
+      <h2 id="local-values-can-be-more-useful-than-global-values">
+        Local Values Can Be More Useful Than Global Values
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Every custom-property tutorial starts with <code>:root</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:root</code> is useful for genuinely global tokens, but it is
+          not mandatory.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If only a pricing card needs <code>--badge-offset</code>, declare it
+          on the pricing card.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That keeps the meaning near its owner and reduces accidental
+          coupling.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 14">
+        <figcaption>Code card 14<span>css</span></figcaption>
+        <pre tabindex="0"><code>.pricing-card {
+  --badge-offset: 0.75rem;
+}
+
+.pricing-card__badge {
+  inset-block-start: var(--badge-offset);
+  inset-inline-end: var(--badge-offset);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Global dumping grounds are not design systems either.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:root</code> can become the new <code>utilities.scss</code>—a
+          place where values go to avoid answering who owns them.</span
+        >
+      </p>
+      <h2 id="the-cascade-gives-us-state-without-rewriting-consumers">
+        The Cascade Gives Us State Without Rewriting Consumers
+      </h2>
+
+      <figure class="card code" aria-label="Code card 15">
+        <figcaption>Code card 15<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button {
+  --button-bg: #6d28d9;
+  background: var(--button-bg);
+}
+
+.button:hover {
+  --button-bg: #5b21b6;
+}
+
+.button[aria-pressed=&quot;true&quot;] {
+  --button-bg: #3730a3;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The <code>background</code> declaration appears once.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >States change the input custom property rather than repeating the
+          consuming declaration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That becomes especially useful when several declarations derive from
+          the same state token.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Or when nested children consume it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But <code>aria-pressed</code> must reflect real button behavior. CSS
+          observing an ARIA state does not implement the state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Accessibility remains a behavior and semantics problem, not a
+          selector costume.</span
+        >
+      </p>
+      <h2 id="themes-are-just-cascaded-contexts">
+        Themes Are Just Cascaded Contexts
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We should demystify theming.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A theme is often a group of semantic values applied at some
+          boundary.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 16">
+        <figcaption>Code card 16<span>css</span></figcaption>
+        <pre tabindex="0"><code>:root {
+  color-scheme: light dark;
+  --surface: #ffffff;
+  --text: #171717;
+}
+
+[data-theme=&quot;dark&quot;] {
+  --surface: #171717;
+  --text: #f5f5f5;
+}
+
+body {
+  color: var(--text);
+  background: var(--surface);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JavaScript may store and apply the user's explicit choice, but CSS
+          carries the values through the document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can also start with <code>prefers-color-scheme</code> when there
+          is no explicit override.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And <code>color-scheme</code> tells the browser which schemes the
+          page supports so built-in controls and browser-provided surfaces can
+          participate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A dark background alone is not a dark theme. Form controls, focus,
+          images, shadows, syntax highlighting, and contrast all need
+          testing.</span
+        >
+      </p>
+      <h2 id="javascript-reads-the-computed-result-differently">
+        JavaScript Reads the Computed Result Differently
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If JavaScript asks
+          <code>element.style.getPropertyValue('--brand')</code>, what does it
+          get?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Only an inline declaration on that element through the
+          <code>style</code> object.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not an inherited value from a stylesheet.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For the computed value, use
+          <code>getComputedStyle(element).getPropertyValue('--brand')</code
+          >.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 17">
+        <figcaption>Code card 17<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const card = document.querySelector(&quot;.card&quot;);
+const styles = getComputedStyle(card);
+const accent = styles.getPropertyValue(&quot;--card-accent&quot;).trim();</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is JavaScript using browser APIs to inspect the cascade's
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It is not reading a Sass module or parsing your source
+          file.</span
+        >
+      </p>
+      <h2 id="cycles-are-still-cycles">Cycles Are Still Cycles</h2>
+
+      <figure class="card code" aria-label="Code card 18">
+        <figcaption>Code card 18<span>css</span></figcaption>
+        <pre tabindex="0"><code>.example {
+  --a: var(--b);
+  --b: var(--a);
+  color: var(--a, purple);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The properties depend on each other, so neither resolves
+          usefully.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Cyclic custom-property references become invalid.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The fallback on the consuming <code>var()</code> can then
+          matter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. Dynamic graphs can have dynamic mistakes.</span>
+      </p>
+      <h2 id="property-is-runtime-validation-not-typescript">
+        @property Is Runtime Validation, Not TypeScript
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I want the TypeScript-series distinction on record.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Go for it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript checks source during development and erases its types
+          before JavaScript runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>@property</code> changes how the browser handles a custom
+          property at runtime.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser knows its syntax, inheritance rule, and initial value
+          while resolving CSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So an invalid assigned value can fall back to the registered initial
+          value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Different boundary. Different guarantee.</span>
+      </p>
+      <h2 id="animating-a-registered-property">
+        Animating a Registered Property
+      </h2>
+
+      <figure class="card code" aria-label="Code card 19">
+        <figcaption>Code card 19<span>css</span></figcaption>
+        <pre tabindex="0"><code>@property --ring-angle {
+  syntax: &quot;&lt;angle&gt;&quot;;
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.loading-ring {
+  background: conic-gradient(
+    from var(--ring-angle),
+    rebeccapurple,
+    transparent
+  );
+  animation: spin-ring 1s linear infinite;
+}
+
+@keyframes spin-ring {
+  to { --ring-angle: 360deg; }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Registration tells the browser this is an angle, so it knows how to
+          interpolate between values.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Without registration, a generic custom property usually changes
+          discretely because the browser sees an opaque token sequence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And because this animation is continuous, we need a reduced-motion
+          decision.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 20">
+        <figcaption>Code card 20<span>css</span></figcaption>
+        <pre tabindex="0"><code>@media (prefers-reduced-motion: reduce) {
+  .loading-ring {
+    animation: none;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plus accessible status text. A spinning gradient does not tell a
+          screen reader that loading is happening.</span
+        >
+      </p>
+      <h2 id="when-sass-and-custom-properties-work-together">
+        When Sass and Custom Properties Work Together
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have contrasted them. Let's let them cooperate.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 21">
+        <figcaption>Code card 21<span>scss</span></figcaption>
+        <pre tabindex="0"><code>$themes: (
+  ocean: (#075985, #e0f2fe),
+  plum: (#6b21a8, #faf5ff)
+);
+
+@each $name, $colors in $themes {
+  [data-theme=&quot;#{$name}&quot;] {
+    --theme-strong: #{nth($colors, 1)};
+    --theme-soft: #{nth($colors, 2)};
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sass generates theme selectors and their starting values.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The emitted custom properties remain live and inheritable in the
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Build-time generation feeding runtime behavior.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The tools are not rivals in a prophecy.</span>
+      </p>
+      <h2 id="naming-is-architecture">Naming Is Architecture</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Should a library call its property <code>--color</code>?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please don't.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Custom-property names share the cascade. Generic names collide and
+          communicate nothing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Prefix public library properties, use semantic roles, and distinguish
+          global tokens from component hooks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Something like <code>--obw-card-surface</code> is less glamorous and
+          far easier to search.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Document accepted value shapes too, especially for unregistered
+          properties.</span
+        >
+      </p>
+      <h2 id="debugging-the-value-chain">Debugging the Value Chain</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My button is the wrong purple. What do I inspect?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Select the button in DevTools. Find the consuming declaration.
+          Inspect the resolved custom property and the declarations that
+          contributed to it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check inheritance, matched selectors, media queries, layers, state
+          selectors, and spelling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Custom-property names are case-sensitive.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So <code>--brandColor</code> and <code>--brandcolor</code> are
+          different properties, because apparently we needed one more way to
+          lose an afternoon.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also inspect whether the final substituted value is valid for the
+          consuming property.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not stare only at <code>:root</code>. The winning value may be
+          local.</span
+        >
+      </p>
+      <h2 id="registering-a-property">Registering a Property</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>@property</code> lets you register a custom property with a
+          type, inheritance behavior, and initial value.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 22">
+        <figcaption>Code card 22<span>css</span></figcaption>
+        <pre tabindex="0"><code>@property --progress {
+  syntax: &quot;&lt;percentage&gt;&quot;;
+  inherits: false;
+  initial-value: 0%;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the browser now knows <code>--progress</code> must be a
+          percentage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, and because it knows the type, it can interpolate the value for
+          animation instead of treating it as an opaque string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does this make CSS runtime TypeScript?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you for preventing the headline.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is registration and validation for one custom property, not a
+          general type system for stylesheets.</span
+        >
+      </p>
+      <h2 id="javascript-can-touch-it-but-should-it">
+        JavaScript Can Touch It, But Should It?
+      </h2>
+
+      <figure class="card code" aria-label="Code card 23">
+        <figcaption>Code card 23<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>document.documentElement.style.setProperty(&quot;--progress&quot;, &quot;65%&quot;);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is JavaScript calling a DOM API, not special CSS syntax.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. JavaScript changes the property on an element, and CSS
+          consumes it wherever the cascade makes it available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Useful for data-driven values.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But do not move every design decision into JavaScript just
+          because you can.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >State and data can cross the boundary; ordinary hover and responsive
+          styling can stay in CSS.</span
+        >
+      </p>
+      <h2 id="design-tokens-without-magical-thinking">
+        Design Tokens Without Magical Thinking
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>People call custom properties design tokens.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Custom properties can carry design-token values: colors, spacing,
+          typography, motion, borders.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But naming a hex code <code>--color-primary</code> does not create a
+          design system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A design system also needs meaning, constraints,
+          documentation, components, accessibility decisions, and
+          maintenance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Otherwise we have a bag of variables wearing a lanyard.</span>
+      </p>
+      <h2 id="please-don-t-theme-away-accessibility">
+        Please Don't Theme Away Accessibility
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Runtime theming makes it easy to swap colors.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It also makes it easy to swap accessible colors for two fashionable
+          grays that differ only spiritually.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Every theme still needs contrast testing, visible focus, readable
+          states, and support for forced colors where relevant.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not assume a mathematically tidy token scale is perceptually tidy
+          for humans.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A Sass variable is evaluated by Sass during the build and disappears
+          into the generated CSS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A custom property remains in the browser, participates in the
+          cascade, and normally inherits.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><code>var()</code> reads it and can provide a missing-value
+          fallback.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The fallback is not support for browsers that do not understand
+          custom properties.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Values can fail at computed-value time.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>@property</code> can register a type, initial value, and
+          inheritance behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Custom properties are brilliant for contextual components and theming
+          because the live document helps resolve them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And Sass variables remain useful for build-time computation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Similar punctuation. Different universe.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next time: Flexbox and Grid.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Two layout systems because apparently one was not enough.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It turns out rows and spreadsheets are different problems.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Tell that to every email layout I built in 2007.</span>
+      </p>
+    </main>
+    <footer>23 code cards · 0 terminal cards</footer>
+  </body>
+</html>

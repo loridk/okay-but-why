@@ -1,0 +1,2746 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 1: What Happened to CSS? — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: What Happened to CSS?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/d4fc5a53-03e6-47a0-94b8-f8bd660a1b23"
+      ></script>
+      <div class="redcirclePlayer-d4fc5a53-03e6-47a0-94b8-f8bd660a1b23"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#first-css-was-never-just-decoration"
+            >First: CSS Was Never Just Decoration</a
+          >
+        </li>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#the-browser-war-hangover">The Browser War Hangover</a>
+        </li>
+        <li><a href="#enter-the-preprocessors">Enter the Preprocessors</a></li>
+        <li><a href="#css-did-not-become-css4">CSS Did Not Become CSS4</a></li>
+        <li><a href="#what-changed">What Changed?</a></li>
+        <li>
+          <a href="#a-card-that-knows-where-it-lives"
+            >A Card That Knows Where It Lives</a
+          >
+        </li>
+        <li>
+          <a href="#who-actually-makes-css-happen"
+            >Who Actually Makes CSS Happen?</a
+          >
+        </li>
+        <li>
+          <a href="#why-did-it-seem-to-happen-suddenly"
+            >Why Did It Seem to Happen Suddenly?</a
+          >
+        </li>
+        <li>
+          <a href="#baseline-is-a-better-question"
+            >Baseline Is a Better Question</a
+          >
+        </li>
+        <li>
+          <a href="#modern-css-does-not-mean-abandoning-old-browsers"
+            >Modern CSS Does Not Mean Abandoning Old Browsers</a
+          >
+        </li>
+        <li>
+          <a href="#please-don-t-use-modern-as-an-accessibility-excuse"
+            >Please Don't Use “Modern” as an Accessibility Excuse</a
+          >
+        </li>
+        <li>
+          <a href="#did-native-css-replace-sass-and-frameworks"
+            >Did Native CSS Replace Sass and Frameworks?</a
+          >
+        </li>
+        <li>
+          <a href="#css-is-becoming-more-component-aware"
+            >CSS Is Becoming More Component-Aware</a
+          >
+        </li>
+        <li>
+          <a href="#what-modern-css-still-does-not-do"
+            >What Modern CSS Still Does Not Do</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-1-what-happened-to-css">
+        Episode 1: What Happened to CSS?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I would like to file a complaint.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Against whom?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's a broad defendant.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Specifically, CSS for quietly becoming good while I was busy
+          maintaining websites.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You think CSS used to be bad?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. I think CSS used to be extremely capable at the things it was
+          designed to do, and extremely hostile toward several things designers
+          kept asking us to do anyway.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Like centering.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do not say that word casually in front of people my age.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sorry.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We have scars.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>From <code>vertical-align</code>?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It knows what it did.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>, the show where developers are
+          allowed to ask why the platform changed while they were using the
+          platform.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'm Parisa. I have written CSS professionally since table layouts
+          were becoming embarrassing but had not yet become extinct.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And I'm Jules. I entered web development in a world where Flexbox
+          existed, although half the tutorials still explained floats first for
+          reasons no one could defend.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Historical reenactment.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today we're starting a series called
+          <em>Wait, CSS Does That Now?</em></span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because apparently CSS has variables.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Nesting.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Parent-ish selectors.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The relational pseudo-class <code>:has()</code>, but yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Container queries.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Actual color math.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And layouts that don't require me to float every child left and then
+          apologize to the parent element.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What the hell happened?</span>
+      </p>
+      <h2 id="first-css-was-never-just-decoration">
+        First: CSS Was Never Just Decoration
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Before we declare a miraculous recovery, what was CSS actually for
+          when you started?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Separating presentation from structure.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>HTML says this is a heading, a paragraph, a list, a button.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS says how those things should be presented.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And presentation is not just making the heading purple.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It includes layout, spacing, typography, visual hierarchy, different
+          media, interaction states, user preferences—</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So “CSS makes it pretty” is underselling it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wildly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS affects whether the page is readable, usable, adaptable, and
+          understandable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It has always been part of the interface logic.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But not programming logic in the JavaScript sense.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Right. CSS is a declarative style-sheet language.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I describe the result and the conditions. The browser figures out how
+          to lay it out and paint it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I do not write a loop that visits every paragraph and manually
+          calculates where it goes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Thankfully.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The browser also participates.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My rules interact with the document, the viewport, available fonts,
+          user settings, default browser styles, content I may not know in
+          advance, and the cascade.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The cascade being the part everyone blames when they wrote seventeen
+          selectors and lost track of them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cascade is not a bug. It is a conflict-resolution system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Put that on a shirt.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Specificity did not betray you. You failed to understand the
+          constitution.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Less marketable.</span>
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So if CSS already had a real job, why does older CSS have such a
+          reputation?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because the web changed faster than its layout tools did.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Early CSS came from a document-oriented world.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pages flow from top to bottom. Text wraps. Blocks stack. Images sit
+          with text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is useful and resilient.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A document can still make sense before your stylesheet loads.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Exactly. That is a feature.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But then clients wanted application interfaces, magazine layouts,
+          equal-height columns, vertically centered everything, complex
+          responsive cards, sticky footers—</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And a carousel.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There is always a carousel.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Product says engagement.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessibility says stop moving the content while I am trying to read
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We were asking tools made for document flow to imitate increasingly
+          complex graphic and application layouts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So we got inventive.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>“Inventive” sounds ominous.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Floats were designed so content could wrap around something, like an
+          image.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We used them to build entire page columns.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is like using a coat hook as structural steel.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It works right up until someone adds a winter coat.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.column {
+  float: left;
+  width: 33.333%;
+}
+
+.row::after {
+  content: &quot;&quot;;
+  display: table;
+  clear: both;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That clearfix pseudo-element exists because floated children can stop
+          contributing to the normal height of their parent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We generated invisible content to repair the layout side effect of
+          using a text-wrapping feature as a grid.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Web development is beautiful.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We also used tables for layout before standards and accessibility
+          finally chased us down an alley.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We used background images for gradients and rounded corners.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We sliced designs into tiny images.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We used negative margins with the confidence of people defusing a
+          bomb.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We wrote JavaScript to measure things CSS could not respond to.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And if the content changed?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Then the bomb beeped faster.</span>
+      </p>
+      <h2 id="the-browser-war-hangover">The Browser War Hangover</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Was the problem only missing features?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Absolutely not.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There was also inconsistent browser support.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different engines interpreted parts of CSS differently. Internet
+          Explorer had bugs that became part of your architecture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We used conditional comments, CSS hacks, browser-specific
+          stylesheets—</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Vendor prefixes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Later, yes. <code>-webkit-</code>, <code>-moz-</code>,
+          <code>-ms-</code>, <code>-o-</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >You could write the same experimental property several times and hope
+          future you remembered to remove the archaeology.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>css</span></figcaption>
+        <pre tabindex="0"><code>.button {
+  -webkit-border-radius: 0.5rem;
+     -moz-border-radius: 0.5rem;
+          border-radius: 0.5rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>For rounded corners.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>For rounded corners.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A thing I now type once without emotion.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Must be nice.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It is.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Browser compatibility tables were not optional reading.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And “supported” did not always mean “works the same in the exact
+          combination we need.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That part remains true.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Modern does not mean magic, and browser testing did not retire
+          to Florida.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But the baseline is dramatically better.</span>
+      </p>
+      <h2 id="enter-the-preprocessors">Enter the Preprocessors</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This is where Sass enters?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass, Less, Stylus. Tools that let us write a more capable source
+          language and compile it into CSS browsers understood.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compile meaning the browser never reads your
+          <code>.scss</code> file.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. A build tool processes it first and emits ordinary CSS.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>scss</span></figcaption>
+        <pre tabindex="0"><code>$brand: #7c3aed;
+
+.card {
+  color: $brand;
+
+  a {
+    text-decoration: none;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Variables and nesting.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plus mixins, functions, partials, imports, loops, color
+          helpers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>These tools solved real authoring problems.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They let us organize large style systems, reuse values, generate
+          repetitive rules, and write code closer to how we thought about
+          components.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So this series is not “Sass was stupid and native CSS saved
+          us.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>God, no.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sass helped demonstrate what authors needed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Frameworks did too.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Bootstrap's grid was a relief because it packaged years of layout
+          knowledge and browser fixes into a convention a team could
+          share.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Even if every website briefly looked like Bootstrap.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We were tired.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Understandable.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But preprocessors have a fundamental limitation: most of their
+          cleverness happens before the page runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Build time.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yes. A Sass variable is replaced while compiling.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It does not participate in the browser's cascade. It does not inherit
+          through the live document. JavaScript cannot change the original Sass
+          variable after the CSS ships.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Whereas a CSS custom property exists in the page at runtime.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why “CSS has variables now” is true but also
+          misleading.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They solve overlapping problems in fundamentally different
+          ways.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is Episode 2.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good. Because I have opinions.</span>
+      </p>
+      <h2 id="css-did-not-become-css4">CSS Did Not Become CSS4</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So did all these new features arrive in CSS4?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No, and this naming situation is not your fault.</span>
+      </p>
+      <h3 id="wait-that-s-just-css">WAIT, THAT'S JUST CSS</h3>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>CSS1 and CSS2 were broad versions of the language.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>After CSS2, the work was split into modules.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Selectors can evolve separately from Color, Grid, Containment,
+          Cascade, Fonts, and so on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Those modules have their own levels.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “Selectors Level 4” can exist without a single thing called
+          CSS4.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That sounds more practical for specification writers and less
+          practical for anyone trying to answer “What version of CSS do you
+          know?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The honest answer is that CSS is now a collection of independently
+          evolving modules.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There is no monolithic CSS4 release where every new feature arrives
+          together.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So “modern CSS” is not a formal version.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It is shorthand for the newer capabilities that have become
+          useful and interoperable enough for real projects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And the exact boundary moves.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Constantly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. A term with vibes instead of borders.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Web developers love those.</span>
+      </p>
+      <h2 id="what-changed">What Changed?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give me the headline version. What can CSS do now that changes how we
+          build?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>First, purpose-built layout.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Flexbox handles relationships mainly along one dimension—a row or a
+          column.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Grid handles two-dimensional layout with rows and columns
+          together.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Instead of impersonating a layout system with floats.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Second, CSS has much better intrinsic and fluid sizing.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Functions like <code>min()</code>, <code>max()</code>, and
+          <code>clamp()</code> let values respond within limits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Grid features like <code>minmax()</code> and flexible tracks can let
+          content and available space negotiate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Meaning fewer breakpoints where I arbitrarily announce that a tablet
+          begins at 768 pixels.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Often, yes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third, custom properties give you reusable values that remain part of
+          the cascade at runtime.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fourth, container queries let a component respond to the space it
+          actually has, not only the width of the browser window.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That one feels overdue.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fifth, selectors got much more expressive.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:is()</code> and <code>:where()</code> help group selectors
+          with different specificity behavior. <code>:has()</code> lets you
+          style an element based on relative selectors—often based on what it
+          contains.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The “parent selector” people requested for twenty years.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>More powerful and slightly more precise than that nickname.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine. The parent-selector-adjacent relationship wizard.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sixth, cascade layers give authors explicit control over categories
+          of style precedence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Native nesting reduces repetition.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Logical properties support layouts across writing modes and
+          directions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Modern color spaces and functions give us better color control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Media queries can respond to user preferences like reduced motion,
+          contrast, and color scheme.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is not one upgrade. That is a neighborhood being rebuilt.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+      <h2 id="a-card-that-knows-where-it-lives">
+        A Card That Knows Where It Lives
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give me one example where this changes the way I think, not merely
+          the number of properties I can memorize.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Imagine a reusable article card.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sometimes it appears in a wide main-content area.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sometimes it appears in a narrow sidebar.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes another team puts it inside a dashboard panel you have
+          never seen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So, a component in captivity.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Traditionally, you might make the card respond to the viewport.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>css</span></figcaption>
+        <pre tabindex="0"><code>@media (min-width: 60rem) {
+  .article-card {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But that only says the browser is wide.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The card itself could still be trapped in a fourteen-rem
+          sidebar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So you add modifier classes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or the parent layout knows about the child's internal design.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Or JavaScript measures the component and toggles something.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >None of which is inherently evil, but the card is not truly
+          portable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Its layout decision lives somewhere else.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With a size container query, the card can respond to the space
+          offered by its container.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>css</span></figcaption>
+        <pre tabindex="0"><code>.card-region {
+  container-type: inline-size;
+}
+
+@container (width &gt; 32rem) {
+  .article-card {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So the page layout provides a container.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The component decides what to do when that container has enough
+          inline space.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Not “desktop card” and “mobile card.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wide-enough card and not-wide-enough card.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the mental shift.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And <code>inline-size</code> is using the writing direction's inline
+          axis rather than hard-coding physical width behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Look at you previewing logical properties.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I contain multitudes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This one example combines several modern-CSS themes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The browser understands layout relationships directly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The component can adapt using live information.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the rule describes a condition instead of making JavaScript
+          continuously calculate presentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is not just nicer syntax.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is a capability we did not have.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay, that's actually pretty cool.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have a section for that later.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Put this one on the tab.</span>
+      </p>
+      <h2 id="who-actually-makes-css-happen">Who Actually Makes CSS Happen?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>When you say “CSS gained a feature,” who did the gaining?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because CSS is not a software package someone deploys on
+          Friday.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Right. Several groups are involved.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>People propose and discuss capabilities.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The CSS Working Group develops specifications.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Browser-engine teams implement those specifications.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Web-platform tests help check whether implementations agree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Developers use the features, find edge cases, and report
+          problems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the specification is not code that gets installed into Chrome,
+          Firefox, and Safari.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It defines expected behavior.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Each browser engine implements that behavior in its own
+          codebase.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which explains how two browsers can both claim support and still
+          disagree in some miserable corner.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Specifications can also change as implementation exposes
+          problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is less like handing three contractors the same finished cabinet
+          and more like handing them an extremely detailed cabinet specification
+          while everyone continues debating one hinge.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And then millions of developers put production dishes in the
+          cabinets.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The metaphor has become load-bearing.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Appropriate.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cross-browser efforts called Interop focus attention on areas where
+          consistent implementation needs improvement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Meaning browser makers collaborate on shared tests and priority areas
+          even though they still build different engines.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That matters because a feature being present everywhere is not enough
+          if it behaves differently everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Interoperability is the actual prize.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I would like that on the shirt instead.</span>
+      </p>
+      <h2 id="why-did-it-seem-to-happen-suddenly">
+        Why Did It Seem to Happen Suddenly?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Here is what confuses me.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS did not update for years and then wake up in 2023 after a spa
+          weekend.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So why does it feel sudden?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Because several timelines overlap.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A feature is proposed.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then specified.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then implemented experimentally in one browser.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then implemented elsewhere.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then bugs and disagreements get resolved.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then support becomes broad enough for your project's users.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then articles appear saying you can finally use it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And then I notice it eighteen months later while looking up something
+          unrelated.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a feature can be “in CSS” without being a sensible production
+          choice for me.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Absolutely.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The specification's maturity and real browser interoperability are
+          related, but they are not the same question.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And support percentage is not my actual audience.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Your analytics, device requirements, embedded browsers, accessibility
+          needs, and cost of a fallback all matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There is also a social lag.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Once a workaround becomes standard, teams keep teaching it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Tutorials survive long after the browser bugs they address.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Stack Overflow answers become geological layers.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Framework abstractions can hide what the platform gained underneath
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And people who got burned by early support stop checking.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. “I tried Grid once and it did not work in IE” can quietly
+          become a five-year policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >To be fair, IE could turn one afternoon into a personality
+          trait.</span
+        >
+      </p>
+      <h2 id="baseline-is-a-better-question">Baseline Is a Better Question</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So how do I know whether a feature is ready without maintaining a
+          conspiracy wall of browser versions?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compatibility data still matters, but there is a newer shared
+          vocabulary called Baseline.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Define it without marketing.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Baseline describes whether web-platform features work across a
+          defined set of widely used browser engines.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A feature can be newly available across those engines, and after
+          enough time it can be considered widely available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So it answers a more useful question than “Does Chrome have
+          it?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It helps answer whether the feature is interoperable across the
+          core browser set.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But it still does not decide my support policy for me.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Baseline is evidence, not permission from the web pope.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good. I was worried there was paperwork.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You still decide what happens in older browsers.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which brings us to progressive enhancement.</span>
+      </p>
+      <h2 id="modern-css-does-not-mean-abandoning-old-browsers">
+        Modern CSS Does Not Mean Abandoning Old Browsers
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where someone says, “Just use the new thing; users should
+          update.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Not us.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Progressive enhancement means we begin with a functional experience,
+          then add capabilities where the browser supports them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And CSS is unusually good at this because of forward-compatible
+          parsing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Meaning when a browser does not understand a declaration, it
+          generally ignores that declaration instead of setting the computer on
+          fire.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Precisely.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>.title {
+  font-size: 2rem;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An older browser that does not understand <code>clamp()</code> can
+          keep the first valid size.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A newer browser uses the later, fluid value.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There is also <code>@supports</code> when you need to test whether a
+          property-value combination or selector is understood.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>css</span></figcaption>
+        <pre tabindex="0"><code>.cards {
+  display: block;
+}
+
+@supports (display: grid) {
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Although we should not wrap every modern feature in
+          <code>@supports</code> reflexively.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If the fallback naturally works through the cascade, keep it
+          simple.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And sometimes the right decision is that an old browser gets a less
+          fancy layout, not an identical layout recreated with twelve kilobytes
+          of hacks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Feature support does not have to mean visual sameness.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It means the experience still works.</span>
+      </p>
+      <h2 id="please-don-t-use-modern-as-an-accessibility-excuse">
+        Please Don't Use “Modern” as an Accessibility Excuse
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>New CSS features can help accessibility.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They can also help you make a beautiful inaccessible interface
+          faster.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS does not repair bad HTML semantics.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Styling a <code>div</code> to look like a button does not make it a
+          button.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reordering content visually with Grid or Flexbox can create a
+          different experience from the keyboard or screen-reader order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Removing focus outlines is still hostile.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Animation still needs restraint and respect for reduced-motion
+          preferences.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Text still needs adequate contrast and room to resize.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So modern capability increases responsibility.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It increases options. Responsibility was already there.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair correction.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, do not use a fancy new selector when clear HTML would solve the
+          actual problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:has()</code> is not a substitute for understanding the
+          document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Neither is Tailwind.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sabrina is going to have thoughts when we reach that episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. She can explain why everyone put the stylesheet directly inside
+          the class attribute while I stare into the middle distance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is not exactly—</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I know. I am saving the argument.</span>
+      </p>
+      <h2 id="did-native-css-replace-sass-and-frameworks">
+        Did Native CSS Replace Sass and Frameworks?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If CSS has variables, nesting, color functions, and powerful layout,
+          do we still need Sass?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sometimes.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Diplomatic.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The correct answer depends on which Sass features your project uses
+          and what problem they solve.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you mainly wanted nesting, reusable values, and color
+          manipulation, native CSS may now cover much more of your need.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you rely on build-time loops, mixins that generate whole rule
+          sets, modules, or a mature design-system pipeline, Sass may still earn
+          its place.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Native CSS and Sass can also coexist.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yes. This is not Highlander. There can be more than one.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What about frameworks?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same question: what problem are they solving for your team?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A framework can provide conventions, components, constraints,
+          documentation, and shared vocabulary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native CSS gaining a capability does not automatically reproduce that
+          organizational value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But you should periodically check whether the abstraction is still
+          paying rent.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not keep a dependency because it solved a browser problem in 2014
+          and nobody has looked behind the curtain since.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also do not rip out a stable system because you saw a cool demo on
+          Tuesday.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Newer is not automatically better.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Older is not automatically safer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Both require thinking. Annoying, I know.</span>
+      </p>
+      <h2 id="css-is-becoming-more-component-aware">
+        CSS Is Becoming More Component-Aware
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I think one theme connects a lot of the newer features.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Go on.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS is getting better at expressing relationships that belong to
+          components rather than only pages.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Custom properties can inherit into a component.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Container queries let the component respond to its own available
+          space.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          ><code>:has()</code> can respond to its contents or state
+          relationships.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Subgrid can align nested content with a parent grid.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cascade layers can make the ordering between resets, third-party
+          styles, components, and utilities explicit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So we are not merely collecting shinier properties.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We are gaining primitives for architecture.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That may be the real answer to what happened.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Old CSS was brilliant at document flow and the cascade, but we
+          stretched it into systems it could not describe directly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Tooling and community patterns filled the gaps.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the platform gradually absorbed many of the proven needs—without
+          necessarily copying the exact solution.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is the key.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS custom properties are not Sass variables implemented by the
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Grid is not Bootstrap's grid with the class names removed.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Native nesting is not character-for-character Sass nesting.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The platform has its own constraints because it has to work live, in
+          the browser, with the cascade, unknown content, user preferences, and
+          backwards compatibility.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And multiple browser engines have to agree on what it means.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Minor detail.</span>
+      </p>
+      <h2 id="what-modern-css-still-does-not-do">
+        What Modern CSS Still Does Not Do
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Time to ruin the victory lap.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Naturally.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS still does not make product decisions.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not choose good semantic HTML.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not guarantee your design works with real content.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It does not test keyboard navigation.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It does not decide whether an animation helps or merely demands
+          attention.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It also does not eliminate JavaScript.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Right.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you need application state, data fetching, complex event logic, or
+          behavior beyond what HTML and CSS express, JavaScript still
+          exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Unfortunately for our job security.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS can now handle interactions people once reached for JavaScript to
+          implement, but “can” and “should” remain different words.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And experimental features are still experimental.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A beautiful browser demo is not a support strategy.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor is a social-media post titled “You Don't Need JavaScript
+          Anymore.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >You almost certainly still need JavaScript. You may need less of it
+          for this one interaction.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Recap.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS was never merely decoration.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is a declarative language for presenting structured documents
+          across different conditions and media.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Early CSS's natural document flow was resilient, but web design
+          demanded layouts and interface patterns the available tools could not
+          directly express.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So developers repurposed floats, used tables, images, hacks,
+          JavaScript, preprocessors, and frameworks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those were not all foolish mistakes. Many were practical responses to
+          real constraints.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser standards, implementations, and interoperability improved
+          over time.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And CSS gained purpose-built tools: Flexbox, Grid, custom properties,
+          intrinsic sizing, container queries, richer selectors, layers,
+          nesting, logical properties, better color, user-preference
+          queries—</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This is why it feels like CSS suddenly does everything.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>But there is no monolithic CSS4.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>CSS evolves in separate modules with separate levels.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Modern CSS” is informal shorthand, and what counts as safe depends
+          on browser interoperability and your actual audience.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Baseline and compatibility data can inform that decision.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Progressive enhancement lets newer browsers get richer presentation
+          while the core experience keeps working.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And native features do not automatically make Sass, frameworks, or
+          JavaScript useless.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We ask what problem each tool solves and whether we still have that
+          problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There it is.</span>
+      </p>
+      <h3 id="okay-that-s-actually-pretty-cool">
+        OKAY, THAT'S ACTUALLY PRETTY COOL
+      </h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I think what is actually cool is not that CSS stole features from our
+          tools.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It learned from decades of people trying to build things the language
+          could not yet express cleanly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And now some of those capabilities exist at the browser level, where
+          they can respond to the actual document instead of being compiled away
+          before the page loads.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That is a much better answer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do not sound surprised.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Never.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next time: CSS custom properties.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also known as CSS variables.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Except they are not Sass variables with the dollar sign replaced by
+          two hyphens.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They inherit.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They participate in the cascade.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They still exist at runtime.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yep.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Oh, that is going to change some things.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Wait until we theme a component by setting one property on its
+          parent.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. That sounds like witchcraft I can get behind.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          ><em>Okay, But Why?</em> is a podcast about understanding the
+          technology we use instead of pretending we already do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next episode: CSS Variables — Oh, So Sass Variables Aren't the Same
+          Thing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I knew that name was suspiciously convenient.</span>
+      </p>
+    </main>
+    <footer>7 code cards · 0 terminal cards</footer>
+  </body>
+</html>

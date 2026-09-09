@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: Tailwind — Why Are There 900 Classes in My HTML? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 10: Tailwind — Why Are There 900 Classes in My HTML?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/b8fa4c6e-b485-4e34-82ba-6f63e851853e"
+      ></script>
+      <div class="redcirclePlayer-b8fa4c6e-b485-4e34-82ba-6f63e851853e"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#what-tailwind-actually-is">What Tailwind Actually Is</a>
+        </li>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#the-appeal-is-not-i-hate-css"
+            >The Appeal Is Not “I Hate CSS”</a
+          >
+        </li>
+        <li>
+          <a href="#variants-encode-conditions">Variants Encode Conditions</a>
+        </li>
+        <li>
+          <a href="#tailwind-v4-is-more-css-shaped"
+            >Tailwind v4 Is More CSS-Shaped</a
+          >
+        </li>
+        <li><a href="#the-html-objection">The HTML Objection</a></li>
+        <li><a href="#composition-has-costs">Composition Has Costs</a></li>
+        <li>
+          <a href="#please-don-t-make-accessibility-a-class-puzzle"
+            >Please Don't Make Accessibility a Class Puzzle</a
+          >
+        </li>
+        <li>
+          <a href="#dynamic-class-names-can-disappear"
+            >Dynamic Class Names Can Disappear</a
+          >
+        </li>
+        <li><a href="#when-tailwind-fits">When Tailwind Fits</a></li>
+        <li>
+          <a href="#when-plain-css-may-be-nicer">When Plain CSS May Be Nicer</a>
+        </li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-10-tailwind-why-are-there-900-classes-in-my-html">
+        Episode 10: Tailwind — Why Are There 900 Classes in My HTML?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Intern!</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We discussed summoning coworkers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I need an explanation and you have lost speaking privileges because
+          you own a hoodie.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That standard seems inconsistent.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >First, I am twenty-two. Second, what did the children do now?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>They put CSS back in the HTML.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Ah. Tailwind.</span>
+      </p>
+      <h2 id="what-tailwind-actually-is">What Tailwind Actually Is</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Tailwind is a utility-first CSS framework.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Define utility-first before showing me the class attribute that ate
+          Cincinnati.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Instead of starting with a component class like
+          <code>.card</code> and writing a custom rule, you compose many small
+          classes that each express a limited styling decision.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;article class=&quot;rounded-xl bg-white p-6 shadow-lg&quot;&gt;
+  &lt;h2 class=&quot;text-xl font-bold text-slate-900&quot;&gt;Release notes&lt;/h2&gt;
+&lt;/article&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Rounded corners, background, padding, shadow, font size, weight,
+          color—all visible in the markup.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Yes. Tailwind scans project source and produces the CSS needed for
+          the utilities it finds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So those class names are not inline styles.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Correct. They map to generated CSS rules and can include states,
+          responsive variants, container variants, and theme tokens.</span
+        >
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Utility-first styling responds to problems teams hit in large CSS
+          codebases.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Naming every wrapper. Growing stylesheets. Dead rules nobody can
+          confidently delete. New component classes that duplicate existing
+          declarations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also the distance between editing markup and finding the stylesheet
+          that controls it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tailwind makes the dependency local and constrains choices to a
+          shared scale.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The class list becomes an API over a design system.</span>
+      </p>
+      <h2 id="the-appeal-is-not-i-hate-css">The Appeal Is Not “I Hate CSS”</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Some people absolutely use it because they do not enjoy naming
+          things.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Finally, honesty.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >But serious teams like it because it can make constraints consistent
+          and changes predictable.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I can review <code>p-4</code> and know it uses the spacing scale. I
+          do not need to hunt for whether
+          <code>.special-panel-inner</code> means fourteen, sixteen, or nineteen
+          pixels.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Unless someone uses an arbitrary value.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Yes. The escape hatch can turn the design system into “whatever was
+          convenient at 4:47.”</span
+        >
+      </p>
+      <h2 id="variants-encode-conditions">Variants Encode Conditions</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;button class=&quot;bg-violet-700 px-4 py-2 text-white
+               hover:bg-violet-800
+               focus-visible:outline-4
+               disabled:cursor-not-allowed disabled:opacity-50&quot;&gt;
+  Save
+&lt;/button&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Prefixes express conditions. Hover, focus-visible, disabled state,
+          media queries, dark mode, container queries, data attributes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tailwind generates selectors and at-rules from that vocabulary.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Right. It is still CSS doing the work in the browser.</span>
+      </p>
+      <h2 id="tailwind-v4-is-more-css-shaped">
+        Tailwind v4 Is More CSS-Shaped
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Current Tailwind uses CSS-first configuration and theme
+          variables.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>css</span></figcaption>
+        <pre tabindex="0"><code>@import &quot;tailwindcss&quot;;
+
+@theme {
+  --color-brand: oklch(55% 0.18 285);
+  --spacing: 0.25rem;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These theme variables influence which utility classes Tailwind
+          creates.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And Tailwind exposes them as CSS custom properties in generated
+          output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is meaningfully different from the older JavaScript-config
+          mental model.</span
+        >
+      </p>
+      <h2 id="the-html-objection">The HTML Objection</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My concern is not purity. It is readability and repeated bundles of
+          decisions.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Fair. A long class attribute can be noisy.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If twelve cards repeat thirty utilities, where does the component
+          abstraction live?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Ideally in the component system. A React <code>Card</code> component
+          can own the repeated markup and class list.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Tailwind often assumes HTML itself is already generated through
+          components or templates.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >It fits that workflow well. In static hand-authored HTML, the
+          tradeoff can feel different.</span
+        >
+      </p>
+      <h2 id="composition-has-costs">Composition Has Costs</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Utility composition makes local changes easy, but cross-project
+          changes may require component abstractions, search-and-replace, or
+          tooling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Semantic class names can describe purpose. Utility classes describe
+          implementation choices.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Neither guarantees maintainability.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A class named <code>.warning</code> can hide chaos. A utility list
+          can expose every decision but obscure intent.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Good components often provide the intent:
+          <code>&lt;Alert tone=&quot;warning&quot;&gt;</code>, with utilities
+          implementing it internally.</span
+        >
+      </p>
+      <h2 id="please-don-t-make-accessibility-a-class-puzzle">
+        Please Don't Make Accessibility a Class Puzzle
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Utilities do not create semantics.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A <code>div</code> with <code>cursor-pointer</code> and a hover color
+          is still not a button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Responsive utilities can visually reorder content with the same
+          accessibility risks as authored CSS.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Focus states, contrast, target size, reduced motion, forced colors,
+          and disabled behavior still require deliberate decisions.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Tailwind can make good states easy to reuse. It can also make
+          omitting them easy.</span
+        >
+      </p>
+      <h2 id="dynamic-class-names-can-disappear">
+        Dynamic Class Names Can Disappear
+      </h2>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>jsx</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// The scanner may not recognize a class assembled this way.
+&lt;div className={`text-${color}-700`} /&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Build tools generally discover complete class-name strings in
+          source.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Constructing arbitrary fragments can prevent the corresponding rule
+          from being generated.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>const tones = {
+  error: &quot;text-red-700&quot;,
+  success: &quot;text-green-700&quot;,
+};
+
+&lt;p className={tones[tone]} /&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Map state to complete, reviewable class strings.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Better for tooling and easier to audit.</span>
+      </p>
+      <h2 id="when-tailwind-fits">When Tailwind Fits</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A component-driven product with a shared token system, many
+          contributors, and a team comfortable with utilities.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Especially when rapid composition and constrained choices matter more
+          than prose-like markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And when the team agrees on component boundaries so utilities are not
+          copied into fifty places by hand.</span
+        >
+      </p>
+      <h2 id="when-plain-css-may-be-nicer">When Plain CSS May Be Nicer</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A small site. Rich bespoke editorial styling. A team fluent in modern
+          CSS. Markup that must remain easy for non-framework contributors to
+          read.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or an existing maintainable codebase where migration buys
+          little.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Tailwind is not an upgrade badge. If it does not solve your problem,
+          it is just another dependency and vocabulary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Intern, you may stay.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>I was not asking.</span>
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tailwind is a utility-first framework that generates CSS from class
+          usage in project sources.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It makes styling decisions local and can enforce shared design
+          constraints.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Variants express conditions, and modern Tailwind leans heavily on
+          native CSS features and theme variables.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cost is dense markup, a framework-specific vocabulary, and
+          potential repetition without good component boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It does not replace semantic HTML, accessibility judgment, or CSS
+          knowledge.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >It is excellent when its workflow matches the team's problems and
+          deeply annoying when it does not.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What problem does this solve, and do we actually have that
+          problem?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Look at that. We agreed without anyone being declared obsolete.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sabrina, thank you for defending the children.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>Again, twenty-two.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next: logical properties and CSS that stops assuming everyone reads
+          like us.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I am leaving before she asks me to translate
+          <code>margin-left</code>.</span
+        >
+      </p>
+    </main>
+    <footer>5 code cards · 0 terminal cards</footer>
+  </body>
+</html>

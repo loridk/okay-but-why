@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 8: Sass in 2026 — Are We Still Doing This? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Modern CSS — Wait, CSS Does That Now? episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 8: Sass in 2026 — Are We Still Doing This?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/e7789f20-3e92-4548-99c3-806e20141b45"
+      ></script>
+      <div class="redcirclePlayer-e7789f20-3e92-4548-99c3-806e20141b45"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#what-sass-actually-is">What Sass Actually Is</a></li>
+        <li>
+          <a href="#what-we-originally-needed">What We Originally Needed</a>
+        </li>
+        <li><a href="#the-overlap-is-real">The Overlap Is Real</a></li>
+        <li>
+          <a href="#build-time-versus-runtime-again"
+            >Build Time Versus Runtime Again</a
+          >
+        </li>
+        <li>
+          <a href="#modules-not-ancient-imports"
+            >Modules, Not Ancient Imports</a
+          >
+        </li>
+        <li>
+          <a href="#mixins-can-earn-their-keep">Mixins Can Earn Their Keep</a>
+        </li>
+        <li><a href="#functions-and-color">Functions and Color</a></li>
+        <li>
+          <a href="#migration-is-not-a-moral-achievement"
+            >Migration Is Not a Moral Achievement</a
+          >
+        </li>
+        <li><a href="#a-decision-test">A Decision Test</a></li>
+        <li>
+          <a href="#what-did-we-actually-learn">What Did We Actually Learn?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <h1 id="episode-8-sass-in-2026-are-we-still-doing-this">
+        Episode 8: Sass in 2026 — Are We Still Doing This?
+      </h1>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CSS has variables and nesting. Is Sass dead?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The internet has declared Sass dead approximately once per new CSS
+          feature.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And yet Dart Sass has releases and my projects still compile.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A troubling sign of life.</span>
+      </p>
+      <h2 id="what-sass-actually-is">What Sass Actually Is</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sass is a stylesheet language compiled into CSS.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The browser does not execute Sass.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Sass runs during development or a build, evaluates its
+          language features, and emits CSS.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That boundary explains both its powers and its limits.</span>
+      </p>
+      <h2 id="what-we-originally-needed">What We Originally Needed</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Variables, nesting, partials, imports, mixins, functions, loops,
+          calculations, reusable libraries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And an organizational model for stylesheets too large to keep in one
+          file called <code>final-final-2.css</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass solved those problems before native CSS had comparable
+          tools.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>scss</span></figcaption>
+        <pre tabindex="0"><code>@mixin focus-ring($color) {
+  outline: 3px solid $color;
+  outline-offset: 3px;
+}
+
+.button:focus-visible {
+  @include focus-ring(#7c3aed);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The mixin generates declarations at build time.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native custom properties cannot generate arbitrary groups of
+          declarations.</span
+        >
+      </p>
+      <h2 id="the-overlap-is-real">The Overlap Is Real</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native CSS now has custom properties, nesting, math functions, color
+          functions, cascade layers, and imports understood by modern build
+          pipelines and browsers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So projects using Sass mainly for variables and modest nesting may no
+          longer need it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Removing it could reduce dependencies and build configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But “native has a similarly named feature” does not prove
+          equivalence.</span
+        >
+      </p>
+      <h2 id="build-time-versus-runtime-again">
+        Build Time Versus Runtime Again
+      </h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>scss</span></figcaption>
+        <pre tabindex="0"><code>$columns: 4;
+
+@for $index from 1 through $columns {
+  .span-#{$index} {
+    grid-column: span $index;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass can loop and generate four separate selectors before the browser
+          sees anything.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS custom properties cannot create selectors or property names
+          through <code>var()</code>.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, Sass cannot react to a component's live inherited theme
+          unless it emits CSS that uses runtime features.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Often the useful answer is both: Sass for generation, custom
+          properties for runtime variation.</span
+        >
+      </p>
+      <h2 id="modules-not-ancient-imports">Modules, Not Ancient Imports</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Modern Sass organizes libraries with <code>@use</code> and
+          <code>@forward</code>.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They provide namespaces and explicit APIs instead of dumping
+          everything into one global scope.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>scss</span></figcaption>
+        <pre tabindex="0"><code>@use &quot;tokens&quot; as tokens;
+
+.card {
+  padding: tokens.$space-lg;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Old Sass <code>@import</code> is legacy architecture, not the model
+          to choose for a new system.</span
+        >
+      </p>
+      <h2 id="mixins-can-earn-their-keep">Mixins Can Earn Their Keep</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A mixin can centralize a complicated, repeated declaration
+          pattern.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can also hide twenty declarations behind a friendly name and
+          generate enormous CSS everywhere it is included.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Reuse in source does not guarantee reuse in output.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inspect the compiled CSS. The browser pays for output, not elegance
+          in the SCSS file.</span
+        >
+      </p>
+      <h2 id="functions-and-color">Functions and Color</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sass has mature build-time functions and data structures.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native CSS color functions now solve more live color problems,
+          including mixing and relative adjustments.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which should you choose?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask whether the value must respond at runtime. If themes,
+          inheritance, or live state matter, keep the calculation in CSS when
+          support fits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If you need to generate a fixed scale or validate a build-time
+          configuration, Sass may be appropriate.</span
+        >
+      </p>
+      <h2 id="migration-is-not-a-moral-achievement">
+        Migration Is Not a Moral Achievement
+      </h2>
+      <h3 id="please-don-t-do-this">PLEASE DON'T DO THIS</h3>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Do not remove Sass from a stable project merely to announce that you
+          removed Sass.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inventory what it does first: module structure, third-party
+          libraries, functions, mixins, generated utilities, asset paths,
+          compatibility processing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Replace capabilities deliberately and compare output.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also do not add Sass automatically to a new project before plain CSS
+          becomes painful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Dependencies should solve present problems, not provide emotional
+          support.</span
+        >
+      </p>
+      <h2 id="a-decision-test">A Decision Test</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Are you only using variables?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Try custom properties.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Only shallow nesting?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Native nesting may be enough.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Need loops that generate selectors, custom build-time functions, or a
+          shared Sass library?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sass still has a concrete job.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Need runtime theming and contextual components?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use native CSS capabilities, whether or not Sass also
+          participates.</span
+        >
+      </p>
+      <h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sass compiles to CSS and offers a real programming model at build
+          time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native CSS now overlaps with several reasons teams originally adopted
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Similar features differ because native CSS participates in the live
+          browser environment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sass still provides loops, mixins, functions, modules, and generation
+          that native custom properties do not.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Existing projects deserve an audit, not a trend-driven rewrite.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >New projects should add Sass only when its current benefits justify
+          its cost.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sass is neither dead nor mandatory.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Nuance survives another episode.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Next: PostCSS.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which is not Sass with a different logo.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The bar is on the floor, and yet I appreciate the
+          clarification.</span
+        >
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

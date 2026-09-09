@@ -1,0 +1,1232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 12: Injection — Stop Concatenating Untrusted Shit — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Cybersecurity episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 12: Injection — Stop Concatenating Untrusted Shit</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata" aria-label="Episode audio"><source src="cybersecurity-12.wav" type="audio/wav">Your browser does not support the audio player.</audio>
+    <!-- Replace the local player with this episode's RedCircle embed when published. -->
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#the-core-pattern">The Core Pattern</a></li>
+<li><a href="#sql-injection">SQL Injection</a></li>
+<li><a href="#parameterized-queries">Parameterized Queries</a></li>
+<li><a href="#orms">ORMs</a></li>
+<li><a href="#command-injection">Command Injection</a></li>
+<li><a href="#ldap-and-nosql-injection">LDAP and NoSQL Injection</a></li>
+<li><a href="#server-side-template-injection">Server-Side Template Injection</a></li>
+<li><a href="#input-validation-helps-but-it-is-not-the-primary-boundary">Input Validation Helps, But It Is Not the Primary Boundary</a></li>
+<li><a href="#least-privilege-limits-damage">Least Privilege Limits Damage</a></li>
+<li><a href="#error-messages">Error Messages</a></li>
+<li><a href="#please-don-t-do-this">Please Don’t Do This</a></li>
+<li><a href="#okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</a></li>
+<li><a href="#parameterization-is-a-structural-fix">Parameterization Is a Structural Fix</a></li>
+<li><a href="#dynamic-queries-are-where-developers-get-tempted">Dynamic Queries Are Where Developers Get Tempted</a></li>
+<li><a href="#stored-procedures-are-not-automatically-safe">Stored Procedures Are Not Automatically Safe</a></li>
+<li><a href="#second-order-injection">Second-Order Injection</a></li>
+<li><a href="#blind-sql-injection">Blind SQL Injection</a></li>
+<li><a href="#command-injection-vs-argument-injection">Command Injection vs. Argument Injection</a></li>
+<li><a href="#path-traversal-is-a-cousin-not-exactly-the-same-bug">Path Traversal Is a Cousin, Not Exactly the Same Bug</a></li>
+<li><a href="#template-injection-vs-xss">Template Injection vs. XSS</a></li>
+<li><a href="#deserialization">Deserialization</a></li>
+<li><a href="#ldap-injection-example">LDAP Injection Example</a></li>
+<li><a href="#nosql-does-not-mean-no-injection">NoSQL Does Not Mean No Injection</a></li>
+<li><a href="#input-validation-allowlist-when-you-can">Input Validation: Allowlist When You Can</a></li>
+<li><a href="#database-privileges">Database Privileges</a></li>
+<li><a href="#detection">Detection</a></li>
+<li><a href="#old-person-yells-at-cloud">Old Person Yells at Cloud</a></li>
+<li><a href="#security-corner">Security+ Corner</a></li>
+<li><a href="#what-did-we-actually-learn">What Did We Actually Learn?</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>SELECT * FROM users WHERE username = '</code> plus user input plus <code>'</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I haven’t even finished.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You finished the vulnerability.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Fair.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Injection.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The family of bugs where the application confuses untrusted data with instructions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="the-core-pattern">The Core Pattern</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A system builds a command in some language.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>SQL.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Shell.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>LDAP query.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Template expression.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attacker controls part of the string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And syntax from that input changes the meaning of the command.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Data becomes code again.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Same conceptual family as XSS, different interpreter.</span>
+        </p>
+<h2 id="sql-injection">SQL Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Classic example.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Unsafe query concatenation:</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>SELECT * FROM users WHERE name = '</code> plus <code>name</code> plus <code>'</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Attacker provides input containing SQL syntax.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe changes the WHERE clause.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Maybe adds a second statement if the driver permits it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The root bug is not “apostrophes are dangerous.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The root bug is combining code and data into one parseable string.</span>
+        </p>
+<h2 id="parameterized-queries">Parameterized Queries</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The primary defense is parameterization.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Prepared statements.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Placeholders.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Bound parameters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The database receives query structure separately from values.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So input like <code>' OR 1=1 --</code> remains a value instead of becoming SQL syntax.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is why escaping is a weaker and more error-prone primary strategy than parameterization.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="orms">ORMs</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>ORMs usually parameterize normal query APIs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Usually.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But raw-query escape hatches can bring injection right back.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“We use an ORM” is not proof that injection is impossible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>You have learned the show’s central security sentence.</span>
+        </p>
+<h2 id="command-injection">Command Injection</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Now swap the database interpreter for a shell.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Application builds a command like <code>convert </code> plus filename.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If attacker-controlled input reaches a shell unsafely, shell metacharacters may execute additional commands.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Defense: avoid invoking shells when possible.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Use APIs that pass arguments as discrete values rather than one shell command string.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="ldap-and-nosql-injection">LDAP and NoSQL Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>SQL is not special.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Any interpreter with structured syntax can be abused if data is inserted unsafely.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>LDAP filters.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>NoSQL query objects.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>XPath.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Template engines.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The recurring question is: does attacker input influence executable syntax?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="server-side-template-injection">Server-Side Template Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Template injection can get nasty.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If a server-side template engine evaluates attacker-controlled template syntax, the attacker may gain access to objects, secrets, or even remote code execution depending on the engine.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Important distinction from simply putting attacker text into a template variable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Safe variable interpolation is different from treating user input as the template itself.</span>
+        </p>
+<h2 id="input-validation-helps-but-it-is-not-the-primary-boundary">Input Validation Helps, But It Is Not the Primary Boundary</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Validate that age is numeric.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Restrict enum values.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But “we validate input” does not replace parameterized queries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Input validation enforces business expectations.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Parameterization enforces code/data separation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Beautiful distinction.</span>
+        </p>
+<h2 id="least-privilege-limits-damage">Least Privilege Limits Damage</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If SQL injection reaches a database account that can only read one schema—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Damage is more limited than if the application connects as database root.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Least privilege returns.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It will never leave.</span>
+        </p>
+<h2 id="error-messages">Error Messages</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Verbose database errors can help an attacker.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They may reveal table names, syntax, framework details, or query structure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Developers need useful logs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Users need safe error messages.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="please-don-t-do-this">Please Don’t Do This</h2>
+<h3 id="please-don-t-do-this-2">PLEASE DON’T DO THIS</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>String-concatenate SQL with user input.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Build shell commands from raw request parameters.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Attempt to blacklist every evil character.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Please don’t.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“We removed semicolons, therefore SQL injection is solved.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Security through punctuation.</span>
+        </p>
+<h2 id="okay-that-s-actually-pretty-cool">Okay, That’s Actually Pretty Cool</h2>
+<h3 id="okay-that-s-actually-pretty-cool-2">OKAY, THAT’S ACTUALLY PRETTY COOL</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Injection is interpreter confusion.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yep.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We intend attacker input to be data.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The interpreter sees part of it as instructions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Separate code from data at the API boundary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That’s the principle.</span>
+        </p>
+<h2 id="parameterization-is-a-structural-fix">Parameterization Is a Structural Fix</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I want to linger on prepared statements because people hear “use parameters” like it’s a style preference.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>It changes how the database parses the operation.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The SQL structure is parsed as SQL.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The values are supplied separately.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That means user input does not get another chance to rewrite the query grammar.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is fundamentally stronger than manually escaping quote characters and hoping we covered every edge case.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="dynamic-queries-are-where-developers-get-tempted">Dynamic Queries Are Where Developers Get Tempted</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What about dynamic sorting?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>User chooses <code>name</code>, <code>date</code>, or <code>price</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Values can be parameterized easily.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Identifiers like column names often cannot be parameterized the same way.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So whitelist allowed identifiers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Map user choice <code>&quot;date&quot;</code> to a hard-coded known column.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not concatenate arbitrary <code>sortBy</code> into SQL because “it isn’t a value.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This is a great example where validation genuinely is part of the safe construction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+<h2 id="stored-procedures-are-not-automatically-safe">Stored Procedures Are Not Automatically Safe</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Stored procedures?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Can be safe if they use parameters properly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But if the stored procedure itself constructs dynamic SQL from strings—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Injection can return.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security does not care which file contains the concatenation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="second-order-injection">Second-Order Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Here’s a nasty one: second-order injection.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Malicious input is stored safely at first, then later used unsafely in another command.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So request one does not exploit anything.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Data enters database as text.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Later an admin report builds dynamic SQL using that stored value.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the payload becomes active then.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“It came from our database” does not mean trusted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Excellent.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Databases can contain attacker-controlled data.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="blind-sql-injection">Blind SQL Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>What if the application doesn’t print database errors or query results?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Injection can still exist.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span><strong>Blind SQL injection</strong> infers information from application behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>True condition returns one response.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>False condition returns another.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Or time-based techniques cause measurable delays.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So hiding errors is good hygiene, not a fix.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+<h2 id="command-injection-vs-argument-injection">Command Injection vs. Argument Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Shell execution has subtleties too.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Avoiding a shell eliminates many metacharacter parsing problems.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But an attacker-controlled argument might still change the behavior of the invoked program.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Filename beginning with <code>--option</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Depending on the command.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So safe process APIs plus input validation for the target program’s semantics.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right.</span>
+        </p>
+<h2 id="path-traversal-is-a-cousin-not-exactly-the-same-bug">Path Traversal Is a Cousin, Not Exactly the Same Bug</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span><code>../../etc/passwd</code>.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Path traversal.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not classic injection into a programming language, but still attacker input changing how the application resolves a resource.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Defense includes canonical path handling, allowlisted locations, safe APIs, and not treating raw user paths as authority.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Good to distinguish categories without pretending they are unrelated.</span>
+        </p>
+<h2 id="template-injection-vs-xss">Template Injection vs. XSS</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We just did XSS.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>How is server-side template injection different?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>XSS reaches the browser’s JavaScript or HTML execution context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Server-side template injection reaches the template engine on the server.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which may have much more dangerous server privileges.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Depending on engine, attacker could read files or execute server-side code.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Potentially.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So “template” does not automatically mean frontend.</span>
+        </p>
+<h2 id="deserialization">Deserialization</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does insecure deserialization fit this same mental family?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Adjacent.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The application treats attacker-controlled serialized data as trusted object structure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which can sometimes trigger unexpected code paths or object construction behavior.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Again: untrusted data crossing into a powerful interpreter or runtime.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That broader mental model is useful.</span>
+        </p>
+<h2 id="ldap-injection-example">LDAP Injection Example</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Suppose authentication code builds an LDAP filter from username input.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If special filter syntax is concatenated unsafely, input may change the search logic.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Same disease.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Different interpreter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="nosql-does-not-mean-no-injection">NoSQL Does Not Mean No Injection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I remember the phase where people said MongoDB meant SQL injection was gone.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>SQL injection, specifically, perhaps.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Injection as a class? No.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If an API accepts JSON and the code passes unvalidated objects directly into a query, attackers may inject query operators.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Technology replacement does not repeal trust boundaries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Another recurring lesson.</span>
+        </p>
+<h2 id="input-validation-allowlist-when-you-can">Input Validation: Allowlist When You Can</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If a field should be one of <code>small</code>, <code>medium</code>, or <code>large</code>—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Accept exactly those values.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If a number must be between one and ten—</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Enforce that.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>This reduces weird application states and some attack opportunities.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But if the value later becomes SQL, still parameterize it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Validation and safe execution APIs solve different layers.</span>
+        </p>
+<h2 id="database-privileges">Database Privileges</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Let’s make least privilege concrete.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Application only needs SELECT, INSERT, UPDATE on three tables.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Don’t connect as a database superuser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If injection happens, attacker should not automatically gain <code>DROP DATABASE</code>, user administration, or filesystem privileges.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Separate migration credentials from runtime credentials.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Excellent practice.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Application runtime does not need permission to alter its own schema in many production designs.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly.</span>
+        </p>
+<h2 id="detection">Detection</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Can WAFs detect injection?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They can detect many common patterns.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful layer.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not an excuse to concatenate queries.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Logs can show unusual query errors, strange parameters, command failures.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>But don’t log sensitive data unnecessarily.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Security monitoring has privacy consequences too.</span>
+        </p>
+<h2 id="old-person-yells-at-cloud">Old Person Yells at Cloud</h2>
+<h3 id="old-person-yells-at-cloud-2">OLD PERSON YELLS AT CLOUD</h3>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>PHP gave us PDO prepared statements ages ago.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yet every generation of developers rediscovers string concatenation in a new abstraction.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>JavaScript template literals made strings nicer, not safer as query builders.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Backticks are not a security feature.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Wait, That’s Just JavaScript: template literals are JavaScript syntax, not query parameterization.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Beautiful use of the bit.</span>
+        </p>
+<h2 id="security-corner">Security+ Corner</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Recognize SQL injection, command injection, and other injection flaws as application attacks.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Know parameterization, safe APIs, least privilege, validation, and secure error handling as defenses.</span>
+        </p>
+<h2 id="what-did-we-actually-learn">What Did We Actually Learn?</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Do not build executable syntax by concatenating untrusted strings.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Use parameters and structured APIs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Validation helps enforce expected values but does not replace code/data separation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And least privilege limits impact if a flaw still exists.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Next: CSRF, CORS, and same-origin policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Three acronyms developers regularly confuse.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>

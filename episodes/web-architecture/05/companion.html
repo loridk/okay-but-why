@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Episode 5: How We Got SPAs — The Page Refuses to Leave — Listening Companion</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="companion-page">
+  <a class="skip-link" href="#script">Skip to script</a>
+  <header>
+    <p><a href="../index.html">← Back to Web Architecture episodes</a></p>
+    <p>Okay, But Why? — Listening Companion</p>
+    <h1>Episode 5: How We Got SPAs — The Page Refuses to Leave</h1>
+    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <audio controls preload="metadata"><source src="web-architecture-05.mp3" type="audio/mpeg">Your browser does not support the audio player.</audio>
+  </header>
+  <nav aria-label="Episode sections"><h2>Episode sections</h2><ul><li><a href="#the-interaction-that-didn-t-need-a-whole-new-document">The Interaction That Didn't Need a Whole New Document</a></li>
+<li><a href="#what-makes-an-application-single-page">What Makes an Application Single-Page?</a></li>
+<li><a href="#what-the-browser-now-owns">What the Browser Now Owns</a></li>
+<li><a href="#sabrina-and-the-dispatch-board">Sabrina and the Dispatch Board</a></li>
+<li><a href="#loading-became-a-product-state">Loading Became a Product State</a></li>
+<li><a href="#racing-requests">Racing Requests</a></li>
+<li><a href="#the-accessibility-jobs-we-took-over">The Accessibility Jobs We Took Over</a></li>
+<li><a href="#startup-cost-and-later-smoothness">Startup Cost and Later Smoothness</a></li>
+<li><a href="#offline-is-a-separate-promise">Offline Is a Separate Promise</a></li>
+<li><a href="#three-kinds-of-state-in-one-screen">Three Kinds of State in One Screen</a></li>
+<li><a href="#the-back-button-is-a-requirement">The Back Button Is a Requirement</a></li>
+<li><a href="#the-deep-link-and-the-server">The Deep Link and the Server</a></li>
+<li><a href="#updating-the-app-while-someone-uses-it">Updating the App While Someone Uses It</a></li>
+<li><a href="#optimistic-updates-with-a-recovery-story">Optimistic Updates With a Recovery Story</a></li>
+<li><a href="#one-screen-several-failure-boundaries">One Screen, Several Failure Boundaries</a></li>
+<li><a href="#when-we-would-choose-it">When We Would Choose It</a></li>
+<li><a href="#the-choice-we-can-explain-to-staff">The Choice We Can Explain to Staff</a></li>
+<li><a href="#closing-a-trade-not-an-upgrade-badge">Closing — A Trade, Not an Upgrade Badge</a></li></ul></nav>
+  <main id="script">
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The app is described as single-page.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Yes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It has a dashboard, settings, order history, a map, and a screen where I regret my password choices.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Single-page doesn't mean one screen.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. The first word is already misleading.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Welcome to <em>Okay, But Why?</em>. Today, why single-page applications exist, and what responsibilities move into the browser when we build one.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We defended server-rendered documents last time. Now the prosecution gets to explain the actual problem.</span>
+        </p>
+<h2 id="the-interaction-that-didn-t-need-a-whole-new-document">The Interaction That Didn't Need a Whole New Document</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Imagine editing a complex order. You choose toppings, compare options, adjust delivery instructions, and keep a little preview visible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A full-page reload for every change would be clumsy. The server could preserve state, but the interaction would keep interrupting itself.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Developers began using background requests to update part of a page instead of replacing the whole document.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>XMLHttpRequest and AJAX-style techniques. AJAX stands for asynchronous JavaScript and XML, but JSON became common, and the technique isn't confined to XML.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nor did AJAX require React. It was a way to request data or content and update an existing page.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>I remember the joy. Click a thing, one part changes, the rest stays put. Then I remember the second part: every event handler knowing far too much about every other event handler.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Add item, update count. Remove item, update subtotal. Change discount, update both. Request fails, undo some changes. The number of coordinated states grows.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which is the problem we discussed in the React series. A declarative interface model can help describe what the interface should look like for a given state.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Frameworks and libraries made large browser applications easier to organize. They didn't invent network requests or interactive pages.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And jQuery wasn't a failed attempt at React. It solved its own problems, including browser inconsistencies and awkward DOM work.</span>
+        </p>
+<h2 id="what-makes-an-application-single-page">What Makes an Application Single-Page?</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In a typical SPA, the browser loads a document and application code. Later navigation is often handled by that code, updating the interface without requesting a completely new document for each screen.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can still request data, code chunks, and assets. Single-page doesn't mean one network request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Correct. It also doesn't mean one URL. Client-side routing can associate paths with different views.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And it doesn't mean no server. The server still handles authoritative operations and data access, as we established in Episode 2.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Nor does React automatically imply SPA. You can put React in one part of a document or use server rendering. And you can build a SPA without React.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Four misconceptions removed. We haven't even reached the loading spinner.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's later. It's downloading.</span>
+        </p>
+<h2 id="what-the-browser-now-owns">What the Browser Now Owns</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If I prevent normal navigation and change the screen myself, what jobs did I volunteer for?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Routing and history. Loading states. Data fetching. Error recovery. Managing local state between views. Often focus and scroll behavior that normal document navigation previously provided.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>So the browser platform still exists, but our code is coordinating more of the experience.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. A router can use the History API to update the address without loading a new document immediately. Back and Forward should still correspond to meaningful states.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>History API is a browser API, not JavaScript syntax and not React. A routing library builds behavior around it.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. If you visit an order detail view and then press Back, people expect to return to the list in a sensible state. Not leave the application, lose their filters, or enter an infinite loop.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Also direct entry. If I paste slash orders slash 417 into a fresh tab, the server must serve the appropriate application entry or route response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Otherwise internal navigation works, but refresh returns four-oh-four. That's a deployment-routing problem, not proof that the URL is imaginary.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A route should be something I can bookmark, share when appropriate, and reach independently. The application shouldn't require a ceremonial walk through the homepage.</span>
+        </p>
+<h2 id="sabrina-and-the-dispatch-board">Sabrina and the Dispatch Board</h2>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>I brought the staff workflow. It's a board with waiting orders, assigned drivers, estimated delivery times, and a map.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Excellent. An actual reason for a lot of interaction.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Staff might compare several orders before assigning a driver. If every selection reloads the page and resets the map, the interface fights them.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So local state is valuable: selected orders, map position, a tentative assignment, open details.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>But the accepted assignment belongs on the server. Two staff members can be looking at the same order.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>One sees “unassigned,” another assigns it, and the first screen is now stale. Rich client state hasn't abolished time.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Exactly. We need the server to reject or reconcile conflicting updates, and the interface to explain what changed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is where people say “use a state library,” but the library doesn't decide the business conflict policy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It can help organize the state. It cannot negotiate which driver is taking the pizza unless we describe the rule.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>I'd also keep important filters in the URL when useful. Then a supervisor can share the overdue-orders view instead of saying, “Click the third thing, then the blue thing.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Strong argument. URL state can support people working together, not just the router's internal housekeeping.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>And the map must have an alternative. A list with addresses and assignment controls can make the task possible without operating a visual map.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's an architectural requirement on the data and interaction. Not a label pasted onto the map at the end.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Thank you, Sabrina. You may invoice us for saving the requirements meeting.</span>
+        </p>
+
+        <p class="dialogue sabrina">
+          <strong>Sabrina</strong>
+          <span>Already did. It's a single-page invoice with six routes.</span>
+        </p>
+<h2 id="loading-became-a-product-state">Loading Became a Product State</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>In a client-rendered route, the app may need data before it can show the relevant content. What does the user see meanwhile?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ideally something understandable. “Loading your orders,” with the page structure stable enough that the screen doesn't leap around later.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If data fails, show a retry where appropriate and preserve the context. A blank page with a console error is not a complete failure state.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the session expired, that's different from “you have no orders.” Empty, loading, forbidden, unavailable, and successful are not interchangeable.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Good state modeling prevents accidental lies. An empty array before the request finishes shouldn't automatically render “You've never ordered.”</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The interface is already making judgments about my life before the database has answered.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>There is also stale data. Maybe we can keep showing the last known order list while refreshing, with a subtle indication that it might be out of date.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Useful for browsing. More caution when a stale value could cause a bad decision, like assigning an already-departed driver.</span>
+        </p>
+<h2 id="racing-requests">Racing Requests</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Here's a classic bug. Search for “mushroom,” then quickly change to “margherita.” The second request returns first. Then the first response arrives and overwrites the new results.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The interface ends up showing the answer to a question I'm no longer asking.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. The application needs to associate results with the request state they belong to. It can ignore obsolete results, cancel requests where appropriate, or use a library that manages those concerns.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And cancellation doesn't necessarily stop remote work already underway. We learned that in client versus server. But we can stop an old response from taking over the current screen.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is a concrete reason data-fetching abstractions can help. They can manage caching, request identity, loading state, and retries.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>After we understand their policies. A library retrying a failed read may be helpful. Blindly retrying a purchase is a different matter.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The network operation still has semantics, even when a hook makes it look tidy.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Hook is a React library concept if we're discussing React hooks. Fetch remains an API; promises and async functions remain JavaScript. Different layers, same source file.</span>
+        </p>
+<h2 id="the-accessibility-jobs-we-took-over">The Accessibility Jobs We Took Over</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A new route loads, but focus stays on a navigation link whose surrounding panel disappeared. What does a keyboard user experience?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Potential confusion or a lost position. We need a deliberate route-transition strategy: a meaningful title, an appropriate focus destination when navigation warrants it, and clear structure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Not “focus the heading after every tiny state change.” That would be maddening. A filter updating results isn't always a full navigation.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Right. Match behavior to the action. Announce important asynchronous results without constantly interrupting screen-reader output.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Preserve the user's place when returning to a list. Avoid replacing focused controls unnecessarily. Use actual links for navigation and buttons for actions.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A div with an onClick handler doesn't acquire all native link behavior. Opening in a new tab, copying an address, keyboard interaction—those matter.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>JSX can describe semantic elements just fine. The framework doesn't force us to replace an anchor with a decorative rectangle.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And native HTML on a server-rendered page can also be misused. These are design responsibilities, not a verdict on one rendering strategy.</span>
+        </p>
+<h2 id="startup-cost-and-later-smoothness">Startup Cost and Later Smoothness</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A SPA can feel fast after startup because it keeps code and state locally and updates only what changes.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>But startup may involve a document, JavaScript download, parsing and execution, then data fetching, then rendering. That's a lot of prerequisites for “we close at ten.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Code splitting can avoid loading every feature immediately. Caching can help repeat visits. Server rendering can provide initial HTML. But each technique has tradeoffs.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And the user's phone has to execute the code. A fast server doesn't lend its CPU to a slow device just because the bundle came from a CDN.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Measure under representative conditions. Your development laptop on excellent Wi-Fi isn't the entire audience.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Search discoverability can be more complex too. Some crawlers execute JavaScript, others don't, and content may be delayed or unavailable to particular consumers.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Which is different from saying SPAs are universally invisible to search engines. The practical question is what your actual discovery and sharing requirements need.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Public menu information should be easy to retrieve. Private dispatch screens don't need search indexing, but absolutely need reliable interaction.</span>
+        </p>
+<h2 id="offline-is-a-separate-promise">Offline Is a Separate Promise</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>People sometimes assume a SPA works offline because it runs in the browser.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Does the order database also live in airplane mode?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Exactly. Local code may continue running, but network-dependent operations still need connectivity. Offline capability requires deliberate storage, caching, synchronization, and conflict handling.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>We could let a customer compose an order offline. We cannot honestly say the shop accepted it until the server does.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And queuing a purchase to send later raises questions. Is the shop still open? Is the price current? Does the customer still want it?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>An offline note-taking app and offline pizza checkout have very different meanings of “sync later.” One produces a paragraph; the other may produce an unwanted calzone.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So don't add offline transaction support just because a service worker tutorial made it look easy.</span>
+        </p>
+<h2 id="three-kinds-of-state-in-one-screen">Three Kinds of State in One Screen</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>On the dispatch board, I have a selected order, a filter for overdue deliveries, and the server's latest assignment list. Are those all the same kind of state?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>No. The selected order may be temporary interface state. The filter might belong in the URL so it can be shared or restored. The assignment list is a local representation of server-owned information.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Why does that distinction help?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Because each needs different persistence and synchronization. Closing a detail panel doesn't need a database write. Changing a shareable filter may update the URL. Assigning a driver needs an authoritative operation and a response.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If we put everything into one giant state object, we can lose those distinctions.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A central store isn't inherently wrong, but it doesn't decide ownership for us. We still need to know what may be discarded, reconstructed, cached, or submitted.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And derived state?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>If the displayed total is calculated from existing quantities and prices, we may derive it instead of storing another independent copy that can drift. The authoritative final price still comes from the server's acceptance rules.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So frontend state modeling is partly about avoiding unnecessary copies, while distributed data modeling is partly about managing the copies we actually need.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Every extra copy asks, “What makes me current?” Some answers are local calculations; others require communication.</span>
+        </p>
+<h2 id="the-back-button-is-a-requirement">The Back Button Is a Requirement</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Let's walk the staff member through a route. Filter to late deliveries, open an order, inspect it, go back.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>They should return to a sensible list position with the relevant filter intact. Whether selection also persists depends on the task, but losing everything is rarely helpful.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>What about scroll position?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Deliberate behavior. Navigating to a genuinely new page may warrant starting near the top. Returning to a list may warrant restoration. Updating a filter shouldn't unexpectedly fling the user somewhere unrelated.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And document title?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>It should identify the current view. Tabs, history, and assistive technology benefit from meaningful titles. Keeping “App” for every route loses useful context.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is work a router may partly support, but the application still configures the right behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. A routing library can provide mechanisms; it can't know that a staff member needs to return to the same urgent order list. That's product knowledge.</span>
+        </p>
+<h2 id="the-deep-link-and-the-server">The Deep Link and the Server</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We mentioned refreshing slash orders slash 417. Let's make the deployment failure concrete. The development server always serves our entry HTML, so every client route works locally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Production hosting looks for a physical file at that path, finds none, and returns four-oh-four. Internal navigation worked because the already-running app handled it without a document request.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The fix is an appropriate route or fallback configuration for the deployment, while preserving real missing-resource behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Don't accidentally return the application HTML for a missing JavaScript file and then wonder why the browser reports a syntax error. Different request types need sensible handling.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>And the server still needs to protect private API data. Serving a generic app entry doesn't authorize order 417.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The client route can show a view shell, but the data request must enforce permission. Again: navigation and authorization are different jobs.</span>
+        </p>
+<h2 id="updating-the-app-while-someone-uses-it">Updating the App While Someone Uses It</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A staff member leaves the dispatch board open all day. We deploy a new version. What happens?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Their browser may keep running the old code. It can request data from the new backend. It may later request an older code chunk, depending on the build and route loading.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>So deployment isn't a synchronized replacement of every client.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Preserve compatibility where needed, retain assets appropriately, and design how the app notices a required update. Don't force a reload in the middle of an unsaved task without a plan.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>A prompt to refresh can be useful, but it should explain the impact and preserve work when possible.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>The person might be assigning urgent deliveries. “New version available” is not automatically more important than their current task.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>This is another cost of long-lived client applications: they are running software copies we don't replace directly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Which can be worth it. We simply budget for the responsibility instead of treating it as an edge case no one could have foreseen.</span>
+        </p>
+<h2 id="optimistic-updates-with-a-recovery-story">Optimistic Updates With a Recovery Story</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Staff drags an order onto a driver's column. The interface shows the assignment immediately while the server checks it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>That's optimistic. What if the driver became unavailable or another staff member assigned the order first?</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We need to reconcile. The UI might restore the previous state, show the authoritative assignment, and explain the conflict.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>And provide a keyboard-operable equivalent to dragging. The action should exist independently of the pointer gesture.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The optimistic display also shouldn't announce a final success before the server accepts it.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Right. “Assigning” can be a distinct state from “assigned.” A subtle pending indicator may be enough, but the user should be able to tell when the operation failed.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For some actions, waiting for confirmation is clearer than optimistic behavior.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Especially consequential or difficult-to-reverse actions. Responsiveness matters, but so does accurate confidence. We don't need to predict everything merely because the browser can animate it.</span>
+        </p>
+<h2 id="one-screen-several-failure-boundaries">One Screen, Several Failure Boundaries</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The map fails to load, but the order list works. Should the whole board disappear?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Probably not. If the list supports assignment and essential information, preserve it and explain that the map is unavailable. Design the regions so a nonessential failure doesn't destroy the entire task.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>React error boundaries can help with some rendering errors, but they aren't a universal handler for every asynchronous failure.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Correct. Request failures, event-handler errors, and rendering failures have different handling mechanisms. The library feature is part of the implementation, not a complete reliability policy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The architecture question is what can remain useful when one dependency fails.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. A resilient interface isn't one that never admits a problem. It's one that accurately shows the problem and preserves whatever work remains possible.</span>
+        </p>
+<h2 id="when-we-would-choose-it">When We Would Choose It</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For the dispatch board, an SPA or a substantial client-side application can be justified. Long sessions, coordinated interaction, lots of temporary state, meaningful local responsiveness.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For the public menu and a modest order form, it may add more responsibility than benefit. An enhanced document flow could be easier to build and maintain.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>For a product with both, we can mix approaches. The boundary might be an area of the site rather than an entire company choosing one rendering identity.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The costs include client code, data synchronization, navigation behavior, and error handling. The benefits include preserving context and managing complex interaction locally.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“It feels like an app” is not quite specific enough. Tell me which task becomes easier and what evidence would show that.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>For staff, perhaps fewer lost selections and faster assignment work. For customers, perhaps no measurable benefit. Then don't force the same solution onto both.</span>
+        </p>
+<h2 id="the-choice-we-can-explain-to-staff">The Choice We Can Explain to Staff</h2>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>How would we explain the dispatch app choice without saying SPA?</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>“This screen keeps your selections and map position while new order information arrives. You can compare and assign deliveries without reloading the whole page. The server still confirms assignments, and the screen will tell you if another person changed something.”</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>That's the benefit in terms of the task.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Exactly. Then explain the limits: it needs a supported browser and connectivity for authoritative updates. If the connection drops, the screen shows that it may be out of date and prevents misleading final actions where necessary.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>We can verify those promises directly.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Yes. Try losing connectivity, receiving a conflicting update, navigating away and back, and using the keyboard. Those scenarios tell us whether the chosen architecture supports the work.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>If we can't explain a benefit that concretely, maybe we haven't justified the complexity.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Or we need to learn more about the workflow. That's a better next step than picking a state-management library while the requirements remain foggy.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>The library choice comes after we know the kinds of state and transitions we need.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Ideally. Sometimes prototyping helps us discover them, but the prototype is an experiment, not proof that every package it used belongs in the final product.</span>
+        </p>
+<h2 id="closing-a-trade-not-an-upgrade-badge">Closing — A Trade, Not an Upgrade Badge</h2>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>Single-page applications grew from a real need: rich, continuous interaction without replacing the document for every change.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>They move more coordination into the browser. That can be valuable, and it creates work that native navigation previously handled.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>React can help describe UI state. A router can help with navigation. A fetching library can help with remote data. None chooses the business rules or accessibility behavior for us.</span>
+        </p>
+
+        <p class="dialogue jules">
+          <strong>Jules</strong>
+          <span>Next time: APIs. The boundary our browser application keeps talking across.</span>
+        </p>
+
+        <p class="dialogue parisa">
+          <strong>Parisa</strong>
+          <span>A JSON URL is about to acquire responsibilities.</span>
+        </p></main>
+  <footer>0 code cards · 0 terminal cards</footer>
+</body>
+</html>
