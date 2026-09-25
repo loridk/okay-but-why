@@ -38,9 +38,9 @@ JULES: Cloud providers secure the underlying cloud infrastructure.
 
 PARISA: Facilities.
 
-Hardware.
+PARISA: Hardware.
 
-Core platform.
+PARISA: Core platform.
 
 JULES: Depending on service model.
 
@@ -121,9 +121,9 @@ JULES: Yes.
 
 PARISA: Database private.
 
-App tier reaches database.
+PARISA: App tier reaches database.
 
-Public load balancer reaches app.
+PARISA: Public load balancer reaches app.
 
 JULES: Exactly.
 
@@ -149,13 +149,13 @@ JULES: **Hardening** reduces unnecessary attack surface.
 
 PARISA: Remove unused services.
 
-Patch.
+PARISA: Patch.
 
-Secure configuration.
+PARISA: Secure configuration.
 
-Disable default accounts.
+PARISA: Disable default accounts.
 
-Restrict ports.
+PARISA: Restrict ports.
 
 JULES: Use hardened images and baselines.
 
@@ -191,11 +191,11 @@ JULES: Correct.
 
 PARISA: Run as non-root.
 
-Minimal images.
+PARISA: Minimal images.
 
-Scan images.
+PARISA: Scan images.
 
-Drop capabilities.
+PARISA: Drop capabilities.
 
 JULES: Secure registry and orchestration permissions.
 
@@ -208,13 +208,13 @@ JULES: Secure architecture includes availability.
 
 PARISA: Redundancy.
 
-Load balancing.
+PARISA: Load balancing.
 
-Multiple zones.
+PARISA: Multiple zones.
 
-Backups.
+PARISA: Backups.
 
-Failover.
+PARISA: Failover.
 
 JULES: Capacity planning and DDoS protection.
 

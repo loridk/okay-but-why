@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 9: Next.js Ate My Web Stack — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 9: Next.js Ate My Web Stack</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/0db0db92-b245-4a7b-9433-4ee37d920e3f"
+      ></script>
+      <div class="redcirclePlayer-0db0db92-b245-4a7b-9433-4ee37d920e3f"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#integration-has-a-practical-reason"
+            >Integration Has a Practical Reason</a
+          >
+        </li>
+        <li>
+          <a href="#images-are-often-the-actual-performance-problem"
+            >Images Are Often the Actual Performance Problem</a
+          >
+        </li>
+        <li>
+          <a href="#choose-the-important-image-deliberately"
+            >Choose the Important Image Deliberately</a
+          >
+        </li>
+        <li>
+          <a href="#fonts-are-layout-decisions">Fonts Are Layout Decisions</a>
+        </li>
+        <li>
+          <a href="#metadata-describes-the-page">Metadata Describes the Page</a>
+        </li>
+        <li>
+          <a href="#loading-empty-missing-failed"
+            >Loading, Empty, Missing, Failed</a
+          >
+        </li>
+        <li>
+          <a href="#recovery-is-an-interaction">Recovery Is an Interaction</a>
+        </li>
+        <li>
+          <a href="#redirects-change-the-address"
+            >Redirects Change the Address</a
+          >
+        </li>
+        <li>
+          <a href="#rewrites-keep-the-visible-address"
+            >Rewrites Keep the Visible Address</a
+          >
+        </li>
+        <li>
+          <a href="#middleware-is-called-proxy-here"
+            >Middleware Is Called Proxy Here</a
+          >
+        </li>
+        <li>
+          <a href="#proxy-is-not-our-only-access-check"
+            >Proxy Is Not Our Only Access Check</a
+          >
+        </li>
+        <li>
+          <a href="#build-tools-are-not-the-runtime"
+            >Build Tools Are Not the Runtime</a
+          >
+        </li>
+        <li>
+          <a href="#we-can-deploy-without-a-vendor-vow"
+            >We Can Deploy Without a Vendor Vow</a
+          >
+        </li>
+        <li>
+          <a href="#a-small-operational-checklist-in-conversation"
+            >A Small Operational Checklist in Conversation</a
+          >
+        </li>
+        <li><a href="#follow-a-cold-visit">Follow a Cold Visit</a></li>
+        <li>
+          <a href="#the-image-pipeline-has-an-origin"
+            >The Image Pipeline Has an Origin</a
+          >
+        </li>
+        <li>
+          <a href="#metadata-can-disagree-with-the-page"
+            >Metadata Can Disagree With the Page</a
+          >
+        </li>
+        <li>
+          <a href="#a-redirect-can-become-permanent-in-more-than-one-place"
+            >A Redirect Can Become Permanent in More Than One Place</a
+          >
+        </li>
+        <li>
+          <a href="#multiple-instances-change-the-picture"
+            >Multiple Instances Change the Picture</a
+          >
+        </li>
+        <li>
+          <a href="#rollback-is-a-product-recovery-tool"
+            >Rollback Is a Product Recovery Tool</a
+          >
+        </li>
+        <li>
+          <a href="#optimization-should-have-a-stop-condition"
+            >Optimization Should Have a Stop Condition</a
+          >
+        </li>
+        <li>
+          <a href="#the-stack-is-a-set-of-choices"
+            >The Stack Is a Set of Choices</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Routing, components, data, forms, endpoints. Surely we've reached the
+          edge of the framework.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It would like to discuss your images.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Of course it would.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also fonts, metadata, and deployment.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does it need an emergency contact? It appears to live here now.</span
+        >
+      </p>
+      <h2 id="integration-has-a-practical-reason">
+        Integration Has a Practical Reason
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? A production page isn't finished when the
+          component returns JSX. Images must load sensibly, fonts affect layout,
+          metadata describes the page, errors need recovery, and something must
+          run the application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These are old web responsibilities. Next integrates tools for them
+          into its routing and build system. The question is whether that
+          integration saves us useful work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Today isn't a list of features to enable. We'll follow
+          DemoCon from a speaker portrait to the deployed request and identify
+          where each facility earns its place.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the framework offers a ballroom, we can still decide our one chair
+          belongs in the kitchen.</span
+        >
+      </p>
+      <h2 id="images-are-often-the-actual-performance-problem">
+        Images Are Often the Actual Performance Problem
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our session page has a speaker portrait. Sending a giant original
+          image to a small phone wastes bandwidth. Reserving no space can make
+          the page jump when it loads.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Neither problem requires a novel rendering acronym. They require an
+          appropriately sized image and predictable layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next's Image component helps integrate responsive image delivery and
+          optimization. We still choose dimensions, sizes, alternative text, and
+          loading behavior appropriate to the actual image.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>import Image from 'next/image';
+
+&lt;Image
+  src=&quot;/speakers/morgan.jpg&quot;
+  alt=&quot;Morgan Chen&quot;
+  width={320}
+  height={320}
+  sizes=&quot;(max-width: 40rem) 40vw, 160px&quot;
+/&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Image is Next-specific, and the element syntax is JSX. Width and
+          height establish intrinsic dimensions and aspect ratio. CSS still
+          controls the rendered layout, so sizes must match the space the design
+          really gives the image.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. This card assumes a layout displaying the portrait at forty
+          percent of viewport width on smaller screens and around one hundred
+          sixty pixels otherwise. Copying sizes without matching the layout can
+          cause poor resource choices.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The alt text also depends on context. If the adjacent text already
+          names Morgan and the portrait adds no useful information, an empty alt
+          may avoid repetition. If identifying the person is the image's
+          purpose, a concise name may fit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The component can't decide that for us. Nor does
+          optimization excuse a decorative image from having the right
+          semantics.</span
+        >
+      </p>
+      <h2 id="choose-the-important-image-deliberately">
+        Choose the Important Image Deliberately
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Should we preload every speaker portrait because faster is
+          good?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Preloading everything creates competition for resources.
+          Prioritize only when appropriate for the actual important image. In
+          Next 16, older examples using the priority prop need updating; preload
+          is the clearer current prop replacing that deprecated usage.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And loading strategy can also involve normal eager loading or fetch
+          priority depending on the case. We shouldn't turn one replacement prop
+          into a universal prescription.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Measure the page. A below-the-fold speaker portrait
+          generally doesn't deserve to compete with essential initial resources
+          just because we discovered preload.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Remote images need an explicit source policy too. Otherwise an
+          optimization service can end up fetching things we never intended it
+          to fetch.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Configure allowed remote patterns carefully. Image
+          optimization also consumes server or platform resources. It's an
+          integration with costs and configuration, not free compression
+          sprinkled into HTML.</span
+        >
+      </p>
+      <h2 id="fonts-are-layout-decisions">Fonts Are Layout Decisions</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next's font facilities integrate font loading with the application
+          and can help reduce layout shifts. Local fonts can be served from the
+          project, and supported Google font integration prepares font assets
+          during the build rather than requiring a visitor's browser to fetch
+          them directly from Google.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which changes who makes the request and when. It doesn't eliminate
+          the build's dependency on obtaining those assets, nor does it override
+          licensing responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A system font stack may be the simplest choice. If DemoCon
+          needs a custom font, load only the weights and subsets the design
+          uses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Six weights, three italics, and a novelty display face for a one-day
+          conference is not a personality. It's a payload.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And test fallback behavior. Text must remain readable. A font isn't
+          successful if it looks lovely after a long invisible interval.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again, the framework gives us machinery. Typography, readability, and
+          restraint remain design decisions.</span
+        >
+      </p>
+      <h2 id="metadata-describes-the-page">Metadata Describes the Page</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A session needs a meaningful document title and description. Next's
+          metadata API connects that information to routes and layouts.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// app/sessions/page.jsx — alongside the page component
+export const metadata = {
+  title: 'Sessions | DemoCon',
+  description: 'Browse the public DemoCon session schedule.',
+};</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a JavaScript object exported under a name Next recognizes. It
+          isn't JSX. For dynamic session metadata, generateMetadata can use the
+          route data rather than giving every talk the same title.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use public information and the correct async params
+          contract. Avoid duplicating expensive reads needlessly, and handle
+          missing sessions consistently with the page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Titles help browser tabs, history, and assistive technology as well
+          as search. This isn't only an SEO trick.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Canonical URLs and social preview metadata also need accurate
+          deployment information. A beautiful preview pointing at localhost is a
+          very limited marketing strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And robots metadata is not access control. A private organizer page
+          needs real authorization even if we ask crawlers politely to go
+          away.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Nor does metadata guarantee ranking. It helps communicate
+          what the page is; it doesn't purchase relevance from the
+          universe.</span
+        >
+      </p>
+      <h2 id="loading-empty-missing-failed">Loading, Empty, Missing, Failed</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Four states people often compress into one spinner.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Loading means work is pending. Empty means the read succeeded and
+          there are no items. Missing means the requested resource isn't
+          available. Failed means the operation couldn't complete
+          normally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The session list being empty is different from the database being
+          unavailable. The user should not have to infer which happened from our
+          minimalist aesthetic.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Next provides conventions such as loading, not-found, and
+          error files. We choose meaningful content and recovery actions within
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Error boundaries handle errors in the subtree they wrap, not
+          necessarily everything imaginable in the route. Event-handler errors
+          and expected form validation need their own handling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Next's error UI is a Client Component. Its recovery control
+          can attempt to render again, but retrying doesn't repair a permanently
+          invalid input or a broken database.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a boundary in a segment doesn't catch failures in that same
+          segment's layout above it. Placement matters. Root-level failures may
+          need the global-error convention.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We don't need every file in DemoCon immediately. We need a
+          deliberate boundary around failures the user can understand and
+          recover from.</span
+        >
+      </p>
+      <h2 id="recovery-is-an-interaction">Recovery Is an Interaction</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A useful error message might say “We couldn't load the schedule. Try
+          again,” with an actual button. It shouldn't dump an internal stack
+          trace.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Keep technical diagnostics on the server where appropriate,
+          with safe correlation information if useful. Don't put credentials or
+          personal data into either logs or error output casually.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Focus and announcements matter when content changes. A user operating
+          with a keyboard shouldn't lose their place because an optional panel
+          failed and rebuilt half the page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An accessible fallback includes meaningful headings, real
+          controls, visible focus, and a clear explanation of what remains
+          usable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Loading UI should also avoid unnecessary movement, especially for
+          users requesting reduced motion. The framework didn't require our
+          skeleton to perform a tiny disco.</span
+        >
+      </p>
+      <h2 id="redirects-change-the-address">Redirects Change the Address</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose DemoCon renames a route from slash talks to slash sessions. A
+          redirect tells the client to request a different location, and the
+          visible address changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful for preserving old links. We choose whether the move is
+          temporary or permanent based on reality, not which number sounds most
+          authoritative.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next offers configuration redirects and programmatic redirect
+          facilities. Their status behavior depends on context, such as a form
+          action versus an ordinary route response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't memorize one status and claim every redirect function always
+          produces it. Understand the intended method and navigation
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Redirect targets also need validation when influenced by
+          input. A login return URL should not become an open redirect to an
+          arbitrary external destination.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“It came from a query string” is a reason to check it, not a reason
+          to trust it.</span
+        >
+      </p>
+      <h2 id="rewrites-keep-the-visible-address">
+        Rewrites Keep the Visible Address
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A rewrite serves content from a different destination while
+          preserving the visible requested URL. That differs from telling the
+          browser to navigate elsewhere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can help migrations or route traffic to another service behind a
+          stable public address.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But it introduces another place to understand routing, headers,
+          caching, and failures. An external rewrite isn't a security policy by
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A URL staying pretty doesn't mean the request stopped crossing a
+          network boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use configuration for straightforward stable rules. Don't
+          introduce request-time code when a simple configured redirect or
+          rewrite solves the problem.</span
+        >
+      </p>
+      <h2 id="middleware-is-called-proxy-here">
+        Middleware Is Called Proxy Here
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Time for the renamed feature. Older tutorials say middleware. What do
+          Next 16 examples call it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Proxy. The middleware file convention is deprecated in favor of
+          proxy. The name emphasizes request-boundary work before a request
+          completes, such as selective redirects, rewrites, or header
+          decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next's proxy file is not automatically an nginx installation, and it
+          isn't synonymous with every reverse proxy in our deployment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It's a framework convention. In this model Proxy runs in the
+          Node.js runtime. Don't copy older claims that middleware always runs
+          at the edge and assume they describe the renamed feature.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// proxy.js — beside app/, or beside src/app/ inside src/
+import { NextResponse } from 'next/server';
+
+export function proxy(request) {
+  return NextResponse.redirect(new URL('/sessions', request.url));
+}
+
+export const config = {
+  matcher: '/talks',
+};</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A deliberately small illustration of the file and function names. URL
+          is a Web API. NextResponse is a Next extension. The matcher keeps this
+          example scoped to the old talks path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a configuration redirect would be simpler for this fixed rule.
+          We're showing the convention, not recommending Proxy for every
+          redirect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We definitely don't redirect every request, including assets, back to
+          sessions and call the resulting loop “centralized routing.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Match narrowly. Keep work limited. Database queries and slow
+          business operations don't belong here merely because it runs before
+          the page.</span
+        >
+      </p>
+      <h2 id="proxy-is-not-our-only-access-check">
+        Proxy Is Not Our Only Access Check
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Could Proxy redirect unauthenticated users away from organizer
+          pages?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can participate in an optimistic early routing check, but it must
+          not be the only authorization enforcement. Protected reads, Server
+          Actions, and handlers need their own checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because routes and operations can be reached through different paths,
+          and the operation itself knows what permission is required.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A quick cookie presence check doesn't establish that a
+          session is valid or that the caller can publish a particular
+          proposal.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Security needs to survive someone calling the operation without
+          clicking through our intended UI.</span
+        >
+      </p>
+      <h2 id="build-tools-are-not-the-runtime">
+        Build Tools Are Not the Runtime
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next's build tooling transforms modules, separates server and client
+          work, and produces output for deployment. In Next 16, Turbopack is the
+          default bundler for development and builds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Turbopack is tooling. React is the UI model. Node is a runtime. The
+          browser is another environment. Keeping those labels separate helps
+          when a failure occurs before the app is even running.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A successful build tells us something valuable, but it
+          doesn't prove production secrets, database access, cache coordination,
+          or reverse proxy behavior are correct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does a development server prove the production bundle works. We
+          need a proportionate production check.</span
+        >
+      </p>
+      <h2 id="we-can-deploy-without-a-vendor-vow">
+        We Can Deploy Without a Vendor Vow
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next can run as a Node server or in a Docker container. Static export
+          supports a limited feature set. Platform adapters provide other
+          hosting integrations with varying support.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vercel is one option, not a requirement of learning Next. We compare
+          actual feature support, operations, and cost.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Our DemoCon version with Server Actions and request-time
+          data requires suitable server support. A static export can't execute
+          those operations on an ordinary static file host.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We could keep a static public site and use a separate backend, but
+          that would be a different deployment arrangement, not the same
+          application magically running without a server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Image optimization, cache persistence, streaming, and
+          background work also depend on the runtime and platform
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A reverse proxy might buffer a streamed response. A cache might be
+          local to one instance. A database might be far away. “Deployed
+          successfully” doesn't answer those questions.</span
+        >
+      </p>
+      <h2 id="a-small-operational-checklist-in-conversation">
+        A Small Operational Checklist in Conversation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>If we actually shipped DemoCon, what would you check first?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The deployed public list and detail routes. A missing slug. A real
+          form submission under the intended account. Rejection of an
+          unauthorized publication. A successful authorized update followed by
+          the expected cache behavior. The public JSON endpoint.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then resources and navigation?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Images at phone sizes, readable fonts, titles, keyboard operation,
+          old-route redirects, and error recovery. Also whether the environment
+          has only the secrets and permissions it needs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And the infrastructure?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Logs without sensitive leakage, database connections appropriate to
+          the runtime, a known update process, and cache coordination if there
+          are multiple instances. We don't need an enterprise platform for a
+          small conference, but we do need to understand what is running.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The framework can reduce integration work. It doesn't remove
+          the responsibility to operate the features we use.</span
+        >
+      </p>
+      <h2 id="follow-a-cold-visit">Follow a Cold Visit</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Someone opens a session on a phone they've never used to visit
+          DemoCon. Which optimizations can help that first visit?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful HTML, a modest client bundle, correctly sized images, readable
+          text, and a server that responds promptly. A cache already in that
+          particular browser can't help because it doesn't exist yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server or CDN reuse may help, depending on the deployment.
+          But a fast repeat visit in our browser isn't evidence about this cold
+          path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A portrait with dimensions reserves space. Appropriate responsive
+          sources reduce unnecessary transfer. A sensible font strategy lets the
+          words appear. These improvements can matter more than an elaborate
+          component refactor.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We should optimize the observed bottleneck. The framework
+          provides tools across the stack because a page's cost is distributed
+          across the stack.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we still need clear content. A page can arrive instantly and fail
+          to tell someone where the talk is.</span
+        >
+      </p>
+      <h2 id="the-image-pipeline-has-an-origin">
+        The Image Pipeline Has an Origin
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose speaker portraits come from a content service. What should we
+          configure besides the Image component?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which remote source patterns are allowed, what dimensions the design
+          uses, and whether the deployment supports the intended optimization
+          path. We should also understand the source images' rights and
+          privacy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If an image requires authentication, don't assume a public
+          optimization request can fetch it safely with the same browser
+          credentials. The request path and access model need deliberate
+          design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we shouldn't expose an internal image URL merely to make the
+          optimizer happy. Public and protected media may need different
+          delivery arrangements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. An image helper simplifies part of delivery; it doesn't make
+          all sources equivalent.</span
+        >
+      </p>
+      <h2 id="metadata-can-disagree-with-the-page">
+        Metadata Can Disagree With the Page
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Imagine the visible session title updates, but the social preview
+          still has the old title. Where do we look?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At the metadata data source, its caching, the generated tags, and the
+          external service's own cached preview. Updating our page doesn't
+          necessarily purge a social platform's saved preview.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another case of multiple copies with different lifetimes. We should
+          inspect the actual metadata response before blaming the component
+          displaying the heading.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also keep canonical URLs and deployment base URLs correct. A
+          staging address shouldn't leak into production metadata because we
+          copied a configuration file without checking it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The page can have one visible heading and a different document title
+          for context, but they shouldn't contradict each other about what
+          resource we're viewing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Metadata should be generated from the same public content
+          contract where practical.</span
+        >
+      </p>
+      <h2 id="a-redirect-can-become-permanent-in-more-than-one-place">
+        A Redirect Can Become Permanent in More Than One Place
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why be careful with permanent redirects during a migration?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Clients and intermediaries can remember them. If we declare a
+          permanent move while experimenting, undoing the server rule may not
+          immediately undo every cached decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Test the intended mapping and choose permanence according to
+          the actual move. Avoid loops and chains where possible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A rewrite has different consequences because the visible URL stays
+          the same. That can help a migration, but it can also obscure which
+          system answered when debugging.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Document the small routing rule sufficiently for maintainers.
+          An invisible routing layer that nobody remembers is a future incident
+          with excellent camouflage.</span
+        >
+      </p>
+      <h2 id="multiple-instances-change-the-picture">
+        Multiple Instances Change the Picture
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our local server stores reusable data. Production runs several
+          instances. Does each one necessarily know when another invalidates
+          something?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not without the appropriate shared storage or coordination strategy.
+          Deployment architecture determines how cache behavior spans instances
+          and survives restarts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we verify the actual hosting setup's support. We don't assume a
+          directive establishes a distributed cache cluster.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Similar questions apply to local files and long-lived
+          memory. A temporary serverless filesystem or process variable is not
+          durable application storage.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why our illustrative database helper points to real
+          persistence infrastructure in a real app. Writing proposals to an
+          in-memory array would not satisfy the promise that submissions are
+          saved.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The framework's request lifecycle and the storage lifecycle
+          are different.</span
+        >
+      </p>
+      <h2 id="rollback-is-a-product-recovery-tool">
+        Rollback Is a Product Recovery Tool
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose a deployment breaks the proposal form. What should the team
+          be able to do?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Detect it, understand enough of the failure, and restore a working
+          version or fix the issue. A rollback strategy needs to consider
+          database changes as well as application files.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An old application build may not work with a newly changed
+          schema if the migration wasn't designed compatibly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to teach full deployment engineering here, but we
+          should avoid implying that a green build is the end of the
+          story.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A small smoke check of the important routes and mutation paths
+          can catch obvious deployment failures quickly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we preserve the user's data. Releasing a simpler interface
+          temporarily is better than asking people to resubmit proposals because
+          our deployment strategy treated persistence as disposable.</span
+        >
+      </p>
+      <h2 id="optimization-should-have-a-stop-condition">
+        Optimization Should Have a Stop Condition
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>When do we stop tuning DemoCon?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >When the important user journeys meet our performance, reliability,
+          and accessibility requirements, and further work isn't justified by
+          evidence. There will always be another graph we could improve.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The framework's feature list isn't a list of unfinished
+          chores.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a system font is readable and appropriate, we don't add a custom
+          font pipeline to prove we understand next/font. If a configured
+          redirect works, we don't promote it into Proxy code for
+          prestige.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Understanding the tool includes knowing when a smaller
+          mechanism is enough.</span
+        >
+      </p>
+      <h2 id="the-stack-is-a-set-of-choices">The Stack Is a Set of Choices</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Images solve resource delivery. Fonts solve a loading and typography
+          problem. Metadata describes routes. Loading and error conventions
+          organize states. Redirects and rewrites manage addresses. Proxy
+          handles selected request-boundary work. Deployment determines which
+          behavior can actually run.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the map. Use the facilities that solve real problems, and keep
+          their limitations visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, the question we've been saving: do I actually need this
+          shit?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We have enough understanding to answer without either a sales pitch
+          or a ceremonial bonfire.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. The ballroom remains optional.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

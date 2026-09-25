@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: One Hundred Percent of What? — Coverage and the Limits of
+      Tests — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 10: One Hundred Percent of What? — Coverage and the Limits of
+        Tests
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/abd56cef-142f-41e4-a4c3-8528d254baa3"
+      ></script>
+      <div class="redcirclePlayer-abd56cef-142f-41e4-a4c3-8528d254baa3"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#coverage-records-execution">Coverage Records Execution</a>
+        </li>
+        <li>
+          <a href="#lines-statements-functions-branches"
+            >Lines, Statements, Functions, Branches</a
+          >
+        </li>
+        <li>
+          <a href="#a-fully-executed-mistake">A Fully Executed Mistake</a>
+        </li>
+        <li>
+          <a href="#configure-the-denominator-deliberately"
+            >Configure the Denominator Deliberately</a
+          >
+        </li>
+        <li>
+          <a href="#thresholds-can-help-or-distort"
+            >Thresholds Can Help or Distort</a
+          >
+        </li>
+        <li>
+          <a href="#mutation-testing-asks-whether-tests-notice"
+            >Mutation Testing Asks Whether Tests Notice</a
+          >
+        </li>
+        <li>
+          <a href="#property-based-tests-explore-families"
+            >Property-Based Tests Explore Families</a
+          >
+        </li>
+        <li>
+          <a href="#tests-can-t-prove-the-requirement-was-good"
+            >Tests Can't Prove the Requirement Was Good</a
+          >
+        </li>
+        <li>
+          <a href="#tests-don-t-exhaust-security-or-accessibility"
+            >Tests Don't Exhaust Security or Accessibility</a
+          >
+        </li>
+        <li>
+          <a href="#performance-and-production-are-different-questions"
+            >Performance and Production Are Different Questions</a
+          >
+        </li>
+        <li>
+          <a href="#ai-can-write-tests-and-share-your-mistake"
+            >AI Can Write Tests and Share Your Mistake</a
+          >
+        </li>
+        <li>
+          <a href="#what-belongs-in-a-useful-test-report"
+            >What Belongs in a Useful Test Report?</a
+          >
+        </li>
+        <li>
+          <a href="#a-practical-review-of-one-new-test"
+            >A Practical Review of One New Test</a
+          >
+        </li>
+        <li>
+          <a href="#listener-workshop-the-green-dashboard"
+            >Listener Workshop — The Green Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="#a-report-that-looks-better-for-the-wrong-reason"
+            >A Report That Looks Better for the Wrong Reason</a
+          >
+        </li>
+        <li>
+          <a href="#the-surviving-mutant-conversation"
+            >The Surviving Mutant Conversation</a
+          >
+        </li>
+        <li>
+          <a href="#removing-tests-can-be-responsible"
+            >Removing Tests Can Be Responsible</a
+          >
+        </li>
+        <li>
+          <a href="#what-confidence-sounds-like">What Confidence Sounds Like</a>
+        </li>
+        <li><a href="#the-last-question">The Last Question</a></li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have one hundred percent coverage.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Of what?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The measured code.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And does checkout work?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have one hundred percent coverage.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I appreciate your commitment to the number, but the customer is
+          currently buying NaN pizzas.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to the JavaScript Testing finale of <em>Okay, But Why?</em>.
+          Coverage, gaps, mutation testing, and how to talk honestly about what
+          passing tests mean.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are keeping the useful meter and declining to build it a
+          religion.</span
+        >
+      </p>
+      <h2 id="coverage-records-execution">Coverage Records Execution</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Code coverage tools record which measured parts of code execute while
+          tests run. Reports can summarize statements, lines, functions, and
+          branches.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Execution, not correctness. A line can run and produce the wrong
+          result while the test fails to notice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Coverage can reveal code we didn't exercise. It doesn't
+          establish that our assertions would reject wrong behavior in the code
+          we did exercise.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the numerator is some form of executed measured code, and the
+          denominator is the code included in that measurement. Both
+          matter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A report excluding important files can look excellent while
+          leaving critical behavior outside its scope.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>One hundred percent of a cupboard isn't the whole kitchen.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's going in the imaginary mug catalog.</span>
+      </p>
+      <h2 id="lines-statements-functions-branches">
+        Lines, Statements, Functions, Branches
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Explain the categories without assuming they're
+          interchangeable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Function coverage asks whether measured functions were invoked.
+          Statement coverage asks whether measured statements executed. Line
+          coverage summarizes execution associated with source lines. Branch
+          coverage tracks alternatives at decision points according to the
+          coverage tool's model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One line can contain multiple decisions, especially with conditional
+          expressions or short-circuit operators. So a line percentage can hide
+          untested alternatives.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And the exact mapping depends on the provider and transformed
+          code. Don't assume two tools produce identical branch counts for every
+          construct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The useful habit is opening the report and understanding the
+          highlighted paths, not memorizing four definitions and staring at the
+          top number.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If an error-handling branch was never executed, ask whether
+          that scenario matters and how to exercise it meaningfully.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Maybe it's important. Maybe it's unreachable defensive code. Maybe it
+          indicates a design problem. The report starts an investigation; it
+          doesn't settle one.</span
+        >
+      </p>
+      <h2 id="a-fully-executed-mistake">A Fully Executed Mistake</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Consider a fee function where the free-delivery threshold should
+          include exactly twenty dollars, but the code uses strictly greater
+          than.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>function deliveryFee(subtotalCents) {
+  return subtotalCents &gt; 2000 ? 0 : 300;
+}
+
+// These two examples can exercise both outcomes and still miss the boundary.
+expect(deliveryFee(1000)).toBe(300);
+expect(deliveryFee(3000)).toBe(0);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Below and above pass. Both outcomes execute. Exactly twenty is still
+          wrong.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Even complete branch coverage of this small decision doesn't
+          prove we chose the right boundary examples.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an even weaker test could call the function without checking the
+          fee at all. Execution would still occur.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Coverage doesn't measure assertion strength or requirement
+          completeness.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The repair is the independently derived example: exactly two thousand
+          cents should return zero. Not another call chosen only because it
+          paints a line green.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is the central distinction. Use the report to ask better
+          questions, then write a test that makes a meaningful claim.</span
+        >
+      </p>
+      <h2 id="configure-the-denominator-deliberately">
+        Configure the Denominator Deliberately
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What should be included in coverage?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The application code whose testing we want to assess. Configure the
+          scope deliberately and understand defaults for the installed tool
+          version. Unimported files may need explicit inclusion to appear as
+          uncovered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Otherwise a never-tested module can disappear from the report, making
+          the percentage more comforting than it deserves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Exclude generated output, test fixtures, or other irrelevant
+          files when appropriate, but don't exclude difficult application code
+          just to raise the score.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And document justified exclusions. If a file is platform-specific and
+          tested elsewhere, say where. If it's untested, say that.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vitest supports coverage providers and configuration for included
+          files, reports, and thresholds. Use a provider compatible with the
+          installed version and add the package only when you need
+          coverage.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>export default {
+  test: {
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{js,jsx}'],
+      reporter: ['text', 'html'],
+    },
+  },
+};</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is a configuration excerpt, not a replacement for the React
+          plugin setup from Episode Seven. The source glob is tooling pattern
+          syntax inside a JavaScript string.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It assumes application files live under src. Our earlier
+          tiny practice files might live at the root, so adapt the pattern
+          rather than copying it blindly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the provider package needs to match the runner's requirements. A
+          command with coverage enabled is still executing tests, not statically
+          proving the code.</span
+        >
+      </p>
+      <h2 id="thresholds-can-help-or-distort">
+        Thresholds Can Help or Distort
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Teams sometimes fail CI if coverage drops below a threshold.
+          Useful?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Potentially. It can prevent unnoticed erosion or prompt review of new
+          untested code. But a target becomes dangerous when people optimize for
+          the number instead of useful checks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Such as calling functions without meaningful assertions, excluding
+          difficult files, or adding trivial tests while critical risks remain
+          untested.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. A threshold is a guardrail, not a quality certificate.
+          Different parts of the system may deserve different expectations based
+          on risk and testability.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A high-risk authorization rule can matter more than a large amount of
+          low-impact formatting code. Aggregate percentages can conceal that
+          imbalance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And comparing teams by coverage percentage without understanding
+          their code and measurement scope is especially dubious. The
+          denominator isn't standardized human virtue.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So discuss what the threshold protects, what it misses, and how
+          exceptions are reviewed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The number should support a conversation, not end it.</span>
+      </p>
+      <h2 id="mutation-testing-asks-whether-tests-notice">
+        Mutation Testing Asks Whether Tests Notice
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Mutation testing deliberately changes code in small ways, then reruns
+          tests. For example, change greater-than-or-equal to greater-than, or
+          replace a returned value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A mutant is the modified version. If the tests fail because they
+          detect its changed behavior, people say the mutant was killed.
+          Dramatic terminology for a comparison operator.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If tests still pass, it survived. That can reveal a missing case or
+          weak assertion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But not every surviving mutant means the tests are deficient. Some
+          changes may be equivalent for all valid inputs, or affect behavior
+          outside the intended contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Equivalent mutants and tooling limitations require
+          interpretation. Mutation scores aren't another universal truth
+          percentage.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And running the suite for many modified versions can be expensive.
+          Start with valuable logic, not necessarily the whole repository on
+          every keystroke.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Mutation testing adds evidence about test sensitivity. It
+          still can't invent missing product requirements or prove the original
+          behavior is correct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our delivery boundary example is a perfect small demonstration:
+          change the comparison, expect the exact-threshold test to fail, then
+          restore the real code.</span
+        >
+      </p>
+      <h2 id="property-based-tests-explore-families">
+        Property-Based Tests Explore Families
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another useful technique is property-based testing. Instead of only
+          listing examples, define a property and generate many inputs to
+          explore it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For a nonmutating cart calculation, a property might be that calling
+          it leaves the input unchanged. For a fee rule, valid subtotals at or
+          above the threshold always produce zero.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Generators should respect the intended input domain unless we're
+          testing validation. Some tools shrink failing inputs to smaller
+          examples that are easier to understand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's helpful because “failed on an enormous random object” is not a
+          delightful debugging experience.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Reproducible seeds and reported counterexamples matter. Randomness
+          without reproducibility can make failures hard to investigate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a property can be wrong or too weak. “Output is a number” doesn't
+          suddenly become a pricing guarantee because we checked it ten thousand
+          times.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Generated tests complement well-chosen examples. They don't
+          remove the need for an independent understanding of the rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The human still supplies meaning. This has been an inconveniently
+          consistent theme.</span
+        >
+      </p>
+      <h2 id="tests-can-t-prove-the-requirement-was-good">
+        Tests Can't Prove the Requirement Was Good
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose every test confirms that checkout discards the cart after a
+          payment error because that's what the specification says.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the tests can be correct and the experience can still be
+          terrible. We may need to change the requirement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A passing suite says the checked behavior matches the
+          encoded expectations under tested conditions. It doesn't certify those
+          expectations are desirable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's why user research, domain discussion, accessibility
+          evaluation, and ordinary critical thought still belong in
+          development.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tests can make a questionable policy visible and repeatable. They
+          can't decide whether the policy serves people well.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And vague requirements produce vague tests. “Works correctly” is not
+          a substitute for concrete examples and tradeoffs.</span
+        >
+      </p>
+      <h2 id="tests-don-t-exhaust-security-or-accessibility">
+        Tests Don't Exhaust Security or Accessibility
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We included specific accessibility and security checks throughout the
+          series. What can we honestly claim?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can claim the tested labels, keyboard interactions, validation
+          cases, and authorization scenarios behaved as expected in the chosen
+          environment. We cannot claim the whole product is accessible or secure
+          because those passed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A role query doesn't evaluate every assistive-technology
+          experience. An injection example doesn't exhaust every context where
+          untrusted data flows.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Security includes design, dependencies, configuration, permissions,
+          operational behavior, and evolving threats. Accessibility includes
+          real interaction across varied users and technologies, not only static
+          markup properties.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated checks are useful parts of that work. Their limits should
+          guide additional evaluation, not make us discard them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should a disclaimer become an excuse to skip the specific checks
+          we can reasonably automate. Useful partial evidence is still
+          useful.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Be precise without becoming defeatist.</span>
+      </p>
+      <h2 id="performance-and-production-are-different-questions">
+        Performance and Production Are Different Questions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A functional test passed in twenty milliseconds. Does that prove the
+          application is fast?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. The measured setup may omit network, realistic data volumes,
+          browser rendering, concurrency, and production infrastructure.
+          Performance testing needs relevant workloads and measurements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a pre-release suite doesn't tell me whether the database is
+          healthy right now. Production monitoring answers ongoing operational
+          questions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Deployment checks, observability, error reporting, and
+          recovery practices complement pre-deployment tests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A test suite can verify a backup function calls an adapter. A restore
+          exercise is different evidence. We should not confuse the label backup
+          with demonstrated recovery.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Great connection to the security and architecture series. Test the
+          promise at the boundary where it matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, no suite explores every possible input, event order, browser
+          condition, dependency version, and human decision. We choose
+          intelligently under constraints.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That isn't failure. It's engineering with explicit uncertainty.</span
+        >
+      </p>
+      <h2 id="ai-can-write-tests-and-share-your-mistake">
+        AI Can Write Tests and Share Your Mistake
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if an AI assistant generates all the tests?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Review them the same way you review any proposed tests. Do they call
+          the real subject? Are the expectations derived from the requirement?
+          Could they detect the relevant bug? Do they accidentally expose data
+          or call real services?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the assistant reads a faulty implementation and copies its logic
+          into expected values, we get highly consistent agreement with the
+          bug.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Generated tests can help brainstorm cases or create a
+          starting point, but independent judgment remains necessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask for missing boundary cases, then evaluate them. Don't accept a
+          hundred generated assertions merely because they look
+          industrious.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And verify they actually run. Syntax-looking text in a file isn't
+          executed evidence until the runner discovers it and the relevant
+          checks complete.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Tests added” and “tests passed” are different claims. So are “parser
+          accepted the script” and “the code examples were executed.” Precision
+          matters in our own production process too.</span
+        >
+      </p>
+      <h2 id="what-belongs-in-a-useful-test-report">
+        What Belongs in a Useful Test Report?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How would you report a change responsibly?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >State the behavior changed, the relevant checks run, and their
+          outcomes. Mention meaningful limitations or checks not performed.
+          Avoid “fully tested” unless you can define what fully means, which is
+          usually more trouble than a precise sentence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For example, delivery boundary unit tests passed; API integration
+          checks passed in the isolated database environment; the checkout
+          browser journey passed in the configured browser; no live payment was
+          attempted.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. That's understandable evidence. A coverage percentage can
+          supplement it with scope clearly stated.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if a test is flaky or skipped, don't bury that beneath the green
+          total.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A skipped test didn't pass. A retry that passed had an earlier
+          failure. State what matters for the decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Honest reporting helps the next person choose what to investigate or
+          verify next.</span
+        >
+      </p>
+      <h2 id="a-practical-review-of-one-new-test">
+        A Practical Review of One New Test
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's review a pull request adding a discount test. What do you
+          ask?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What behavior does the name promise? Is the setup creating that
+          condition? Does the real relevant code run? Is the assertion
+          independent and strong enough? Does the test fail for the intended
+          defect?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then scope?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What dependencies are replaced? What integration evidence exists
+          elsewhere? Does the test clean up state, time, and external resources?
+          Can it run reliably without production data or secrets?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Maintenance?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Can another developer read it without following six helpers? Does it
+          protect a public contract or freeze incidental implementation? Is the
+          runtime reasonable for the feedback loop?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That sounds like a lot, but for a small clear test it can be
+          quick.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Clear tests answer most of these questions on the page.
+          Complicated tests make the questions expensive, which is a signal
+          worth noticing.</span
+        >
+      </p>
+      <h2 id="listener-workshop-the-green-dashboard">
+        Listener Workshop — The Green Dashboard
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Finale scenario. Coverage is high. Unit tests pass. The browser
+          journey passes. A customer reports that using a keyboard loses their
+          cart when a request fails. What do we do?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reproduce and understand the report. The passing suite doesn't
+          invalidate the customer's experience. Identify the missing
+          combination: keyboard interaction, request failure, and cart
+          preservation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then add a test?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >At the scope that includes the failure mechanism. Maybe a component
+          test for state preservation and a browser check for focus behavior.
+          First confirm the intended recovery behavior with the product
+          context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And coverage?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It may remain unchanged. We can add a highly valuable assertion or
+          scenario without executing a new line. Quality improved even if the
+          meter didn't move.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a useful final answer to “one hundred percent of what?”</span
+        >
+      </p>
+      <h2 id="a-report-that-looks-better-for-the-wrong-reason">
+        A Report That Looks Better for the Wrong Reason
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yesterday coverage was eighty percent. Today it's ninety-five. What
+          happened?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Maybe we added meaningful tests. Maybe we deleted obsolete code.
+          Maybe we excluded an important directory. Maybe a configuration change
+          altered what gets counted. Ask before celebrating.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The same numerical movement can have very different
+          causes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we removed unused code, that's potentially a good change even
+          though we didn't add tests. If we excluded a difficult payment adapter
+          without replacing its evidence, the higher number may hide more
+          risk.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if generated files were accidentally included before, excluding
+          them can make the report more relevant. Exclusion isn't inherently
+          dishonest.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The reason and scope matter. A useful report should make the
+          denominator understandable enough that reviewers can tell the
+          difference.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What about a drop caused by adding a new module that isn't tested
+          yet?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's useful information. Discuss the module's risk and add
+          appropriate checks. Don't immediately exclude it because the threshold
+          blocks the build.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A metric can create pressure. We should design the review process so
+          the easiest response is improving evidence, not hiding the gap.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Good intentions need a workflow that doesn't reward
+          nonsense.</span
+        >
+      </p>
+      <h2 id="the-surviving-mutant-conversation">
+        The Surviving Mutant Conversation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Mutation testing changes a comparison in our validation guard, and
+          the tests still pass. What next?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Read the change. Find an input where the mutated behavior differs
+          within the intended domain. If such an input matters, add or
+          strengthen a test with an independently derived expectation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose no valid input can distinguish the versions because an
+          earlier guard already rejects the relevant values.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then it may be equivalent within our contract. We don't need a
+          contorted test of impossible behavior just to kill the mutant.
+          Document or handle it according to the tool and project policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the mutation changes an error message's punctuation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask whether exact punctuation is part of the intended contract. If
+          it's an internal diagnostic, maybe not. If a public API or user-facing
+          requirement depends on the message, maybe it matters. Context
+          again.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So mutation testing gives us questions about sensitivity, not
+          automatic instructions to make every detail immutable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. It can reveal weak assertions, but it can also tempt us to
+          over-specify irrelevant behavior. We still choose what deserves
+          protection.</span
+        >
+      </p>
+      <h2 id="removing-tests-can-be-responsible">
+        Removing Tests Can Be Responsible
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Is deleting a test ever the right improvement?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. If the feature no longer exists, if the test duplicates evidence
+          without useful diagnostic value, or if it enforces an obsolete
+          implementation detail. Review the reason and preserve coverage of the
+          actual current behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What if it's flaky?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Flakiness alone doesn't tell us whether deletion is right.
+          Investigate whether it protects a real risk and whether a
+          better-scoped test can replace it. Don't quietly remove the only check
+          of a critical workflow because it was inconvenient.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And a slow test?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same principle. Optimize setup, move repeated cases to a narrower
+          scope, or schedule expensive checks appropriately. If its evidence
+          matters, find a sustainable way to keep that evidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the test suite is maintained software, not an ever-growing museum
+          of every assertion anyone wrote.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Obsolete tests can obstruct useful changes and teach the
+          wrong requirements. Keeping everything forever isn't automatically
+          safer.</span
+        >
+      </p>
+      <h2 id="what-confidence-sounds-like">What Confidence Sounds Like</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We have to make a release decision. How do you express confidence
+          without pretending certainty?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >State what changed and which risks we checked. “The fee boundary
+          cases pass, the API uses authoritative cents, and the isolated
+          checkout journey shows the expected total. We haven't exercised the
+          external provider in this run.” That's concrete.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And if the untested boundary is crucial to the change?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then perform the appropriate additional check or explain why the
+          decision remains blocked. Don't bury the missing evidence under a
+          broad phrase like all tests passed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>If the change is a tiny wording fix?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Scale verification to the change. We don't need to rerun the universe
+          to prove a typo was corrected, though we should check the actual
+          output and avoid breaking the surrounding markup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a nice final tradeoff. Useful confidence includes knowing when
+          more testing would add little information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Testing isn't a contest to consume the most compute. It's a way
+          to make better decisions about software and the people depending on
+          it.</span
+        >
+      </p>
+      <h2 id="the-last-question">The Last Question</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If you could ask only one thing about a new test, what would it
+          be?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What meaningful mistake would make this fail? The answer doesn't have
+          to cover every possible bug, but it should identify something we care
+          about.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the answer is only that changing the test's own fixture would
+          make it fail?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then inspect whether the real subject contributes anything. Maybe
+          it's a legitimate fixture-validation test, but don't describe it as
+          application coverage unless it exercises the application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A clear answer connects the test to the reason it exists.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. That's more valuable than a large assertion count and
+          considerably harder to fake with a green badge.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We started with a button Parisa had already clicked. Automated tests
+          gave us repeatable examples and a way to preserve selected behavior
+          through change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unit tests isolated decisions. Arrange, Act, Assert made the question
+          readable. Runners handled execution. Doubles controlled dependencies.
+          DOM and React tests observed interactions. Async tests made completion
+          explicit. Integration and end-to-end tests connected the wires.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Coverage helps reveal execution gaps. Mutation and property-based
+          techniques can deepen the investigation. None makes judgment
+          unnecessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The goal isn't to prove the absence of all bugs. It's to make useful
+          claims, catch meaningful mistakes, and understand what's still
+          uncertain.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What problem does this test solve, and does that problem apply
+          here?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There it is. The show's question, wearing a test filename.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Thanks for listening to <em>Okay, But Why?</em>.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >May your tests be clear, your fixtures be fictional, and your green
+          dashboard have something specific to say.</span
+        >
+      </p>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

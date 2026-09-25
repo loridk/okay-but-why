@@ -45,7 +45,7 @@ PARISA: And security invented a zoo inside it.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
@@ -83,7 +83,7 @@ PARISA: Needs a host.
 
 JULES: Generally, yes.
 
-A **worm** is self-propagating malware that can spread across systems or networks without needing the same kind of user-assisted host execution.
+JULES: A **worm** is self-propagating malware that can spread across systems or networks without needing the same kind of user-assisted host execution.
 
 PARISA: Which can make worms spread terrifyingly fast.
 
@@ -129,7 +129,7 @@ PARISA: So “we have backups” is necessary but not sufficient.
 
 JULES: Exactly.
 
-If attackers exfiltrated sensitive data, restoring files doesn’t undo the confidentiality breach.
+JULES: If attackers exfiltrated sensitive data, restoring files doesn’t undo the confidentiality breach.
 
 PARISA: Double extortion.
 
@@ -146,7 +146,7 @@ PARISA: Browsing activity. Credentials. Messages.
 
 JULES: Potentially.
 
-A **keylogger** captures keystrokes.
+JULES: A **keylogger** captures keystrokes.
 
 PARISA: Which can steal credentials before encryption even matters.
 
@@ -233,7 +233,7 @@ PARISA: “Fileless” sounds like marketing.
 
 JULES: It can be overused, but the concept is real.
 
-Some attacks rely heavily on memory, scripts, built-in system tools, or legitimate interpreters instead of dropping a traditional executable file to disk.
+JULES: Some attacks rely heavily on memory, scripts, built-in system tools, or legitimate interpreters instead of dropping a traditional executable file to disk.
 
 PARISA: PowerShell.
 
@@ -256,7 +256,7 @@ JULES: Often they want **persistence**.
 
 PARISA: Survive reboot.
 
-Come back later.
+PARISA: Come back later.
 
 JULES: Startup entries, scheduled tasks, services, modified accounts, stolen tokens, web shells, cloud access keys.
 
@@ -271,9 +271,9 @@ JULES: Malware may contact **command-and-control**, C2, infrastructure.
 
 PARISA: Get instructions.
 
-Upload stolen data.
+PARISA: Upload stolen data.
 
-Download more payloads.
+PARISA: Download more payloads.
 
 JULES: Exactly.
 
@@ -290,13 +290,13 @@ JULES: **Indicators of compromise**, IOCs, are observable artifacts associated w
 
 PARISA: File hashes.
 
-IP addresses.
+PARISA: IP addresses.
 
-Domains.
+PARISA: Domains.
 
-Registry changes.
+PARISA: Registry changes.
 
-Processes.
+PARISA: Processes.
 
 JULES: Exactly.
 
@@ -321,9 +321,9 @@ JULES: **Endpoint Detection and Response** monitors endpoint activity, detects s
 
 PARISA: Kill process.
 
-Isolate machine.
+PARISA: Isolate machine.
 
-Collect telemetry.
+PARISA: Collect telemetry.
 
 JULES: Exactly.
 
@@ -390,13 +390,13 @@ JULES: Usually.
 
 PARISA: Worm tells me how it spreads.
 
-Trojan tells me how it arrives.
+PARISA: Trojan tells me how it arrives.
 
-Ransomware tells me the monetization or impact.
+PARISA: Ransomware tells me the monetization or impact.
 
-Spyware tells me the goal.
+PARISA: Spyware tells me the goal.
 
-Rootkit tells me stealth and persistence.
+PARISA: Rootkit tells me stealth and persistence.
 
 JULES: And one sample can have several behaviors.
 

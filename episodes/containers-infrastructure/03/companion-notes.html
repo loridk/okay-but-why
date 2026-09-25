@@ -1,0 +1,14 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">A Linux container isolates processes while sharing its hosting Linux kernel. It is not simply a small VM.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Host</strong></dt><dd>The system running the container runtime; it may itself be a VM.</dd>
+<dt><strong>User space</strong></dt><dd>Application software, runtimes, and libraries above the kernel.</dd>
+<dt><strong>Container runtime</strong></dt><dd>Software that executes and manages containers.</dd>
+<dt><strong>Docker</strong></dt><dd>Tools and an ecosystem for building, distributing, and running containers; not the whole concept of containers.</dd></dl>
+<h3>Compare the boundary</h3><ul><li><strong>VM:</strong> virtual hardware and a guest OS with its own kernel.</li><li><strong>Linux container:</strong> isolated process environment using an existing Linux kernel.</li><li><strong>Desktop Linux containers:</strong> commonly run within a Linux VM or WSL 2 environment on a non-Linux desktop.</li></ul><p>Portability still depends on OS and CPU compatibility, runtime support, configuration, and external services. Isolation depends on permissions and configuration; privileged containers and sensitive host mounts can weaken the boundary.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/">Docker: What is a container?</a></li>
+<li><a href="https://docs.docker.com/desktop/features/wsl/">Docker Desktop: WSL 2 backend</a></li>
+<li><a href="https://docs.docker.com/desktop/troubleshoot-and-support/faqs/general/">Docker Desktop: General FAQs</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

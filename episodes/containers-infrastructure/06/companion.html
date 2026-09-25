@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Docker Compose: My App Has Friends — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Docker Compose: My App Has Friends</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/94f9cc3c-1237-408a-abd4-c5e1b289a4ec"
+      ></script>
+      <div class="redcirclePlayer-94f9cc3c-1237-408a-abd4-c5e1b289a4ec"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#one-application-several-processes"
+            >One Application, Several Processes</a
+          >
+        </li>
+        <li><a href="#the-file-is-yaml">The File Is YAML</a></li>
+        <li><a href="#trace-one-request">Trace One Request</a></li>
+        <li>
+          <a href="#starting-is-not-being-ready">Starting Is Not Being Ready</a>
+        </li>
+        <li>
+          <a href="#wait-i-ve-been-using-this-shit-already"
+            >Wait. I've Been Using This Shit Already?</a
+          >
+        </li>
+        <li>
+          <a href="#a-definition-not-a-whole-operations-department"
+            >A Definition, Not a Whole Operations Department</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My setup instructions are now “start this, then that, remember the
+          network, attach the volume, set these values, don't use the old port,
+          and ask Jules what we named the database.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I named it db.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Your most restrained architectural decision.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Our fictional podcast application now has a
+          frontend, an API, and a database. Today: Docker Compose, because a bag
+          of individually reasonable containers can still be a pain in the ass
+          to coordinate.</span
+        >
+      </p>
+      <h2 id="one-application-several-processes">
+        One Application, Several Processes
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why separate the services at all? People have successfully put
+          several processes on one machine for quite a while.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They have, and this isn't a moral rule about one process per
+          container. We're separating components with different jobs and
+          lifecycles. The web-facing component serves the frontend, the API
+          handles requests, and the database manages durable records.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different images, different configuration, different update
+          schedules. I might change the API code without changing the database
+          software.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Docker Compose describes and manages a multi-container
+          application environment. You describe services and their relationships
+          in configuration, then use Compose to create and start the
+          arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A service here means a named application component in the Compose
+          model. Later Kubernetes uses the word Service for a more specific
+          networking object. Same English word, different API vocabulary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Thank you for putting that signpost down before the terminology
+          collision.</span
+        >
+      </p>
+      <h2 id="the-file-is-yaml">The File Is YAML</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The file has colons and indentation. It's YAML configuration. Not
+          JavaScript, and not a Dockerfile with a different haircut.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. YAML is a data notation. Compose gives meaning to keys such as
+          services, image, ports, networks, and volumes. Indentation expresses
+          nesting, and a dash often introduces an item in a list. Use spaces
+          consistently; indentation is structure here.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So YAML itself doesn't know what a container is. Compose reads the
+          data according to the Compose specification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Our companion has a deliberately incomplete illustration
+          with three services. The fictional frontend and API images are named
+          as examples; we're not creating an application repository or asking
+          anyone to run them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Under the frontend service, ports publishes its web port to a
+          loopback port on the laptop. Under the API, environment supplies the
+          database hostname. Under the database, volumes attaches the data
+          storage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A top-level volumes entry declares the named volume. A top-level
+          networks entry describes networks we want to use. Compose also
+          supplies a default network if you don't explicitly define another
+          arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our small example uses two networks to make the relationships
+          visible. Frontend and API share one; API and database share the other.
+          The database isn't directly connected to the frontend network.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a network boundary, not a replacement for authentication or
+          authorization. The API still needs an appropriately restricted
+          database identity.</span
+        >
+      </p>
+      <h2 id="trace-one-request">Trace One Request</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's make the arrows earn their keep. I open the podcast page in my
+          laptop browser. It connects to the frontend's published host
+          port.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The frontend server returns the page. For this illustration, it is
+          also configured to proxy requests under an API path to the API service
+          on their shared network.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Configured in the server, not magically by writing an environment
+          variable that no software reads.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Compose supplies infrastructure configuration. It doesn't
+          implement the application or proxy. The companion explicitly marks
+          those pieces as assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the browser can use a same-origin API path. The frontend server
+          resolves api on its network. The API resolves db on the backend
+          network. The database port is not published to the laptop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And if we chose a frontend that calls a separately published
+          API directly from the browser, we'd need a browser-reachable URL and
+          suitable cross-origin behavior. Compose's private DNS names still
+          wouldn't be browser addresses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One application diagram, several networking perspectives. That's the
+          part I want people to retain, not the punctuation in the file.</span
+        >
+      </p>
+      <h2 id="starting-is-not-being-ready">Starting Is Not Being Ready</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then we use the shell command docker compose up to bring the project
+          up. In detached mode it runs in the background. Other commands show
+          status and logs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The command is something we type into a terminal. The YAML is what it
+          reads. Small distinction, saves a lot of “where do I paste
+          this?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now suppose the API starts before the database can accept
+          connections. We can describe dependencies and health checks. But basic
+          startup ordering doesn't guarantee readiness.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A database process can exist while it initializes files or recovers.
+          “Started” doesn't mean “ready for this request.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compose can wait for a dependency marked healthy when configured with
+          the appropriate dependency condition. That helps initial startup.
+          Applications still need sensible retry and reconnection behavior
+          because dependencies can fail later too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we don't solve distributed failure by sleeping for five seconds
+          and believing in ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Nor should we interpret a green health check as proof every
+          feature works. It proves the particular check succeeded.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And stopping the project shouldn't casually delete our named data
+          volume. Some cleanup options explicitly remove volumes. Read those
+          before turning a tidying command into a data-loss event.</span
+        >
+      </p>
+      <h2 id="wait-i-ve-been-using-this-shit-already">
+        Wait. I've Been Using This Shit Already?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the point where I look at DDEV and Lando and get suspicious.
+          They give me a local web environment, database, versions, project
+          commands, friendly URLs. Have I been using this shit already?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In that family of workflows, yes. DDEV uses Docker and Docker Compose
+          to manage development environments, adding conventions and
+          integrations. Lando is also built around container-based local
+          development and provides recipes, services, tooling, and networking
+          conveniences over that machinery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So choosing a PHP version or starting a Drupal project with a
+          friendly command wasn't avoiding infrastructure. It was using somebody
+          else's carefully arranged infrastructure interface.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Those tools add real value: project defaults, routing,
+          certificates, command wrappers, and integrations. They aren't merely
+          Compose with the name filed off, and their configuration files aren't
+          interchangeable with a raw Compose file.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But now when a local database isn't reachable, I have somewhere to
+          start. Which service? Which network? Which port? Is it ready? Where's
+          its data?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when you execute a project command through the development tool,
+          it can run that command in the environment with the project's selected
+          runtime rather than whatever happens to be installed globally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's useful as hell. The friendly button was doing work; now I can
+          understand more of the work.</span
+        >
+      </p>
+      <h2 id="a-definition-not-a-whole-operations-department">
+        A Definition, Not a Whole Operations Department
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Does Compose make the environment reproducible?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >More reproducible. The configuration is reviewable and repeatable,
+          but the image versions, secret delivery, mounted files, and external
+          services still matter. A file referring to mutable images isn't a time
+          machine.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a colleague needs the required tools, compatible images, and
+          development configuration. We commit the shareable definition and
+          examples of required settings, not private credentials or production
+          database contents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Would we use Compose in production?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can be appropriate for some deployments, especially on a single
+          host with an understood operations plan. It isn't automatically a
+          multi-machine scheduler, a highly available database platform, or a
+          backup service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the presence of a Compose file doesn't answer how we handle host
+          failure, updates, TLS, monitoring, or data recovery.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It solves describing and managing related services together.
+          That's a significant problem. It doesn't have to solve every problem
+          to earn its place.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our app has friends, their addresses are written down, and the
+          database has a place to keep its belongings. Next we need to get the
+          whole arrangement somewhere users can reach.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>From Git push to production.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which, I am assured, involves more than pushing Git really
+          hard.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Compose describes related services together. Startup ordering,
+          readiness, application behavior, and production operations remain
+          distinct concerns.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>Compose service</strong></dt>
+          <dd>
+            A named component with an image/build definition and runtime
+            settings.
+          </dd>
+          <dt><strong>YAML</strong></dt>
+          <dd>
+            A data notation whose nesting uses indentation; Compose defines the
+            meaning of these keys.
+          </dd>
+          <dt><strong>Network</strong></dt>
+          <dd>
+            Provides a communication context; connected services can discover
+            one another by service name.
+          </dd>
+          <dt><strong>DDEV / Lando</strong></dt>
+          <dd>
+            Development tools that add conventions, recipes, routing, and
+            workflows over container infrastructure.
+          </dd>
+        </dl>
+        <h3>Conceptual three-service arrangement</h3>
+        <p>
+          Browser → frontend server/proxy → API → database. The frontend server
+          and API share edge; the API and database share backend. The database
+          has a named volume.
+        </p>
+        <p>
+          <strong
+            >Illustrative, incomplete Compose YAML; do not run as
+            supplied.</strong
+          >
+          Frontend and API images are fictional. Frontend proxy routing, API
+          behavior, database credentials, secret delivery, health checks, and
+          startup dependencies are deliberately omitted. The frontend must
+          actually be configured to proxy its API path to api:3000. PostgreSQL
+          17 is selected to make this example’s data-directory path explicit;
+          check the image documentation when changing major versions.
+        </p>
+        <figure class="card code">
+          <figcaption>
+            Relationships, not a functioning application<span
+              >Docker Compose YAML</span
+            >
+          </figcaption>
+          <pre tabindex="0"><code>services:
+  frontend:
+    image: example.invalid/obw/frontend:illustration
+    ports:
+      - &quot;127.0.0.1:8080:80&quot;
+    networks: [edge]
+  api:
+    image: example.invalid/obw/api:illustration
+    environment:
+      DB_HOST: db
+    networks: [edge, backend]
+  db:
+    image: postgres:17
+    volumes:
+      - podcast-data:/var/lib/postgresql/data
+    networks: [backend]
+
+networks:
+  edge: {}
+  backend: {}
+volumes:
+  podcast-data: {}</code></pre>
+        </figure>
+        <h3>Commands in a real configured project</h3>
+        <figure class="card code">
+          <figcaption>
+            Identify the command’s job<span>Shell commands</span>
+          </figcaption>
+          <pre
+            tabindex="0"
+          ><code>docker compose up -d   # create/start in the background
+docker compose ps      # inspect status
+docker compose logs    # inspect output; avoid logging secrets
+docker compose stop    # stop existing service containers</code></pre>
+        </figure>
+        <p>
+          A configured service_healthy dependency condition can wait for
+          readiness at initial startup. Runtime failures still require
+          application retries and reconnection. Do not add volume-removal
+          cleanup flags without understanding which data they delete.
+        </p>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a href="https://docs.docker.com/compose/how-tos/networking/"
+              >Compose networking</a
+            >
+          </li>
+          <li>
+            <a href="https://docs.docker.com/compose/how-tos/startup-order/"
+              >Compose startup order</a
+            >
+          </li>
+          <li>
+            <a href="https://docs.ddev.com/en/stable/users/usage/architecture/"
+              >How DDEV works</a
+            >
+          </li>
+          <li>
+            <a href="https://docs.lando.dev/landofile/services.html"
+              >Lando services</a
+            >
+          </li>
+          <li>
+            <a href="https://hub.docker.com/_/postgres"
+              >Official PostgreSQL image</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

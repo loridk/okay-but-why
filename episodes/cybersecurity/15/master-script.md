@@ -72,17 +72,17 @@ JULES: A medical system, public blog, payment platform, browser extension, and i
 
 JULES: Threat modeling asks questions before or during design.
 
-What are we building?
+JULES: What are we building?
 
-What do we need to protect?
+JULES: What do we need to protect?
 
-Who might attack it?
+JULES: Who might attack it?
 
-How could they do that?
+JULES: How could they do that?
 
-What controls do we have?
+JULES: What controls do we have?
 
-What should we change?
+JULES: What should we change?
 
 PARISA: That sounds refreshingly normal.
 
@@ -97,15 +97,15 @@ JULES: Things that matter.
 
 PARISA: Customer data.
 
-Authentication credentials.
+PARISA: Authentication credentials.
 
-Money.
+PARISA: Money.
 
-Source code.
+PARISA: Source code.
 
-Availability.
+PARISA: Availability.
 
-Reputation.
+PARISA: Reputation.
 
 JULES: Admin capability. Cryptographic keys. Business processes.
 
@@ -120,13 +120,13 @@ PARISA: Where does trust change?
 
 JULES: Browser to API.
 
-API to database.
+JULES: API to database.
 
-Public internet to private network.
+JULES: Public internet to private network.
 
-Third-party webhook into our service.
+JULES: Third-party webhook into our service.
 
-CI pipeline to cloud account.
+JULES: CI pipeline to cloud account.
 
 PARISA: Those boundaries deserve attention because untrusted or differently trusted data crosses them.
 
@@ -154,17 +154,17 @@ PARISA: Security loves mnemonics.
 
 JULES: STRIDE is one threat-modeling framework.
 
-Spoofing.
+JULES: Spoofing.
 
-Tampering.
+JULES: Tampering.
 
-Repudiation.
+JULES: Repudiation.
 
-Information disclosure.
+JULES: Information disclosure.
 
-Denial of service.
+JULES: Denial of service.
 
-Elevation of privilege.
+JULES: Elevation of privilege.
 
 PARISA: Conveniently maps to identity, integrity, accountability, confidentiality, availability, authorization.
 
@@ -200,13 +200,13 @@ JULES: Attack trees start with an attacker goal and branch into ways to achieve 
 
 PARISA: Goal: steal admin account.
 
-Phish admin.
+PARISA: Phish admin.
 
-Steal session.
+PARISA: Steal session.
 
-Exploit password reset.
+PARISA: Exploit password reset.
 
-Compromise identity provider.
+PARISA: Compromise identity provider.
 
 JULES: Exactly.
 
@@ -284,9 +284,9 @@ JULES: Please don’t.
 
 PARISA: Architecture changes.
 
-New integrations appear.
+PARISA: New integrations appear.
 
-Threats change.
+PARISA: Threats change.
 
 JULES: Threat models should evolve with meaningful system changes.
 

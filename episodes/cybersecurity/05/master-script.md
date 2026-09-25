@@ -31,13 +31,13 @@ PARISA: Therefore—
 
 JULES: Authentication answers “Who are you?”
 
-Authorization answers “What are you allowed to do?”
+JULES: Authorization answers “What are you allowed to do?”
 
 PARISA: Fine.
 
-So the computer believes I’m Parisa.
+PARISA: So the computer believes I’m Parisa.
 
-Now it needs to establish whether Parisa should have a giant red “DELETE PRODUCTION” button.
+PARISA: Now it needs to establish whether Parisa should have a giant red “DELETE PRODUCTION” button.
 
 JULES: Preferably no.
 
@@ -47,21 +47,21 @@ PARISA: Rude.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Last time we talked authentication.
 
-Passwords.
+PARISA: Passwords.
 
-MFA.
+PARISA: MFA.
 
-Passkeys.
+PARISA: Passkeys.
 
-Biometrics.
+PARISA: Biometrics.
 
-Identity providers.
+PARISA: Identity providers.
 
 JULES: Today we do the thing that comes immediately after successful authentication.
 
@@ -76,7 +76,7 @@ PARISA: Which is where an alarming amount of application security quietly dies.
 
 JULES: Let’s use a boring example because boring examples are useful.
 
-You log into an online store.
+JULES: You log into an online store.
 
 PARISA: The system proves I’m my account.
 
@@ -115,33 +115,33 @@ JULES: Put it on a shirt.
 
 PARISA: IAM.
 
-Identity and Access Management.
+PARISA: Identity and Access Management.
 
-It sounds enterprise.
+PARISA: It sounds enterprise.
 
 JULES: It can be, but the problem exists everywhere.
 
-Who are the users?
+JULES: Who are the users?
 
-How are identities created?
+JULES: How are identities created?
 
-What systems know about them?
+JULES: What systems know about them?
 
-What are they allowed to access?
+JULES: What are they allowed to access?
 
-How does access change when their job changes?
+JULES: How does access change when their job changes?
 
-What happens when they leave?
+JULES: What happens when they leave?
 
-How do service accounts work?
+JULES: How do service accounts work?
 
-Who approves privileged access?
+JULES: Who approves privileged access?
 
 PARISA: That’s a lot more than “roles table.”
 
 JULES: Exactly.
 
-IAM is the discipline and tooling around managing identities and their access across systems.
+JULES: IAM is the discipline and tooling around managing identities and their access across systems.
 
 PARISA: So identity lifecycle plus authorization policy.
 
@@ -183,11 +183,11 @@ PARISA: Instead of individually configuring every permission for every person.
 
 JULES: Right.
 
-A help-desk role might reset passwords.
+JULES: A help-desk role might reset passwords.
 
-A billing role might view invoices.
+JULES: A billing role might view invoices.
 
-An administrator role might manage users.
+JULES: An administrator role might manage users.
 
 PARISA: And one user can sometimes have multiple roles.
 
@@ -195,7 +195,7 @@ JULES: Yes.
 
 PARISA: This maps very naturally to web apps.
 
-`admin`, `editor`, `viewer`.
+PARISA: `admin`, `editor`, `viewer`.
 
 JULES: Right.
 
@@ -228,7 +228,7 @@ PARISA: There’s our tradeoff.
 
 JULES: RBAC is easy to reason about until roles explode.
 
-ABAC can model nuanced rules but can become difficult to understand and debug.
+JULES: ABAC can model nuanced rules but can become difficult to understand and debug.
 
 PARISA: “Why was Lori denied?”
 
@@ -243,25 +243,25 @@ PARISA: Security+ has more access models, right?
 
 JULES: Yep.
 
-**Rule-Based Access Control** applies system-wide rules.
+JULES: **Rule-Based Access Control** applies system-wide rules.
 
 PARISA: Like a firewall-style rule?
 
 JULES: Similar idea. Access depends on defined rules rather than ownership.
 
-Then there’s **Discretionary Access Control**, DAC.
+JULES: Then there’s **Discretionary Access Control**, DAC.
 
 PARISA: Resource owner decides who gets access.
 
 JULES: Right.
 
-Classic file permissions can work this way.
+JULES: Classic file permissions can work this way.
 
 PARISA: And Mandatory Access Control?
 
 JULES: **MAC** uses centrally enforced labels and classifications.
 
-Users and data may have security labels, and the system enforces policy.
+JULES: Users and data may have security labels, and the system enforces policy.
 
 PARISA: More rigid.
 
@@ -276,7 +276,7 @@ JULES: Companion notes.
 
 PARISA: Developer moment.
 
-Let’s say my React app hides the “Delete user” button unless `currentUser.isAdmin`.
+PARISA: Let’s say my React app hides the “Delete user” button unless `currentUser.isAdmin`.
 
 JULES: Useful for UX.
 
@@ -311,7 +311,7 @@ JULES: Insecure Direct Object Reference, often called IDOR.
 
 PARISA: I request `/invoice/123`.
 
-Then I change it to `/invoice/124`.
+PARISA: Then I change it to `/invoice/124`.
 
 JULES: If the server only checks that you’re authenticated and not whether invoice 124 belongs to you, you might see someone else’s data.
 
@@ -342,7 +342,7 @@ PARISA: Regular user becomes admin.
 
 JULES: Right.
 
-**Horizontal privilege escalation** means accessing another user’s resources at the same privilege level.
+JULES: **Horizontal privilege escalation** means accessing another user’s resources at the same privilege level.
 
 PARISA: Me reading another customer’s account.
 
@@ -361,19 +361,19 @@ JULES: **PAM** focuses on high-risk privileged accounts and access.
 
 PARISA: Domain admins.
 
-Cloud root accounts.
+PARISA: Cloud root accounts.
 
-Database administrators.
+PARISA: Database administrators.
 
 JULES: Exactly.
 
-PAM systems may vault credentials, rotate secrets, approve privileged sessions, record activity, or grant temporary access.
+JULES: PAM systems may vault credentials, rotate secrets, approve privileged sessions, record activity, or grant temporary access.
 
 PARISA: Just-in-time access.
 
 JULES: Yes.
 
-Instead of giving someone permanent admin privileges, grant them for the specific period they need.
+JULES: Instead of giving someone permanent admin privileges, grant them for the specific period they need.
 
 PARISA: Least privilege plus time.
 
@@ -386,13 +386,13 @@ PARISA: Humans aren’t the only identities.
 
 JULES: Right.
 
-Applications, services, CI jobs, containers, and automation need identities too.
+JULES: Applications, services, CI jobs, containers, and automation need identities too.
 
 PARISA: Service accounts.
 
-Managed identities.
+PARISA: Managed identities.
 
-Workload identities.
+PARISA: Workload identities.
 
 JULES: Exactly.
 
@@ -413,13 +413,13 @@ JULES: Dramatically.
 
 PARISA: Employee joins.
 
-What happens?
+PARISA: What happens?
 
 JULES: Account gets provisioned.
 
-Groups assigned.
+JULES: Groups assigned.
 
-Access granted.
+JULES: Access granted.
 
 PARISA: Employee changes teams.
 
@@ -437,13 +437,13 @@ PARISA: Orphaned accounts.
 
 JULES: Yes.
 
-Former employees.
+JULES: Former employees.
 
-Old contractors.
+JULES: Old contractors.
 
-Unused service accounts.
+JULES: Unused service accounts.
 
-Dormant admin accounts.
+JULES: Dormant admin accounts.
 
 PARISA: Accounts are attack surface too.
 
@@ -456,7 +456,7 @@ PARISA: Organizations love groups.
 
 JULES: For good reason.
 
-Assigning access through groups makes management easier.
+JULES: Assigning access through groups makes management easier.
 
 PARISA: Until somebody joins Finance, later moves to Engineering, later joins Security, and somehow still has all three permissions.
 
@@ -502,7 +502,7 @@ PARISA: Is dual control the same thing?
 
 JULES: Related, but more specific.
 
-Dual control means two authorized people are required to perform an action.
+JULES: Dual control means two authorized people are required to perform an action.
 
 PARISA: Two keys to launch the missiles.
 
@@ -523,7 +523,7 @@ PARISA: One place to manage accounts, groups, MFA, and policy.
 
 JULES: Right.
 
-Applications trust identity assertions or tokens from that provider.
+JULES: Applications trust identity assertions or tokens from that provider.
 
 PARISA: Big benefit: disable one account and remove access from many systems.
 
@@ -544,7 +544,7 @@ PARISA: I’ve heard JEA and JIT.
 
 JULES: **Just Enough Administration** gives only the administrative capabilities required.
 
-**Just-in-Time** access grants privileges only when needed and often only temporarily.
+JULES: **Just-in-Time** access grants privileges only when needed and often only temporarily.
 
 PARISA: Scope plus time.
 
@@ -615,7 +615,7 @@ JULES: Correct.
 
 PARISA: Login gets me an identity.
 
-IAM is the lifecycle and policy around what that identity can do across systems.
+PARISA: IAM is the lifecycle and policy around what that identity can do across systems.
 
 JULES: Exactly.
 
@@ -629,11 +629,11 @@ JULES: Yes.
 
 PARISA: Roles make permissions manageable.
 
-Attributes make policy more expressive.
+PARISA: Attributes make policy more expressive.
 
-PAM protects high-risk access.
+PARISA: PAM protects high-risk access.
 
-JIT limits how long powerful permissions exist.
+PARISA: JIT limits how long powerful permissions exist.
 
 JULES: You’ve got it.
 
@@ -661,19 +661,19 @@ JULES: Exactly.
 
 PARISA: Authentication proves identity.
 
-Authorization decides access.
+PARISA: Authorization decides access.
 
 JULES: IAM manages identities and access across their lifecycle.
 
 PARISA: Least privilege minimizes unnecessary power.
 
-RBAC bundles permissions into roles.
+PARISA: RBAC bundles permissions into roles.
 
-ABAC uses attributes and context.
+PARISA: ABAC uses attributes and context.
 
 JULES: MAC centrally enforces classification policy.
 
-DAC lets owners control access.
+JULES: DAC lets owners control access.
 
 PARISA: Server-side authorization must protect the actual operation.
 
@@ -693,7 +693,7 @@ JULES: We specifically promised no wizard robes.
 
 PARISA: Fine.
 
-Math robes.
+PARISA: Math robes.
 
 [MUSIC]
 

@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: Views, Display Modes &amp; Render Arrays: Who Actually Builds
+      the Page? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 5: Views, Display Modes &amp; Render Arrays: Who Actually Builds
+        the Page?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/daebad93-df4b-4684-92ca-994af940065a"
+      ></script>
+      <div class="redcirclePlayer-daebad93-df4b-4684-92ca-994af940065a"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#a-list-is-a-query-with-decisions-attached"
+            >A List Is a Query With Decisions Attached</a
+          >
+        </li>
+        <li><a href="#follow-the-relationship">Follow the Relationship</a></li>
+        <li>
+          <a href="#three-kinds-of-filter-input">Three Kinds of Filter Input</a>
+        </li>
+        <li>
+          <a href="#a-view-display-isn-t-an-entity-view-mode"
+            >A View Display Isn't an Entity View Mode</a
+          >
+        </li>
+        <li>
+          <a href="#the-approximate-rendering-journey"
+            >The Approximate Rendering Journey</a
+          >
+        </li>
+        <li>
+          <a href="#why-return-an-array-instead-of-html"
+            >Why Return an Array Instead of HTML?</a
+          >
+        </li>
+        <li>
+          <a href="#cache-tags-what-changed">Cache Tags: What Changed?</a>
+        </li>
+        <li>
+          <a href="#cache-contexts-what-makes-two-requests-different"
+            >Cache Contexts: What Makes Two Requests Different?</a
+          >
+        </li>
+        <li>
+          <a href="#max-age-how-long-is-it-valid"
+            >Max-Age: How Long Is It Valid?</a
+          >
+        </li>
+        <li>
+          <a href="#metadata-travels-with-the-output"
+            >Metadata Travels With the Output</a
+          >
+        </li>
+        <li>
+          <a href="#diagnose-the-disagreement">Diagnose the Disagreement</a>
+        </li>
+        <li>
+          <a href="#the-layers-now-have-jobs">The Layers Now Have Jobs</a>
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I changed the event title. The event page has the new title. The
+          department page has the old title. The sidebar has apparently formed
+          its own government.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We should inspect how each piece is built and cached.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I was hoping for a button labeled Make Website Agree With
+          Itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the architecture.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Terrible button label.</span>
+      </p>
+      <h2 id="a-list-is-a-query-with-decisions-attached">
+        A List Is a Query With Decisions Attached
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Bellweather has structured events. Now we
+          need an upcoming-events list. Drupal Views lets us configure queries
+          and their presentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Translate the Drupal: a View is not simply a template. It's a saved
+          definition of what to retrieve and how to present it, with supporting
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Views is in core. For ordinary database-backed content, it
+          can construct queries from configuration. Extensions can add other
+          integrations, but we'll start with events stored in Drupal.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'd normally write a query: select published events whose start is in
+          the future, order by start, limit the results. Then render them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Views gives a site builder an interface for much of that work. Filter
+          by content type Event. Filter by published status. Add the relevant
+          date condition. Sort ascending by start time. Set a pager or
+          limit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We still need to define upcoming. Does an event that began an hour
+          ago but lasts all day count? If yes, filtering only by start time is
+          wrong.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. A query builder doesn't choose the business meaning. We might
+          filter by end time, handle missing end times deliberately, and account
+          for stored time zones and display time zones.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There's the value of knowing SQL. Even when the interface generates
+          it, we still need to reason about conditions, joins, and result
+          sets.</span
+        >
+      </p>
+      <h2 id="follow-the-relationship">Follow the Relationship</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The event references a Location. We want to filter events by that
+          location's campus.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the query needs a relationship to the referenced location before
+          it can use its campus information. Conceptually, a join.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. In Views, adding a relationship makes related data available
+          for fields, filters, or other parts of the query. Whether the
+          relationship is required affects which results survive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like an inner join excluding an event with no matching location
+          versus a left join preserving it. The interface doesn't repeal
+          relational algebra.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And multi-value relationships can multiply rows. If an event has
+          three speakers, joining speakers can produce several rows for one
+          event.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if the pager says ten results and I see repeated events, I inspect
+          relationship cardinality and query behavior. I don't immediately hide
+          duplicates with CSS and declare victory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Aggregation or distinct handling may help in suitable cases, but we
+          need to understand what values we're combining. Sometimes the correct
+          design is to render the entity and let its multi-value field display
+          its speakers.</span
+        >
+      </p>
+      <h2 id="three-kinds-of-filter-input">Three Kinds of Filter Input</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A regular filter can be configured in the View: only published Event
+          nodes, for example.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An exposed filter lets the visitor choose a value, like subject or
+          campus. It's a form controlling the query.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. It needs a proper label, a useful empty option,
+          understandable results, and keyboard operation. An AJAX update also
+          needs to communicate that the results changed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And contextual filters?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They receive an argument from context, often a route argument or a
+          configured default. On a department page, the department identifier
+          can tell an event listing which department to match.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So contextual doesn't mean psychic. Something supplies the value, and
+          the View must define what happens when it's missing or invalid.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. Show all results, show none, use a default, or reject the
+          context—those are choices to configure carefully.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a filter isn't a complete authorization system. A published-only
+          condition is useful, but custom entity and field access rules still
+          matter. We test what an anonymous visitor and each relevant role can
+          retrieve.</span
+        >
+      </p>
+      <h2 id="a-view-display-isn-t-an-entity-view-mode">
+        A View Display Isn't an Entity View Mode
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One View can have several displays: a page at a route, a block for
+          placement elsewhere, perhaps a feed. Displays can inherit defaults and
+          override particular settings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is different from a node's Teaser view mode. Drupal has named
+          both things with the word display and then left us to cope.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A View display describes an output of the query configuration. An
+          entity view mode describes how an individual entity should be
+          rendered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They can cooperate. The View's page display retrieves events, and
+          each result is rendered in the event's Teaser view mode.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Alternatively, Views can render selected fields directly.
+          That gives flexibility, but can bypass some of the consistency you get
+          from reusing an entity display.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we fix the event teaser's date format, a listing using that view
+          mode can benefit. A listing assembling its own fields may need a
+          separate change.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>View: upcoming_events
+  Filter: published Event records whose end has not passed
+  Sort: start ascending, then ID for stable ordering
+  Relationship: Event -&gt; Location, if campus filtering needs it
+  Exposed filter: subject
+  Contextual filter: department ID supplied by the embedding context
+
+View displays: page / block
+Row rendering choice: Event in teaser view mode
+
+View display = an output of a query configuration
+Entity view mode = a named way to render one entity</code></pre>
+      </figure>
+      <h2 id="the-approximate-rendering-journey">
+        The Approximate Rendering Journey
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's follow a single event. Drupal loads the content entity. An
+          entity view builder prepares it for a chosen view mode. Field
+          formatters contribute output descriptions. Drupal's rendering and
+          theme systems resolve those descriptions, often through Twig
+          templates, into HTML.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Content, entity, view mode, render array, theme system, Twig, HTML.
+          Useful sequence, but not a literal law that every request passes
+          through every stage exactly once.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A page contains a tree of components. Some output is already
+          cached. Some is a form or a custom controller result. Some render
+          elements don't need a Twig template. The diagram is a mental map, not
+          a stack trace.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And Views sits upstream when we need a list. It decides which things
+          participate and how rows are prepared. It doesn't replace the entire
+          rendering system.</span
+        >
+      </p>
+      <h2 id="why-return-an-array-instead-of-html">
+        Why Return an Array Instead of HTML?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's my PHP instinct: I know the value. Escape it, wrap it in
+          markup, return a string. Why does Drupal want a render array?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because rendering is more than choosing angle brackets. A render
+          array is a structured description of output to build later. It can
+          carry children, theme information, attached assets, access results,
+          and cache metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Deferred work with context attached. Like handing the renderer a
+          recipe for a piece of output rather than a finished string with all
+          its history stripped away.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, though this recipe analogy is separate from Drupal Recipes, the
+          installation/configuration feature we'll discuss later. Drupal has
+          enough overloaded nouns without us adding more.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you for policing our metaphors.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keys beginning with a hash are render properties with special
+          meanings. Other keys can represent child elements. The array is
+          ordinary PHP syntax; the meaning of those keys is Drupal's Render
+          API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A key called plain text asks Drupal to treat the value as text, not
+          trusted HTML. Useful when displaying a stored label or external
+          value.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>php</span></figcaption>
+        <pre tabindex="0"><code>use Drupal\Core\Cache\CacheableMetadata;
+
+$build = [
+    '#type' =&gt; 'container',
+    'event_name' =&gt; [
+        '#plain_text' =&gt; $node-&gt;label(),
+    ],
+];
+
+CacheableMetadata::createFromObject($node)-&gt;applyTo($build);
+return $build;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The card is a method-body example, not a complete controller. It
+          demonstrates carrying an entity's cacheability into derived output.
+          The surrounding code must obtain the correct entity and handle
+          access.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If access depends on the current user or permissions, the access
+          result can carry cacheability too. We must preserve that information
+          rather than turn it into a naked true or false and forget why.</span
+        >
+      </p>
+      <h2 id="cache-tags-what-changed">Cache Tags: What Changed?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A cache stores reusable work. Cache tags describe dependencies so
+          Drupal can invalidate related cached results when data changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our event label depends on that event. If the title changes, cached
+          output tagged with that dependency should be invalidated.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A tag isn't a separate cached copy for each visitor. It's a
+          label used for invalidation. An entity can supply its tags through the
+          API so we don't hard-code all the details ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A list has a subtle dependency too. If I create a new event, a cached
+          list of upcoming events must change even though the new event wasn't
+          in the old list.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. List-level dependencies matter, not just tags for the items
+          already present. Core entity and Views systems handle much of this
+          when used correctly; custom queries need deliberate cacheability
+          design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Otherwise the title update works but adding an event doesn't. That's
+          a clue about which dependency we forgot.</span
+        >
+      </p>
+      <h2 id="cache-contexts-what-makes-two-requests-different">
+        Cache Contexts: What Makes Two Requests Different?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cache contexts describe variations. Output might differ by interface
+          language, permissions, route, or a relevant query parameter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If visitors can filter by campus, North Campus and South Campus
+          results can't share one cached value as though the requests were
+          equivalent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If output depends on a query argument, its cacheability needs
+          to reflect that dependency. If it depends on permissions, a suitable
+          permissions context may be required.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if it's a personal greeting containing a person's name,
+          permissions alone won't distinguish two users with identical
+          permissions. We'd need the appropriate user variation, or a different
+          strategy for that personalized fragment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use the variation the output actually depends on. Varying
+          everything by user can destroy useful sharing. Failing to vary
+          personalized output can expose the wrong person's information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So this is correctness and privacy work, not only performance
+          tuning.</span
+        >
+      </p>
+      <h2 id="max-age-how-long-is-it-valid">Max-Age: How Long Is It Valid?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Max-age expresses a time limit on reuse. Zero says this result isn't
+          cacheable in that context. A permanent value means no time-based
+          expiry, though tags can still invalidate it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Permanent doesn't mean ignore edits forever. It means time isn't the
+          reason we expire this item; dependency changes may still be the
+          reason.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And time-based queries need thought. An upcoming-events list
+          can become stale simply because the clock passed an event's ending
+          time. No editor saved anything, so no content edit necessarily
+          invalidated it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We need a suitable expiration or invalidation strategy for that
+          boundary. Tags alone don't announce that Thursday has happened.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Also, render caching, page caching, reverse proxies, and
+          browser caching are related but distinct. Setting a render array's
+          max-age isn't a complete configuration for every cache between Drupal
+          and the visitor.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Cache tags      What data/configuration changes invalidate this output?
+Cache contexts  Which request differences require separate variants?
+Max-age         How long may this output be reused without another signal?
+
+Event changed?                  dependency/tag question
+Different language or user?    variation/context question
+Event expires with time?       time/expiration question
+
+Metadata from nested output must reach the containing response.
+Do not replace missing metadata with routine full-cache clears.</code></pre>
+      </figure>
+      <h2 id="metadata-travels-with-the-output">
+        Metadata Travels With the Output
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why keep this metadata on render arrays instead of setting it once on
+          the whole page?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because the page doesn't necessarily know every nested dependency. A
+          location field formatter might depend on a referenced building. A
+          block might depend on permissions. The rendering system combines
+          cacheability as those pieces participate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the component that knows why its output varies can declare that
+          fact, and it travels upward. If I prematurely render it into an
+          ordinary string or pluck out a raw value, I risk losing that
+          information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Preserve render structures until the intended rendering
+          stage, and use the cacheability APIs for derived output. Lower-level
+          optimizations shouldn't quietly remove the correctness contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the first time render arrays have felt less like ceremonial
+          PHP and more like an answer to a real problem.</span
+        >
+      </p>
+      <h2 id="diagnose-the-disagreement">Diagnose the Disagreement</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Back to our inconsistent title. First, confirm each area is actually
+          using the same event and revision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then check whether a listing uses the entity label, an independently
+          stored heading, or a rewritten Views field. If it's different data,
+          clearing caches won't fix the model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the data source is correct, inspect cache dependencies and
+          variants. Does the custom sidebar carry the event's cache metadata? Is
+          an external cache retaining the old response? Are we looking at the
+          same language?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A cache rebuild can help during development or deployment when
+          discovery information changes. It can also temporarily hide an
+          invalidation bug. If the bug returns after the next edit, “clear it
+          again” isn't the finished fix.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test a warmed cache, edit content, and request again as the relevant
+          users. Cold-cache tests alone miss the problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also create a new matching event and wait across a time boundary.
+          That's how we test list membership and expiry, not just title
+          replacement.</span
+        >
+      </p>
+      <h2 id="the-layers-now-have-jobs">The Layers Now Have Jobs</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Views selects and arranges results. View modes select an entity
+          presentation. Render arrays describe output with its dependencies. The
+          theme system and Twig shape much of the HTML. Caches reuse work under
+          declared conditions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means “who builds the page” has several answers because
+          building the page contains several jobs. The trick is knowing which
+          job we're debugging.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, the frontend: Twig, themes, libraries, behaviors, and
+          Single Directory Components.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have successfully collected the data and kept the sidebar from
+          seceding. Now let's give it a sensible heading.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Query selection, entity display, rendering, and cache correctness are
+          separate jobs that cooperate to build a page.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 5 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Views relationship</th>
+              <td>
+                Makes related records available to a query; multi-value joins
+                can multiply rows.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Contextual filter</th>
+              <td>
+                Receives an argument from configured context, with explicit
+                missing/invalid behavior.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Exposed filter</th>
+              <td>A visitor-facing control for query input.</td>
+            </tr>
+            <tr>
+              <th scope="row">View display</th>
+              <td>A page, block, or other output of a View.</td>
+            </tr>
+            <tr>
+              <th scope="row">Render array</th>
+              <td>
+                Deferred output structure with dependencies, attachments, and
+                other metadata.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Cache tags</th>
+              <td>Dependencies used for invalidation.</td>
+            </tr>
+            <tr>
+              <th scope="row">Cache contexts</th>
+              <td>Request differences requiring separate variants.</td>
+            </tr>
+            <tr>
+              <th scope="row">Max-age</th>
+              <td>
+                Time-based limit on reuse; other caching layers also require
+                appropriate configuration.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Rendering map</h3>
+        <p>
+          Content → entity → chosen view mode → render array → theme system →
+          Twig → HTML is an approximate map. A page is a tree of output, and
+          caches or specialized elements may bypass some work.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li><strong>Code card 1:</strong> Keep these names separate</li>
+          <li>
+            <strong>Code card 2:</strong> A small render array, inside a method
+            where $node is loaded and access-checked
+          </li>
+          <li><strong>Code card 3:</strong> Three different questions</li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Warm the cache, edit a listed event, and request the page again.
+          </li>
+          <li>Create a new matching event to test list dependencies.</li>
+          <li>
+            Test language, permission, and relevant query-argument variants.
+          </li>
+          <li>Cross an event time boundary without an edit to test expiry.</li>
+          <li>
+            Inspect query relationships before treating duplicate rows as a
+            presentation bug.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/user_guide/en/views-concept.html"
+              >Views concepts</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/docs/drupal-apis/render-api"
+              >Render API</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/develop/drupal-apis/cache-api/cache-contexts"
+              >Cache contexts</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/develop/drupal-apis/cache-api/cache-tags"
+              >Cache tags</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/develop/drupal-apis/cache-api/cache-max-age"
+              >Cache max-age</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x"
+              >CacheableMetadata</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

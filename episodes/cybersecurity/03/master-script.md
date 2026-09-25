@@ -41,31 +41,31 @@ JULES: Unless the rules are bad.
 
 PARISA: Ah.
 
-So the bouncer is only as smart as the clipboard.
+PARISA: So the bouncer is only as smart as the clipboard.
 
 [MUSIC STING]
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Last time we built the network map.
 
-Addresses.
+PARISA: Addresses.
 
-Ports.
+PARISA: Ports.
 
-Protocols.
+PARISA: Protocols.
 
-Routing.
+PARISA: Routing.
 
-Subnets.
+PARISA: Subnets.
 
-DNS.
+PARISA: DNS.
 
-Traffic.
+PARISA: Traffic.
 
 JULES: Today we’re asking the next question.
 
@@ -75,11 +75,11 @@ JULES: Exactly.
 
 PARISA: Firewalls.
 
-Segmentation.
+PARISA: Segmentation.
 
-VPNs.
+PARISA: VPNs.
 
-And eventually—
+PARISA: And eventually—
 
 JULES: Zero Trust.
 
@@ -102,36 +102,36 @@ PARISA: HTTPS on 443.
 
 JULES: Right.
 
-Maybe SSH should only be reachable from a management network.
+JULES: Maybe SSH should only be reachable from a management network.
 
-Maybe the database should only accept traffic from the application tier.
+JULES: Maybe the database should only accept traffic from the application tier.
 
-Maybe an internal admin service should never be reachable publicly at all.
+JULES: Maybe an internal admin service should never be reachable publicly at all.
 
 PARISA: So without controls, if the network can route traffic there, anyone with a path can at least try to connect.
 
 JULES: Exactly.
 
-A firewall gives us a place to enforce policy about that traffic.
+JULES: A firewall gives us a place to enforce policy about that traffic.
 
 PARISA: Source.
 
-Destination.
+PARISA: Destination.
 
-Port.
+PARISA: Port.
 
-Protocol.
+PARISA: Protocol.
 
 JULES: Those are common ingredients.
 
-Modern firewalls can inspect much more, but the basic question is: allow or deny?
+JULES: Modern firewalls can inspect much more, but the basic question is: allow or deny?
 
 
 ## Packet Filtering: The Clipboard
 
 JULES: The simplest mental model is **packet filtering**.
 
-A firewall looks at packet information and compares it to rules.
+JULES: A firewall looks at packet information and compares it to rules.
 
 PARISA: “Traffic from this source network to this destination on TCP 443: allow.”
 
@@ -145,7 +145,7 @@ PARISA: Default deny.
 
 JULES: Yep.
 
-Instead of trying to predict every bad thing and block it, you permit the communication you actually need.
+JULES: Instead of trying to predict every bad thing and block it, you permit the communication you actually need.
 
 PARISA: Least privilege, but for networking.
 
@@ -155,7 +155,7 @@ PARISA: I like that.
 
 JULES: A permissive rule set says, “Everything is allowed unless we’ve specifically forbidden it.”
 
-A restrictive rule set says, “Nothing is allowed unless we’ve specifically permitted it.”
+JULES: A restrictive rule set says, “Nothing is allowed unless we’ve specifically permitted it.”
 
 PARISA: And security generally prefers starting restrictive.
 
@@ -176,9 +176,9 @@ PARISA: So it knows that an inbound packet might be part of a conversation my ma
 
 JULES: Exactly.
 
-Suppose your laptop opens a TCP connection to a website.
+JULES: Suppose your laptop opens a TCP connection to a website.
 
-The firewall can record that connection state and allow matching return traffic.
+JULES: The firewall can record that connection state and allow matching return traffic.
 
 PARISA: Instead of treating every packet like a total stranger.
 
@@ -203,19 +203,19 @@ PARISA: What actually changed?
 
 JULES: Traditional firewalls focused heavily on addresses, ports, and connection state.
 
-Next-generation firewalls may also understand applications, users, content, signatures, and threats.
+JULES: Next-generation firewalls may also understand applications, users, content, signatures, and threats.
 
 PARISA: So traffic on port 443 isn’t automatically trusted just because it’s HTTPS.
 
 JULES: Right.
 
-A modern firewall might identify the application or inspect permitted traffic more deeply, depending on configuration and whether encryption can be inspected.
+JULES: A modern firewall might identify the application or inspect permitted traffic more deeply, depending on configuration and whether encryption can be inspected.
 
 PARISA: Which raises privacy and operational questions.
 
 JULES: Absolutely.
 
-TLS inspection can improve visibility, but it also means deliberately intercepting encrypted connections inside an organization.
+JULES: TLS inspection can improve visibility, but it also means deliberately intercepting encrypted connections inside an organization.
 
 PARISA: Which has implications for certificates, trust, sensitive information, and things you probably shouldn’t inspect casually.
 
@@ -232,7 +232,7 @@ PARISA: The operating system can decide which inbound or outbound connections ar
 
 JULES: Right.
 
-A **network firewall** sits at a network boundary or between network segments and controls traffic crossing that point.
+JULES: A **network firewall** sits at a network boundary or between network segments and controls traffic crossing that point.
 
 PARISA: Defense in depth says we can use both.
 
@@ -259,21 +259,21 @@ PARISA: Because you can enforce rules between segments.
 
 JULES: Exactly.
 
-Imagine one enormous flat office network.
+JULES: Imagine one enormous flat office network.
 
-Employee laptops.
+JULES: Employee laptops.
 
-Printers.
+JULES: Printers.
 
-Security cameras.
+JULES: Security cameras.
 
-Servers.
+JULES: Servers.
 
-Developer machines.
+JULES: Developer machines.
 
-Payroll.
+JULES: Payroll.
 
-Guest devices.
+JULES: Guest devices.
 
 PARISA: Toaster.
 
@@ -283,19 +283,19 @@ PARISA: The toaster has Bluetooth. It is now infrastructure.
 
 JULES: Fair.
 
-If everything can directly reach everything else, one compromised device may have a huge amount of opportunity.
+JULES: If everything can directly reach everything else, one compromised device may have a huge amount of opportunity.
 
 PARISA: Lateral movement.
 
 JULES: Right.
 
-An attacker gains a foothold and then tries to move through the environment toward more valuable systems.
+JULES: An attacker gains a foothold and then tries to move through the environment toward more valuable systems.
 
 PARISA: So segmentation creates boundaries inside the network.
 
 JULES: Yes.
 
-You might separate users from servers, production from development, guest Wi-Fi from corporate devices, sensitive systems from general systems.
+JULES: You might separate users from servers, production from development, guest Wi-Fi from corporate devices, sensitive systems from general systems.
 
 PARISA: And then explicitly allow only the communication that needs to cross those boundaries.
 
@@ -322,15 +322,15 @@ JULES: Thank you.
 
 PARISA: I am learning the cybersecurity trick.
 
-Never stop at the noun.
+PARISA: Never stop at the noun.
 
 JULES: Exactly.
 
-“What control enforces the boundary?”
+JULES: “What control enforces the boundary?”
 
-“How is it configured?”
+JULES: “How is it configured?”
 
-“What traffic is allowed?”
+JULES: “What traffic is allowed?”
 
 PARISA: Otherwise we have beautifully labeled neighborhoods connected by six-lane highways.
 
@@ -343,7 +343,7 @@ PARISA: A network segment for systems that need some exposure to untrusted netwo
 
 JULES: Exactly.
 
-Historically, public-facing web servers might live in a DMZ, separated from both the internet and the internal network by firewall rules.
+JULES: Historically, public-facing web servers might live in a DMZ, separated from both the internet and the internal network by firewall rules.
 
 PARISA: So compromising the web server doesn’t automatically put the attacker on the same network as payroll.
 
@@ -353,7 +353,7 @@ PARISA: Cloud architecture doesn’t always look like old diagrams with a litera
 
 JULES: Very much.
 
-Public subnets, private subnets, security groups, network ACLs, service boundaries—the implementation changes, but the idea of controlled exposure remains.
+JULES: Public subnets, private subnets, security groups, network ACLs, service boundaries—the implementation changes, but the idea of controlled exposure remains.
 
 
 ## VPNs: The Tunnel Metaphor, With Conditions
@@ -366,7 +366,7 @@ PARISA: Encrypted tunnel through an untrusted network.
 
 JULES: That’s the standard metaphor, and it’s useful.
 
-A VPN creates a protected connection between endpoints over another network, often the public internet.
+JULES: A VPN creates a protected connection between endpoints over another network, often the public internet.
 
 PARISA: Remote employee to corporate network.
 
@@ -384,7 +384,7 @@ PARISA: And this is where marketing becomes messy, because people hear “VPN”
 
 JULES: Right.
 
-A VPN changes who can observe parts of your traffic path. It does not make you invisible.
+JULES: A VPN changes who can observe parts of your traffic path. It does not make you invisible.
 
 PARISA: The VPN provider can become a party you are trusting instead of the local network.
 
@@ -392,11 +392,11 @@ JULES: Exactly.
 
 PARISA: Websites still have cookies.
 
-You can still log into accounts.
+PARISA: You can still log into accounts.
 
-Browser fingerprinting exists.
+PARISA: Browser fingerprinting exists.
 
-Malware on your device does not care that the tunnel has a cute shield icon.
+PARISA: Malware on your device does not care that the tunnel has a cute shield icon.
 
 JULES: Correct.
 
@@ -413,7 +413,7 @@ PARISA: Full tunnel.
 
 JULES: Right.
 
-Or only traffic destined for corporate resources.
+JULES: Or only traffic destined for corporate resources.
 
 PARISA: Split tunnel.
 
@@ -432,11 +432,11 @@ JULES: Security design is context.
 
 PARISA: Here’s a thing I want tattooed on somebody’s firewall.
 
-Connecting to the VPN should not automatically grant access to everything.
+PARISA: Connecting to the VPN should not automatically grant access to everything.
 
 JULES: Yes.
 
-Older designs often treated the VPN as proof that you were “inside.”
+JULES: Older designs often treated the VPN as proof that you were “inside.”
 
 PARISA: Which means a stolen VPN credential could hand an attacker a very large internal network.
 
@@ -457,37 +457,37 @@ PARISA: Castle wall.
 
 JULES: Yep.
 
-Build a strong perimeter.
+JULES: Build a strong perimeter.
 
-Once you’re inside, you’re trusted more broadly.
+JULES: Once you’re inside, you’re trusted more broadly.
 
 PARISA: That model gets uncomfortable when employees are remote, applications are in multiple clouds, services call other services, phones access SaaS, contractors need limited access, and attackers steal legitimate credentials.
 
 JULES: Exactly.
 
-The perimeter stopped being a single meaningful boundary.
+JULES: The perimeter stopped being a single meaningful boundary.
 
 PARISA: So **Zero Trust** says don’t grant trust merely because of network location.
 
 JULES: Right.
 
-“Never trust, always verify” is the slogan, but the actual concept is more nuanced.
+JULES: “Never trust, always verify” is the slogan, but the actual concept is more nuanced.
 
 PARISA: Thank God.
 
 JULES: Trust should be evaluated continuously and based on context.
 
-Who is the user?
+JULES: Who is the user?
 
-What device are they using?
+JULES: What device are they using?
 
-Is the device healthy?
+JULES: Is the device healthy?
 
-What resource are they requesting?
+JULES: What resource are they requesting?
 
-What privileges do they have?
+JULES: What privileges do they have?
 
-What’s the risk of the request?
+JULES: What’s the risk of the request?
 
 PARISA: So my laptop being physically in the office is not sufficient proof that I should access payroll.
 
@@ -504,23 +504,23 @@ PARISA: The name makes it sound like a corporate culture problem.
 
 JULES: It does.
 
-Zero Trust does not mean systems refuse to trust anyone.
+JULES: Zero Trust does not mean systems refuse to trust anyone.
 
-They have to grant access eventually or nothing works.
+JULES: They have to grant access eventually or nothing works.
 
 PARISA: Availability has once again entered the meeting.
 
 JULES: Right.
 
-It means trust is not implicit.
+JULES: It means trust is not implicit.
 
-Access is explicitly evaluated.
+JULES: Access is explicitly evaluated.
 
 PARISA: Identity becomes much more important.
 
 JULES: Yes.
 
-Identity, device posture, policy, least privilege, segmentation, monitoring.
+JULES: Identity, device posture, policy, least privilege, segmentation, monitoring.
 
 PARISA: Which is why Zero Trust is not one product.
 
@@ -539,11 +539,11 @@ PARISA: Security+ has specific Zero Trust vocabulary, doesn’t it?
 
 JULES: It does.
 
-At a simplified level, you can think of a **policy engine** making the decision about whether access should be granted.
+JULES: At a simplified level, you can think of a **policy engine** making the decision about whether access should be granted.
 
-A **policy administrator** helps execute that decision.
+JULES: A **policy administrator** helps execute that decision.
 
-A **policy enforcement point** sits where the decision is actually enforced.
+JULES: A **policy enforcement point** sits where the decision is actually enforced.
 
 PARISA: So one part reasons about policy, another coordinates, and another says yes or no at the gate.
 
@@ -560,9 +560,9 @@ PARISA: Zero Trust also talks a lot about microsegmentation.
 
 JULES: Because broad network trust is dangerous.
 
-Traditional segmentation might separate departments or server tiers.
+JULES: Traditional segmentation might separate departments or server tiers.
 
-Microsegmentation can create much smaller policy boundaries around workloads, applications, or resources.
+JULES: Microsegmentation can create much smaller policy boundaries around workloads, applications, or resources.
 
 PARISA: So two servers in the same cloud environment do not automatically get to communicate freely.
 
@@ -576,7 +576,7 @@ PARISA: There’s the tradeoff.
 
 JULES: Fine-grained policy improves control, but increases complexity.
 
-Badly designed security can become so complicated that nobody understands the rules.
+JULES: Badly designed security can become so complicated that nobody understands the rules.
 
 PARISA: And then somebody writes `allow *` at 2:00 AM.
 
@@ -591,11 +591,11 @@ PARISA: Decide whether a device should be allowed to connect.
 
 JULES: Right.
 
-A NAC system may consider identity, device type, compliance status, certificate state, or other conditions before granting access.
+JULES: A NAC system may consider identity, device type, compliance status, certificate state, or other conditions before granting access.
 
 PARISA: Company laptop with current security software gets corporate access.
 
-Unknown device gets guest access or quarantine.
+PARISA: Unknown device gets guest access or quarantine.
 
 JULES: Exactly.
 
@@ -610,31 +610,31 @@ PARISA: Let’s clarify proxies while we’re here.
 
 JULES: Good idea.
 
-A firewall generally controls whether traffic is permitted to cross a boundary.
+JULES: A firewall generally controls whether traffic is permitted to cross a boundary.
 
-A **proxy** acts as an intermediary in the communication.
+JULES: A **proxy** acts as an intermediary in the communication.
 
 PARISA: Client talks to proxy. Proxy talks to destination.
 
 JULES: Right.
 
-A forward proxy acts on behalf of clients.
+JULES: A forward proxy acts on behalf of clients.
 
-A reverse proxy acts on behalf of servers.
+JULES: A reverse proxy acts on behalf of servers.
 
 PARISA: Web developers know reverse proxies whether they realize it or not.
 
-Nginx.
+PARISA: Nginx.
 
-Load balancers.
+PARISA: Load balancers.
 
-CDNs.
+PARISA: CDNs.
 
-Cloud edge services.
+PARISA: Cloud edge services.
 
 JULES: Exactly.
 
-Reverse proxies can terminate TLS, route requests, add authentication, filter traffic, rate-limit, or hide backend infrastructure.
+JULES: Reverse proxies can terminate TLS, route requests, add authentication, filter traffic, rate-limit, or hide backend infrastructure.
 
 PARISA: But again, “we have a reverse proxy” is not the same as “the backend is secure.”
 
@@ -651,13 +651,13 @@ PARISA: Specifically understands web traffic.
 
 JULES: Right.
 
-A WAF can inspect HTTP requests and responses and apply rules designed for web attacks.
+JULES: A WAF can inspect HTTP requests and responses and apply rules designed for web attacks.
 
 PARISA: SQL injection patterns.
 
-Cross-site scripting patterns.
+PARISA: Cross-site scripting patterns.
 
-Suspicious request structures.
+PARISA: Suspicious request structures.
 
 JULES: Among other things.
 
@@ -669,9 +669,9 @@ PARISA: Good.
 
 JULES: It’s another layer.
 
-A WAF can block many known attack patterns or buy time during remediation.
+JULES: A WAF can block many known attack patterns or buy time during remediation.
 
-But it can’t understand every application-specific authorization rule or magically repair unsafe design.
+JULES: But it can’t understand every application-specific authorization rule or magically repair unsafe design.
 
 PARISA: Defense in depth, not defense instead of depth.
 
@@ -684,7 +684,7 @@ PARISA: Intrusion Detection System and Intrusion Prevention System.
 
 JULES: An **IDS** detects suspicious activity and alerts.
 
-An **IPS** can actively block or prevent traffic.
+JULES: An **IPS** can actively block or prevent traffic.
 
 PARISA: Detective versus preventive.
 
@@ -696,7 +696,7 @@ JULES: Very much. But Security+ wants you to understand the conceptual differenc
 
 PARISA: IDS says “hey, that looks bad.”
 
-IPS says “hey, that looks bad, and I slapped it.”
+PARISA: IPS says “hey, that looks bad, and I slapped it.”
 
 JULES: Technically impeccable.
 
@@ -713,7 +713,7 @@ JULES: Please don’t do this.
 
 PARISA: Firewalls control traffic paths.
 
-They do not fix broken authorization.
+PARISA: They do not fix broken authorization.
 
 JULES: Correct.
 
@@ -746,9 +746,9 @@ JULES: Availability has filed another complaint.
 
 PARISA: Here’s my click.
 
-A firewall is not a force field.
+PARISA: A firewall is not a force field.
 
-It’s policy enforcement for network communication.
+PARISA: It’s policy enforcement for network communication.
 
 JULES: Yep.
 
@@ -779,7 +779,7 @@ PARISA: Don’t ruin this.
 
 JULES: For Security+, know firewall types and the basic difference between stateless and stateful filtering.
 
-Understand segmentation, VLANs, DMZs, ACLs, VPN concepts, split versus full tunneling, NAC, IDS versus IPS, proxies, WAFs, and Zero Trust architecture.
+JULES: Understand segmentation, VLANs, DMZs, ACLs, VPN concepts, split versus full tunneling, NAC, IDS versus IPS, proxies, WAFs, and Zero Trust architecture.
 
 PARISA: And understand the purpose.
 
@@ -834,7 +834,7 @@ JULES: Oh yes.
 
 PARISA: Finally.
 
-Something invented after we collectively admitted passwords are terrible.
+PARISA: Something invented after we collectively admitted passwords are terrible.
 
 JULES: We’re going to talk about exactly why.
 

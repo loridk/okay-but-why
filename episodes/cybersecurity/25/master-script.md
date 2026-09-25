@@ -17,21 +17,21 @@ JULES: We did it.
 
 PARISA: Networks.
 
-Crypto.
+PARISA: Crypto.
 
-IAM.
+PARISA: IAM.
 
-Malware.
+PARISA: Malware.
 
-Web attacks.
+PARISA: Web attacks.
 
-Cloud.
+PARISA: Cloud.
 
-Incident response.
+PARISA: Incident response.
 
-Governance.
+PARISA: Governance.
 
-Backups.
+PARISA: Backups.
 
 JULES: And now—
 
@@ -69,7 +69,7 @@ JULES: For most people, yes.
 
 PARISA: Learn what the thing does.
 
-Then attach the acronym.
+PARISA: Then attach the acronym.
 
 JULES: Exactly.
 
@@ -88,13 +88,13 @@ PARISA: Group related terms.
 
 JULES: Authentication factors together.
 
-Access-control models together.
+JULES: Access-control models together.
 
-Incident-response phases together.
+JULES: Incident-response phases together.
 
-Backup/recovery metrics together.
+JULES: Backup/recovery metrics together.
 
-Network protocols and ports together.
+JULES: Network protocols and ports together.
 
 PARISA: Control categories and control types.
 
@@ -107,15 +107,15 @@ PARISA: I am not chanting port numbers.
 
 JULES: Associate service with purpose.
 
-22 SSH.
+JULES: 22 SSH.
 
-53 DNS.
+JULES: 53 DNS.
 
-80 HTTP.
+JULES: 80 HTTP.
 
-443 HTTPS.
+JULES: 443 HTTPS.
 
-3389 RDP.
+JULES: 3389 RDP.
 
 PARISA: Then expand.
 
@@ -136,13 +136,13 @@ PARISA: Look for what problem the question is asking you to solve.
 
 JULES: Confidentiality?
 
-Availability?
+JULES: Availability?
 
-Least privilege?
+JULES: Least privilege?
 
-Fast containment?
+JULES: Fast containment?
 
-Long-term remediation?
+JULES: Long-term remediation?
 
 PARISA: Read the last sentence carefully.
 
@@ -176,9 +176,9 @@ JULES: Exactly.
 
 PARISA: Exams retire.
 
-Objectives change.
+PARISA: Objectives change.
 
-Weights change.
+PARISA: Weights change.
 
 JULES: The official objectives tell you what you’re responsible for.
 
@@ -187,11 +187,11 @@ JULES: The official objectives tell you what you’re responsible for.
 
 PARISA: Objective.
 
-Do I understand it?
+PARISA: Do I understand it?
 
-Can I explain it?
+PARISA: Can I explain it?
 
-Can I recognize it in a scenario?
+PARISA: Can I recognize it in a scenario?
 
 JULES: Great.
 
@@ -280,9 +280,9 @@ JULES: Use them diagnostically.
 
 PARISA: Why was my answer wrong?
 
-What clue pointed to the better answer?
+PARISA: What clue pointed to the better answer?
 
-Which concept am I mixing up?
+PARISA: Which concept am I mixing up?
 
 JULES: Exactly.
 
@@ -295,9 +295,9 @@ JULES: Group by domain.
 
 PARISA: Expand acronym out loud.
 
-Explain it in one sentence.
+PARISA: Explain it in one sentence.
 
-Give an example.
+PARISA: Give an example.
 
 JULES: If you can do all three, it sticks much better.
 
@@ -364,11 +364,11 @@ JULES: And an infrastructure person to zoom sideways.
 
 PARISA: Security is not just secure code.
 
-Not just firewalls.
+PARISA: Not just firewalls.
 
-Not just hackers.
+PARISA: Not just hackers.
 
-Not just policy.
+PARISA: Not just policy.
 
 JULES: It’s all the systems around protecting what matters.
 
@@ -471,6 +471,6 @@ JULES: That’s honestly pretty good.
 
 PARISA: Cool.
 
-I’m going to go rotate my secrets.
+PARISA: I’m going to go rotate my secrets.
 
 [MUSIC OUT]

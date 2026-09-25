@@ -40,17 +40,17 @@ JULES: Incident response is the structured process for handling security inciden
 
 PARISA: Preparation.
 
-Detection.
+PARISA: Detection.
 
-Analysis.
+PARISA: Analysis.
 
-Containment.
+PARISA: Containment.
 
-Eradication.
+PARISA: Eradication.
 
-Recovery.
+PARISA: Recovery.
 
-Lessons learned.
+PARISA: Lessons learned.
 
 JULES: Exactly.
 
@@ -63,13 +63,13 @@ JULES: Right.
 
 PARISA: Contacts.
 
-Runbooks.
+PARISA: Runbooks.
 
-Backups.
+PARISA: Backups.
 
-Logging.
+PARISA: Logging.
 
-Access.
+PARISA: Access.
 
 JULES: Forensic tooling, escalation paths, legal and communications contacts, tabletop exercises.
 
@@ -84,15 +84,15 @@ PARISA: Alert fires.
 
 JULES: Determine whether it is real.
 
-What happened?
+JULES: What happened?
 
-When?
+JULES: When?
 
-Which systems?
+JULES: Which systems?
 
-Which accounts?
+JULES: Which accounts?
 
-What data?
+JULES: What data?
 
 PARISA: Scope before assumptions.
 
@@ -105,11 +105,11 @@ PARISA: Stop damage from spreading.
 
 JULES: Isolate endpoint.
 
-Block malicious IP.
+JULES: Block malicious IP.
 
-Disable account.
+JULES: Disable account.
 
-Segment system.
+JULES: Segment system.
 
 PARISA: Short-term containment may prioritize speed.
 
@@ -122,11 +122,11 @@ PARISA: Remove root cause and attacker foothold.
 
 JULES: Malware.
 
-Persistence.
+JULES: Persistence.
 
-Vulnerable service.
+JULES: Vulnerable service.
 
-Compromised credentials.
+JULES: Compromised credentials.
 
 PARISA: Patch door and remove person already inside.
 
@@ -139,9 +139,9 @@ PARISA: Restore systems safely.
 
 JULES: Validate.
 
-Monitor.
+JULES: Monitor.
 
-Gradually return to production.
+JULES: Gradually return to production.
 
 PARISA: Don’t restore compromised backup into same vulnerable configuration.
 
@@ -154,11 +154,11 @@ PARISA: Blameless retrospective if possible.
 
 JULES: What failed?
 
-What worked?
+JULES: What worked?
 
-What detections were missing?
+JULES: What detections were missing?
 
-What controls need improvement?
+JULES: What controls need improvement?
 
 PARISA: Not “who clicked the link?”
 
@@ -219,13 +219,13 @@ PARISA: What can app developers contribute?
 
 JULES: Architecture knowledge.
 
-Log interpretation.
+JULES: Log interpretation.
 
-Deploy history.
+JULES: Deploy history.
 
-Feature behavior.
+JULES: Feature behavior.
 
-Recent changes.
+JULES: Recent changes.
 
 PARISA: But follow incident command rather than improvising destructive fixes.
 
@@ -238,15 +238,15 @@ PARISA: Security incident is also communications incident.
 
 JULES: Leadership.
 
-Customers.
+JULES: Customers.
 
-Legal.
+JULES: Legal.
 
-Regulators.
+JULES: Regulators.
 
-Law enforcement in some cases.
+JULES: Law enforcement in some cases.
 
-Insurance.
+JULES: Insurance.
 
 PARISA: Accuracy matters more than speculative speed.
 

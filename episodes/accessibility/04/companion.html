@@ -1,0 +1,1843 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: ARIA: What Is This Shit Actually For? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Accessibility episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: ARIA: What Is This Shit Actually For?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/f0c7c6da-3bfc-45b5-baf0-b07ca468e32c"
+      ></script>
+      <div class="redcirclePlayer-f0c7c6da-3bfc-45b5-baf0-b07ca468e32c"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-missing-information-problem"
+            >The Missing Information Problem</a
+          >
+        </li>
+        <li>
+          <a href="#native-first-means-fewer-jobs-to-rebuild"
+            >Native First Means Fewer Jobs to Rebuild</a
+          >
+        </li>
+        <li>
+          <a href="#role-state-property-relationship"
+            >Role, State, Property, Relationship</a
+          >
+        </li>
+        <li>
+          <a href="#what-is-an-accessible-name">What Is an Accessible Name?</a>
+        </li>
+        <li>
+          <a href="#labelled-by-means-use-that-text"
+            >Labelled By Means Use That Text</a
+          >
+        </li>
+        <li>
+          <a href="#the-visible-words-need-to-survive"
+            >The Visible Words Need to Survive</a
+          >
+        </li>
+        <li>
+          <a href="#described-by-is-additional-help"
+            >Described By Is Additional Help</a
+          >
+        </li>
+        <li>
+          <a href="#a-disclosure-that-tells-the-truth"
+            >A Disclosure That Tells the Truth</a
+          >
+        </li>
+        <li>
+          <a href="#state-is-not-a-decoration">State Is Not a Decoration</a>
+        </li>
+        <li>
+          <a href="#disabled-current-and-other-nonmagical-claims"
+            >Disabled, Current, and Other Nonmagical Claims</a
+          >
+        </li>
+        <li><a href="#hidden-from-whom">Hidden from Whom?</a></li>
+        <li>
+          <a href="#changes-people-didn-t-ask-to-focus"
+            >Changes People Didn't Ask to Focus</a
+          >
+        </li>
+        <li>
+          <a href="#diagnose-the-meaning-before-adding-an-attribute"
+            >Diagnose the Meaning Before Adding an Attribute</a
+          >
+        </li>
+        <li>
+          <a href="#the-decision-you-can-actually-reuse"
+            >The Decision You Can Actually Reuse</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Hypothetically, I have a div.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My condolences.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And I give it role button.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why is it a div?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Hypothetically.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Hypothetically use a fucking button.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the opening joke, but it cannot be our entire ARIA
+          lesson.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Agreed. I already know native HTML comes first. What I want is the
+          part after that advice. When does an ARIA attribute supply information
+          I actually need? What information? Who receives it? And what am I
+          still responsible for?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Excellent. We can release the div back into the wild.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>As a layout container. Under supervision.</span>
+      </p>
+      <h2 id="the-missing-information-problem">
+        The Missing Information Problem
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? ARIA expands to Accessible Rich Internet
+          Applications. The broader WAI-ARIA name connects it to the Web
+          Accessibility Initiative.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the acronym describes a historical need: web interfaces became
+          more interactive than the original set of HTML controls could fully
+          express.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Authors built things like tabs, tree views, custom dialogs,
+          and dynamically updating interfaces. There needed to be a standardized
+          vocabulary for exposing additional semantics to accessibility
+          APIs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So ARIA supplies information about the interface. It doesn't download
+          an accessible interaction engine into the element.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A role can identify a widget. States and properties describe
+          it. References can establish relationships. The browser maps that
+          information into its accessibility representation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then assistive technology can use it. It isn't a private language
+          spoken only by one screen reader.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But the actual experience still depends on browser and
+          assistive-technology support, correct markup, and correct behavior.
+          The specification doesn't replace testing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The question we've carried through the series is useful here: what
+          does the browser know right now? If the answer is “not enough about
+          this custom interaction,” ARIA may fill that gap.</span
+        >
+      </p>
+      <h2 id="native-first-means-fewer-jobs-to-rebuild">
+        Native First Means Fewer Jobs to Rebuild
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A native button already has button semantics and expected behavior.
+          Giving a div role button can communicate the role, but it doesn't
+          automatically make it focusable or implement Enter and Space
+          activation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or disabled behavior, form participation, and the other details we'd
+          inherit from the native element. The role is a statement about what
+          the user should expect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which makes it a promise you have to fulfill.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A sign saying “lift” doesn't install an elevator. If somebody follows
+          the sign, we owe them more than a beautifully named hole.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's the metaphor. With a firm boundary: ARIA isn't merely
+          decorative signage. It provides machine-readable semantics. But it
+          doesn't construct the interaction it describes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can also use ARIA on native elements when information is missing.
+          A real button that expands delivery details can expose whether those
+          details are expanded.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Native first doesn't mean ARIA never. It means start with
+          the strongest platform support, then add the semantics the particular
+          interaction requires.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before writing a custom disclosure, consider details and summary.
+          Before building a custom checkbox, consider input type checkbox.
+          Before building a custom modal from nothing, consider dialog.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And don't override a native role just because you can. A heading
+          shouldn't become a button unless you're intentionally replacing its
+          semantics, and usually a real button inside an appropriate heading is
+          a clearer structure.</span
+        >
+      </p>
+      <h2 id="role-state-property-relationship">
+        Role, State, Property, Relationship
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give me a useful distinction between the categories without a
+          taxonomy dissertation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Role asks what the thing is. Button, dialog, status. Many HTML
+          elements already provide implicit roles. States and properties provide
+          additional information, such as expanded, selected, or disabled, and
+          naming or relationship information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >State often sounds like something that changes as I interact. A
+          checkbox goes from unchecked to checked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, although the specification's state/property distinction isn't
+          simply “changes” versus “never changes.” Authors can update properties
+          too. The practical task is selecting a supported attribute with the
+          correct meaning and keeping its value truthful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I shouldn't put every plausible attribute on every element. Roles
+          have expectations about what attributes make sense.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Selected has a particular meaning on a tab or option. It
+          isn't a generic way to say “I styled this thing purple.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a relationship can point from one element to another using an ID.
+          That gives the browser a connection visual proximity alone might not
+          establish.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll use that for labels, descriptions, and a controlled panel.
+          Unique IDs and references to existing elements matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser doesn't conduct a séance to find the element I
+          meant.</span
+        >
+      </p>
+      <h2 id="what-is-an-accessible-name">What Is an Accessible Name?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An accessible name is the text the platform computes to identify an
+          element to assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “button” tells me the kind of control. “Apply discount” tells me
+          which button and what it does.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A button with visible text often gets its name from that
+          content. A form control can get its name from an associated label.
+          There are element-specific rules and an accessible-name computation,
+          not one universal “read whatever is nearby” process.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And visible text and accessible name may match, but they're not
+          identical concepts. I can have visible text that's never associated,
+          or an invisible name that overrides visible text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's why a browser's computed accessibility properties are so
+          helpful. They show what actually won.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's start with the ordinary field. Delivery name. An actual visible
+          label associated with the input.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually the best option. It helps sighted users, establishes the
+          programmatic relationship, and doesn't disappear when typing
+          starts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I do not need aria-label Delivery name on top of it just to
+          demonstrate commitment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Redundant sources can become conflicting sources when one
+          gets updated and the other doesn't.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially in localization. Now the visible Spanish label and the
+          forgotten English attribute are having a disagreement inside the same
+          control.</span
+        >
+      </p>
+      <h2 id="labelled-by-means-use-that-text">
+        Labelled By Means Use That Text
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Aria-labelledby references the ID of one or more elements whose text
+          supplies the name. It can reuse an existing visible heading to name a
+          dialog, for example.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The dialog heading says “Edit delivery address.” Pointing to it means
+          the visible title and programmatic name come from the same
+          content.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Multiple IDs can combine text in reference order, but don't
+          create elaborate naming puzzles when a simple label works.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And aria-label?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It supplies a text string directly. A common case is an icon-only
+          button where there isn't suitable visible label text to associate. The
+          name should describe the action: “Close address dialog,” not “X
+          icon.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if an icon is confusing visually, an invisible name doesn't solve
+          that for sighted users. Adding visible text may be the better product
+          decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. The ARIA choice can't compensate for every design
+          choice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if I put both on a button?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For ordinary supported naming cases, a valid aria-labelledby takes
+          precedence over aria-label, which can override native or text-content
+          naming. There are detailed rules and exceptions, so inspect the
+          computed result rather than treating that as a universal algorithm for
+          every role.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The practical rule is to choose one intentional naming strategy. More
+          naming attributes aren't extra credit.</span
+        >
+      </p>
+      <h2 id="the-visible-words-need-to-survive">
+        The Visible Words Need to Survive
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine a button visibly says “Pay now,” but its aria-label says
+          “Complete transaction.” Both phrases are understandable, but they
+          don't match.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A voice-control user may say “Click Pay now” because that's what they
+          can see. We've introduced a mismatch between their visible clue and
+          the exposed name.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep the visible label in the accessible name. Prefer the same
+          wording, with extra context only when necessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like a Remove button in each basket item. “Remove margherita pizza”
+          preserves Remove and distinguishes the target.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It may also be possible to include visually hidden supplementary text
+          or use a relationship to visible context. The key is a clear name that
+          doesn't contradict the interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't make the name a miniature manual. “Place order, button” is
+          useful. “Place order, click here to submit your order using this
+          button” is the semantic equivalent of someone standing too
+          close.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Role and state information can be announced separately. You generally
+          don't need to put the word button in the name of a button.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Names identify. Descriptions explain. Let's do that distinction
+          next.</span
+        >
+      </p>
+      <h2 id="described-by-is-additional-help">
+        Described By Is Additional Help
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Aria-describedby references additional explanatory text. A field
+          named Delivery instructions might have a description saying “Optional.
+          Include an entry code if the driver needs one.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That text should usually be visibly available too. The attribute
+          associates it; it doesn't write or display the explanation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A validation error can also be associated as a description. Keep the
+          label as the name, identify the invalid state where appropriate, and
+          connect useful error text.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;label for=&quot;postal-code&quot;&gt;Postal code&lt;/label&gt;
+&lt;input id=&quot;postal-code&quot; name=&quot;postalCode&quot; autocomplete=&quot;postal-code&quot;
+       aria-invalid=&quot;true&quot; aria-describedby=&quot;postal-help postal-error&quot;&gt;
+&lt;p id=&quot;postal-help&quot;&gt;Use the postal code for your delivery address.&lt;/p&gt;
+&lt;p id=&quot;postal-error&quot;&gt;Enter a postal code before continuing.&lt;/p&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the state after validation found an error, not a declaration
+          that a pristine empty field is invalid as soon as the page
+          loads.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. When corrected, update the invalid state and remove the
+          obsolete error association and text as appropriate. Don't leave a
+          stale description insisting there's a problem after it's fixed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And adding describedby doesn't guarantee a newly changed error gets
+          announced immediately while focus remains elsewhere. That's a separate
+          update and focus decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Description and announcement are related tools with
+          different jobs. We'll get to live regions shortly.</span
+        >
+      </p>
+      <h2 id="a-disclosure-that-tells-the-truth">
+        A Disclosure That Tells the Truth
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's build one complete small interaction, because this is where
+          attributes stop being vocabulary and start needing a source of
+          truth.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Delivery details. A native button opens and closes a panel. The
+          button's accessible name stays Delivery details. Aria-expanded
+          communicates its current open state. Aria-controls references the
+          panel.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Controls does not make the button control anything. It's a
+          relationship, not an event listener.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. JavaScript changes visibility and updates expanded together.
+          In this example the content starts visible and the button hidden until
+          enhancement is ready, so the details remain available if the script
+          never runs.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;button type=&quot;button&quot; id=&quot;delivery-toggle&quot; hidden
+        aria-expanded=&quot;true&quot; aria-controls=&quot;delivery-details&quot;&gt;
+  Delivery details
+&lt;/button&gt;
+&lt;section id=&quot;delivery-details&quot; aria-labelledby=&quot;delivery-heading&quot;&gt;
+  &lt;h2 id=&quot;delivery-heading&quot;&gt;Delivery details&lt;/h2&gt;
+  &lt;p&gt;Review your delivery address before placing the order.&lt;/p&gt;
+&lt;/section&gt;
+&lt;script&gt;
+  const toggle = document.querySelector(&quot;#delivery-toggle&quot;);
+  const panel = document.querySelector(&quot;#delivery-details&quot;);
+
+  function setExpanded(expanded) {
+    panel.hidden = !expanded;
+    toggle.setAttribute(&quot;aria-expanded&quot;, String(expanded));
+  }
+
+  setExpanded(false);
+  toggle.hidden = false;
+
+  toggle.addEventListener(&quot;click&quot;, function () {
+    const nextExpanded = toggle.getAttribute(&quot;aria-expanded&quot;) !== &quot;true&quot;;
+    setExpanded(nextExpanded);
+  });
+&lt;/script&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Audio version: the one update function decides both whether the panel
+          is hidden and what state the button reports. Clicking the native
+          button invokes that function with the opposite state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And native keyboard activation also produces the button's click
+          action. We don't need an extra key handler that might toggle
+          twice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Wait, that's just JavaScript. Const, a function, an event listener.
+          No TypeScript, no framework, no ARIA engine running the show.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. String converts the boolean into the text value used in the
+          attribute. The hidden property controls HTML visibility. Aria-expanded
+          communicates state. Different mechanisms updated from the same
+          decision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important little syntax trap: aria-expanded false is a meaningful
+          false state. The HTML hidden attribute is a boolean attribute, where
+          putting the text false in the markup doesn't make it absent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is why using the hidden property with a boolean is clear here.
+          And our script appears after the markup it expects. If you adapt this
+          into a reusable component, account for its lifecycle and validate the
+          elements you depend on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also don't override hidden with CSS that displays the panel anyway.
+          Then the accessibility state can be truthful about our variable and
+          false about reality.</span
+        >
+      </p>
+      <h2 id="state-is-not-a-decoration">State Is Not a Decoration</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In a framework, derive visibility and ARIA state from the same
+          application state. Avoid one variable for the animation, another for
+          expanded, and a third for what the user apparently believes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One source of truth is useful until the truth has three
+          roommates.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If a state change can happen from several paths, test each path. A
+          close button, Escape, navigation, or a server response can all leave
+          stale semantics if only the click handler updates them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our simple disclosure leaves focus on its button. If a more complex
+          interaction hides content that currently contains focus, we need to
+          choose a safe destination before it disappears.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's Episode 3 meeting Episode 4. Semantics must reflect the UI,
+          and the interaction must preserve orientation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about aria-selected versus aria-checked?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Selected describes selection in roles such as tabs and options.
+          Checked describes a checkable control. For native checkboxes and
+          radios, use their native checked state; the browser exposes it. Don't
+          maintain a contradictory aria-checked beside it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a toggle button can use aria-pressed, which isn't the same thing
+          as a tab being selected. We should choose the interaction model first,
+          then the state that belongs to it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The companion reference gives those distinctions without
+          forcing everyone to memorize an attribute family reunion.</span
+        >
+      </p>
+      <h2 id="disabled-current-and-other-nonmagical-claims">
+        Disabled, Current, and Other Nonmagical Claims
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Aria-disabled is one I see treated like native disabled. What's the
+          difference?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It communicates that a control is unavailable. It doesn't itself stop
+          clicks, key activation, form submission, or focus. Your implementation
+          must enforce the unavailable behavior and style it
+          understandably.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native disabled supplies native disabling behavior, including
+          removing many controls from the normal tab sequence and affecting form
+          submission. So they're not interchangeable shortcuts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keeping an unavailable action discoverable can sometimes be useful,
+          with an explanation of what would enable it. That can justify
+          aria-disabled on a suitable control, but you still have to block every
+          activation path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CSS pointer-events none won't block keyboard activation. And neither
+          kind of disabled control enforces authorization on the server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another useful attribute is aria-current. A navigation link can
+          indicate the current page. A step indicator can indicate the current
+          step.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't navigate or change the selected tab. It identifies the
+          current item within a set. Current page and selected widget option are
+          different meanings.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And aria-controls identifies a controlled element but doesn't promise
+          every assistive technology presents a convenient navigation shortcut
+          for that relationship. Don't make the interface depend on such a
+          shortcut being available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Useful information, not a teleportation service.</span>
+      </p>
+      <h2 id="hidden-from-whom">Hidden from Whom?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Aria-hidden true excludes an element and its descendants from the
+          accessibility tree. It doesn't visually hide them or remove them from
+          keyboard focus by itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So using it on a decorative icon inside a properly named button can
+          prevent redundant information. Using it on the whole operable button
+          creates a contradiction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Don't hide focusable controls or an ancestor containing them
+          from assistive technology while they remain available to keyboard
+          focus.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A user arrives at a thing we've told their tools doesn't exist.
+          Haunted focus.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And setting aria-hidden false on a child doesn't rescue it from an
+          aria-hidden true ancestor. The hidden subtree relationship
+          matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If content should be unavailable visually and interactively, use the
+          appropriate HTML or application mechanism. Hidden and inert have jobs
+          distinct from aria-hidden.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, visually hidden text can intentionally remain available to
+          assistive technology. That's different from display none, which
+          ordinarily removes content from the accessibility tree too. Naming
+          references have special rules, so inspect actual computed results when
+          those mechanisms intersect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The DOM, visual rendering, accessibility tree, and focus behavior are
+          connected. They are not one giant visibility switch.</span
+        >
+      </p>
+      <h2 id="changes-people-didn-t-ask-to-focus">
+        Changes People Didn't Ask to Focus
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our customer adds a pizza. The basket count changes, but keyboard
+          focus stays on Add. How do they learn that it worked without us
+          throwing focus into the basket?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A live region can communicate an update. Aria-live polite asks for an
+          announcement at an appropriate pause. Assertive asks for
+          higher-priority interruption; exact behavior depends on the assistive
+          technology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Polite” doesn't mean a guaranteed queue with a delivery
+          receipt.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A status role has implicit polite live-region behavior and
+          is a good fit for nonurgent results. An alert has assertive semantics
+          for urgent information. Don't make every basket update an
+          emergency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Otherwise the screen reader spends the whole checkout interrupting
+          itself about mozzarella.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;p id=&quot;cart-status&quot; role=&quot;status&quot;&gt;&lt;/p&gt;
+&lt;script&gt;
+  function announceCartSuccess(itemName) {
+    const status = document.querySelector(&quot;#cart-status&quot;);
+    status.textContent = itemName + &quot; added to cart.&quot;;
+  }
+  // Call after the application confirms the add operation succeeded.
+&lt;/script&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The region exists before its text changes. That is more reliable than
+          inventing a populated live region at the exact instant you want an
+          announcement. The function doesn't actually add anything to the cart;
+          it reports a confirmed result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same for “Password copied.” Only announce success after copying
+          succeeds. Don't expose the actual password in the message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For loading results, a concise status like “Six delivery slots
+          available” can be useful. Announcing the entire refreshed page is
+          usually exhausting.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an error needs useful visible text too. An announcement can be
+          missed. Leave information available so someone can find and review
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Avoid stacking alert, assertive, and focus movement on the same
+          routine event. Repeated identical messages and rapid updates need
+          testing; announcements can be coalesced or omitted.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again, we're communicating a state change, not operating a guaranteed
+          speech API.</span
+        >
+      </p>
+      <h2 id="diagnose-the-meaning-before-adding-an-attribute">
+        Diagnose the Meaning Before Adding an Attribute
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Can we do a little decision clinic? I want to hear how we'd reason
+          through an existing component rather than start from perfect
+          markup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First case: three buttons across the top of a delivery panel. Today,
+          Tomorrow, and Choose date. The developer added aria-selected to all
+          three because one has a highlighted background.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What does selecting one actually do?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today and Tomorrow choose a delivery date. Choose date opens a
+          date-selection control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the three things aren't necessarily one uniform tab interface.
+          Two may be date choices and the third an action. We need to clarify
+          the interaction before declaring all of them selected tabs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So the highlight doesn't determine the role.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. If these are mutually exclusive options for a form value,
+          native radios might fit. If they genuinely switch panels in a tab
+          interface, follow the tab pattern, including selection, relationships,
+          and keyboard behavior. If one opens another interaction, identify that
+          action honestly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser needs a coherent model, not just an annotation describing
+          our CSS class.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. We can't repair an unclear interaction solely by finding an
+          attribute whose English name sounds nearby.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Second case: a button says “Delivery details,” expands a panel, and
+          then changes its aria-label to “Click to close the additional delivery
+          details section.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a lot of instructions. A stable useful name plus expanded
+          state often communicates the change more cleanly. Keep the visible and
+          accessible naming aligned. Don't write a sentence that repeats the
+          role, input method, and state unnecessarily.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And “click” assumes a particular method even though Enter and Space
+          work too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. A name should describe the action or object, not narrate a mouse
+          tutorial. If changing the visible action text is appropriate, keep the
+          accessible result consistent, but don't create a hidden alternate
+          interface without a reason.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third case: our checkout disables Place order until every field is
+          valid. Someone wants aria-disabled so the button remains discoverable
+          by keyboard.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a valid design discussion, but first ask whether preemptively
+          disabling submission is helping. If the person can't work out why it's
+          unavailable, we may have hidden the error-recovery path they
+          need.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Letting them submit and receive useful validation can be clearer in
+          some forms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. If unavailability is necessary, explain it visibly. If we
+          choose aria-disabled, block the operation in the application logic as
+          well as communicating it. And don't rely on that client state for
+          server enforcement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the attribute decision follows the feedback and behavior decision.
+          It doesn't settle it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fourth case, my turn. The same page has a basket icon next to visible
+          “Basket” text. A screen reader repeats Basket twice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inspect the computed name and icon markup. If the icon is redundant
+          decoration, hide that decorative part from accessibility exposure or
+          use an empty image alternative as appropriate. Preserve the control's
+          useful name from the visible text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Don't hide the entire link just because one child is noisy.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Remove redundant information at its source without erasing
+          the action. And don't assume an icon font's character will always be
+          silent or meaningful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fifth case: a filter updates the number of available delivery slots
+          on every keystroke. The whole results panel has assertive live
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's likely far too disruptive. Keep typing focus where it belongs.
+          Consider a concise polite status after a settled update, rather than
+          announcing every result during every change. Test timing so stale
+          responses don't announce obsolete counts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There's our ordinary application-state problem again. If an older
+          request finishes after a newer one, accessibility information can be
+          wrong even though the attributes are valid.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. ARIA doesn't solve request races. The data and visible state
+          must be correct first; then the announcement should reflect the actual
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Last case: a custom checkbox displays a checkmark, reports
+          aria-checked true, but sends false when the form submits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then the application contradicts its own UI. Fix the shared state and
+          submission path. Better yet, revisit whether a native checkbox would
+          avoid maintaining parallel versions of the value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. The recurring question isn't “have I used ARIA?” It's “do
+          meaning, behavior, visible state, and submitted data describe the same
+          reality?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if they don't, more attributes can make the contradiction
+          louder.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. The incense has been removed from the component
+          library.</span
+        >
+      </p>
+      <h2 id="the-decision-you-can-actually-reuse">
+        The Decision You Can Actually Reuse
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's finish with a real decision process. Can native HTML express
+          the thing correctly?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use it. Then ask whether any semantic information is still
+          missing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If yes, choose the specific ARIA role, state, name, description, or
+          relationship that communicates it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next: what interaction behavior remains our responsibility? Keyboard
+          handling, focus, visibility, unavailable actions, whatever this
+          component actually requires.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then keep dynamic state synchronized and inspect what the browser
+          exposes. Test the behavior with the input methods and assistive
+          technology relevant to the interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if I can't explain what an attribute accomplishes, I don't
+          sprinkle it on and hope the accessibility total increases.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We have a practical guide in the companion: names versus
+          descriptions, common states, live updates, hiding, and the native
+          alternative to consider first.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Today's “ohhh” is that ARIA communicates additional semantic
+          information. It isn't an accessibility spell. But when information
+          really is missing, it's exactly the tool I may need.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, we challenge the other half of the interface: visual
+          design. Correct semantics don't rescue text someone can't read or a
+          form that disappears when enlarged.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our button has valid identification now. Next we check whether it's
+          wearing camouflage.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <h3>Practical ARIA decision guide</h3>
+        <ol>
+          <li>
+            <strong>Can native HTML express this correctly?</strong> Use it:
+            button, link, checkbox, details/summary, dialog, label,
+            fieldset/legend, and appropriate document structure.
+          </li>
+          <li>
+            <strong>What semantic information is missing?</strong> Identify the
+            specific role, name, description, state, or relationship. Add only
+            attributes supported by that element/role.
+          </li>
+          <li>
+            <strong>What behavior is still missing?</strong> Implement the
+            relevant keyboard pattern, focus management, visibility, and
+            activation behavior. ARIA does not implement these.
+          </li>
+          <li>
+            <strong>Can the state change?</strong> Derive visible and exposed
+            state from the same decision. Test every opening, closing,
+            selection, validation, and failure path.
+          </li>
+          <li>
+            <strong>What does the browser expose?</strong> Inspect the computed
+            role/name/state and references, then test the actual interaction and
+            relevant assistive-technology experience.
+          </li>
+          <li>
+            <strong>Cannot explain the attribute's job?</strong> Look it up
+            before adding it. Attribute count is not an accessibility measure.
+          </li>
+        </ol>
+        <h3>Naming and descriptions: choose deliberately</h3>
+        <dl>
+          <dt><strong>Visible native label / button text</strong></dt>
+          <dd>
+            First choice where appropriate. Associate a label with its input;
+            use meaningful button text. Visible labels help people beyond
+            screen-reader users.
+          </dd>
+          <dt><strong>aria-labelledby</strong></dt>
+          <dd>
+            Uses text from referenced element IDs as a name. Useful for naming a
+            dialog from its visible heading or combining necessary visible
+            context. IDs must be unique and references valid.
+          </dd>
+          <dt><strong>aria-label</strong></dt>
+          <dd>
+            Supplies a name string directly when a supported element needs one
+            and suitable visible text is unavailable, such as an icon-only close
+            button. It does not create a visible label.
+          </dd>
+          <dt><strong>Naming precedence</strong></dt>
+          <dd>
+            For ordinary supported controls, valid
+            <code>aria-labelledby</code> takes priority over
+            <code>aria-label</code>, which can override native/text naming.
+            Element-specific computation rules matter. Prefer one intentional
+            strategy and inspect the computed name.
+          </dd>
+          <dt><strong>Visible words stay in the name</strong></dt>
+          <dd>
+            A visible “Remove” control can be named “Remove margherita pizza.”
+            Avoid renaming visible “Pay now” as “Complete transaction.”
+            Mismatches can obstruct voice control.
+          </dd>
+          <dt><strong>aria-describedby</strong></dt>
+          <dd>
+            References supplementary help or error text. It describes rather
+            than replaces the name. Keep important information available
+            visually too. Changing a description is not a guaranteed immediate
+            announcement.
+          </dd>
+        </dl>
+        <figure class="card code">
+          <figcaption>Original naming examples<span>html</span></figcaption>
+          <pre
+            tabindex="0"
+          ><code>&lt;!-- Native visible name: no extra ARIA name needed --&gt;
+&lt;button type="submit"&gt;Place order&lt;/button&gt;
+
+&lt;!-- Icon-only action: prefer visible text if the icon is unclear --&gt;
+&lt;button type="button" aria-label="Close address dialog"&gt;
+  &lt;span aria-hidden="true"&gt;×&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;!-- Reuse visible text for a dialog's name --&gt;
+&lt;dialog aria-labelledby="address-title"&gt;
+  &lt;h2 id="address-title"&gt;Edit delivery address&lt;/h2&gt;
+  &lt;!-- Add real fields, close behavior, and deliberate focus handling. --&gt;
+&lt;/dialog&gt;</code></pre>
+        </figure>
+        <p>
+          The dialog fragment demonstrates naming only; it is not a complete
+          dialog implementation. The transcript contains a complete
+          single-disclosure example with synchronized visibility and expanded
+          state.
+        </p>
+        <h3>States and relationships quick reference</h3>
+        <dl>
+          <dt><strong>role</strong></dt>
+          <dd>
+            Identifies semantics such as dialog or status. Native HTML often
+            supplies an implicit role. Assigning a role creates expectations; it
+            does not supply the interaction.
+          </dd>
+          <dt><strong>aria-expanded</strong></dt>
+          <dd>
+            Reports whether controlled content is expanded. Put it on the
+            appropriate controlling element and synchronize it with actual
+            visibility.
+          </dd>
+          <dt><strong>aria-controls</strong></dt>
+          <dd>
+            References the controlled element's ID. It does not toggle, move
+            focus, or guarantee an assistive-technology shortcut. It is optional
+            in the APG disclosure pattern.
+          </dd>
+          <dt><strong>aria-selected</strong></dt>
+          <dd>
+            Selection state for supported roles such as tab or option.
+            Distinguish focus from selection; implement the widget's keyboard
+            pattern.
+          </dd>
+          <dt><strong>aria-checked</strong></dt>
+          <dd>
+            Checked state for supported custom checkable roles. Prefer native
+            checkbox/radio controls and their native <code>checked</code> state.
+            Mixed state belongs only where supported and meaningful.
+          </dd>
+          <dt><strong>aria-pressed</strong></dt>
+          <dd>
+            Pressed state for a toggle button. It is not a substitute for
+            expanded, selected, or a checkbox's checked state.
+          </dd>
+          <dt><strong>aria-disabled</strong></dt>
+          <dd>
+            Communicates unavailability without disabling activation or changing
+            tab order by itself. Enforce every activation path. Native
+            <code>disabled</code> has its own behavior and form-submission
+            consequences.
+          </dd>
+          <dt><strong>aria-current</strong></dt>
+          <dd>
+            Identifies the current item in a set, for example
+            <code>page</code> for the current navigation link or
+            <code>step</code> in a process. It does not navigate or select a
+            widget option.
+          </dd>
+          <dt><strong>aria-invalid</strong></dt>
+          <dd>
+            Marks a detected invalid value. Update it with validation state and
+            associate useful error text. Do not declare untouched fields invalid
+            merely because they are initially empty.
+          </dd>
+          <dt><strong>aria-hidden</strong></dt>
+          <dd>
+            Excludes an element and its subtree from the accessibility tree. It
+            does not visually hide or disable them. Never leave focusable
+            controls within an aria-hidden subtree. A child set to false cannot
+            undo a true ancestor.
+          </dd>
+        </dl>
+        <h3>Visibility is not one switch</h3>
+        <ul>
+          <li>
+            <code>hidden</code> normally hides content visually and from
+            accessibility exposure. It is an HTML boolean attribute:
+            <code>hidden="false"</code> still means present. The JavaScript
+            <code>element.hidden</code> property accepts a boolean.
+          </li>
+          <li>
+            <code>aria-hidden="false"</code> is an ARIA value, not the same
+            boolean-attribute mechanism. It cannot override another reason
+            content is hidden.
+          </li>
+          <li>
+            <code>inert</code> prevents interaction/focus and removes a subtree
+            from accessibility exposure; it does not itself create visual
+            styling.
+          </li>
+          <li>
+            Visually hidden text can intentionally remain available to assistive
+            technology. Do not confuse that pattern with
+            <code>display: none</code>.
+          </li>
+        </ul>
+        <h3>Live updates without stealing focus</h3>
+        <dl>
+          <dt><strong>role="status"</strong></dt>
+          <dd>
+            Useful for nonurgent results such as “Item added to cart” or “Six
+            delivery slots available”; implicitly polite, with atomic
+            announcement semantics.
+          </dd>
+          <dt><strong>role="alert"</strong></dt>
+          <dd>
+            Assertive, atomic live semantics for urgent information. Avoid using
+            it for routine updates or combining multiple announcement mechanisms
+            unnecessarily.
+          </dd>
+          <dt><strong>aria-live="polite" / "assertive"</strong></dt>
+          <dd>
+            Specify update-announcement priority on an appropriate region. These
+            are not guaranteed speech delivery or exact timing APIs.
+          </dd>
+        </dl>
+        <ul>
+          <li>
+            Create the region before changing its content; test timing and
+            browser/assistive-technology combinations.
+          </li>
+          <li>Announce confirmed results, not merely attempted operations.</li>
+          <li>
+            Keep messages concise, relevant, and available for later review when
+            needed.
+          </li>
+          <li>
+            Do not announce a whole refreshed page or sensitive values such as
+            the copied password.
+          </li>
+          <li>
+            Check repeated identical messages, rapid updates, and concurrent
+            focus changes.
+          </li>
+        </ul>
+        <h3>References for the next real component</h3>
+        <ul>
+          <li>
+            <a
+              href="https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/"
+              >APG: Names and Descriptions</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/"
+              >APG: Disclosure Pattern</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/"
+              >APG: Component Patterns</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/TR/wai-aria-1.2/"
+              >WAI-ARIA 1.2: role and attribute definitions</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions"
+              >MDN: Live regions</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html"
+              >WCAG: Label in Name</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

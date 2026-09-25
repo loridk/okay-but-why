@@ -1,0 +1,1469 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 3: Arrange, Act, Assert — The Testing Sandwich — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: Arrange, Act, Assert — The Testing Sandwich</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/b446f3aa-0145-4242-99e0-a4f464170e87"
+      ></script>
+      <div class="redcirclePlayer-b446f3aa-0145-4242-99e0-a4f464170e87"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-question-hidden-in-the-test"
+            >The Question Hidden in the Test</a
+          >
+        </li>
+        <li><a href="#one-small-sandwich">One Small Sandwich</a></li>
+        <li>
+          <a href="#one-behavior-can-need-several-observations"
+            >One Behavior Can Need Several Observations</a
+          >
+        </li>
+        <li>
+          <a href="#test-names-are-tiny-specifications"
+            >Test Names Are Tiny Specifications</a
+          >
+        </li>
+        <li>
+          <a href="#the-fixture-should-explain-the-scenario"
+            >The Fixture Should Explain the Scenario</a
+          >
+        </li>
+        <li>
+          <a href="#hooks-useful-then-suspicious"
+            >Hooks: Useful, Then Suspicious</a
+          >
+        </li>
+        <li>
+          <a href="#parameterized-tests-without-a-punctuation-ambush"
+            >Parameterized Tests Without a Punctuation Ambush</a
+          >
+        </li>
+        <li>
+          <a href="#repair-a-test-that-passes-too-easily"
+            >Repair a Test That Passes Too Easily</a
+          >
+        </li>
+        <li>
+          <a href="#state-machines-make-arrange-more-interesting"
+            >State Machines Make Arrange More Interesting</a
+          >
+        </li>
+        <li>
+          <a href="#what-if-the-expected-behavior-changes"
+            >What If the Expected Behavior Changes?</a
+          >
+        </li>
+        <li><a href="#the-debugging-order">The Debugging Order</a></li>
+        <li>
+          <a href="#listener-workshop-a-rejected-discount"
+            >Listener Workshop — A Rejected Discount</a
+          >
+        </li>
+        <li><a href="#read-a-bad-test-aloud">Read a Bad Test Aloud</a></li>
+        <li>
+          <a href="#a-failure-message-is-part-of-the-interface"
+            >A Failure Message Is Part of the Interface</a
+          >
+        </li>
+        <li>
+          <a href="#setup-isn-t-free-just-because-it-s-shared"
+            >Setup Isn't Free Just Because It's Shared</a
+          >
+        </li>
+        <li>
+          <a href="#the-review-you-can-do-without-running-it"
+            >The Review You Can Do Without Running It</a
+          >
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I found a test with three comments: arrange, act, assert.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A classic.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Under arrange, it creates the entire company. Under act, it performs
+          six transactions. Under assert, it says true is true.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The comments may have overpromised.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's what worries me. Have we invented a ritual that looks
+          organized while doing absolutely anything?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Today we explain why Arrange,
+          Act, Assert exists, and why writing those words doesn't automatically
+          make a test clear.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I support sandwiches. I object to finding an office building between
+          the bread.</span
+        >
+      </p>
+      <h2 id="the-question-hidden-in-the-test">
+        The Question Hidden in the Test
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine opening a failing test you didn't write. You need three
+          things quickly: what situation did it create, what behavior did it
+          trigger, and what result did it require?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Context, event, consequence. Without those, I have to execute the
+          whole thing in my head before I even know what broke.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrange, Act, Assert gives those responsibilities an order. Arrange
+          prepares the relevant situation. Act performs the behavior we're
+          investigating. Assert checks the meaningful outcome.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's a reading aid and a design aid. Not JavaScript syntax, and not
+          something a test runner recognizes because I capitalized it
+          nicely.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. You'll also hear Given, When, Then. Given a situation, when
+          something happens, then an outcome follows. Related way to describe
+          behavior, sometimes used by particular tools, but the basic idea
+          doesn't require those tools.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I can apply it to a manual test. Given an empty cart, when I add a
+          pizza, then the cart shows that pizza and the correct total.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Automation turns that example into executable setup, action,
+          and observations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means if I cannot say the intended behavior plainly, the test
+          may not be ready to become code yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A readable sentence often reveals missing assumptions before
+          syntax distracts us.</span
+        >
+      </p>
+      <h2 id="one-small-sandwich">One Small Sandwich</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>import { expect, test } from 'vitest';
+import { deliveryFee } from './delivery-fee.js';
+
+test('a subtotal at the free-delivery threshold has no fee', () =&gt; {
+  // Arrange
+  const subtotalCents = 2000;
+
+  // Act
+  const feeCents = deliveryFee(subtotalCents);
+
+  // Assert
+  expect(feeCents).toBe(0);
+});</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We prepare a subtotal of two thousand cents. We ask the real function
+          for the delivery fee. We require zero cents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The comments are optional. The structure is useful whether or not we
+          label every layer like airport luggage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. In a tiny test, a compact assertion around the function call
+          may be perfectly readable. Separating the result into a named variable
+          becomes useful when it clarifies the action or avoids repeating
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Const, the arrow function, and the function call are JavaScript.
+          Test, expect, and ToBe are Vitest's testing API. The words arrange,
+          act, assert are just comments.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the expected zero comes from the delivery rule, not from calling
+          the function a second time.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Otherwise the test would say the function agrees with itself. Many
+          bugs have excellent self-esteem.</span
+        >
+      </p>
+      <h2 id="one-behavior-can-need-several-observations">
+        One Behavior Can Need Several Observations
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I've heard “one assertion per test.” Is that a law?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A guideline some teams use, but one coherent behavior can require
+          several assertions. Suppose adding an item returns a new cart. We
+          might check the added item, the total, and preservation of the
+          original cart.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those all help describe one operation's contract. Splitting them
+          could duplicate the same setup repeatedly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But if the test adds an item, removes another, applies a
+          discount, and submits payment, it's doing much more than one focused
+          unit-test scenario.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A larger workflow test might intentionally do that. The problem is
+          pretending it gives the diagnostic clarity of a tiny calculation
+          test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Scope and purpose determine whether the length makes sense.
+          For focused tests, keep a clear central action. For a user journey, a
+          meaningful sequence can be the action under investigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Multiple assertions can also hide information because the first
+          failure stops the rest in ordinary test flow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >True. If observations concern separate rules with different failure
+          causes, separate tests may produce better reports. Don't consolidate
+          unrelated expectations merely to save three lines.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The unit of readability is the question, not the assertion
+          count.</span
+        >
+      </p>
+      <h2 id="test-names-are-tiny-specifications">
+        Test Names Are Tiny Specifications
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which name would you rather debug: “works,” “test three,” or “rejects
+          a negative subtotal before calculating a fee”?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The last one, unless test three comes with psychic powers.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A useful name identifies the relevant condition and expected
+          behavior. It doesn't need to narrate implementation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Calls validate, then compare, then return” mostly describes today's
+          function body. “Rejects negative subtotal” describes why the behavior
+          matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Names can include context through a describe block, which groups
+          related tests. But describe is another runner API, not a JavaScript
+          language construct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And twenty nested describes aren't inherently better than two clear
+          sentences. If I need a family tree to understand the failure report,
+          we have over-organized.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A good name is also a check on the assertion. If the name says
+          rejection, but the assertion only checks that something was called,
+          ask whether it really verifies rejection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Test names can lie accidentally. The code beneath them is what
+          executes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's why reviewing tests includes comparing the scenario, action,
+          and assertion. Not just checking whether they pass.</span
+        >
+      </p>
+      <h2 id="the-fixture-should-explain-the-scenario">
+        The Fixture Should Explain the Scenario
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's talk about arrange becoming enormous. I often inherit a giant
+          fixture called validCustomer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With a dozen addresses, five preferences, a subscription, and an
+          unexplained field containing the number seven.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Seven is load-bearing. Nobody knows why.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a delivery-fee test, we may only need a subtotal. Extra data
+          hides what's relevant and adds things that can break for unrelated
+          reasons.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But some application boundaries genuinely require a fuller object.
+          Then a helper might make sense.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A small fixture builder can provide sensible synthetic defaults
+          and allow the test to override the relevant values. The test should
+          still make its important conditions visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Don't make me open three helper files to discover the cart secretly
+          contains a discount. If discount state affects the rule, show it near
+          the test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Reuse setup that is incidental. Keep decisive facts local.
+          Repeated readable data can be better than a clever abstraction hiding
+          the story.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which feels contrary to the instinct to eliminate every repeated
+          character in code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tests are documentation as well as executable checks. A little
+          duplication can make them independent and understandable. Changing a
+          shared helper can otherwise alter dozens of scenarios at once.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And production data isn't a fixture shortcut. Make synthetic records
+          with obvious fake addresses and no real secrets.</span
+        >
+      </p>
+      <h2 id="hooks-useful-then-suspicious">Hooks: Useful, Then Suspicious</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Runners provide hooks such as beforeEach and afterEach. They run
+          setup or cleanup around individual tests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those names come from the testing tool. Not browser events, not
+          JavaScript keywords.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. They can establish fresh state or restore something a test
+          changed. But putting all setup into hooks can make individual tests
+          hard to understand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I scroll up through three nested scopes and discover a parent hook
+          changed the clock to Tuesday. Tuesday is now a hidden
+          dependency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Prefer explicit setup when it explains the scenario. Use hooks for
+          genuinely shared lifecycle work, such as clearing a test DOM after
+          each test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And afterEach means even a failed assertion should still be followed
+          by cleanup managed by the runner. Better than putting cleanup after
+          the assertion where an exception could skip it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. External resources still need robust lifecycle management.
+          If setup partly fails, cleanup should handle that state too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For our pure function, we don't need hooks at all. No mutable state,
+          no connections, no ritual washing of the subtotal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Add lifecycle machinery when there's a lifecycle to
+          manage.</span
+        >
+      </p>
+      <h2 id="parameterized-tests-without-a-punctuation-ambush">
+        Parameterized Tests Without a Punctuation Ambush
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Several delivery cases share the same shape: input subtotal, expected
+          fee. A table can express them compactly.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>test.each([
+  [0, 300],
+  [1999, 300],
+  [2000, 0],
+  [2001, 0],
+])('subtotal %i cents has fee %i cents', (subtotalCents, expectedFee) =&gt; {
+  const actualFee = deliveryFee(subtotalCents);
+  expect(actualFee).toBe(expectedFee);
+});</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Audio version: four rows. Zero and nineteen ninety-nine receive a
+          three-dollar fee. Twenty and twenty-oh-one receive zero. Each row
+          becomes a separately reported case.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The nested arrays and callback parameters are JavaScript. Test.each
+          is Vitest's parameterized-test API. The percent-i placeholders are
+          formatting understood by the testing tool, not interpolation built
+          into ordinary JavaScript strings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important. Those aren't template literals. The test runner supplies
+          values to those placeholders.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This pattern helps when cases have the same action and assertion
+          shape. If each row needs special branches, setup, or a different
+          meaning, separate named tests may be clearer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I've seen a table grow flags like shouldThrow, skipSetup,
+          specialMode, useAlternateResult. At some point you've built a worse
+          programming language in an array.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Test code should usually be simpler than the behavior it
+          checks. A conditional assertion can accidentally skip the branch we
+          intended to verify.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a loop generating no cases can produce no useful checks. Make
+          sure the runner actually discovers the cases you expected.</span
+        >
+      </p>
+      <h2 id="repair-a-test-that-passes-too-easily">
+        Repair a Test That Passes Too Easily
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a flawed test in words: call the fee function, then assert
+          that the result is defined.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It passes for zero, three hundred, negative eight thousand, and
+          “banana.” It hasn't encoded the fee rule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>First repair?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Assert the exact expected fee for the chosen scenario. Name the
+          boundary. Make the input visible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Second flawed test: it calculates expected fee by copying the same
+          conditional as the production function.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Replace that with an independently worked example. Otherwise the same
+          greater-than bug could appear in both places.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Third: the test catches errors, logs them, and continues.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let unexpected errors fail the test. For expected errors, use a
+          specific rejection or throw assertion. Logging isn't asserting.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fourth: a test adds a cart item in one test, then a later test
+          assumes it's still there.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Arrange a fresh cart in each test. Tests shouldn't require their
+          neighbors to leave useful crumbs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >These aren't formatting problems. They affect what evidence a green
+          result provides.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Three comments won't save a test that never asks the right
+          question.</span
+        >
+      </p>
+      <h2 id="state-machines-make-arrange-more-interesting">
+        State Machines Make Arrange More Interesting
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's leave arithmetic. An order can be draft, submitted, or
+          cancelled. Cancelling a submitted order returns a cancellation state
+          if the policy allows it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now the starting state matters. “Cancel order” without saying its
+          current state is incomplete.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrange might prepare a submitted order. Act requests cancellation.
+          Assert checks the resulting state and any specified side
+          effects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If an already-cancelled order receives another cancellation request,
+          do we return the same result, reject it, or produce a second refund?
+          That needs an explicit rule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A good test makes that ambiguity visible. Repeated requests are
+          common in real systems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But let's not quietly turn this into a payment-integration example.
+          Our local state transition doesn't prove a provider refund happened
+          exactly once.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. We can test the decision here and test the external
+          integration elsewhere. The boundary must remain visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why arrange isn't just “make some objects.” It establishes
+          the conditions that make the expected consequence meaningful.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And it may reveal unreachable states. A test that creates an
+          impossible object can be useful for validation, but don't mistake it
+          for an ordinary workflow scenario.</span
+        >
+      </p>
+      <h2 id="what-if-the-expected-behavior-changes">
+        What If the Expected Behavior Changes?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The shop raises the free-delivery threshold to twenty-five dollars.
+          Our twenty-dollar test fails. Is that a regression?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It may be an intentional requirement change. The existing test
+          correctly flags that the old promise changed. We review and update the
+          examples to the new agreed rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So tests aren't laws handed down on stone tablets. They preserve
+          decisions until we deliberately replace them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The review should explain the behavior change, not just say “fix
+          tests.” Twenty-four ninety-nine, twenty-five, and twenty-five-oh-one
+          become meaningful boundary examples.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And historical orders might need their old accepted prices preserved.
+          Updating a calculation for new orders doesn't mean rewriting
+          receipts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nice architecture callback. The correct tests depend on which
+          responsibility we're changing: current quote calculation, stored order
+          history, or display.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A well-named test helps us see the difference. A vague “price works”
+          test makes all those responsibilities blur together.</span
+        >
+      </p>
+      <h2 id="the-debugging-order">The Debugging Order</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When a test fails, do you read arrange first or assert first?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Usually the failure message tells me the assertion disagreement. Then
+          I check the action and relevant setup. Did we create the intended
+          condition? Did we call the real subject? Did we observe the right
+          result?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That order can expose tests aimed at the wrong object, stale
+          variables, or assertions that run before asynchronous work
+          finishes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Async is coming later. For now, the test should make the moment of
+          observation obvious.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Reproduce the failure in the smallest appropriate scope. Then
+          determine whether the application, expectation, fixture, or
+          environment is responsible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't add a random delay because the failure feels nervous.
+          Timing problems need an explanation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That will be on the Episode Eight mug.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We have an alarming number of imaginary mugs.</span>
+      </p>
+      <h2 id="listener-workshop-a-rejected-discount">
+        Listener Workshop — A Rejected Discount
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's design a test without writing it. A discount code has expired.
+          The application must reject it and preserve the original cart total.
+          Arrange?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A cart with a known total, the expired discount, and a controlled
+          current time if expiration depends on time. We need to know whether
+          expiration includes the exact boundary moment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Act?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Attempt to apply that code once through the relevant public
+          operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Assert?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A meaningful rejection result and an unchanged total. If the UI is
+          the boundary, check an understandable error and the displayed total.
+          If it's a pure rule function, check its specified result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Would “discount validation was called” be enough?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. It could be called and ignored. We need the actual outcome. An
+          interaction assertion might supplement it if that interaction is
+          itself required.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What could make the test flaky?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Using the real current date with a fixed expiration date. One day the
+          test becomes a different scenario. Make time explicit or control it
+          deliberately.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Great. Three steps exposed requirements, scope, and a source of
+          nondeterminism before we installed anything.</span
+        >
+      </p>
+      <h2 id="read-a-bad-test-aloud">Read a Bad Test Aloud</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >I'm going to read a fictional test in prose. Before every test, we
+          create a customer with a loyalty flag. Inside the test, we create a
+          cart. We call applyDiscount. If the result has an error, we expect the
+          error to exist. Otherwise we expect the total to be defined.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That test is prepared to agree with nearly anything. It doesn't
+          commit to whether the discount should succeed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The name is “applies loyalty discount.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the error branch contradicts the name. Decide the scenario. If
+          this is an eligible customer with a valid discount, assert the
+          expected discounted total and relevant success state. Unexpected
+          errors should fail.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What about the loyalty flag in the hook?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's decisive setup. Bring it into the test or make the fixture
+          helper invocation explicit enough to say eligible customer. The person
+          reading the test shouldn't have to discover the reason for eligibility
+          somewhere above the fold.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The original author says the conditional makes the test reusable for
+          failures too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then create a separate failure case or a clear table of cases with
+          explicit expected outcomes. Reuse shouldn't make every possible
+          outcome acceptable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the repaired story is: given an eligible customer and a cart worth
+          a known amount, when we apply this valid discount, then the total
+          becomes this independently calculated amount.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. And a separate story: given an ineligible customer, when we
+          attempt the discount, then we get the specified rejection and preserve
+          the total. Two clear claims beat one diplomatic shrug.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Diplomatic shrug is unfortunately a very common assertion
+          style.</span
+        >
+      </p>
+      <h2 id="a-failure-message-is-part-of-the-interface">
+        A Failure Message Is Part of the Interface
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We talk about accessible product messages. Tests also have an
+          audience: the developer trying to understand the failure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good point. A failure should expose the relevant mismatch without
+          requiring a full mental replay. Useful names, small fixtures, and
+          precise assertions help.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I assert a giant object equals another giant object, the diff may
+          be technically complete but practically unreadable. Sometimes checking
+          the meaningful fields separately is clearer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Provided we don't omit fields that are part of the contract. If
+          preventing extra sensitive data is the goal, an exact shape assertion
+          can be important.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. Clarity and completeness have to serve the actual question. We
+          aren't picking a matcher based on how short its line is.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Custom assertion helpers can express domain concepts when repeated
+          checks become noisy. But their failures should still say what
+          differed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A helper named expectValidOrder that throws “bad order” is not much
+          help. Show the particular invariant that failed, such as the total not
+          matching the line items.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And don't put so much business logic into the helper that it becomes
+          another untested implementation of the same rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We keep rediscovering the same principle: make the expected meaning
+          visible, avoid reproducing the algorithm, and let unexpected behavior
+          disagree loudly.</span
+        >
+      </p>
+      <h2 id="setup-isn-t-free-just-because-it-s-shared">
+        Setup Isn't Free Just Because It's Shared
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One more scenario. Every test starts a database because a global
+          beforeEach does it, even our pure fee test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then a tiny calculation depends on infrastructure it doesn't use. It
+          becomes slower and can fail before reaching the actual question.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How would you reorganize it?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Separate the setup by scope. Database tests use the database
+          lifecycle. Pure tests don't inherit it. That might mean separate
+          configuration or suites, depending on the project.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if we use beforeAll to start the database once for speed?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine if each test still gets independent data or reliable isolation.
+          Shared infrastructure is different from shared mutable scenario
+          state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That distinction is useful. We can reuse the expensive resource while
+          keeping the facts each test changes separate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Arrange, Act, Assert doesn't require waste. It requires
+          knowing which state makes the scenario true and ensuring another test
+          can't secretly rewrite it.</span
+        >
+      </p>
+      <h2 id="the-review-you-can-do-without-running-it">
+        The Review You Can Do Without Running It
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Before running a new test, read its name and point to the line that
+          creates the named condition. Then point to the action and the
+          assertion that would reject the wrong outcome.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I can't find those, simplify the test. This is a useful review
+          even before execution, though it doesn't replace actually running
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Then execute it and inspect what the runner discovered. For
+          a regression, confirm the failure corresponds to the original defect
+          when practical.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That gives us two complementary checks: does the story make sense,
+          and does the code actually enforce that story? A test can look
+          persuasive and still import the wrong function.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or execute perfectly while checking a requirement nobody agreed
+          to.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The sandwich needs ingredients and a reason to exist. I apologize for
+          making lunch this rigorous.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Arrange, Act, Assert exists to make a test's situation, action, and
+          expected consequence easy to see.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use it to clarify the question. Keep decisive data visible, share
+          incidental setup carefully, and prefer meaningful observations over
+          ceremonial assertion counts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Table-driven tests help with repeated case shapes. Hooks help with
+          real setup and cleanup. Neither should hide the reason the test
+          exists.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next episode, the tooling suitcase finally opens: Jest, Vitest,
+          runners, environments, and who actually calls these little
+          functions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You ready?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. My sandwich now contains a reasonable amount of software.</span
+        >
+      </p>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

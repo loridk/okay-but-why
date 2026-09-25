@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: Jest, Vitest, and Who Actually Runs This Stuff? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: Jest, Vitest, and Who Actually Runs This Stuff?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/ce4fbf34-c384-4831-b7d0-90075281d9fb"
+      ></script>
+      <div class="redcirclePlayer-ce4fbf34-c384-4831-b7d0-90075281d9fb"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#separate-the-jobs">Separate the Jobs</a></li>
+        <li><a href="#why-these-two-names">Why These Two Names?</a></li>
+        <li>
+          <a href="#a-small-practice-project">A Small Practice Project</a>
+        </li>
+        <li><a href="#how-the-file-gets-found">How the File Gets Found</a></li>
+        <li>
+          <a href="#watch-mode-is-a-feedback-loop"
+            >Watch Mode Is a Feedback Loop</a
+          >
+        </li>
+        <li>
+          <a href="#the-environment-is-not-the-runner"
+            >The Environment Is Not the Runner</a
+          >
+        </li>
+        <li>
+          <a href="#jsx-is-not-an-assertion-feature"
+            >JSX Is Not an Assertion Feature</a
+          >
+        </li>
+        <li>
+          <a href="#configuration-should-earn-its-place"
+            >Configuration Should Earn Its Place</a
+          >
+        </li>
+        <li><a href="#node-can-test-too">Node Can Test Too</a></li>
+        <li>
+          <a href="#continuous-integration-is-another-place-to-run-it"
+            >Continuous Integration Is Another Place to Run It</a
+          >
+        </li>
+        <li><a href="#listener-triage">Listener Triage</a></li>
+        <li>
+          <a href="#follow-one-command-all-the-way-through"
+            >Follow One Command All the Way Through</a
+          >
+        </li>
+        <li>
+          <a href="#a-realistic-first-failure">A Realistic First Failure</a>
+        </li>
+        <li>
+          <a href="#choosing-without-a-migration-crusade"
+            >Choosing Without a Migration Crusade</a
+          >
+        </li>
+        <li>
+          <a href="#reading-documentation-without-adopting-every-example"
+            >Reading Documentation Without Adopting Every Example</a
+          >
+        </li>
+        <li>
+          <a href="#the-smallest-successful-run">The Smallest Successful Run</a>
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I understand the test. I do not understand what happens when I type
+          npm test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It runs the test script defined in package.json.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Which runs a runner.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Usually.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which runs JavaScript in something that may pretend to be a browser,
+          after something else transforms it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Depending on the project.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. The straightforward command is hiding a small
+          airport.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Today we're opening the airport
+          map. Test runner, assertions, environment, transformations, watch
+          mode, and continuous integration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And whether Jest and Vitest are rival languages. Spoiler: I suspect
+          they are not.</span
+        >
+      </p>
+      <h2 id="separate-the-jobs">Separate the Jobs</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First job: find tests, load them, schedule them, and report outcomes.
+          That's the test runner.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It sees files matching its configuration, registers the named cases,
+          and invokes their callbacks. It also needs to know when a case is
+          finished.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Second job: compare actual behavior with expected behavior. That's
+          assertion functionality. Expect and its matchers are one style. Node's
+          assert module is another.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Third: provide the environment where the code executes. Node has
+          JavaScript and server-oriented APIs, but it doesn't ordinarily provide
+          a browser document just because my code would like one.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Fourth: transform code when needed. JSX or TypeScript may
+          need processing before execution in the selected environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fifth: mocks, reports, coverage, and other supporting features. Some
+          tools bundle many of those jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Jest and Vitest bundle a lot. That convenience can make the
+          boundaries harder to see, but they're still conceptually different
+          responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “my test framework” might refer to a package that includes a
+          runner, assertions, mocking, and more. We shouldn't assume the word
+          framework identifies one precise job.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And DOM Testing Library, which we'll use later, is not itself
+          the thing scheduling all our test files.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Put a pin in that before somebody tries to replace a runner
+          with a query function.</span
+        >
+      </p>
+      <h2 id="why-these-two-names">Why These Two Names?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Jest is an established JavaScript testing framework with an extensive
+          ecosystem. Vitest is built around Vite's tooling and can fit naturally
+          into projects already using Vite.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Natural fit isn't a commandment to migrate. Existing Jest
+          configuration, tests, integrations, and team knowledge have
+          value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. Their familiar test and expect styles make examples look
+          similar, but compatibility isn't universal. Module handling, mocks,
+          configuration, environments, and version-specific details can
+          differ.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A search-and-replace from jest to vi is not a migration plan.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. For this series we're choosing Vitest for a consistent
+          example vocabulary. We're teaching transferable testing ideas and
+          identifying tool-specific details.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if I'm working in an established Jest repository, my sensible
+          first move is to learn and use its setup, not install a second runner
+          to make a podcast example match exactly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Look at package.json, existing tests, configuration, and project
+          instructions. Run the documented command before changing the
+          machinery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is one place where boring consistency is genuinely useful. The
+          best test tool is not necessarily the one with the freshest
+          logo.</span
+        >
+      </p>
+      <h2 id="a-small-practice-project">A Small Practice Project</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If you're starting a separate practice directory, the companion shows
+          the minimal shape. It isn't an instruction to alter an existing
+          application's package file wholesale.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;test&quot;: &quot;vitest&quot;,
+    &quot;test:run&quot;: &quot;vitest run&quot;
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is JSON, not JavaScript and not testing-language syntax. Type
+          module tells Node how to treat ordinary .js files in this package. It
+          supports the import and export style our examples use.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The scripts object names commands npm can invoke. Test runs Vitest's
+          normal local mode. Test colon run is just a script name we chose for a
+          single run.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The colon in the name isn't a special dependency relationship. Npm
+          doesn't infer that test:run is a child process of test because the
+          names look related.</span
+        >
+      </p>
+
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>npm install --save-dev vitest
+npm run test:run</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The first command installs Vitest as a development dependency in that
+          practice project. The second invokes our package script, using the
+          installed local executable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These are terminal commands. Save-dev records a development tool
+          dependency; it doesn't mean the package is incapable of executing
+          code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Installation and test execution can run code with the
+          permissions of the developer or CI job. Use trusted packages and
+          normal dependency review, and don't give tests production credentials
+          casually.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also check the current tool's supported Node version before
+          installing. We're deliberately not hard-coding a “latest” version that
+          this episode will outlive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Commit the relevant package metadata and lockfile in a real project
+          so the team has a reproducible dependency baseline. These podcast
+          files don't install a runner into the audio-production project.</span
+        >
+      </p>
+      <h2 id="how-the-file-gets-found">How the File Gets Found</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where does our delivery test live?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A file such as delivery-fee.test.js, next to delivery-fee.js, is a
+          common straightforward arrangement. Vitest's defaults recognize test
+          or spec patterns, and configuration can change discovery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The filename isn't JavaScript semantics. It's a convention the tool
+          uses to decide what to load.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The test file imports the real function and imports test and
+          expect from Vitest. Explicit imports make the origin of those names
+          visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some projects configure globals so test and expect exist without
+          importing. That can be convenient, but it makes a newcomer wonder
+          whether JavaScript acquired an expect keyword overnight.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is why we use explicit imports here. Then the runner loads the
+          module, collects the cases, invokes their callbacks, and reports
+          assertions or unexpected errors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If it says no tests found, I shouldn't celebrate the absence of red.
+          Check the working directory, naming pattern, inclusion and exclusion
+          settings, and whether the file actually contains registered
+          cases.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A successful command that ran zero relevant checks may provide
+          no evidence about your change. Read the discovered test count and
+          filenames.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Nothing failed” and “the thing was tested” are different
+          statements.</span
+        >
+      </p>
+      <h2 id="watch-mode-is-a-feedback-loop">Watch Mode Is a Feedback Loop</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >During development, watch mode keeps the runner alive and reruns
+          tests as files change. It shortens the loop between an edit and
+          feedback.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like live reload, but the thing updating is my evidence. It isn't a
+          daemon secretly publishing code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A one-shot run executes and exits, which is useful in
+          scripts and CI. That's why our test:run command uses vitest run
+          explicitly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because a process waiting for me to press a key is not a good final
+          step in an unattended build.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Runners may adjust defaults in CI, but explicit commands
+          make intent clearer. Exit status matters: automation needs a
+          machine-readable failure signal, not just red text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A wrapper that catches every failure and exits successfully can
+          neutralize the whole setup. Printing “tests failed” while returning
+          success is a very polite way to ship the bug.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And local filters are useful, but don't forget the wider suite before
+          considering a change ready. A focused run answers a focused
+          question.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I run only delivery-fee.test.js, I haven't checked the integration
+          that passes it the subtotal.</span
+        >
+      </p>
+      <h2 id="the-environment-is-not-the-runner">
+        The Environment Is Not the Runner
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our pure fee function works in a Node environment. It doesn't need a
+          DOM.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then I wouldn't add a fake browser to help it subtract zero.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. For DOM-oriented tests, an environment such as jsdom provides
+          many browser-like document APIs. It isn't a full rendering
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So an error saying document is not defined usually means our selected
+          environment doesn't provide document, not that the assertion library
+          has lost confidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We choose the environment that suits the behavior.
+          Real-browser testing is another option, with different capabilities
+          and costs. Modern tools can support browser-based component tests
+          too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important distinction: real browser does not automatically mean
+          end-to-end. A component test in a real browser can still replace the
+          network and render just one component.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Execution environment and test scope are separate axes. We'll
+          keep those separate in Episode Nine.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And Node version differences matter. A test using a built-in API
+          present in one version may fail in another. Make the project's runtime
+          expectations explicit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Same principle for browser APIs. A simulated environment might not
+          implement an API, or might behave differently from a supported
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Polyfilling something in setup isn't proof the production browser
+          supports it. It changes our test environment.</span
+        >
+      </p>
+      <h2 id="jsx-is-not-an-assertion-feature">
+        JSX Is Not an Assertion Feature
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When we reach React, our test may contain JSX, the angle-bracket
+          element syntax.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JSX is a syntax extension used with React and other tooling. It isn't
+          ordinary JavaScript syntax a raw Node process necessarily accepts, and
+          it isn't TypeScript simply because it looks unfamiliar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The project transforms JSX into executable JavaScript. Vitest can use
+          the project's Vite configuration and relevant plugins; Jest projects
+          have their own transformation setup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “unexpected token angle bracket” may be a transform configuration
+          issue. Rewriting the assertion won't fix a file the runner can't
+          parse.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Similarly, executing a TypeScript test after transformation
+          doesn't necessarily mean a full type check happened. Transpilation and
+          type checking are different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compile-time analysis versus runtime evidence, again. A project may
+          need a separate type-check command alongside its tests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Neither replaces the other. A type checker can catch certain
+          inconsistencies without running examples; a runtime test can verify a
+          pricing expectation the type system doesn't encode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And both can be satisfied while the product requirement is wrong. Our
+          favorite recurring limitation has returned.</span
+        >
+      </p>
+      <h2 id="configuration-should-earn-its-place">
+        Configuration Should Earn Its Place
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Do we need a configuration file for the tiny fee example?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not merely to prove we're serious. If defaults handle plain
+          JavaScript tests in Node, start there.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then add configuration for actual needs: environment, setup files,
+          coverage scope, project paths, transforms, or separate test
+          groups.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keep each addition explainable. A copied configuration containing ten
+          unexplained flags is future archaeology.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Existing Vite configuration can matter because it may include aliases
+          and plugins the application uses. A separate test configuration can
+          change how those are picked up or merged, so follow the current docs
+          and the project's established pattern.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And changing module format isn't a harmless styling preference.
+          Mixing CommonJS require and ESM imports can expose real compatibility
+          constraints.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We use an isolated ESM practice example. We don't tell
+          everyone to add type module to an established package and hope nothing
+          else noticed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the kind of tiny config edit that can become an
+          afternoon.</span
+        >
+      </p>
+      <h2 id="node-can-test-too">Node Can Test Too</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One more useful name: Node includes a built-in test runner. You don't
+          always need a third-party framework for ordinary server-side
+          JavaScript checks.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>import test from 'node:test';
+import assert from 'node:assert/strict';
+
+test('twenty dollars qualifies', () =&gt; {
+  const fee = 2000 &gt;= 2000 ? 0 : 300;
+  assert.equal(fee, 0);
+});</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This isolated card demonstrates the API shape. In an application test
+          we'd import the real deliveryFee function instead of repeating its
+          expression.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Node colon test and Node colon assert identify built-in Node
+          modules. The JavaScript import syntax is the same; the testing
+          functions come from a different provider.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we can recognize the concept across tools. Prepare a situation,
+          perform an operation, assert something meaningful. Different reporting
+          and convenience features around it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Tool choice depends on the project. The existence of a
+          built-in option doesn't make established Jest or Vitest setups
+          pointless.</span
+        >
+      </p>
+      <h2 id="continuous-integration-is-another-place-to-run-it">
+        Continuous Integration Is Another Place to Run It
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>CI sounds grander than what we're doing here.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Continuous integration systems run defined jobs when changes are
+          proposed or integrated. A test job checks out code, installs the
+          intended dependencies, runs the command, and reports the result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ideally in a clean, repeatable environment. So it can catch “works
+          because my laptop has an untracked file” problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But CI doesn't create good tests automatically. It repeats the
+          suite we give it under the configured conditions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keep privileges small. A job testing an untrusted contribution
+          shouldn't casually receive deployment secrets. Test code is executable
+          code, including setup and dependency scripts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And keep artifacts appropriate: failure reports can include request
+          data, screenshots, and logs. Use synthetic test accounts and avoid
+          recording sensitive information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If local passes and CI fails, compare versions, operating-system
+          assumptions, environment variables, timing, locale, and filesystem
+          case sensitivity. Don't begin by accusing the cloud of personality
+          defects.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Even if it has several.</span>
+      </p>
+      <h2 id="listener-triage">Listener Triage</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Three failures. First: npm says the test script doesn't exist.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check package.json and the working directory. Npm cannot run a script
+          that hasn't been defined there.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Second: document is not defined.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check whether this is a DOM test running in Node without a DOM
+          environment. Don't add jsdom to a pure function test unless it
+          actually needs document.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third: the runner loads the file but says expected zero, received
+          three hundred.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now we're probably at the behavior or expectation layer. Read the
+          named scenario, actual function call, and rule. We made it through
+          discovery and parsing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. Knowing which layer failed prevents random configuration
+          changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And each fix should answer the observed problem. “I installed seven
+          packages and it stopped yelling” is not a durable explanation.</span
+        >
+      </p>
+      <h2 id="follow-one-command-all-the-way-through">
+        Follow One Command All the Way Through
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's follow the command slowly, because this is where toolchains
+          become fog. I'm in the practice directory. I type npm run test:run.
+          What happens first?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Npm reads the package scripts for that project and finds our test:run
+          entry. That entry says vitest run. Npm makes the project's installed
+          command-line tools available while running the script.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the version used is normally the one installed for the project,
+          not necessarily something I once installed globally.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Then Vitest reads applicable configuration, discovers
+          matching files, prepares the configured runtime environment, and loads
+          the test modules through its tooling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Loading the module executes its top-level JavaScript. That means the
+          test declarations register cases. It also means random top-level side
+          effects can happen before any individual test begins.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Avoid starting servers, sending requests, or mutating important
+          data at module load merely because it's a test file. Put lifecycle
+          work where the runner can manage it and where the scope is
+          clear.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the callbacks run, assertions either succeed or throw, and the
+          runner collects results. Async callbacks need to return their
+          completion promise, as we'll cover later.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Finally the report tells us which files and cases ran, and
+          the process exits with an appropriate status. Our outer automation can
+          use that status to decide whether the check succeeded.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's much less mystical. Npm dispatches a configured command. The
+          runner handles discovery and execution. JavaScript executes the actual
+          behavior. Assertions express disagreement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. When something fails, identify which step failed.
+          Installation, script lookup, discovery, transformation, environment
+          setup, test execution, or assertion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Otherwise we start fixing the wrong layer. Updating a matcher won't
+          solve a missing dependency, and reinstalling dependencies won't
+          correct a delivery threshold.</span
+        >
+      </p>
+      <h2 id="a-realistic-first-failure">A Realistic First Failure</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You create delivery-fee.test.js and run the command. It says it can't
+          resolve delivery-fee.js. What do you inspect?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The import path relative to the test file, filename spelling,
+          extension, and whether the file exists. If the path uses an alias,
+          verify the test tool knows that alias.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then it loads, but says expect is not defined.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In our explicit-import convention, I probably omitted expect from the
+          Vitest import. I don't need to enable globals across the entire
+          project to repair one missing import.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then it passes. You change the threshold comparison to the known
+          wrong version, but it still passes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now I check whether I edited the file actually imported, whether the
+          boundary test was discovered, and whether the assertion observes the
+          real result. A green report isn't enough if the intended test didn't
+          run.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. Tools can be configured correctly while the evidence is still
+          wrong.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the opposite: a tool configuration failure doesn't prove the
+          application logic is broken. Keep the diagnosis tied to the
+          layer.</span
+        >
+      </p>
+      <h2 id="choosing-without-a-migration-crusade">
+        Choosing Without a Migration Crusade
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the existing application uses Jest and a colleague suggests
+          Vitest because it's newer. How would you evaluate that?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask what problem the change solves. Slow feedback? Difficult ESM
+          integration? Duplicate transform configuration? A missing feature?
+          Then compare migration cost and compatibility, not just marketing
+          adjectives.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'd try representative tests, especially ones with module mocks,
+          environment setup, timers, and transforms. Simple arithmetic passing
+          doesn't prove the whole suite migrates cleanly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Measure the actual workflow if speed is the motivation.
+          Startup time, targeted reruns, full CI runs, memory use, and failure
+          diagnostics can matter differently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And keep the test behavior stable while changing runners when
+          possible, so a migration doesn't simultaneously rewrite every
+          assertion and application interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Separate changes make disagreements easier to understand. If both the
+          runner and the expected behavior change, we have two explanations for
+          every result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Would you ever keep both runners?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >During a deliberate migration or for distinct justified needs, maybe.
+          But two overlapping setups add maintenance. Don't accidentally create
+          that complexity by following an isolated tutorial inside an
+          established repository.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. The podcast's consistent Vitest vocabulary is for teaching. It
+          isn't a judgment on every project's existing choice.</span
+        >
+      </p>
+      <h2 id="reading-documentation-without-adopting-every-example">
+        Reading Documentation Without Adopting Every Example
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One last modern-tooling trap: docs show TypeScript configuration, and
+          the listener thinks TypeScript is required to run JavaScript
+          tests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good catch. Documentation often uses TypeScript for richer editor
+          information, but check whether the tool also accepts JavaScript
+          configuration. Our examples deliberately use JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you see a type annotation in a documentation snippet, identify it
+          before copying. It's not a test runner feature merely because it
+          appears on the runner's website.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And version matters. Search results can land on old, next, or
+          migration documentation. Check that the instructions apply to your
+          installed version and chosen environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's not busywork. A small API difference can explain a confusing
+          failure faster than an hour of rearranging code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Record the supported setup in the project. Then future developers
+          don't need to reconstruct why three apparently similar commands behave
+          differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A useful README beats institutional memory stored in one person's
+          browser tabs.</span
+        >
+      </p>
+      <h2 id="the-smallest-successful-run">The Smallest Successful Run</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What's our first setup milestone?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One discovered test calling the real fee function, with a meaningful
+          passing assertion. Then a deliberate local mismatch that fails for the
+          expected reason, followed by restoring the correct code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not coverage, browser projects, reporters, and parallel workers all
+          at once.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Once the basic loop works, each additional tool should solve
+          a concrete problem we can explain. The next milestone might be a DOM
+          environment because we're actually testing a document.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That makes troubleshooting easier too. If we add one capability and
+          the setup fails, we have a smaller change to inspect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Small understandable steps aren't less professional. They let us know
+          why the final configuration works instead of merely knowing which
+          collection of files stopped the errors.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test runners coordinate execution. Assertions express expectations.
+          Environments provide runtime capabilities. Transforms handle syntax
+          the runtime doesn't directly execute.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Jest and Vitest bundle useful tooling, but our tests are still
+          JavaScript using APIs. Npm is invoking a configured command, not
+          discovering the meaning of quality.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next: mocks, stubs, spies, and other lies we tell our code.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, an episode about professional dishonesty with cleanup
+          hooks.</span
+        >
+      </p>
+    </main>
+    <footer>2 code cards · 1 terminal cards</footer>
+  </body>
+</html>

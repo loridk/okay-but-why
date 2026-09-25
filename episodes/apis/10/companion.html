@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: CORS: Why Is My Browser Yelling at Me? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 10: CORS: Why Is My Browser Yelling at Me?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/c4348855-0d16-466c-a823-1116d238953b"
+      ></script>
+      <div class="redcirclePlayer-c4348855-0d16-466c-a823-1116d238953b"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#your-browser-runs-other-people-s-code"
+            >Your Browser Runs Other People's Code</a
+          >
+        </li>
+        <li><a href="#what-is-an-origin">What Is an Origin?</a></li>
+        <li>
+          <a href="#reading-and-sending-are-different"
+            >Reading and Sending Are Different</a
+          >
+        </li>
+        <li>
+          <a href="#cors-is-an-explicit-sharing-mechanism"
+            >CORS Is an Explicit Sharing Mechanism</a
+          >
+        </li>
+        <li>
+          <a href="#why-the-browser-sometimes-asks-first"
+            >Why the Browser Sometimes Asks First</a
+          >
+        </li>
+        <li>
+          <a href="#preflight-has-its-own-failure-modes"
+            >Preflight Has Its Own Failure Modes</a
+          >
+        </li>
+        <li>
+          <a href="#credentials-add-conditions">Credentials Add Conditions</a>
+        </li>
+        <li>
+          <a href="#no-cors-does-not-mean-no-security"
+            >No-Cors Does Not Mean No Security</a
+          >
+        </li>
+        <li>
+          <a href="#why-curl-and-postman-work">Why Curl and Postman Work</a>
+        </li>
+        <li>
+          <a href="#debug-the-boundary-in-order">Debug the Boundary in Order</a>
+        </li>
+        <li>
+          <a href="#a-same-origin-backend-can-be-a-deliberate-design"
+            >A Same-Origin Backend Can Be a Deliberate Design</a
+          >
+        </li>
+        <li>
+          <a href="#case-one-the-request-happened-but-javascript-can-t-read-it"
+            >Case One: The Request Happened, but JavaScript Can't Read It</a
+          >
+        </li>
+        <li>
+          <a href="#case-two-the-actual-request-never-gets-sent"
+            >Case Two: The Actual Request Never Gets Sent</a
+          >
+        </li>
+        <li>
+          <a href="#case-three-the-error-response-lost-the-headers"
+            >Case Three: The Error Response Lost the Headers</a
+          >
+        </li>
+        <li>
+          <a href="#development-proxies-can-hide-a-production-difference"
+            >Development Proxies Can Hide a Production Difference</a
+          >
+        </li>
+        <li>
+          <a href="#public-data-and-credentialed-data-need-different-decisions"
+            >Public Data and Credentialed Data Need Different Decisions</a
+          >
+        </li>
+        <li><a href="#a-header-you-can-t-see">A Header You Can't See</a></li>
+        <li>
+          <a href="#origin-is-evidence-within-a-browser-model"
+            >Origin Is Evidence Within a Browser Model</a
+          >
+        </li>
+        <li>
+          <a href="#a-fix-should-preserve-the-reason-for-the-boundary"
+            >A Fix Should Preserve the Reason for the Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#the-browser-has-a-reason">The Browser Has a Reason</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The request works in curl.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But not in the browser?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Correct. So the internet works, the server works, and Chrome has
+          decided to become my manager.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Your browser is protecting a boundary.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Could it protect the boundary with a more encouraging error
+          message?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A reasonable feature request. First, let's understand the
+          boundary.</span
+        >
+      </p>
+      <h2 id="your-browser-runs-other-people-s-code">
+        Your Browser Runs Other People's Code
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Before CORS, the same-origin policy. A
+          browser routinely loads JavaScript from sites you don't control. That
+          code runs while the browser may also have credentials for other
+          services.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as my email, bank, or our fictional pizza account. If every
+          random site could read responses from every other site using my
+          browser's authority, visiting a page would be an alarming act of
+          trust.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The same-origin policy restricts interactions between
+          different origins, especially script access to another origin's data.
+          There are important exceptions and resource-specific rules, but that's
+          the foundation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser isn't merely a generic HTTP client. It's an environment
+          executing untrusted web content while protecting users and separating
+          sites.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The protection starts making sense when you ask whose
+          JavaScript is running, not just whether the destination server is
+          online.</span
+        >
+      </p>
+      <h2 id="what-is-an-origin">What Is an Origin?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For ordinary web URLs, an origin is the scheme, host, and port
+          combination.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HTTPS versus HTTP changes the scheme. App dot example versus api dot
+          example changes the host. Port 3000 versus 4000 changes the port. Any
+          of those can make two URLs different origins.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Different paths on the same scheme, host, and effective port
+          are the same origin. Slash orders and slash menu aren't different
+          origins simply because the path changed.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>https://app.example/orders
+https://app.example/menu
+Same origin.
+
+https://app.example
+https://api.example
+Different origins: different hosts.
+
+http://localhost:3000
+http://localhost:4000
+Different origins: different ports.</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why two development servers running on my own machine can
+          trigger CORS. My emotional sense that “it's all my laptop” isn't the
+          browser's origin calculation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And origin is not identical to site in cookie terminology.
+          We shouldn't casually substitute those words when discussing SameSite
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Related boundaries, different definitions. The names could have tried
+          harder.</span
+        >
+      </p>
+      <h2 id="reading-and-sending-are-different">
+        Reading and Sending Are Different
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A crucial correction: the same-origin policy doesn't mean a browser
+          can never send anything cross-origin. The web has long supported
+          links, forms, images, and other cross-origin interactions under
+          specific rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a malicious page may be able to cause some requests even when its
+          JavaScript cannot read the responses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That is why CORS is not a complete CSRF defense. Preventing
+          the attacker from reading the response doesn't necessarily prevent a
+          state-changing request from taking effect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The bank transfer doesn't become safe because the attacker can't
+          admire the confirmation page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Servers still need authentication, authorization, and CSRF
+          protections where appropriate. CORS controls a browser's sharing of
+          responses with requesting script under the protocol's rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That distinction is the episode's load-bearing wall. CORS is not a
+          firewall around the API and not a replacement for access checks.</span
+        >
+      </p>
+      <h2 id="cors-is-an-explicit-sharing-mechanism">
+        CORS Is an Explicit Sharing Mechanism
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CORS stands for Cross-Origin Resource Sharing. It gives servers a way
+          to tell browsers when a response may be shared with code from another
+          origin.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our frontend is at app dot example. Our API is at api dot example. We
+          intentionally want the frontend to read certain API responses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser includes an Origin header in the relevant cross-origin
+          request. The server can respond with Access-Control-Allow-Origin
+          matching the approved origin, or use a wildcard in appropriate
+          non-credentialed situations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The permission comes from the response. Adding
+          Access-Control-Allow-Origin to my outgoing fetch headers doesn't make
+          the server agree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It may instead create more trouble by introducing an
+          unnecessary request header. The server or gateway responsible for the
+          response must be configured correctly.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>http</span></figcaption>
+        <pre tabindex="0"><code>Access-Control-Allow-Origin: https://app.example
+Vary: Origin</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vary Origin matters when a response's origin-specific behavior varies
+          and a shared cache might otherwise reuse the wrong variant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And don't simply reflect any Origin value back while also
+          allowing credentials. Validate against the intended allowed origins.
+          The header is supposed to express a policy, not repeat whatever a
+          stranger requested.</span
+        >
+      </p>
+      <h2 id="why-the-browser-sometimes-asks-first">
+        Why the Browser Sometimes Asks First
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Now the mysterious OPTIONS request that I didn't write.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For requests that aren't CORS-safelisted, the browser generally sends
+          a preflight request. It asks whether the origin may send the intended
+          method and headers before sending the actual request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CORS-safelisted is precise but unfriendly. People often call the
+          simpler category simple requests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Certain methods and header combinations qualify. A POST with
+          application/json or a request with an Authorization header generally
+          triggers a preflight. The browser uses OPTIONS with headers describing
+          the intended request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the preflight isn't my order update happening twice. It's a
+          permissions inquiry, followed by the actual operation if
+          permitted.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>http</span></figcaption>
+        <pre tabindex="0"><code>OPTIONS /orders/42 HTTP/1.1
+Origin: https://app.example
+Access-Control-Request-Method: PATCH
+Access-Control-Request-Headers: content-type
+
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://app.example
+Access-Control-Allow-Methods: PATCH
+Access-Control-Allow-Headers: Content-Type
+Vary: Origin</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >These are simplified sketches. The real request and the actual
+          response still have their own security and CORS requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the preflight response allowing PATCH doesn't authorize this user
+          to edit order 42. It says the browser may proceed with that
+          cross-origin request shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The actual endpoint must authenticate and authorize the
+          operation.</span
+        >
+      </p>
+      <h2 id="preflight-has-its-own-failure-modes">
+        Preflight Has Its Own Failure Modes
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose our authentication middleware rejects every OPTIONS request
+          because there's no session cookie.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Standard CORS preflight requests don't include credentials. The
+          server needs to answer the permission inquiry appropriately without
+          requiring the actual request's user credential on the preflight
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the actual request carries credentials according to the client's
+          configuration and browser policy, and that's where the operation's
+          access checks occur.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Middleware or gateways can accidentally intercept preflight
+          before the route's CORS behavior is applied. Looking only at the final
+          handler can miss the problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And browsers may cache preflight results according to the protocol
+          and their limits. We shouldn't assume every actual request gets a
+          fresh visible OPTIONS exchange.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also, the successful preflight doesn't eliminate the need
+          for appropriate CORS headers on the actual response.</span
+        >
+      </p>
+      <h2 id="credentials-add-conditions">Credentials Add Conditions</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cross-origin fetch doesn't automatically send every browser
+          credential. A client may need credentials include for a cookie-based
+          arrangement, and the server must opt into credentialed response
+          sharing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >With Access-Control-Allow-Credentials true and a specific allowed
+          origin, not a wildcard origin for that credentialed case.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Cookie scope, SameSite rules, and browser third-party-cookie
+          policies still apply. CORS permission doesn't override all other
+          browser privacy rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So changing one header may not solve a missing-cookie problem. We
+          have to distinguish “request was blocked,” “response wasn't exposed,”
+          and “credential wasn't included.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And manually supplied Authorization headers introduce their
+          own preflight considerations. Credentials mode is not a universal
+          switch for every possible authentication scheme.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why randomly adding include, wildcard, and no-cors until the
+          red text changes is such an expensive hobby.</span
+        >
+      </p>
+      <h2 id="no-cors-does-not-mean-no-security">
+        No-Cors Does Not Mean No Security
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fetch has a mode called no-cors. The name has caused a lot of false
+          hope.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't mean “please ignore the same-origin policy and give me the
+          JSON.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. For relevant cross-origin requests, you get an opaque
+          response whose body and useful status information aren't available to
+          the requesting JavaScript. The request also has restrictions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if my application needs to read order data, an opaque response
+          doesn't solve the problem. It just changes how my lack of access is
+          packaged.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Nor should we teach people to disable browser security or
+          install an extension that removes the boundary as the production
+          solution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That changes the testing environment while leaving users' browsers
+          correctly unwilling to do the same thing. And it weakens protections
+          for other browsing.</span
+        >
+      </p>
+      <h2 id="why-curl-and-postman-work">Why Curl and Postman Work</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A normal curl request runs under the authority of the person or
+          program invoking it. It isn't implementing the browser's same-origin
+          boundary for a webpage's JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Similarly, a server-side HTTP client doesn't generally enforce
+          browser CORS rules. It still needs network access and valid
+          credentials, but CORS isn't its gatekeeper.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. So “works in curl” can prove the endpoint is reachable and
+          responds to that request. It doesn't prove the server grants browser
+          script at your origin permission to read it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And server-side success doesn't prove the browser sent the exact same
+          method, headers, cookies, or body. Compare actual requests before
+          declaring the browser irrational.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The difference may be CORS, authentication, a redirect,
+          mixed content, or something else. The browser's message is evidence to
+          investigate, not a diagnosis of every possible underlying cause.</span
+        >
+      </p>
+      <h2 id="debug-the-boundary-in-order">Debug the Boundary in Order</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can make this practical. First compare the page origin and
+          destination origin. If they're the same, ordinary cross-origin sharing
+          shouldn't be the explanation, though redirects can change the path of
+          the exchange.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next inspect the network panel. Is there a preflight? Did it succeed?
+          Does its response allow the required origin, method, and
+          headers?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then inspect the actual response if there is one. Are CORS headers
+          present even on errors? Did a gateway return a 500 without the headers
+          the application normally supplies?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A underlying server failure can surface as a CORS symptom
+          because the browser can't expose the response to script. Server logs
+          can help distinguish those layers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check credentials separately. Were the required cookies or
+          authorization values sent under the intended rules? Never paste their
+          values into a public troubleshooting thread.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if JavaScript needs to read a non-safelisted response header, the
+          server may need Access-Control-Expose-Headers. Permission to read the
+          body doesn't automatically expose every header.</span
+        >
+      </p>
+      <h2 id="a-same-origin-backend-can-be-a-deliberate-design">
+        A Same-Origin Backend Can Be a Deliberate Design
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if we route browser requests through our own backend?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That can be a legitimate architecture. The browser calls a
+          same-origin endpoint; the backend contacts another service. It may
+          also keep a provider secret out of the browser and adapt the data
+          contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But it isn't a magic security bypass. Our backend must enforce
+          allowed destinations and operations, authenticate callers where
+          needed, and avoid becoming an open proxy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The server-to-server request isn't constrained by browser
+          CORS, so the server takes responsibility for its own boundary.
+          Arbitrary user-supplied URLs can introduce server-side request forgery
+          risks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another case where moving the work changes the responsibility rather
+          than deleting it.</span
+        >
+      </p>
+      <h2 id="case-one-the-request-happened-but-javascript-can-t-read-it">
+        Case One: The Request Happened, but JavaScript Can't Read It
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's work an actual case. Our app sends a cross-origin GET using a
+          request shape that doesn't require preflight. The server log shows the
+          request and a successful response. The browser reports a CORS
+          failure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That can happen if the response doesn't include the required sharing
+          permission for the requesting origin. The network exchange occurred,
+          but the browser won't expose the response to that script.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I shouldn't conclude the server never received it. And if the
+          operation had improperly changed state, that effect could already have
+          happened even though JavaScript can't inspect the result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. This is the concrete reason CORS isn't a general defense
+          against unwanted state changes. The application's method choices and
+          CSRF defenses still matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We inspect the actual response headers and the actual Origin. If the
+          server allows a different origin, even one differing only by port,
+          that doesn't satisfy this request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Exact configuration matters. Browser origin comparison doesn't
+          accept “close enough, same developer.”</span
+        >
+      </p>
+      <h2 id="case-two-the-actual-request-never-gets-sent">
+        Case Two: The Actual Request Never Gets Sent
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now our app sends a PATCH with JSON. The browser sends OPTIONS first.
+          The server responds but doesn't allow PATCH or the required
+          header.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser rejects the preflight result and doesn't send the actual
+          PATCH. In this case, looking for the update handler to run is the
+          wrong starting point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The network panel reveals which exchange failed. Fix the
+          server's policy if this origin and operation are intended to be
+          allowed, rather than weakening the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the policy intentionally forbids that origin, the rejection is
+          correct. A CORS error isn't automatically a configuration bug; it can
+          be an enforced boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We need to know the desired policy before deciding what to
+          change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose OPTIONS returns a login redirect because our generic
+          authentication layer intercepts it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then we need to arrange appropriate preflight handling while
+          retaining authentication on the actual operation. Exempting a
+          permission inquiry from user authentication isn't the same as making
+          the protected data public.</span
+        >
+      </p>
+      <h2 id="case-three-the-error-response-lost-the-headers">
+        Case Three: The Error Response Lost the Headers
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our API works most of the time. During an outage, the browser
+          suddenly says CORS. Everyone starts editing the allowlist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But a gateway may be generating the outage response without the CORS
+          headers normally added by the application. The visible symptom can
+          mask the underlying server failure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So check the response source and server logs. The fix might be
+          restoring the dependency and ensuring error responses consistently
+          apply the intended sharing policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We don't want an error-handling layer that removes the
+          information the frontend needs to explain an outage.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we make the allowed origin a wildcard just because it
+          changes the error message. That can broaden access without repairing
+          the actual fault.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Debugging should narrow the cause, not progressively remove
+          every safeguard until something responds.</span
+        >
+      </p>
+      <h2 id="development-proxies-can-hide-a-production-difference">
+        Development Proxies Can Hide a Production Difference
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A development server can proxy slash api to a backend on another
+          port. The browser sees a same-origin request to the development
+          server, which forwards it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That can be convenient. But if production instead calls a different
+          API origin directly, the browser's behavior changes. Passing local
+          tests doesn't prove the production CORS policy is correct.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Know which component makes each request. The development
+          proxy is a server-side hop, not evidence that cross-origin browser
+          access has been configured.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Test the deployed origin arrangement before release. Also test the
+          intended error paths, because that's where missing headers often
+          become visible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Localhost ports, staging subdomains, and production domains
+          are different origin values. Configure them deliberately rather than
+          accepting any origin forever because development was
+          inconvenient.</span
+        >
+      </p>
+      <h2 id="public-data-and-credentialed-data-need-different-decisions">
+        Public Data and Credentialed Data Need Different Decisions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose we have a public menu endpoint and no private data or
+          credentials. Could we allow any origin to read it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Potentially, yes. A wildcard sharing policy can be appropriate for
+          intentionally public, non-credentialed data. The server still needs
+          operational controls such as rate limits if relevant.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But a private order endpoint using browser credentials needs a much
+          narrower decision, including the exact permitted origin and
+          credentialed-response rules.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Avoid one indiscriminate CORS configuration for every
+          resource if the intended sharing policies differ.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And allowing an origin doesn't mean every person using that origin
+          can access every order. Authentication and authorization still decide
+          which response each caller may receive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. CORS answers whether script from an origin may access a
+          response under the browser's rules. It doesn't replace the service's
+          user or resource policy.</span
+        >
+      </p>
+      <h2 id="a-header-you-can-t-see">A Header You Can't See</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The response body works, but my JavaScript can't read a custom
+          request-tracking header that I can see in developer tools. Is that
+          possible?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Browser developer tools can show information that the page's
+          JavaScript isn't permitted to access. CORS exposes only certain
+          response headers by default.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server can explicitly expose an appropriate custom header with
+          Access-Control-Expose-Headers. Again, that is response policy, not
+          something the client can grant itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Only expose what the client needs. Don't turn a debugging
+          convenience into a reason to reveal sensitive internal metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This explains another source of “but I can see it right there.” The
+          human using dev tools and the script executing in a webpage don't have
+          identical access.</span
+        >
+      </p>
+      <h2 id="origin-is-evidence-within-a-browser-model">
+        Origin Is Evidence Within a Browser Model
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Could a non-browser client send an Origin header pretending to be our
+          frontend?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can construct headers. Which is another reason the server cannot
+          treat an allowed Origin as sufficient user authentication.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The browser enforces restrictions on what page scripts can
+          do. A general-purpose HTTP client operates outside that enforcement
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So CORS doesn't stop someone using curl from calling our public
+          network endpoint. Credentials, permissions, input checks, and network
+          controls where appropriate are the server's defenses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Different controls cover different threats. Once we separate
+          them, the behavior stops looking contradictory.</span
+        >
+      </p>
+      <h2 id="a-fix-should-preserve-the-reason-for-the-boundary">
+        A Fix Should Preserve the Reason for the Boundary
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our practical resolution is to configure the server to permit the
+          actual intended frontend origin, methods, and headers; handle
+          preflight correctly; and send appropriate sharing headers on relevant
+          responses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >While keeping the endpoint's authentication, authorization, and other
+          browser-security requirements intact.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or choose a deliberate same-origin architecture with a properly
+          constrained backend. Either way, the fix is an explicit design, not
+          telling every browser to stop caring.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We can be annoyed by the debugging experience and still
+          appreciate the security property.</span
+        >
+      </p>
+      <h2 id="the-browser-has-a-reason">The Browser Has a Reason</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Same-origin policy protects data boundaries while browsers run code
+          from different sites. CORS is the server's way to permit specific
+          cross-origin sharing under browser rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some requests are sent without preflight; others require an OPTIONS
+          inquiry. The server's response policy, actual credentials, and
+          application authorization are separate pieces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Curl working doesn't contradict a browser CORS failure. They operate
+          under different security models.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser isn't telling me my API doesn't exist. It's saying the
+          script in this context doesn't have the required permission to see the
+          response, or to proceed with this request shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I still want a nicer error message. But I no longer want to fire the
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, webhooks. Stop asking “did it happen yet?” and let the
+          other system send a notification.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Finally, the API can be the one checking in too often.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

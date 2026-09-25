@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: The Cloud Is Someone Else's Computer* — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 10: The Cloud Is Someone Else's Computer*</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/2e77bc08-dbe9-4ba2-9a90-8632a4d5077b"
+      ></script>
+      <div class="redcirclePlayer-2e77bc08-dbe9-4ba2-9a90-8632a4d5077b"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#start-with-jobs-not-product-names"
+            >Start With Jobs, Not Product Names</a
+          >
+        </li>
+        <li>
+          <a href="#data-and-traffic-still-need-decisions"
+            >Data and Traffic Still Need Decisions</a
+          >
+        </li>
+        <li>
+          <a href="#three-familiar-abbreviations"
+            >Three Familiar Abbreviations</a
+          >
+        </li>
+        <li>
+          <a href="#containers-kubernetes-and-serverless"
+            >Containers, Kubernetes, and Serverless</a
+          >
+        </li>
+        <li>
+          <a href="#geography-is-part-of-the-design"
+            >Geography Is Part of the Design</a
+          >
+        </li>
+        <li>
+          <a href="#who-can-do-what-and-who-notices"
+            >Who Can Do What, and Who Notices?</a
+          >
+        </li>
+        <li>
+          <a href="#the-asterisk-earned-its-place"
+            >The Asterisk Earned Its Place</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The cloud is someone else's computer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Asterisk.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I hate when my satisfying joke develops documentation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The joke reminds us there's hardware underneath. It leaves out the
+          services, automation, networks, operational work, and responsibilities
+          layered over it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Today the useful question is: how much of
+          this bullshit would you like someone else to manage?</span
+        >
+      </p>
+      <h2 id="start-with-jobs-not-product-names">
+        Start With Jobs, Not Product Names
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >AWS, Azure, and Google Cloud have many product names. We don't need
+          to memorize them to understand the categories. Start with compute:
+          resources that execute work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A VM is compute. A managed service running our API containers also
+          supplies compute, even if we don't choose and patch the underlying
+          machine ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then storage. Block storage can provide something like a disk for a
+          machine. File storage supplies shared filesystem behavior. Object
+          storage keeps objects addressed by keys, such as audio files and
+          images.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our podcast audio is a natural object-storage example. But object
+          storage isn't automatically a drop-in local disk for a database.
+          Different interfaces and behavior support different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We might serve those audio objects through a CDN: a content
+          delivery network. It can cache suitable content at locations closer to
+          listeners, reducing repeated work at the origin and often improving
+          delivery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Suitable” includes cache rules and access requirements. A private
+          response accidentally cached for everyone is a security failure with
+          excellent distribution.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And publishing a corrected audio file can require thinking about
+          cache freshness. The CDN is useful, not clairvoyant.</span
+        >
+      </p>
+      <h2 id="data-and-traffic-still-need-decisions">
+        Data and Traffic Still Need Decisions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Managed databases are another category. The provider handles some
+          combination of provisioning, patching, backups, replication, and
+          recovery mechanisms depending on the service and plan.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We still choose settings, restrict access, design queries, manage
+          data, and verify recovery. “Managed” is a scope of service, not a
+          guarantee that every checkbox was chosen well for us.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our fictional API could use a managed database even if we run the API
+          ourselves on a VM. These aren't mutually exclusive lifestyle
+          brands.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Networking connects those pieces and controls routes between them.
+          Private networks, firewall rules, and public endpoints determine who
+          can reach what.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A load balancer distributes incoming requests across suitable backend
+          instances. It can use health information to avoid sending new traffic
+          to instances that shouldn't receive it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A load balancer doesn't make a single shared database
+          infinitely scalable. It distributes traffic at a particular layer. We
+          still need to understand the whole request path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Browser, public entry point, API, database. Audio delivery may follow
+          a separate path through object storage and the CDN. The simple
+          application drawing can now show different kinds of work without
+          becoming an unlicensed subway map.</span
+        >
+      </p>
+      <h2 id="three-familiar-abbreviations">Three Familiar Abbreviations</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >IaaS, infrastructure as a service, gives you infrastructure building
+          blocks such as virtual machines and networks. You commonly manage the
+          guest operating system and application while the provider manages
+          physical infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PaaS, platform as a service, gives me a managed platform for
+          deploying code or an application artifact. More of the runtime and
+          operations machinery is provided, within that product's
+          constraints.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SaaS, software as a service, is a finished application you use. A
+          hosted collaboration tool or hosted business application, rather than
+          a place where you administer its internal runtime.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those are categories, not perfectly sealed boxes. Products combine
+          features. Ask which tasks the provider actually takes responsibility
+          for.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Less operational control can be a benefit. If I don't need
+          to choose the OS, giving up that choice may let me spend more time on
+          the application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or it can be a constraint if we require a particular system
+          capability the platform doesn't support. Convenience and control are a
+          tradeoff we can evaluate, not a personality test.</span
+        >
+      </p>
+      <h2 id="containers-kubernetes-and-serverless">
+        Containers, Kubernetes, and Serverless
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A managed container service may accept our image and handle
+          placement, restarts, and scaling without asking us to operate a whole
+          cluster ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Managed Kubernetes offers Kubernetes with some infrastructure
+          responsibilities handled by the provider, often including the control
+          plane. The exact division depends on the service mode.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We still have workload configuration, identities, network
+          access, image maintenance, and data decisions. Depending on the
+          offering, worker-node responsibilities also vary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then serverless arrives, which sounds like we've finally disproved
+          episode one.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We have not. Servers still execute the work. Serverless describes
+          offerings where the provider abstracts server provisioning and
+          capacity management, commonly scaling execution around demand.
+          Functions triggered by requests or events are a familiar example, but
+          the label covers more than functions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I might supply a function to process a newly uploaded file. I
+          don't keep a named VM waiting solely for that function. But I still
+          care about execution limits, startup latency, concurrency, retries,
+          and permissions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And durable state goes somewhere appropriate outside a replaceable
+          execution environment. Some offerings can scale to zero; not every
+          product or mode does. “Serverless” alone doesn't specify billing or
+          availability behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does it promise cheapness. A busy workload, network transfer, or
+          badly behaved retry loop can still produce an enthusiastic bill.</span
+        >
+      </p>
+      <h2 id="geography-is-part-of-the-design">
+        Geography Is Part of the Design
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Providers organize infrastructure geographically. A region is a
+          geographic deployment area. Availability zones are separated locations
+          or failure domains within a region, with details defined by the
+          provider.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In AWS, a zone can comprise one or more discrete data centers. So
+          “zone equals one building” is a shortcut we shouldn't rely on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Spreading a suitably designed application across zones can
+          reduce dependence on one zone. It doesn't automatically protect
+          against every region-wide problem, configuration mistake, or shared
+          dependency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And multi-region is another level of coordination. Data replication,
+          latency, cost, recovery, and residency requirements matter. We don't
+          tick a second region merely because the first one looked lonely.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For our little podcast site, audience location and the CDN may matter
+          more than running duplicate APIs around the planet. For other
+          organizations, geographic requirements can be decisive.</span
+        >
+      </p>
+      <h2 id="who-can-do-what-and-who-notices">
+        Who Can Do What, and Who Notices?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Identity and access determine who or what can act on these resources.
+          A deployed application should have only the permissions its job
+          requires.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A workload identity can be allowed to read particular objects without
+          being allowed to delete every storage resource in the account. Human
+          administrators need protected access too. Network reachability and
+          permission to perform an operation are separate boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Monitoring answers whether the system behaves as intended: failures,
+          response time, saturation, unusual activity, costs. Somebody must
+          choose useful signals and respond to them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Managed infrastructure doesn't mean managed application correctness.
+          A provider can keep a database server available while our query design
+          makes every request slow.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which brings us to costs beyond the monthly compute line. Storage,
+          backups, data transfer, requests, logging, support, and people's time
+          can all matter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And lock-in. Provider-specific APIs and operations can make migration
+          harder. Using a common container image helps portability at one layer,
+          but doesn't make a deeply provider-specific application instantly
+          movable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >On the other hand, refusing every useful managed feature to avoid
+          hypothetical lock-in can cost more than a future migration. We should
+          name the dependency and judge the tradeoff.</span
+        >
+      </p>
+      <h2 id="the-asterisk-earned-its-place">The Asterisk Earned Its Place</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our fictional application could combine managed frontend hosting, an
+          API container service, a managed database, and object storage with a
+          CDN. Or a simpler managed platform could cover much of that. The
+          categories help us compare actual responsibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cloud is somebody else's computers, networks, buildings, and
+          operating teams, offered through services. We still choose how our
+          application uses them and what happens when something fails.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: documenting those choices so we don't reconstruct them
+          from screenshots six months later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Infrastructure as code. Because the server remembered our settings,
+          but unfortunately we did not.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Choose how much infrastructure to operate yourself. Managed services
+          change the division of responsibility; they do not remove your
+          application and data responsibilities.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>Compute</strong></dt>
+          <dd>
+            Execution capacity: VMs, managed container execution, functions, and
+            other models.
+          </dd>
+          <dt><strong>Storage</strong></dt>
+          <dd>
+            Block, file, and object interfaces support different workloads.
+          </dd>
+          <dt><strong>Load balancer / CDN</strong></dt>
+          <dd>
+            Distributes traffic among backends / delivers and caches appropriate
+            content nearer users.
+          </dd>
+          <dt><strong>Region / availability zone</strong></dt>
+          <dd>
+            Geographic deployment area / provider-defined separated location or
+            failure domain within a region.
+          </dd>
+        </dl>
+        <h3>Responsibility spectrum</h3>
+        <ul>
+          <li>
+            <strong>IaaS:</strong> infrastructure building blocks; you commonly
+            operate the guest OS and application.
+          </li>
+          <li>
+            <strong>PaaS:</strong> application platform; more runtime and
+            deployment work is managed.
+          </li>
+          <li><strong>SaaS:</strong> a finished hosted application.</li>
+          <li>
+            <strong>Managed containers:</strong> run images with
+            platform-managed operations that vary by service.
+          </li>
+          <li>
+            <strong>Managed Kubernetes:</strong> Kubernetes with a
+            service-specific division of cluster responsibilities.
+          </li>
+          <li>
+            <strong>Serverless:</strong> abstracts server provisioning and
+            capacity management; execution constraints, state, permissions, and
+            costs still matter.
+          </li>
+        </ul>
+        <h3>Before choosing</h3>
+        <p>
+          Compare maintenance ownership, identity permissions, monitoring,
+          recovery, latency, data location, transfer charges, workload limits,
+          and exit costs. Multiple replicas or zones help only when the
+          application and its dependencies are designed to use them.
+        </p>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a href="https://aws.amazon.com/types-of-cloud-computing/"
+              >AWS: Cloud service categories</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html"
+              >AWS Regions</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-availability-zones.html"
+              >AWS Availability Zones</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 11: Infrastructure as Code: Why Is My Server in Git? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 11: Infrastructure as Code: Why Is My Server in Git?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/33b7eeda-fcc1-4b1a-8e4f-46d165e1ee9a"
+      ></script>
+      <div class="redcirclePlayer-33b7eeda-fcc1-4b1a-8e4f-46d165e1ee9a"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-console-remembered-we-didn-t"
+            >The Console Remembered. We Didn't.</a
+          >
+        </li>
+        <li><a href="#declare-the-result">Declare the Result</a></li>
+        <li><a href="#write-plan-apply">Write, Plan, Apply</a></li>
+        <li>
+          <a href="#what-is-state-doing-here">What Is State Doing Here?</a>
+        </li>
+        <li>
+          <a href="#drift-is-a-decision-not-just-an-error"
+            >Drift Is a Decision, Not Just an Error</a
+          >
+        </li>
+        <li>
+          <a href="#repeatable-doesn-t-mean-identical-in-every-detail"
+            >Repeatable Doesn't Mean Identical in Every Detail</a
+          >
+        </li>
+        <li>
+          <a href="#a-useful-boundary-around-the-tool"
+            >A Useful Boundary Around the Tool</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Who configured production?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Us, six months ago.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What did we change?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There are screenshots.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>These are screenshots of a successful login and your lunch.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Both important milestones.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Our fictional podcast application has
+          acquired infrastructure and lost the memory of how we configured it.
+          Today: infrastructure as code. Why is my server in Git?</span
+        >
+      </p>
+      <h2 id="the-console-remembered-we-didn-t">
+        The Console Remembered. We Didn't.
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We created a network, a compute service, storage, and a database.
+          Then we changed a firewall rule in the console while diagnosing a
+          problem. Someone increased capacity. Someone added a test
+          resource.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Production now works, mostly. Staging doesn't match it, nobody knows
+          whether the extra rule is still needed, and recreating the environment
+          sounds like detective work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's configuration drift: actual settings diverge from the intended
+          or recorded configuration. Manual changes can be legitimate, but
+          undocumented differences make systems harder to understand and
+          reproduce.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The issue isn't that clicking is morally inferior to typing. The
+          issue is that we can't reliably explain what exists or repeat the
+          decisions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Infrastructure as code, often abbreviated IaC, means
+          describing and managing infrastructure through machine-readable
+          definitions that can be version-controlled and reviewed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Git contains the description. It doesn't contain the physical server.
+          This seems obvious until somebody says “our infrastructure is in Git”
+          and waves vaguely at a data center.</span
+        >
+      </p>
+      <h2 id="declare-the-result">Declare the Result</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Terraform and OpenTofu are examples of tools commonly used for
+          declarative infrastructure management. We describe resources and their
+          desired settings. Providers connect the tool to APIs that create and
+          manage those resources.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Provider here means the integration plugin, which might talk to a
+          cloud provider but can also manage other supported services. Another
+          word with too many jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Provisioning means creating or allocating resources. A
+          definition might say we want a particular network and a compute
+          service connected to it. The tool determines dependencies and proposes
+          operations needed to reach that configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unlike a purely imperative list saying click this, then create that,
+          then attach this exact newly returned ID. Though infrastructure as
+          code is a broader category; it can include imperative approaches
+          too.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We're focusing on the declarative model because it connects to
+          desired state from Kubernetes. Write down what should exist, compare
+          it with what is known to exist, and work toward the desired
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >With an important difference: ordinary Terraform or OpenTofu
+          workflows run when we invoke them or trigger automation. They aren't
+          inherently a continuously running Kubernetes-style reconciliation
+          loop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A committed configuration file doesn't patrol the cloud
+          account by itself.</span
+        >
+      </p>
+      <h2 id="write-plan-apply">Write, Plan, Apply</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Walk through a small change. Our podcast API needs more memory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We edit the desired capacity in configuration and review the change.
+          A plan compares configuration, recorded state, and information read
+          from the remote system, then proposes actions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Create, update, or destroy resources. “Plan” is the point where I
+          want to learn that a seemingly harmless setting requires replacing
+          something.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Applying performs the selected changes using the provider's
+          APIs. It can take time, encounter errors, or partially complete. This
+          isn't a transaction that necessarily rolls back every previous
+          operation if the final one fails.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So read the plan and understand the resource's lifecycle. A database
+          replacement is more consequential than changing a label, even if both
+          fit on one line of configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And review the relevant plan for the environment and revision we're
+          actually applying. Reality can change between planning and execution.
+          Team workflows need coordination and appropriate state locking where
+          supported.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can automate this through CI, but automation shouldn't turn a
+          destructive surprise into a faster destructive surprise. Restrict the
+          identity doing the apply and make important changes reviewable.</span
+        >
+      </p>
+      <h2 id="what-is-state-doing-here">What Is State Doing Here?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The tool needs to relate our logical resource definitions to real
+          objects. State records that mapping and other information about
+          managed resources.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For example, our configuration calls something podcast storage, and
+          state records which remote storage resource that refers to. Otherwise
+          every run might be unable to tell what it already manages.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. State isn't just a disposable build cache. Teams need a
+          protected, reliable way to store and coordinate it, often through a
+          remote backend with suitable access controls and locking.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And state can contain sensitive data. Marking an input sensitive may
+          hide it from ordinary output without removing it from stored
+          state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Protect state and saved plan files. Don't casually commit them
+          to a public repository. Keep credentials out of configuration and use
+          supported authentication mechanisms with narrow permissions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >OpenTofu offers state and plan encryption capabilities too, but
+          encryption requires configuration and key management. It's not an
+          excuse to hand the files to everybody.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The source definition, the state, and the secrets have
+          different roles and access requirements.</span
+        >
+      </p>
+      <h2 id="drift-is-a-decision-not-just-an-error">
+        Drift Is a Decision, Not Just an Error
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say production breaks at midnight and someone changes a setting
+          directly in the console. What happens next?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A later refresh and plan may detect the difference for managed
+          resources. Then we decide whether the configuration should restore the
+          old setting or adopt the emergency change. We reconcile the record
+          with the intended reality.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Blindly applying the old definition could undo the fix. Blindly
+          editing the file to match everything in production could preserve a
+          mistake. We need context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Tools detect certain differences; people decide what should be
+          true. Resources outside the tool's management aren't automatically
+          discovered and brought under control just because they're in the same
+          account.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Existing infrastructure may need import and corresponding
+          configuration. “We added Terraform” isn't evidence that every
+          historical resource is now tracked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor is a clean plan proof of application health. It can mean the
+          managed infrastructure matches the declaration while the API still
+          returns errors.</span
+        >
+      </p>
+      <h2 id="repeatable-doesn-t-mean-identical-in-every-detail">
+        Repeatable Doesn't Mean Identical in Every Detail
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can use the definitions to create staging and production with
+          deliberate differences. Smaller capacity in staging, different names,
+          separate data, different credentials.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Repeatable structure and reviewed variation. Don't copy
+          production secrets or private data into a development environment just
+          to make it “realistic.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And recreating a database resource doesn't recreate its contents. The
+          description provisions a place for data. Restoring the data is a
+          separate recovery operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That distinction matters during disaster recovery. Configuration,
+          artifacts, data backups, secrets access, and tested procedures all
+          contribute. Infrastructure code isn't a replacement for the other
+          pieces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Version control also doesn't make infrastructure changes reversible
+          in the same way as text. Reverting a commit and applying it may
+          trigger new destructive operations or fail because the previous
+          resource no longer exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Git remembers the description. It doesn't reverse time for
+          external systems.</span
+        >
+      </p>
+      <h2 id="a-useful-boundary-around-the-tool">
+        A Useful Boundary Around the Tool
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does IaC deploy our application image too?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can manage service definitions that refer to images, depending on
+          the provider and workflow. But teams often separate infrastructure
+          provisioning from frequent application releases. The division should
+          be clear so two tools don't fight over the same setting.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our simple distinction can be: infrastructure definitions describe
+          the places and relationships; the release pipeline promotes the tested
+          application artifact. If one tool handles both, we still understand
+          both jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the Terraform or OpenTofu language is HCL-style configuration,
+          not YAML or JavaScript. We don't need to learn its syntax today to
+          understand the purpose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The companion gives us a workflow sketch instead of pretending a
+          five-line snippet could provision a secure production platform.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So why is the server in Git?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Its intended configuration is in Git because we want a reviewable
+          explanation, a history of changes, and a repeatable way to create or
+          change environments. We still protect state, review plans, and
+          preserve data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time we stop adding machinery and ask which of it our
+          application actually needs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A brave moment for a technology series. We may conclude that the
+          first hosting account was fine.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Version-control the intended infrastructure. Review the proposed
+          actions. Protect state and data separately.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>Configuration drift</strong></dt>
+          <dd>Actual settings diverge from intended or recorded settings.</dd>
+          <dt><strong>Provisioning</strong></dt>
+          <dd>Create or allocate infrastructure resources.</dd>
+          <dt><strong>Provider</strong></dt>
+          <dd>
+            Integration that communicates with a service API to manage
+            resources.
+          </dd>
+          <dt><strong>State</strong></dt>
+          <dd>
+            Mapping and recorded information connecting logical definitions to
+            real resources; may include sensitive data.
+          </dd>
+        </dl>
+        <h3>Repeatable workflow</h3>
+        <p>
+          Terraform and OpenTofu commonly use HCL-style declarative
+          configuration. The workflow below is a concept diagram, not executable
+          configuration.
+        </p>
+        <figure class="card code">
+          <figcaption>
+            Write, plan, apply, observe<span>Text diagram</span>
+          </figcaption>
+          <pre tabindex="0"><code>Desired configuration in Git
+          │ review
+          ▼
+Plan ← recorded state + remote resource information
+          │ inspect creates, updates, replacements, deletions
+          ▼
+Apply → provider APIs → actual infrastructure
+          │
+          ▼
+Updated state + operational verification
+
+Later drift → investigate → choose intended state → plan again</code></pre>
+        </figure>
+        <h3>Keep the boundaries clear</h3>
+        <ul>
+          <li>
+            Normal plan/apply runs are triggered work, not inherently continuous
+            reconciliation.
+          </li>
+          <li>Git history does not undo external data changes.</li>
+          <li>Provisioning a database does not restore its contents.</li>
+          <li>Sensitive output flags do not guarantee absence from state.</li>
+          <li>
+            Protect state and plan files; coordinate team access and locking.
+          </li>
+          <li>
+            Failed applies can leave partial changes; inspect before retrying.
+          </li>
+        </ul>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.hashicorp.com/terraform/intro/core-workflow"
+              >Terraform core workflow</a
+            >
+          </li>
+          <li>
+            <a href="https://opentofu.org/docs/intro/core-workflow/"
+              >OpenTofu core workflow</a
+            >
+          </li>
+          <li>
+            <a href="https://opentofu.org/docs/language/state/sensitive-data/"
+              >OpenTofu: Sensitive data in state</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

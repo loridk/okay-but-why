@@ -27,19 +27,19 @@ JULES: Historical naming is a burden we carry.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: This is finally an attack I understand in my bones.
 
-User input.
+PARISA: User input.
 
-HTML.
+PARISA: HTML.
 
-Browser.
+PARISA: Browser.
 
-Bad decisions.
+PARISA: Bad decisions.
 
 JULES: Exactly.
 
@@ -56,11 +56,11 @@ PARISA: Which means it may access things my site can access.
 
 JULES: DOM.
 
-Session data not protected from JavaScript.
+JULES: Session data not protected from JavaScript.
 
-Application state.
+JULES: Application state.
 
-Actions available to the user.
+JULES: Actions available to the user.
 
 PARISA: And because the script runs under my origin, same-origin policy may treat it as trusted code.
 
@@ -71,13 +71,13 @@ JULES: Exactly.
 
 PARISA: Comment form.
 
-User submits `<script>evil()</script>`.
+PARISA: User submits `<script>evil()</script>`.
 
-Site stores it.
+PARISA: Site stores it.
 
-Other users load the page.
+PARISA: Other users load the page.
 
-Browser executes it.
+PARISA: Browser executes it.
 
 JULES: Classic **stored XSS**.
 
@@ -105,7 +105,7 @@ PARISA: DOM XSS means the dangerous transformation happens in client-side JavaSc
 
 JULES: Exactly.
 
-Maybe code reads `location.hash` and assigns it to `innerHTML`.
+JULES: Maybe code reads `location.hash` and assigns it to `innerHTML`.
 
 PARISA: Server never saw the payload.
 
@@ -141,7 +141,7 @@ PARISA: Treat the content as text.
 
 JULES: Right.
 
-**Sanitization** allows some markup but removes or neutralizes dangerous parts.
+JULES: **Sanitization** allows some markup but removes or neutralizes dangerous parts.
 
 PARISA: Useful if I intentionally allow rich text.
 
@@ -196,7 +196,7 @@ JULES: **Content Security Policy**, CSP, lets a site tell the browser what kinds
 
 PARISA: Restrict script sources.
 
-Block inline script unless specifically permitted.
+PARISA: Block inline script unless specifically permitted.
 
 JULES: Exactly.
 
@@ -253,7 +253,7 @@ JULES: Exactly.
 
 PARISA: Attacker gives us data.
 
-We accidentally tell the browser it is code.
+PARISA: We accidentally tell the browser it is code.
 
 JULES: That’s the heart of it.
 
@@ -262,13 +262,13 @@ JULES: That’s the heart of it.
 
 PARISA: I want to kill one mental model before it grows legs.
 
-XSS is not “someone typed a script tag.”
+PARISA: XSS is not “someone typed a script tag.”
 
 JULES: Correct.
 
 PARISA: That is one payload.
 
-The actual problem is attacker-controlled data reaching a browser execution context.
+PARISA: The actual problem is attacker-controlled data reaching a browser execution context.
 
 JULES: Exactly.
 
@@ -276,11 +276,11 @@ PARISA: Which means payloads can depend on where the data lands.
 
 JULES: Right.
 
-If input lands inside an HTML attribute, the attacker may try to escape the attribute.
+JULES: If input lands inside an HTML attribute, the attacker may try to escape the attribute.
 
-If it lands inside JavaScript, the relevant syntax is JavaScript.
+JULES: If it lands inside JavaScript, the relevant syntax is JavaScript.
 
-If it lands in a URL, URL parsing and protocol handling matter.
+JULES: If it lands in a URL, URL parsing and protocol handling matter.
 
 PARISA: Context-specific escaping finally makes emotional sense.
 
@@ -288,7 +288,7 @@ JULES: Good.
 
 PARISA: We are not escaping “bad characters.”
 
-We are preserving the boundary between data and the grammar of the destination context.
+PARISA: We are preserving the boundary between data and the grammar of the destination context.
 
 JULES: That is the better mental model.
 
@@ -301,25 +301,25 @@ PARISA: Source is where attacker-controlled data comes from.
 
 JULES: URL parameters.
 
-`location.hash`.
+JULES: `location.hash`.
 
-`postMessage`.
+JULES: `postMessage`.
 
-Storage.
+JULES: Storage.
 
-API responses.
+JULES: API responses.
 
 PARISA: Sink is the dangerous place we put it.
 
 JULES: `innerHTML`.
 
-`outerHTML`.
+JULES: `outerHTML`.
 
-`insertAdjacentHTML`.
+JULES: `insertAdjacentHTML`.
 
-Dynamic script execution.
+JULES: Dynamic script execution.
 
-Certain URL assignments depending on context.
+JULES: Certain URL assignments depending on context.
 
 PARISA: So auditing client-side code can mean tracing untrusted values from source to sink.
 
@@ -357,7 +357,7 @@ JULES: Then you need a sanitization policy.
 
 PARISA: Allow paragraphs, emphasis, links.
 
-Reject scripts, event handlers, dangerous URLs, weird embedded objects.
+PARISA: Reject scripts, event handlers, dangerous URLs, weird embedded objects.
 
 JULES: Exactly.
 
@@ -388,13 +388,13 @@ PARISA: If I let users provide a URL, I care about more than HTML escaping.
 
 JULES: Right.
 
-A URL like `javascript:...` can be dangerous in contexts that execute JavaScript URLs.
+JULES: A URL like `javascript:...` can be dangerous in contexts that execute JavaScript URLs.
 
 PARISA: So validate allowed schemes.
 
-`https:`.
+PARISA: `https:`.
 
-Maybe `mailto:` if the product needs it.
+PARISA: Maybe `mailto:` if the product needs it.
 
 JULES: Exactly.
 
@@ -428,21 +428,21 @@ JULES: A recurring theme.
 
 PARISA: Let’s be concrete.
 
-If an attacker gets JavaScript execution in my origin, what can happen?
+PARISA: If an attacker gets JavaScript execution in my origin, what can happen?
 
 JULES: It depends on the application and browser protections.
 
-They may read sensitive DOM content.
+JULES: They may read sensitive DOM content.
 
-Make authenticated requests.
+JULES: Make authenticated requests.
 
-Modify what the user sees.
+JULES: Modify what the user sees.
 
-Capture input.
+JULES: Capture input.
 
-Redirect users.
+JULES: Redirect users.
 
-Call application APIs.
+JULES: Call application APIs.
 
 PARISA: Potentially steal non-HttpOnly tokens from storage.
 
@@ -456,7 +456,7 @@ PARISA: So XSS is not merely “annoying alert box.”
 
 JULES: The alert box is a safe proof of concept.
 
-Real impact can be account compromise or data theft.
+JULES: Real impact can be account compromise or data theft.
 
 
 ## Why `HttpOnly` Matters Without Solving XSS
@@ -488,7 +488,7 @@ PARISA: Browser reads directives like where scripts can load from.
 
 JULES: Right.
 
-A strong policy can avoid broad `'unsafe-inline'` execution and use nonces or hashes for scripts the page intentionally authorizes.
+JULES: A strong policy can avoid broad `'unsafe-inline'` execution and use nonces or hashes for scripts the page intentionally authorizes.
 
 PARISA: A CSP nonce is a random value attached to approved script elements and included in the policy.
 
@@ -532,13 +532,13 @@ JULES: Start with code review and automated tooling, then test input paths in en
 
 PARISA: Look at rendering contexts.
 
-Try harmless payloads.
+PARISA: Try harmless payloads.
 
-Inspect whether characters are encoded or markup is created.
+PARISA: Inspect whether characters are encoded or markup is created.
 
 JULES: Browser developer tools help.
 
-Security scanners can help.
+JULES: Security scanners can help.
 
 PARISA: But scanners will not understand every custom DOM flow.
 

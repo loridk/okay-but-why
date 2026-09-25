@@ -41,9 +41,14 @@ function slugify(value) {
 
 function formatSeriesName(slug) {
   const names = {
+    "javascript-testing": "JavaScript Testing",
     "modern-css": "Modern CSS — Wait, CSS Does That Now?",
     "node-npm": "Node, npm & the Modern JavaScript Toolchain",
     "react-frameworks": "React & Modern Front-End Frameworks",
+    "modern-cms": "Modern CMS Development",
+    "containers-infrastructure": "Containers & Infrastructure",
+    apis: "APIs — How Software Talks to Other Software",
+    nextjs: "Next.js",
     typescript: "TypeScript",
   };
 
@@ -172,7 +177,7 @@ function createPage(episode, slug, seriesSlug, existingAudio) {
     .map(({ id, text }) => `<li><a href="#${id}">${inlineMarkdown(text)}</a></li>`)
     .join("\n");
   // A comment-only placeholder is invisible; show the local player until published.
-  if (["modern-javascript", "web-architecture", "cybersecurity"].includes(seriesSlug) && !/<(?:audio|iframe|script)\b/i.test(existingAudio ?? "")) {
+  if (["modern-javascript", "web-architecture", "cybersecurity", "javascript-testing", "nextjs", "apis", "modern-cms", "accessibility", "containers-infrastructure"].includes(seriesSlug) && !/<(?:audio|iframe|script)\b/i.test(existingAudio ?? "")) {
     existingAudio = `<audio controls preload="metadata" aria-label="Episode audio"><source src="${escapeHtml(slug)}.wav" type="audio/wav">Your browser does not support the audio player.</audio>
     <!-- Replace the local player with this episode's RedCircle embed when published. -->`;
   }
@@ -192,7 +197,7 @@ function createPage(episode, slug, seriesSlug, existingAudio) {
     <p><a href="../index.html">← Back to ${escapeHtml(formatSeriesName(seriesSlug))} episodes</a></p>
     <p>Okay, But Why? — Listening Companion</p>
     <h1>${inlineMarkdown(episode.title)}</h1>
-    <p>Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed.</p>
+    <p>${episode.navigation.some(section => section.id === "companion-reference") ? "Follow the complete transcript, then use the companion reference for definitions, examples, and sources." : "Play the episode and follow the complete transcript. Code and terminal cards appear exactly where they are discussed."}</p>
     ${audio}
   </header>
   <nav aria-label="Episode sections"><h2>Episode sections</h2><ul>${navigation}</ul></nav>
@@ -213,6 +218,16 @@ async function buildEpisode(seriesSlug, episodeNumber) {
   const outputPath = path.join(episodeDirectory, "companion.html");
   const source = await fs.readFile(scriptPath, "utf8");
   const episode = parseMasterScript(source);
+  // Optional companion-only material stays out of the audio script.
+  try {
+    const notes = await fs.readFile(path.join(episodeDirectory, "companion-notes.html"), "utf8");
+    episode.content.push(notes);
+    episode.cardCount += (notes.match(/<figure\b[^>]*class="[^"]*\bcode\b[^"]*"/g) ?? []).length;
+    episode.terminalCount += (notes.match(/<figure\b[^>]*class="[^"]*\bterminal\b[^"]*"/g) ?? []).length;
+    episode.navigation.push({ id: "companion-reference", text: "Companion reference" });
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
   let existingAudio;
   try {
     const existing = await fs.readFile(outputPath, "utf8");
@@ -249,3 +264,4 @@ if (!seriesSlug || !episodeNumber) {
     process.exitCode = 1;
   });
 }
+

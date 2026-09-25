@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: Okay, What Actually Is an API? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: Okay, What Actually Is an API?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/d1b52fa3-d05f-4bf3-aa32-f2b692c99ce9"
+      ></script>
+      <div class="redcirclePlayer-d1b52fa3-d05f-4bf3-aa32-f2b692c99ce9"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#three-words-that-need-unpacking"
+            >Three Words That Need Unpacking</a
+          >
+        </li>
+        <li>
+          <a href="#the-interface-you-already-know"
+            >The Interface You Already Know</a
+          >
+        </li>
+        <li>
+          <a href="#contract-does-not-mean-lawyer"
+            >Contract Does Not Mean Lawyer</a
+          >
+        </li>
+        <li>
+          <a href="#who-asked-for-this-boundary"
+            >Who Asked for This Boundary?</a
+          >
+        </li>
+        <li>
+          <a href="#a-library-api-lives-near-your-code"
+            >A Library API Lives Near Your Code</a
+          >
+        </li>
+        <li>
+          <a href="#your-browser-is-a-host-with-rules"
+            >Your Browser Is a Host With Rules</a
+          >
+        </li>
+        <li>
+          <a href="#downstairs-the-operating-system"
+            >Downstairs, the Operating System</a
+          >
+        </li>
+        <li>
+          <a href="#now-we-can-visit-the-internet-building"
+            >Now We Can Visit the Internet Building</a
+          >
+        </li>
+        <li>
+          <a href="#the-local-call-and-the-remote-call"
+            >The Local Call and the Remote Call</a
+          >
+        </li>
+        <li>
+          <a href="#why-everyone-says-api-and-means-url"
+            >Why Everyone Says API and Means URL</a
+          >
+        </li>
+        <li>
+          <a href="#a-boundary-can-be-useful-and-still-be-bad"
+            >A Boundary Can Be Useful and Still Be Bad</a
+          >
+        </li>
+        <li>
+          <a href="#follow-one-button-through-several-interfaces"
+            >Follow One Button Through Several Interfaces</a
+          >
+        </li>
+        <li>
+          <a href="#the-loading-dock-can-stay">The Loading Dock Can Stay</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have a confession. I have used APIs. I have built things that other
+          people called APIs. I have put API integration on a task list and
+          successfully completed the task.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sounds promising.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And yet, if someone points at a URL and says “the API,” part of my
+          brain pictures a little industrial building on the internet. There are
+          pipes. Possibly a loading dock.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Is anyone working there?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A very tired person named Jason.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>JSON gets its own episode.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I didn't say it was a good mental model. I'm saying the building has
+          survived multiple framework migrations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we evict the building.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can we keep the loading dock? I understand loading docks.</span>
+      </p>
+      <h2 id="three-words-that-need-unpacking">
+        Three Words That Need Unpacking
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Our new series is APIs: How Software Talks
+          to Other Software. We just spent a series with Next.js, where data
+          access and endpoints kept appearing. Now we're asking what that
+          underlying interface actually is.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And you don't need to have listened to the Next.js series. You need
+          the experience of making a thing, using someone else's thing, and
+          occasionally wondering what the hell connected them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>API stands for Application Programming Interface.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That expands the letters. It has not yet improved my life.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fair. An interface is a defined way to interact with something. A
+          programming interface is one that code can use. It tells the caller
+          what operations are available and how to use them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Caller meaning the code making the request or calling the function.
+          Not necessarily an actual telephone situation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And “application” doesn't mean both sides have to be full
+          applications with windows and login screens. One piece of code can use
+          an interface supplied by a library, a browser, an operating system, or
+          a remote service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the central idea is a boundary I can use intentionally. Here's
+          what you let me ask for. Here's how I ask. Here's what I can expect
+          back.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And here's what can go wrong. Errors belong to the interface
+          too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. Because my applications have been enthusiastically
+          exploring that section.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An API can be a collection of functions, objects, methods, or
+          messages. The exact shape depends on where the boundary is. It does
+          not inherently require a URL or an internet connection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want that near the beginning, in large conceptual letters. API does
+          not automatically mean internet.</span
+        >
+      </p>
+      <h2 id="the-interface-you-already-know">
+        The Interface You Already Know
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me try an old friend. I ask the document for an element by its
+          ID. JavaScript gets a reference to that element, assuming it exists.
+          Have I used an API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The Document Object Model, usually called the DOM, exposes a
+          programming interface for working with a document. You call a method
+          supplied by the browser environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means I was using APIs while changing a heading on a page.
+          Nobody issued a special badge.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You were. And we should separate two things that look like one thing
+          when you type them together. JavaScript supplies the language syntax
+          for a function call. The browser supplies the document object and its
+          methods.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same keyboard, different source of authority.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A variable declaration is JavaScript. Asking document to find
+          an element uses a browser API. JavaScript doesn't independently
+          contain a webpage waiting to be manipulated.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's why ordinary Node code doesn't automatically have document.
+          Running the language doesn't mean every browser facility came along
+          for the ride.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Some APIs exist in several environments, but you need to
+          check the actual environment. The language and the host's capabilities
+          are related, not interchangeable.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const statusMessage = document.querySelector(&quot;#status&quot;);
+
+if (statusMessage !== null) {
+  statusMessage.textContent = &quot;Ready.&quot;;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners, this asks the document for the first element matching
+          our status selector. If it finds one, it changes the text. No server
+          request has been introduced by this example.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And const is modern JavaScript syntax for a binding we won't
+          reassign. It isn't TypeScript. The method called querySelector comes
+          from the DOM API. It can return null when nothing matches, which is
+          why the example checks before using the result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That null possibility is part of what I need to understand about the
+          interface. The operation is not merely “find thing.” It's “find the
+          first matching thing, or report that there isn't one this way.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Knowing a method's name is less than knowing its contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And textContent treats our value as text. If we were inserting
+          untrusted strings as HTML, we'd have a different security
+          conversation. Even our tiny interface choice changes what happens to
+          the input.</span
+        >
+      </p>
+      <h2 id="contract-does-not-mean-lawyer">Contract Does Not Mean Lawyer</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >People often describe an API as a contract. That doesn't necessarily
+          mean a formal legal document. It means an agreement about observable
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inputs, outputs, side effects, failures. Things my code is allowed to
+          rely on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Suppose a fictional library offers calculateDeliveryFee. It
+          takes a distance in kilometers and returns a fee in cents. Those units
+          matter as much as the function's name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I send miles and interpret the result as dollars, both sides may
+          run flawlessly while our pizza business acquires a financial
+          emergency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The code card can show that promise, but the important part is the
+          meaning. Distance has a unit. Money has a unit and currency. Negative
+          distances need a defined response. Rounding needs a rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A parameter named number is not a business agreement. It is a cry for
+          documentation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the contract might state that invalid input throws an error. Or
+          it might return a structured failure. You have to learn which behavior
+          this API actually uses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because I can't handle an exception as though it were an ordinary
+          return value. Same broad task, different agreement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's another important distinction: a contract being documented
+          does not mean reality is guaranteed to comply. Bugs exist. Providers
+          can break promises. Callers can misuse interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We use tests and validation to check behavior. The word contract
+          doesn't install enforcement elves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >TypeScript can describe some of the expected shapes while we're
+          developing. But a type saying “number” doesn't establish kilometers,
+          reasonable range, or whether information arriving from outside the
+          application is truthful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Compile-time checks help our code agree with itself. Runtime checks
+          inspect what actually arrived. We know this distinction, and we're
+          going to keep it because apparently people keep trying to retire
+          it.</span
+        >
+      </p>
+      <h2 id="who-asked-for-this-boundary">Who Asked for This Boundary?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why not just let my code reach into the other code and get what it
+          needs?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes you can. The question is what you become dependent on.
+          Imagine our delivery library stores its pricing rules in an internal
+          array. You discover it and read the third item directly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because today the third item means the local delivery fee.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tomorrow the library author changes the storage to a map, adds
+          regional pricing, or computes the fee dynamically. Their supported
+          function still works. Your code breaks because you depended on an
+          internal arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a good boundary lets the implementation change without requiring
+          every caller to change with it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, as long as the observable promise stays compatible. The
+          implementation is how the work happens inside. The interface is how
+          callers use it from outside that boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I used to do this with PHP functions. Put the database query in a
+          function, return a useful result, don't make six page templates
+          understand the database layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the same motivation. We can discuss a module's API within one
+          application. It doesn't need to be sold, published, or registered
+          anywhere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is nice, because my helper function does not have a marketing
+          budget.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The boundary can also make collaboration easier. You implement the
+          fee calculation. I build the checkout summary against its documented
+          behavior. We don't need to edit the same internal code to do our
+          jobs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unless we discover the original promise was missing something, like
+          currency. Then we discuss it. We don't silently return euros and blame
+          each other's attitude.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. APIs make dependencies explicit. They don't eliminate the
+          need to agree.</span
+        >
+      </p>
+      <h2 id="a-library-api-lives-near-your-code">
+        A Library API Lives Near Your Code
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A library is reusable code you bring into your program. Its API is
+          the set of supported operations you use.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A date-formatting library might accept a date and a format choice,
+          then return text. An image library might resize an image. A testing
+          library lets us describe expectations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those are APIs even if every operation happens locally. Installing
+          the library may involve downloading it. That doesn't mean each later
+          function call makes a network request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important distinction. I can download a cookbook without telephoning
+          the publisher every time I make soup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some libraries do make network calls, though. A client library for a
+          remote service can present a local method that sends an HTTP request
+          underneath.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So function-call syntax doesn't tell me whether the work stays in my
+          process.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. You need to understand the behavior. Does it calculate
+          locally? Read a file? Contact another machine? Each has different
+          timing and failure possibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The friendly function name can hide complicated plumbing. That can be
+          helpful, but I still need enough knowledge to diagnose a burst
+          pipe.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And “public API” in library documentation often means the parts
+          supported for callers. It doesn't mean those functions are websites
+          accessible to the entire public.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Public relative to the boundary. Not public as in “we posted your tax
+          return.”</span
+        >
+      </p>
+      <h2 id="your-browser-is-a-host-with-rules">
+        Your Browser Is a Host With Rules
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We've done DOM manipulation. What else have I been using without
+          calling it an API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Adding event listeners. Working with browser storage. Controlling
+          media playback. Drawing on a canvas. Asking for device location. Those
+          are capabilities exposed through browser interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different capabilities, different rules. Changing my page's text does
+          not need the same permission as reading someone's location.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Exposing an operation doesn't mean every caller can perform
+          it at any time. A browser can require a secure context, a user action,
+          permission, or other conditions depending on the API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If location access is denied, that is an outcome the app has to
+          handle. We shouldn't turn “permission denied” into “the website is
+          broken until you surrender.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A delivery form can let someone enter their address. Automatic
+          location can be a convenience without becoming a compulsory guessing
+          game.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an API existing in documentation doesn't mean the browser on
+          someone's phone implements that exact feature. Support and failure
+          handling belong to the design.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The interface gives your code access to a capability under
+          defined conditions. It doesn't promise unlimited power.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is another crack in my internet-building mental model. Sometimes
+          the other thing I'm talking to is the browser that's already running
+          my code.</span
+        >
+      </p>
+      <h2 id="downstairs-the-operating-system">
+        Downstairs, the Operating System
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Go one layer further. Applications ask the operating system to do
+          things: open files, create processes, use networking, work with
+          windows.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Rather than each application inventing its own way to boss around
+          every disk and network adapter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Operating systems expose programming interfaces for those
+          capabilities. A language runtime or library may wrap them in a form
+          convenient for that language.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So when server-side JavaScript reads a file through Node's filesystem
+          API, I'm directly using Node's interface, and Node works with
+          operating-system facilities underneath.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. There can be several interfaces in the chain. Calling one
+          doesn't mean you directly called every lower layer yourself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And reading a file can fail because it doesn't exist, because the
+          process lacks permission, or because storage has a problem. Again, the
+          name readFile is not a supernatural guarantee.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The caller requests a capability; the implementation carries
+          it out within the environment's constraints.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like this because it explains portability without pretending all
+          systems are identical. A runtime can offer similar operations across
+          systems and still document platform differences.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's an important limit to abstraction. A useful interface reduces
+          what you need to know. It doesn't make every underlying distinction
+          disappear.</span
+        >
+      </p>
+      <h2 id="now-we-can-visit-the-internet-building">
+        Now We Can Visit the Internet Building
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine. We have earned the loading dock. What makes a web API a web
+          API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the common service sense, software exposes operations over web
+          protocols, usually HTTP. Another program sends a request and receives
+          a response. The service defines addresses, accepted inputs, behavior,
+          and outputs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our fictional Nervous Robot Pizza Delivery service might let an
+          authorized caller ask for an order's status. The caller doesn't
+          directly inspect the kitchen's database.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It sends a request through the supported interface. The server
+          checks the request, determines what the caller may see, does the work,
+          and responds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The order can be in the oven whether the customer checks from a
+          website or a phone app. Both need the same underlying fact, but they
+          don't need the same screen.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We'll use order 42 as our small running example. A status
+          request asks about that order. It doesn't imply the caller gets every
+          internal note or the driver's personal information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And knowing the number 42 doesn't grant access. A predictable
+          identifier is a way to identify something, not proof of
+          permission.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We'll give identity and permissions their own room later, but
+          they already matter to what this interface exposes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is the API the URL?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The URL is part of how you address the interface. The API is bigger:
+          which requests you can send, their meaning, the required inputs, the
+          responses, and the rules. One address by itself doesn't explain all
+          that.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A street address does not tell me whether this is a bakery, a tax
+          office, or an unusually disappointing nightclub.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And an endpoint is commonly a particular address or operation within
+          that web API. Different teams use the word with slightly different
+          precision. Ask which request they mean.</span
+        >
+      </p>
+      <h2 id="the-local-call-and-the-remote-call">
+        The Local Call and the Remote Call
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose I have a local function that looks up an order in data
+          already in memory. Then I replace it with a function that calls the
+          remote service. Same information, so is it effectively the same
+          thing?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Same business question, different operational situation. The remote
+          call has to cross a network boundary. The other system may be
+          unavailable. The request or response may be delayed. The remote
+          service may reject the operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the other side doesn't have a direct reference to the JavaScript
+          object living in my memory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The systems need transferable messages. We'll get to
+          serialization and JSON. For now, imagine sending a description rather
+          than handing over a live object from your program.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >More like sending the contents of a form than lending someone my
+          actual clipboard.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A web API can let a JavaScript client and a PHP server agree
+          without running the same language. They agree on the messages and
+          behavior at the boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is a much more useful definition of “talking” than implying the
+          computers have a shared personality.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Especially because computers are spectacularly literal colleagues.
+          “You knew what I meant” is not a reliable error-handling
+          strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It's not doing great with human colleagues either.</span>
+      </p>
+      <h2 id="why-everyone-says-api-and-means-url">
+        Why Everyone Says API and Means URL
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In web development, remote data services come up constantly. Teams
+          shorten “web service API” to “API” because the context usually
+          supplies the rest.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like saying “the server” when there may be a web server, a database
+          server, and several people in a restaurant trying to take a
+          break.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The shorthand can be perfectly practical. Trouble starts
+          when it becomes our whole definition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then someone mentions a browser API and I start looking for the API
+          key. Even though we're discussing changing an element's text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or a library announces an API change, and you assume a remote
+          endpoint moved. They might mean a function now takes different
+          arguments.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So my first clarifying question becomes: which boundary are we
+          talking about?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A library? The browser? An operating system? A remote service?
+          Then ask what crosses it and what behavior is promised.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I don't need to correct everyone at a meeting with “technically, API
+          is broader.” I need a mental model that survives context
+          changes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We are building understanding, not a new form of meeting
+          aggression.</span
+        >
+      </p>
+      <h2 id="a-boundary-can-be-useful-and-still-be-bad">
+        A Boundary Can Be Useful and Still Be Bad
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say my fictional library exposes one method: doStuff. It
+          accepts a string called data. It sometimes returns false. Have I
+          created an API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes. Possibly an unpleasant one.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good. I was worried the acronym conferred quality.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An API can be confusing, inconsistent, poorly documented, or
+          unstable. The concept doesn't guarantee good design. We'll devote an
+          episode to making other developers' lives less miserable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's another question. If we have a small server-rendered
+          application, do we need to pull every internal function into a
+          separate web service now?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. A useful programming boundary doesn't automatically justify a
+          network boundary. Separate services introduce deployment,
+          coordination, latency, and failure concerns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sometimes a well-defined function or module is the right amount of
+          architecture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The goal is a boundary that serves a real need. Multiple
+          remote clients can be a reason for a web API. Reusing local
+          calculations can be a reason for a library. Different needs, different
+          costs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an interface doesn't replace the thing doing the work. An API for
+          delivery status still needs a system that actually knows the
+          status.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Documentation can describe an operation. Someone still
+          implements it. We'll flip to that side in Episode Seven.</span
+        >
+      </p>
+      <h2 id="follow-one-button-through-several-interfaces">
+        Follow One Button Through Several Interfaces
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's make the layers concrete. A customer presses “Check order” on
+          our website.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A real button, because keyboard users also eat pizza.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser dispatches an event. Our event listener runs. That's
+          browser API territory. Our code uses fetch to ask the remote service
+          for order 42. Fetch is also an interface offered by the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the service we're contacting has its own API. So I'm using one
+          API to call another API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. They do different jobs. Fetch provides the request
+          mechanism. The order service defines what the order request
+          means.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser isn't born knowing our order statuses. The server isn't
+          responsible for implementing JavaScript's function-call syntax.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The server may use a database library's API while processing
+          the request. Eventually a result comes back. Our code uses the DOM API
+          to put the status in the page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Several interfaces, one user action. And from the customer's
+          perspective, hopefully just “my pizza is in the oven.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the point of these boundaries. Different pieces can cooperate
+          without every piece knowing every internal detail.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the boundaries also tell me where to investigate. Did the click
+          handler run? Did the request happen? Did the service respond? Did our
+          code update the page?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The mental model gives you places to look instead of one
+          giant category called “API broken.”</span
+        >
+      </p>
+      <h2 id="the-loading-dock-can-stay">The Loading Dock Can Stay</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me put the whole thing in my own words. An API is a defined way
+          for code to use another piece of software. It exposes operations and
+          expectations. The implementation does the work behind that
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It might be local, like a library. It might expose a browser or
+          operating-system capability. It might connect to a service over the
+          web. Web APIs are one important category, not the definition of the
+          entire concept.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The reason I care is that I can understand what I'm depending on. I
+          can use a capability without rebuilding its internals, and I can
+          recognize where the agreement stops protecting me from real-world
+          details.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when a new technology announces that it has an API, you have
+          useful questions. Who calls it? What can they ask for? What must they
+          send? What happens? What comes back? What can fail?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's better than imagining a warehouse called API. Though,
+          honestly, a loading dock is still a reasonable metaphor for a
+          controlled entry point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Provided you remember some of the loading docks are function calls
+          inside the same program.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The metaphor has acquired a very small forklift.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: why web APIs became such a big part of the picture. We'll
+          start with a server returning HTML and ask what made developers want
+          the data separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, my PHP experience gets to be useful without someone
+          describing it as archaeology.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You brought that word into the conversation.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Preventative maintenance.</span>
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

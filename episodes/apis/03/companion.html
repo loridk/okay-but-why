@@ -1,0 +1,1512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 3: HTTP: The Thing Underneath the API — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: HTTP: The Thing Underneath the API</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/71f4d04c-ad33-4d6c-b17d-19a49c2d17db"
+      ></script>
+      <div class="redcirclePlayer-71f4d04c-ad33-4d6c-b17d-19a49c2d17db"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#http-is-an-agreement-about-messages"
+            >HTTP Is an Agreement About Messages</a
+          >
+        </li>
+        <li>
+          <a href="#client-and-server-are-roles">Client and Server Are Roles</a>
+        </li>
+        <li>
+          <a href="#start-with-a-specific-question"
+            >Start With a Specific Question</a
+          >
+        </li>
+        <li>
+          <a href="#the-method-says-what-kind-of-request"
+            >The Method Says What Kind of Request</a
+          >
+        </li>
+        <li><a href="#headers-add-context">Headers Add Context</a></li>
+        <li>
+          <a href="#the-body-carries-content">The Body Carries Content</a>
+        </li>
+        <li>
+          <a href="#put-the-request-together">Put the Request Together</a>
+        </li>
+        <li>
+          <a href="#what-happens-between-here-and-there"
+            >What Happens Between Here and There?</a
+          >
+        </li>
+        <li>
+          <a href="#read-the-response-in-layers">Read the Response in Layers</a>
+        </li>
+        <li>
+          <a href="#status-codes-are-categories-not-a-personality-test"
+            >Status Codes Are Categories, Not a Personality Test</a
+          >
+        </li>
+        <li>
+          <a href="#fetch-does-not-mean-json">Fetch Does Not Mean JSON</a>
+        </li>
+        <li>
+          <a href="#the-error-that-was-actually-a-response"
+            >The Error That Was Actually a Response</a
+          >
+        </li>
+        <li>
+          <a href="#a-timeout-can-leave-an-awkward-question"
+            >A Timeout Can Leave an Awkward Question</a
+          >
+        </li>
+        <li>
+          <a href="#one-request-is-not-a-whole-page"
+            >One Request Is Not a Whole Page</a
+          >
+        </li>
+        <li>
+          <a href="#why-a-shared-protocol-helps">Why a Shared Protocol Helps</a>
+        </li>
+        <li>
+          <a href="#follow-the-pizza-one-last-time"
+            >Follow the Pizza One Last Time</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The API is broken.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What happened?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I asked it for something and I didn't get the thing.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did the request leave the browser?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Unclear.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did the server respond?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Also unclear.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What was the status?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Emotionally? Deteriorating.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we're giving that sentence some more useful nouns.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Because “the API is broken” is currently doing the work of nine
+          separate incident reports and a small scream.</span
+        >
+      </p>
+      <h2 id="http-is-an-agreement-about-messages">
+        HTTP Is an Agreement About Messages
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We know why a program might ask a web
+          service for data. Now let's follow the request. HTTP stands for
+          Hypertext Transfer Protocol.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Expand protocol before we wave respectfully at it and move on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A protocol is an agreed set of communication rules. HTTP defines
+          things about requests and responses: how an operation is identified,
+          how information accompanies it, and how the result is described.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if our order service has an API, HTTP supplies a common messaging
+          model underneath that service's specific meaning.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. HTTP can tell us that we're making a GET request and that
+          the server returned a successful response. Our application's contract
+          tells us what an order is and what its status field means.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HTTP has no opinion about whether extra pineapple is a cry for
+          help.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Neither do we. This is a supportive podcast.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine. The protocol remains neutral on fruit.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >HTTP also carries ordinary webpages, images, downloads, and many
+          other things. HTTP and API aren't synonyms. A local library API
+          doesn't inherently use HTTP, and an HTTP response doesn't have to be
+          an API's JSON result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are keeping the layers apart so we can understand where a problem
+          lives.</span
+        >
+      </p>
+      <h2 id="client-and-server-are-roles">Client and Server Are Roles</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For an HTTP exchange, the client initiates a request. The server
+          handles it and returns a response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The client could be a browser, a phone app, a command-line tool, or
+          another server-side program. It's a role in this conversation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Our order application can act as a server when answering the
+          customer's browser, then act as a client when it contacts another
+          service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One program can have both jobs. We don't have to repaint the computer
+          every time it changes roles.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And “server” might mean the software handling requests, not just a
+          particular physical box. There can be intermediaries such as proxies
+          and caches along the way.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means a response can come from something other than the exact
+          application process I imagined. A cache might satisfy a request. A
+          gateway might return an error before our route handler runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We'll keep the simple request-response picture, but we shouldn't
+          mistake it for a complete map of the infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The point for debugging is that “I got a response” and “my
+          application code definitely ran” are different claims.</span
+        >
+      </p>
+      <h2 id="start-with-a-specific-question">
+        Start With a Specific Question
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our fictional Nervous Robot Pizza Delivery customer wants the status
+          of order 42. The service contract says an authorized customer can
+          retrieve an order summary at a particular URL.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Uniform Resource Locator. An address identifying where we're asking
+          for something. Please don't make me memorize what every letter stands
+          for before dinner.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You won't have to. Listen to the pieces in this example: HTTPS,
+          orders dot example, slash orders slash 42, and an optional query
+          asking for a summary view.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>https://orders.example/orders/42?view=summary
+
+scheme: https
+host: orders.example
+path: /orders/42
+query: view=summary</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The example domain is fictional. Nobody should expect it to deliver
+          actual pizza or actual data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The scheme tells us the kind of access. HTTPS is HTTP using transport
+          protection. The host identifies the service's host name. The path
+          identifies the resource within that service. The query carries
+          additional parameters according to the application's rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And view equals summary is our invented API contract. HTTP itself
+          doesn't define that query's meaning.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Another service could use different parameter names, or no
+          query at all. A URL can also include a port. HTTPS normally uses port
+          443 when none is specified.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What about the hash bit, the fragment, like section two at the end of
+          a page link?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The fragment isn't sent as part of the HTTP request target. Browsers
+          often use it for a location within a document, and applications can
+          use it in other client-side ways.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if I put an API parameter after a hash and expect the server to
+          see it, I've mailed a letter with the important instruction still on
+          my desk.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And URLs are poor places for secrets. They may show up in
+          logs, browser history, copied links, and other surfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HTTPS protects transport. It does not make every place we store or
+          display a URL private.</span
+        >
+      </p>
+      <h2 id="the-method-says-what-kind-of-request">
+        The Method Says What Kind of Request
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The URL isn't the whole request. We also choose an HTTP method,
+          sometimes called a verb. For retrieving the order summary, we use
+          GET.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >GET asks to retrieve a representation. A representation is some
+          transferable description of the thing, not the physical pizza and not
+          necessarily our database row.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. POST asks the target to process submitted content according to
+          its semantics. It's often used to create something, but “POST means
+          create” is too narrow as a definition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PUT and PATCH commonly appear when changing things. DELETE requests
+          removal of the target's association with its current functionality.
+          We'll use less stiff language when we explore actual design choices
+          next episode.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Today the key is that methods have defined semantics. They're
+          not arbitrary colored labels you can swap without consequences.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A GET request should not mean “charge this customer's card.”
+          Browsers, crawlers, caches, and other software may treat retrieval
+          differently from an operation that deliberately changes state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. GET is defined as safe: the client isn't requesting a state
+          change as its purpose. Incidental effects, such as logging, don't
+          change that meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And choosing the correct method does not authenticate anyone. A
+          DELETE request from an unauthorized caller still needs to be
+          rejected.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Method semantics and permission checks solve different
+          problems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's a practical surprise for newcomers: the same path can support
+          different methods with different operations. The address alone may not
+          identify the whole endpoint behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. When reporting an issue, include the method as well as the URL,
+          with sensitive details removed.</span
+        >
+      </p>
+      <h2 id="headers-add-context">Headers Add Context</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Headers carry additional information about the request or response.
+          Think of them as named pieces of context attached to the
+          message.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as what kind of content is being sent, what kind the client
+          prefers to receive, or instructions affecting caching.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A request can have an Accept header indicating acceptable
+          response formats. A message with a JSON body can use Content-Type to
+          identify that body's format as JSON.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me keep those straight. Accept describes what I can accept back.
+          Content-Type describes the content in this message. They aren't two
+          interchangeable ways of announcing enthusiasm for JSON.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And a GET request without a body generally doesn't need a
+          Content-Type header just because the client hopes to receive
+          JSON.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because there is no request body whose type we're describing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Responses have headers too. The server can use Content-Type to
+          identify its response body, or cache-related headers to describe
+          permitted reuse.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Credentials may travel in headers as well, depending on the
+          authentication mechanism. That means headers aren't automatically
+          harmless debugging text. Don't paste a real authorization value into a
+          public issue.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And browser JavaScript doesn't have unrestricted control over every
+          header. The browser manages some details itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is reasonable. “It's a JavaScript option” should not mean “you
+          may impersonate every part of the networking stack.”</span
+        >
+      </p>
+      <h2 id="the-body-carries-content">The Body Carries Content</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A request can also have a body containing content for the operation.
+          An order submission might include selected menu items and delivery
+          details.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In an ordinary form, the browser might encode form fields. In another
+          request, our code might send JSON. A file upload uses different
+          considerations. HTTP isn't married to one format.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The receiving service must know which formats it accepts and
+          interpret the content accordingly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And validate it. Content-Type saying JSON doesn't mean the body is
+          well-formed, reasonable, or authorized.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Nor does it mean the numbers are truthful. Our server should
+          calculate trusted prices from trusted rules instead of accepting the
+          client's total as a commandment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A body can describe a requested change. It does not appoint the
+          caller chief financial officer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For our simple GET request, we aren't sending a body. The path
+          identifies order 42; a documented query can choose the view. GET
+          request bodies don't have generally defined semantics, and browser
+          fetch doesn't allow a GET or HEAD body.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we shouldn't teach a GET body as a cute place to tuck extra
+          parameters. Use the interface the service actually defines.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And not every response has a body either. Some outcomes
+          deliberately return none. We'll come back to that when parsing enters
+          the story.</span
+        >
+      </p>
+      <h2 id="put-the-request-together">Put the Request Together</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>http</span></figcaption>
+        <pre tabindex="0"><code>GET /orders/42?view=summary HTTP/1.1
+Host: orders.example
+Accept: application/json</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners, that card says: retrieve the summary of order 42 from
+          our fictional host; we'd like JSON. It leaves credentials out of the
+          illustration. The real private-order operation still needs
+          authorization.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. This is a readable HTTP/1.1-style sketch, not a complete
+          capture and not the literal wire format for every HTTP version. HTTP/2
+          and HTTP/3 carry the concepts differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't have to learn every transport detail to follow the message.
+          But we also shouldn't think all HTTP traffic is literally a few lines
+          of text floating through a cable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The enduring mental model is a target, a method, headers, and
+          content when appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And when I use fetch, I usually don't assemble that whole message by
+          hand. The browser does work based on the URL, options, environment,
+          and its rules.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An API for making requests saves us from writing the entire
+          protocol implementation.</span
+        >
+      </p>
+      <h2 id="what-happens-between-here-and-there">
+        What Happens Between Here and There?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have a request in our minds. How does it reach the service?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At a high level, the browser determines where to connect, often using
+          DNS to resolve a host name. It establishes or reuses suitable
+          connections and, for HTTPS, uses a protected connection with server
+          identity checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Often and reuses are doing honest work there. We don't necessarily do
+          a fresh DNS lookup and a brand-new connection for every request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Caches, connection reuse, proxies, and browser features can
+          change the physical path. Some requests may be satisfied without a
+          fresh trip to the origin server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important point is that fetch asks the environment to perform an
+          operation. It doesn't teleport into the database.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. When a request reaches the application, routing chooses the
+          code responsible for that method and path. That code can inspect
+          credentials, enforce permission, validate inputs, and perform the
+          relevant work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Maybe a database lookup. Maybe an in-memory value. Maybe another
+          service call. HTTP doesn't require a database to be present.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then the server constructs the response: an outcome status, headers,
+          and a body if appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Somebody wrote that server code. We will meet that somebody,
+          conceptually, in Episode Seven. No wizard behind the status
+          field.</span
+        >
+      </p>
+      <h2 id="read-the-response-in-layers">Read the Response in Layers</h2>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>http</span></figcaption>
+        <pre tabindex="0"><code>HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{&quot;id&quot;:42,&quot;status&quot;:&quot;baking&quot;,&quot;estimatedMinutes&quot;:18}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For listeners: the request succeeded. The content is identified as
+          JSON. The response instructs caches not to store it. The body
+          describes order 42 as baking, with an estimate of eighteen
+          minutes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is still a simplified sketch. But it gives me three different
+          questions. What was the HTTP outcome? How should I interpret the
+          content? What does the application data say?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Two hundred doesn't mean the pizza has arrived. It means
+          this HTTP request succeeded according to its semantics. The body tells
+          us the order's situation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the application's contract must define eighteen minutes until
+          what. Until delivery, in our example. It's an estimate, not a
+          guarantee that the driver can bend spacetime.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. This is where our API-specific agreement adds meaning that
+          HTTP cannot supply.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, no-store is a caching instruction, not a way to stop an
+          authorized recipient from remembering information they've
+          received.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It doesn't replace access control or make the response
+          invisible to the receiving program.</span
+        >
+      </p>
+      <h2 id="status-codes-are-categories-not-a-personality-test">
+        Status Codes Are Categories, Not a Personality Test
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >HTTP status codes describe the response outcome. Broadly, the one
+          hundreds are informational; two hundreds indicate success; three
+          hundreds involve redirection or related follow-up handling; four
+          hundreds indicate a problem associated with the request; five hundreds
+          indicate a server-side failure to fulfill an apparently valid
+          request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And four hundred doesn't mean the human is morally responsible. Bad
+          frontend code can produce a bad request. An expired session can happen
+          during ordinary use.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Names and categories guide handling; they don't assign blame
+          in a meeting.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Give us a few useful landmarks rather than a phone book.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Two hundred commonly accompanies successful retrieval. Two oh one
+          means created. Two oh four means successful with no response content.
+          Four hundred is a bad request. Four oh one indicates missing or
+          invalid authentication credentials, despite its historical name
+          Unauthorized.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then four oh three is forbidden: the server refuses the request.
+          Often that's an access decision, although we shouldn't reduce every
+          possible reason to one sentence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Four oh four means the target wasn't found or the server isn't
+          willing to disclose that it exists. Five hundred is a generic internal
+          server error. Other codes provide more specific information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about a redirect?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A response can direct the client elsewhere. Browsers often follow
+          redirects automatically. That can make an API debugging problem
+          sneaky: a request might end up at an HTML login page when your code
+          expected JSON.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The final response can look successful at the HTTP level and still be
+          the wrong kind of content for what our code is doing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Status alone isn't the entire contract.</span>
+      </p>
+      <h2 id="fetch-does-not-mean-json">Fetch Does Not Mean JSON</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's finally press the JavaScript button. What happens conceptually
+          when code calls fetch?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In a browser, fetch is the interface we use to request a resource. It
+          returns a promise, a JavaScript object representing a future result.
+          We can arrange to handle the response when it's available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The promise is modern JavaScript machinery. Fetch is an
+          environment-provided API, also available in some other runtimes. It is
+          not a TypeScript keyword or a React feature.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A successful fetch promise gives us a Response object. That
+          object gives us access to the status, allowed headers, and the
+          body.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It isn't automatically our order object.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Reading and interpreting the body is another step. Calling
+          response.json asks to read the body and parse it as JSON. That
+          operation is asynchronous too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means “the response headers arrived” and “I have fully read and
+          parsed the body” are separate moments.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Bodies can be streamed. We don't need to learn streaming
+          implementation today, but the distinction explains why there are
+          multiple asynchronous steps in familiar fetch examples.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And parsing JSON can fail independently. A login page, malformed
+          content, an empty body—none of those become valid JSON through
+          optimism.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. We should not call json on a deliberate no-content
+          response and act surprised when there is no JSON to parse.</span
+        >
+      </p>
+      <h2 id="the-error-that-was-actually-a-response">
+        The Error That Was Actually a Response
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's the fetch detail that causes an impressive amount of
+          confusion: an HTTP error status doesn't ordinarily make fetch reject
+          its promise.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A four oh four is still a response that arrived.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Fetch can fulfill with a Response whose status is 404 or
+          500. Your code needs to inspect it. The ok property is true for
+          statuses from 200 through 299.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So catch alone doesn't mean “all unsuccessful HTTP outcomes
+          handled.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Rejection can happen for reasons such as a network failure,
+          a browser policy failure, or an aborted request. The exact error
+          depends on what happened.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And even when fetch fulfills, a later body-read or parse operation
+          can fail. Several stages, several possible failures.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Episode Six will turn this into a small useful coding pattern.
+          Today, remember the distinction between “a response reporting failure
+          arrived” and “the request operation couldn't provide a usable
+          response.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which also explains why I should look in the browser's network tools
+          instead of assuming every red message means the same thing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Check the request URL and method, the status if there is
+          one, the response content type, and the body where it's safe to
+          inspect it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Redact credentials and private order details before sharing.
+          Debugging does not need to become an accidental data export.</span
+        >
+      </p>
+      <h2 id="a-timeout-can-leave-an-awkward-question">
+        A Timeout Can Leave an Awkward Question
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose we send an order-creation request. The browser waits and
+          eventually gives up. Did the order get created?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We may not know from that failure alone. The request might never have
+          reached the server. Or the server might have created the order and the
+          response was lost or delayed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “I didn't receive success” is not always “nothing happened.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's a crucial distributed-systems distinction. The client
+          observes its side of communication, not every event on the other
+          side.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which makes blindly retrying a purchase dangerous. We might
+          accidentally ask for the operation twice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. API designs can provide ways to handle retries safely,
+          including idempotency mechanisms we'll explore later. Today we just
+          need to recognize the ambiguity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And cancelling the browser's wait doesn't guarantee the server rolls
+          back everything it was doing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Cancellation is useful, but you can't assume it erases
+          remote effects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like that this falls out of the mental model. Two systems
+          exchanging messages can lose contact between “work happened” and “the
+          caller learned it happened.” That's not a weird JavaScript
+          quirk.</span
+        >
+      </p>
+      <h2 id="one-request-is-not-a-whole-page">
+        One Request Is Not a Whole Page
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's another debugging habit worth building. Loading a page may
+          cause many HTTP requests: document, stylesheets, scripts, images, and
+          later application data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The page existing doesn't prove the order-status request worked. The
+          stylesheet loading doesn't prove the API is healthy. Each exchange has
+          its own result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. In the network panel, identify the specific request
+          associated with the failed interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If our button handler never starts a request, staring at the server
+          logs may not help. If the server returned the correct data but the UI
+          didn't update, changing the route may not help either.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Follow the chain: user action, client code, request, processing,
+          response, interpretation, presentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And caches or service workers may influence that chain. We can
+          investigate those when evidence points there, rather than beginning
+          every bug with a ritual purge of everything.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You mean “clear cache and pray” isn't a root-cause analysis?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It's a spiritual practice. Different department.</span>
+      </p>
+      <h2 id="why-a-shared-protocol-helps">Why a Shared Protocol Helps</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why is it valuable that so many different systems use HTTP?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Shared tools and expectations. A browser, a command-line client, a
+          proxy, and our application can agree about basic message semantics
+          even when they don't know each other's implementation language.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We gain infrastructure and tooling around common behavior.
+          But our particular API still has to define its operations, fields,
+          permissions, and errors clearly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HTTP doesn't force the application to be RESTful, consistent, or
+          pleasant. It gives us a shared foundation to build on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And it isn't the answer to every communication problem. Later we'll
+          compare approaches involving different interaction patterns and
+          protocols. Ordinary request-response HTTP is useful, not universally
+          sufficient.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. No protocol worship. Just understand what it does and where it
+          fits.</span
+        >
+      </p>
+      <h2 id="follow-the-pizza-one-last-time">
+        Follow the Pizza One Last Time
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The customer asks to check order 42. Our browser code calls fetch
+          using the service's URL and appropriate request options.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The request identifies what we're targeting and what kind of
+          operation we want. Headers add context. A body is included when the
+          operation calls for one.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The service receives the request, checks access, performs the lookup,
+          and constructs a response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The response status tells us about the HTTP outcome. Headers describe
+          things like content type. The body contains our application's
+          representation when a body is appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our code checks the outcome, reads and interprets the body, and
+          updates the page with understandable feedback.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or it handles the failure at the stage where the failure actually
+          happened. No more filing everything under “internet warehouse
+          sad.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What changed in your mental model?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fetch stopped being a spell that returns data. It asks the
+          environment to perform an HTTP operation. The operation produces a
+          response or fails to provide one. Then my application still has
+          interpretation and presentation work to do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the HTTP protocol isn't our whole API. It carries the
+          conversation. Our order service's contract supplies the meaning of
+          that conversation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next episode, REST. Why resources and conventions became such a
+          common way to organize these conversations, and why people use the
+          word more loosely than its original architectural meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally. I've seen enough arguments about whether a URL is RESTful to
+          suspect there's a ceremonial mountain involved.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We are not climbing the mountain.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. My pizza is eighteen minutes away, subject to the limitations
+          of distributed estimation.</span
+        >
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

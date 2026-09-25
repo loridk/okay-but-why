@@ -28,13 +28,13 @@ JULES: Finding vulnerabilities is only the first step.
 
 PARISA: Discover.
 
-Validate.
+PARISA: Validate.
 
-Prioritize.
+PARISA: Prioritize.
 
-Remediate.
+PARISA: Remediate.
 
-Verify.
+PARISA: Verify.
 
 JULES: Exactly.
 
@@ -96,11 +96,11 @@ JULES: Scanners automate discovery.
 
 PARISA: Network scanners.
 
-Web app scanners.
+PARISA: Web app scanners.
 
-Dependency scanners.
+PARISA: Dependency scanners.
 
-Cloud configuration scanners.
+PARISA: Cloud configuration scanners.
 
 JULES: They’re useful, but can produce false positives and false negatives.
 
@@ -134,7 +134,7 @@ PARISA: Penetration testing is not “run scanner, export PDF.”
 
 JULES: Correct.
 
-A pentest is an authorized attempt to exploit weaknesses and demonstrate realistic impact.
+JULES: A pentest is an authorized attempt to exploit weaknesses and demonstrate realistic impact.
 
 PARISA: Scope matters.
 
@@ -142,13 +142,13 @@ JULES: Enormously.
 
 PARISA: What systems?
 
-What dates?
+PARISA: What dates?
 
-What techniques?
+PARISA: What techniques?
 
-Can we social-engineer?
+PARISA: Can we social-engineer?
 
-Can we disrupt service?
+PARISA: Can we disrupt service?
 
 JULES: Rules of engagement.
 
@@ -159,9 +159,9 @@ PARISA: Same thing?
 
 JULES: Not necessarily.
 
-Pentests often focus on finding and exploiting vulnerabilities in a defined scope.
+JULES: Pentests often focus on finding and exploiting vulnerabilities in a defined scope.
 
-Red-team exercises more broadly emulate adversary objectives and test detection and response.
+JULES: Red-team exercises more broadly emulate adversary objectives and test detection and response.
 
 PARISA: “Can we get domain admin without being caught?” versus “What vulnerabilities exist in this app?”
 
@@ -176,9 +176,9 @@ JULES: Follow authorized disclosure channels.
 
 PARISA: Bug bounty if available.
 
-Security contact.
+PARISA: Security contact.
 
-Coordinated disclosure.
+PARISA: Coordinated disclosure.
 
 JULES: Don’t exceed authorization because you think you’re helping.
 
@@ -191,13 +191,13 @@ JULES: Fix root cause where possible.
 
 PARISA: Patch.
 
-Configuration change.
+PARISA: Configuration change.
 
-Remove service.
+PARISA: Remove service.
 
-Reduce permission.
+PARISA: Reduce permission.
 
-Network mitigation.
+PARISA: Network mitigation.
 
 JULES: Sometimes compensating controls buy time.
 
@@ -241,9 +241,9 @@ JULES: Exactly.
 
 PARISA: CVE names the issue.
 
-CVSS describes technical severity.
+PARISA: CVSS describes technical severity.
 
-Environment tells us actual priority.
+PARISA: Environment tells us actual priority.
 
 JULES: Yes.
 

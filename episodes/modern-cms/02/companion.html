@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 2: WordPress: How Did a Blogging Tool Eat the Web? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: WordPress: How Did a Blogging Tool Eat the Web?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/7e8e9e47-0016-4e39-9fe5-ff19cbcd9698"
+      ></script>
+      <div class="redcirclePlayer-7e8e9e47-0016-4e39-9fe5-ff19cbcd9698"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-blog-was-a-useful-starting-point"
+            >The Blog Was a Useful Starting Point</a
+          >
+        </li>
+        <li>
+          <a href="#posts-pages-and-a-table-with-an-overloaded-name"
+            >Posts, Pages, and a Table With an Overloaded Name</a
+          >
+        </li>
+        <li>
+          <a href="#give-the-event-a-proper-name"
+            >Give the Event a Proper Name</a
+          >
+        </li>
+        <li>
+          <a href="#taxonomy-is-classification">Taxonomy Is Classification</a>
+        </li>
+        <li>
+          <a href="#who-turns-the-record-into-a-page"
+            >Who Turns the Record Into a Page?</a
+          >
+        </li>
+        <li>
+          <a href="#plugins-add-behavior-hooks-connect-it"
+            >Plugins Add Behavior; Hooks Connect It</a
+          >
+        </li>
+        <li><a href="#gutenberg-and-blocks">Gutenberg and Blocks</a></li>
+        <li>
+          <a href="#the-database-isn-t-just-posts"
+            >The Database Isn't Just Posts</a
+          >
+        </li>
+        <li>
+          <a href="#the-ecosystem-is-part-of-the-architecture"
+            >The Ecosystem Is Part of the Architecture</a
+          >
+        </li>
+        <li>
+          <a href="#when-the-fit-gets-awkward">When the Fit Gets Awkward</a>
+        </li>
+        <li>
+          <a href="#translate-before-you-judge">Translate Before You Judge</a>
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Bellweather University needs a news website.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Someone has suggested WordPress.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That sounds reasonable.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Someone else says WordPress is only for blogs. A third person says it
+          can replace the student records system. We have achieved the full
+          spectrum of unhelpful confidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Can we begin with the actual news website?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A radical intervention. Let's try it.</span>
+      </p>
+      <h2 id="the-blog-was-a-useful-starting-point">
+        The Blog Was a Useful Starting Point
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? WordPress began in 2003 as a blogging
+          project, growing from b2/cafelog. Its publishing roots explain some
+          names that can otherwise seem peculiar.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Blogging meant people repeatedly publishing entries, often arranged
+          newest first, with authors, dates, categories, and comments. That's a
+          useful bundle of needs, not an embarrassing childhood to
+          conceal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a lot of organizations also need people to publish entries with
+          authors, dates, categories, and comments. News, announcements, essays,
+          project updates. The starting point generalized well.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Add an ecosystem of themes, plugins, hosting, documentation, and
+          people who already know how to use it, and the value isn't just the
+          code. It's the availability of a whole working arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WordPress the open-source software is also distinct from
+          WordPress.com, a hosted service. Hosting arrangements and available
+          features can differ. We're discussing the software's
+          architecture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Otherwise a question about PHP somehow turns into a
+          pricing-plan argument.</span
+        >
+      </p>
+      <h2 id="posts-pages-and-a-table-with-an-overloaded-name">
+        Posts, Pages, and a Table With an Overloaded Name
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A post is a content entry commonly used for dated publishing. A page
+          is typically used for relatively durable information, like About or
+          Contact. Pages can be hierarchical.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Typically” matters. A page isn't magically permanent, and a post
+          isn't legally required to contain an opinion about breakfast.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Both are examples of post types. That broader term includes more than
+          blog posts. WordPress stores many such objects in its posts table,
+          distinguishing them with a post-type value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I see a table called posts and shouldn't conclude every row is a
+          blog article. It's a shared storage model for several kinds of content
+          objects.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The usual table prefix is wp underscore, but sites can use
+          another prefix. We shouldn't hard-code that assumption into custom
+          queries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a custom post type is a registered kind of content, like an
+          Event. It doesn't necessarily create a new database table called
+          events.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Registration tells WordPress how that type behaves: labels,
+          supported editing features, visibility, capabilities, and API
+          exposure. Individual events remain individual records.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That explains a lot. “Custom” means our content type is registered
+          with the system, not that we've discarded the system and created an
+          unrelated schema.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Additional properties commonly live in post metadata. That's a
+          key-and-value style extension to the main record. Plugins may also use
+          custom tables when their needs justify it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Metadata is flexible, but complex querying across lots of values can
+          become awkward. We should understand the storage and indexes instead
+          of assuming every field behaves like a purpose-designed relational
+          column.</span
+        >
+      </p>
+      <h2 id="give-the-event-a-proper-name">Give the Event a Proper Name</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the companion there's a small complete plugin that registers
+          Bellweather Events. It uses a prefixed internal name so we're less
+          likely to collide with another plugin.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And it lives in a plugin because the university's events should still
+          exist as a registered content type if we change the visual
+          theme.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The data isn't automatically deleted when registration code
+          disappears, but the normal editing and display interfaces can stop
+          recognizing it as expected. That's an unpleasant surprise during a
+          redesign.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The code hooks into WordPress initialization, then calls its
+          registration function. The function and array syntax are PHP. The
+          names init and register post type are WordPress APIs.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>php</span></figcaption>
+        <pre tabindex="0"><code>&lt;?php
+/**
+ * Plugin Name: Bellweather Events
+ * Description: Registers a basic editorial event type.
+ * Version: 1.0.0
+ */
+
+defined('ABSPATH') || exit;
+
+function bellweather_register_events() {
+    register_post_type('bw_event', [
+        'labels' =&gt; [
+            'name' =&gt; 'Events',
+            'singular_name' =&gt; 'Event',
+        ],
+        'public' =&gt; true,
+        'has_archive' =&gt; true,
+        'show_in_rest' =&gt; true,
+        'supports' =&gt; ['title', 'editor', 'revisions'],
+        'rewrite' =&gt; ['slug' =&gt; 'events'],
+    ]);
+}
+add_action('init', 'bellweather_register_events');
+
+function bellweather_events_activate() {
+    bellweather_register_events();
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'bellweather_events_activate');</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is a basic public content type, not a finished event-management
+          product. It doesn't implement dates, bookings, or department-specific
+          permissions. It uses the default post capabilities, which you should
+          review for the real editorial roles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And it refreshes rewrite rules on activation, not on every request.
+          Rebuilding routing information constantly because it fixed one
+          development problem is an expensive superstition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The API-exposure setting also supports the block editor's
+          expectations. Turning it on deserves an access review; it isn't a
+          substitute for permissions.</span
+        >
+      </p>
+      <h2 id="taxonomy-is-classification">Taxonomy Is Classification</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We want visitors to find science events and arts events. Is that
+          another post type?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually it's classification of events, not a different kind of
+          record. WordPress calls a classification system a taxonomy. Categories
+          and tags are built-in examples; custom taxonomies can describe things
+          like academic subject.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The taxonomy is the classification system, and a term is one of its
+          values. Subject is the taxonomy; Botany is a term.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Hierarchical taxonomies can express parent-child groupings.
+          Flat ones can express labels without that hierarchy. The shape should
+          match editorial meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If editors type Science, Sciences, and science exclamation mark, a
+          free-text field has allowed three spellings where visitors needed one
+          filter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A controlled vocabulary can help. It still needs ownership: who may
+          add terms, merge duplicates, and decide what they mean?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A taxonomy does not prevent an organization from having meetings
+          about terminology. It gives the meeting's result somewhere to
+          live.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And relationships to terms are stored through taxonomy-related
+          tables. You don't need to memorize the joins to use the API, but
+          knowing there's a relationship explains why this isn't just a
+          comma-separated string.</span
+        >
+      </p>
+      <h2 id="who-turns-the-record-into-a-page">
+        Who Turns the Record Into a Page?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A theme supplies presentation. Templates describe the structure for
+          different requests. The template hierarchy determines which suitable
+          template WordPress uses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In a classic PHP theme, a specific template for a single event can
+          take precedence over a general single-content template, which can fall
+          back further. It's a selection mechanism, not random filename
+          folklore.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The familiar Loop iterates over posts returned by a query and renders
+          them. It isn't necessarily the database query itself. WordPress has
+          already interpreted the request and prepared query results in the
+          common main-query flow.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I appreciate that distinction. Calling every layer “the Loop” makes
+          debugging feel like arguing with a washing machine.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Block themes use block-based templates, usually stored as HTML
+          template files, with Site Editor customizations also able to live in
+          the database. Theme configuration can live in theme.json.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means “I changed the template” needs a follow-up: in a tracked
+          theme file or in the site's editor? Otherwise deployment becomes a
+          mystery involving two sources of truth.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Classic themes, block themes, and hybrid arrangements exist.
+          Don't assume every WordPress site has the same frontend architecture
+          just because it runs the same CMS.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we casually edit a parent theme that updates will replace.
+          Use an appropriate child theme or a maintained custom theme, and know
+          where your change belongs.</span
+        >
+      </p>
+      <h2 id="plugins-add-behavior-hooks-connect-it">
+        Plugins Add Behavior; Hooks Connect It
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Plugins extend functionality. They can register content types, add
+          integrations, provide blocks, change admin behavior, and much
+          more.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But how does my plugin participate without editing WordPress
+          core?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Hooks. WordPress exposes named extension points. Your code registers
+          a callback, and WordPress calls it at the relevant point.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ordinary PHP functions or other callables, wired into a framework's
+          lifecycle. Not PHP automatically recognizing a sacred function
+          name.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Two major kinds are actions and filters. An action says
+          something is happening; run the registered behavior. A filter passes a
+          value through callbacks that return the resulting value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Action: initialization is happening, so register our event type.
+          Filter: here's an excerpt length, return the length we want.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a filter callback must return the value. Printing a value is not
+          returning it. That distinction is plain PHP and can be very visible
+          when a callback accidentally leaks text into the page.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>php</span></figcaption>
+        <pre tabindex="0"><code>function bellweather_excerpt_length($length) {
+    return 24;
+}
+add_filter('excerpt_length', 'bellweather_excerpt_length');</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This affects automatically generated excerpts where that filter is
+          used. It doesn't rewrite every stored summary or trim every paragraph
+          everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The contract of the hook matters. Its arguments, when it runs,
+          and what its return value means. Callback priority affects ordering,
+          so multiple plugins can influence the same result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is useful until three plugins each believe they are the final
+          authority on punctuation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then debugging includes finding which callbacks are registered, not
+          just staring at the template. The visible output may have passed
+          through several extensions.</span
+        >
+      </p>
+      <h2 id="gutenberg-and-blocks">Gutenberg and Blocks</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should unpack Gutenberg, because people use the name for several
+          related things.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It's the project behind WordPress's block editing direction, and
+          there's also a Gutenberg plugin where features can develop ahead of
+          their inclusion in core. The core block editor is the normal editing
+          interface on many modern sites.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A block is an editable unit of content or layout: paragraph, image,
+          heading, a custom event feature, and so on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A custom block can have a JavaScript editing interface. WordPress's
+          editor uses React-based tooling. That doesn't mean the public website
+          must become a browser-rendered React application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the part that gets lost in the phrase “WordPress uses React.”
+          Which part? For what job? A React editor can save content that PHP
+          later turns into an ordinary HTML response.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Static blocks typically serialize their saved markup and block
+          information into post content. Dynamic blocks can render their output
+          on the server at request time, often with a PHP callback or render
+          file.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a paragraph block and a “show the next five events” block may have
+          different lifecycles. One stores its authored content; the other needs
+          current query results.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Block metadata, commonly in block.json, coordinates
+          registration details. The editor preview and public rendering must
+          agree about meaning, but they needn't use identical implementation
+          code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an editor choosing a heading block doesn't automatically
+          guarantee a sensible heading hierarchy. The system should help with
+          good defaults and constraints, then we still inspect the resulting
+          page.</span
+        >
+      </p>
+      <h2 id="the-database-isn-t-just-posts">The Database Isn't Just Posts</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Besides posts and post metadata, the database includes users, user
+          metadata, options, taxonomy information, comments, and other records.
+          Plugins can extend that picture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Options are application or site settings. Users are identities.
+          Attachments use the post system to represent media-related records,
+          while the uploaded file bytes generally live in file storage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is why a database-only backup may not include the original
+          photographs. A usable recovery plan knows about files, database state,
+          configuration, and the code needed to run them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should generally use WordPress APIs for reads and writes so its
+          behaviors run. Directly changing a database row can bypass validation,
+          caches, relationships, and plugin reactions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And custom queries still need safe parameter handling. The existence
+          of a CMS doesn't make SQL injection a historical problem other people
+          solved forever.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Likewise, when rendering output, escape for the context. Text,
+          attributes, and URLs aren't interchangeable. Allowing a trusted editor
+          to format content is not permission to print arbitrary untrusted
+          strings as executable markup.</span
+        >
+      </p>
+      <h2 id="the-ecosystem-is-part-of-the-architecture">
+        The Ecosystem Is Part of the Architecture
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WordPress's ecosystem can make a project dramatically easier. Maybe
+          there's already a maintained integration with the university's
+          newsletter system, accessible editing patterns, and hosting your team
+          understands.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is real engineering value. “We could build it ourselves” doesn't
+          price the years we would maintain it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But plugins are dependencies with behavior. We review maintenance,
+          compatibility, permissions, data handling, and whether the plugin's
+          model fits. Ten overlapping plugins don't become a coherent
+          architecture by sharing an admin menu.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And paid doesn't automatically mean good, free doesn't automatically
+          mean risky, and popularity doesn't prove suitability. Those are clues,
+          not verdicts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If a page breaks after an update, inspect the actual failure: PHP
+          error, theme assumption, callback conflict, cached output, or editor
+          serialization issue. Don't jump from one incident to “WordPress is
+          bad.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The corresponding mistake is refusing to acknowledge a mismatch
+          because an extension technically exists. You can keep bolting on
+          relational workflows until the admin interface feels like a filing
+          cabinet fell down the stairs.</span
+        >
+      </p>
+      <h2 id="when-the-fit-gets-awkward">When the Fit Gets Awkward</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a news site with a few content types, familiar editorial work,
+          and a team comfortable with WordPress, the fit may be excellent.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For Bellweather's full university model, we should examine shared
+          people records, department relationships, multilingual content,
+          granular approval rules, and reusable displays. WordPress can support
+          a lot, but we need to identify what comes from core, custom work, and
+          specific plugins.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we should ask the same questions of Drupal. It isn't fair to
+          compare a carefully assembled Drupal site with an imaginary WordPress
+          installation that has never received any design work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor compare WordPress's easiest demo with Drupal's most complicated
+          government deployment. Compare the same requirements and the actual
+          team's ability to operate each solution.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's the mental model I want to keep: WordPress interprets a
+          request, gets content through its APIs and queries, lets extensions
+          participate, and selects presentation through its theme system.
+          Editors work through an interface built around those records and
+          capabilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Recognizable web development. The names tell you where the system
+          gives you something reusable.</span
+        >
+      </p>
+      <h2 id="translate-before-you-judge">Translate Before You Judge</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Post type: kind of content record. Taxonomy: classification. Theme:
+          presentation. Plugin: functionality. Action: run behavior at an
+          extension point. Filter: transform and return a value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And block: an editor-facing unit whose saved or rendered behavior
+          depends on its implementation. A little less catchy, but substantially
+          less wrong.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WordPress didn't become useful by transcending PHP. It arranged
+          common publishing work into a product that many people can extend and
+          operate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time we enter Drupal, where we will immediately encounter the
+          word entity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Several times.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have brought database experience and snacks. One of them had better
+          help.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          WordPress combines a publishing-oriented data model, extension hooks,
+          and theme conventions with a large ecosystem. Evaluate the actual
+          requirement rather than ranking CMS identities.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 2 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Post type</th>
+              <td>
+                A registered kind of content record; a custom type does not
+                automatically get a new database table.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Taxonomy / term</th>
+              <td>A classification system / one value in that system.</td>
+            </tr>
+            <tr>
+              <th scope="row">Theme / template</th>
+              <td>Presentation package / a selected structure for output.</td>
+            </tr>
+            <tr>
+              <th scope="row">Plugin</th>
+              <td>A package of WordPress functionality.</td>
+            </tr>
+            <tr>
+              <th scope="row">Action</th>
+              <td>An extension point that invokes behavior.</td>
+            </tr>
+            <tr>
+              <th scope="row">Filter</th>
+              <td>
+                An extension point that passes a value through callbacks which
+                return a value.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Block</th>
+              <td>
+                An editable content or layout unit; static and dynamic blocks
+                have different rendering lifecycles.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Example boundaries</h3>
+        <p>
+          The complete PHP plugin in the transcript registers a basic public
+          event type. It does not implement scheduling, bookings, custom date
+          fields, or department-specific authorization. Its labels are English
+          demonstration strings; production localization is additional work.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li>
+            <strong>Code card 1:</strong> Complete small plugin; wp-content/<wbr />plugins/<wbr />bellweather-events/<wbr />bellweather-events.<wbr />php
+          </li>
+          <li>
+            <strong>Code card 2:</strong> A filter can be added to the same demo
+            plugin
+          </li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Activate the example plugin only in a development site and verify
+            Events appears.
+          </li>
+          <li>
+            Review the default post capabilities before using the type with real
+            editorial roles.
+          </li>
+          <li>
+            Create an event, inspect its public output, and check API access.
+          </li>
+          <li>
+            Keep content-type registration in a plugin when it must survive
+            theme changes.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li><a href="https://wordpress.org/about/history/">History</a></li>
+          <li>
+            <a href="https://developer.wordpress.org/plugins/post-types/"
+              >Post types</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.wordpress.org/reference/functions/register_post_type/"
+              >Registration API</a
+            >
+          </li>
+          <li>
+            <a href="https://developer.wordpress.org/plugins/hooks/">Hooks</a>
+          </li>
+          <li>
+            <a
+              href="https://developer.wordpress.org/themes/basics/template-hierarchy/"
+              >Template hierarchy</a
+            >
+          </li>
+          <li>
+            <a href="https://developer.wordpress.org/block-editor/"
+              >Block editor</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

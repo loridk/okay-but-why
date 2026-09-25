@@ -1,0 +1,25 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Version-control the intended infrastructure. Review the proposed actions. Protect state and data separately.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Configuration drift</strong></dt><dd>Actual settings diverge from intended or recorded settings.</dd>
+<dt><strong>Provisioning</strong></dt><dd>Create or allocate infrastructure resources.</dd>
+<dt><strong>Provider</strong></dt><dd>Integration that communicates with a service API to manage resources.</dd>
+<dt><strong>State</strong></dt><dd>Mapping and recorded information connecting logical definitions to real resources; may include sensitive data.</dd></dl>
+<h3>Repeatable workflow</h3><p>Terraform and OpenTofu commonly use HCL-style declarative configuration. The workflow below is a concept diagram, not executable configuration.</p><figure class="card code"><figcaption>Write, plan, apply, observe<span>Text diagram</span></figcaption><pre tabindex="0"><code>Desired configuration in Git
+          │ review
+          ▼
+Plan ← recorded state + remote resource information
+          │ inspect creates, updates, replacements, deletions
+          ▼
+Apply → provider APIs → actual infrastructure
+          │
+          ▼
+Updated state + operational verification
+
+Later drift → investigate → choose intended state → plan again</code></pre></figure><h3>Keep the boundaries clear</h3><ul><li>Normal plan/apply runs are triggered work, not inherently continuous reconciliation.</li><li>Git history does not undo external data changes.</li><li>Provisioning a database does not restore its contents.</li><li>Sensitive output flags do not guarantee absence from state.</li><li>Protect state and plan files; coordinate team access and locking.</li><li>Failed applies can leave partial changes; inspect before retrying.</li></ul>
+<h3>Official sources and further reading</h3><ul><li><a href="https://developer.hashicorp.com/terraform/intro/core-workflow">Terraform core workflow</a></li>
+<li><a href="https://opentofu.org/docs/intro/core-workflow/">OpenTofu core workflow</a></li>
+<li><a href="https://opentofu.org/docs/language/state/sensitive-data/">OpenTofu: Sensitive data in state</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

@@ -1,0 +1,1469 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: Do I Actually Need This Shit? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 10: Do I Actually Need This Shit?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/63c5e731-6964-437a-9d22-959ae4440c05"
+      ></script>
+      <div class="redcirclePlayer-63c5e731-6964-437a-9d22-959ae4440c05"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#understanding-is-not-a-purchase-obligation"
+            >Understanding Is Not a Purchase Obligation</a
+          >
+        </li>
+        <li><a href="#democon-version-one">DemoCon, Version One</a></li>
+        <li><a href="#react-with-vite">React With Vite</a></li>
+        <li>
+          <a href="#what-a-browser-focused-app-costs"
+            >What a Browser-Focused App Costs</a
+          >
+        </li>
+        <li>
+          <a href="#astro-and-content-with-islands"
+            >Astro and Content With Islands</a
+          >
+        </li>
+        <li>
+          <a href="#traditional-server-rendered-applications"
+            >Traditional Server-Rendered Applications</a
+          >
+        </li>
+        <li>
+          <a href="#where-next-earns-its-place">Where Next Earns Its Place</a>
+        </li>
+        <li>
+          <a href="#operational-complexity-counts"
+            >Operational Complexity Counts</a
+          >
+        </li>
+        <li><a href="#the-cost-of-change">The Cost of Change</a></li>
+        <li>
+          <a href="#a-decision-meeting-with-actual-questions"
+            >A Decision Meeting With Actual Questions</a
+          >
+        </li>
+        <li>
+          <a href="#a-small-spike-beats-a-large-rewrite"
+            >A Small Spike Beats a Large Rewrite</a
+          >
+        </li>
+        <li>
+          <a href="#reasons-that-do-not-survive-contact-with-tuesday"
+            >Reasons That Do Not Survive Contact With Tuesday</a
+          >
+        </li>
+        <li>
+          <a href="#keep-the-useful-architecture-even-if-the-tool-changes"
+            >Keep the Useful Architecture Even If the Tool Changes</a
+          >
+        </li>
+        <li>
+          <a href="#three-constraints-that-change-the-answer"
+            >Three Constraints That Change the Answer</a
+          >
+        </li>
+        <li><a href="#migration-is-work-too">Migration Is Work Too</a></li>
+        <li>
+          <a href="#team-comprehension-is-a-performance-metric"
+            >Team Comprehension Is a Performance Metric</a
+          >
+        </li>
+        <li>
+          <a href="#accessibility-is-not-a-tiebreaker-we-add-later"
+            >Accessibility Is Not a Tiebreaker We Add Later</a
+          >
+        </li>
+        <li>
+          <a href="#cost-includes-the-user-s-device"
+            >Cost Includes the User's Device</a
+          >
+        </li>
+        <li>
+          <a href="#what-would-make-us-revisit">What Would Make Us Revisit?</a>
+        </li>
+        <li><a href="#the-democon-verdict">The DemoCon Verdict</a></li>
+        <li><a href="#what-we-can-explain-now">What We Can Explain Now</a></li>
+        <li>
+          <a href="#final-question-actual-answer"
+            >Final Question, Actual Answer</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have routes, server components, client components, caching, forms,
+          endpoints, images, metadata, and a thing called Proxy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We've learned a lot.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I have one final architecture question.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Go on.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Could this conference have been a page?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good. I needed to hear you say it.</span>
+      </p>
+      <h2 id="understanding-is-not-a-purchase-obligation">
+        Understanding Is Not a Purchase Obligation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Learning Next.js doesn't commit us to
+          choosing it. It gives us enough understanding to evaluate what we'd
+          gain and what we'd own.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a better ending than “now rewrite everything.” I would like to
+          retain several functioning websites and some evenings.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next integrates React with routing, server and client coordination,
+          rendering, data access patterns, mutations, and delivery features.
+          Those integrations can be useful. They can also be more machinery than
+          a project needs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React alone didn't fail its assignment. The full application had more
+          assignments. Next supplies one connected set of answers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The decision isn't whether Next is good in the abstract.
+          It's whether its particular answers fit this product, team,
+          deployment, and maintenance horizon.</span
+        >
+      </p>
+      <h2 id="democon-version-one">DemoCon, Version One</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Twelve sessions. Finalized schedule. No login. No submission
+          workflow. A favorite toggle that can be local. Public information that
+          changes rarely.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A static site is a strong candidate. It can be plain HTML and CSS
+          with a little JavaScript, or generated from structured content by a
+          suitable tool.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can have semantic pages, meaningful URLs, responsive images,
+          accessible navigation, and excellent loading behavior without a
+          request-time application server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Static doesn't mean ugly or amateur. It describes how the
+          output is produced and served. We can still use client-side
+          interaction where needed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the schedule changes, we rebuild and publish. That delay might be
+          entirely acceptable. We shouldn't add a dynamic system to solve a
+          freshness problem the conference doesn't have.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Next can produce static output, but its ability to do so
+          doesn't make it the simplest tool for this version.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We learned the framework and then chose not to use it. That is a
+          successful learning outcome, despite what the merchandise table
+          implies.</span
+        >
+      </p>
+      <h2 id="react-with-vite">React With Vite</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now imagine DemoCon's internal organizer tool. It's a rich scheduling
+          interface, users are authenticated, and a separate backend already
+          exists. Most interactions happen after initial loading.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A browser-focused React application built with Vite might fit well.
+          The team can use the backend's existing API and choose routing and
+          client data tools appropriate to the interface.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Vite is development and build tooling. It isn't a full
+          application framework supplying every routing and backend convention
+          Next supplies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “React plus Vite” is shorthand for a setup whose remaining
+          architecture still needs answers. Some of those answers may already
+          exist in the organization.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If the platform already provides authentication, API
+          contracts, observability, and deployment, adding Next may duplicate or
+          complicate parts of that arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But Vite doesn't inherently forbid server rendering. It supports SSR
+          integration. We are comparing a common browser-focused setup, not
+          claiming a law of physics.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Once you assemble server rendering yourself or use another
+          framework around Vite, the comparison changes. Compare complete
+          systems, not a framework against an imaginary configuration-free
+          alternative.</span
+        >
+      </p>
+      <h2 id="what-a-browser-focused-app-costs">
+        What a Browser-Focused App Costs
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The tradeoff can be more client JavaScript and an initial
+          data-fetching path before useful content appears. That may be
+          acceptable for the internal tool, but we should measure it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Route fallback configuration, error handling, data loading, and
+          access enforcement still matter. An API must enforce permissions; a
+          client route guard isn't enough.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A static host serving the app shell can be simple to operate, while
+          the existing backend handles server responsibilities. That's a
+          legitimate separation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And if public discoverability or first-visit content becomes
+          important, we revisit the rendering arrangement. We don't pretend the
+          original choice was immoral because the requirements evolved.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Architecture is allowed to have a date and a reason.</span>
+      </p>
+      <h2 id="astro-and-content-with-islands">
+        Astro and Content With Islands
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a content-heavy public conference site, Astro is another
+          candidate. It emphasizes generating HTML and adding client interaction
+          where needed through islands.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as public session pages with one favorite control, rather than
+          treating the whole document as an interactive client subtree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Astro can use React components for interactive regions. It
+          also supports on-demand server rendering with appropriate adapters, so
+          “Astro is only static” would be inaccurate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different composition model, overlapping capabilities. We should
+          compare the work our application actually needs rather than flatten
+          both tools into slogans.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A site mostly consisting of content with isolated interactions
+          can fit that model naturally. An application with deeply connected
+          interactive state across much of the screen may make a larger React
+          application model more convenient.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not impossible in Astro, just a reason to examine boundaries and
+          coordination costs. We aren't making a capability chart where one
+          checkmark decides the project.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Astro's server islands and server rendering options broaden
+          its use cases, but we don't need to learn every one before choosing a
+          simple content site.</span
+        >
+      </p>
+      <h2 id="traditional-server-rendered-applications">
+        Traditional Server-Rendered Applications
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now my department. A traditional server-rendered application can
+          route requests, query data, render templates, and process forms.
+          Mature frameworks provide authentication patterns, validation,
+          database tooling, and many other facilities.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Entirely valid. If a team knows that stack, the product is form- and
+          content-oriented, and rich shared client state isn't central, it can
+          be an excellent choice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can add browser JavaScript where it improves the experience.
+          Traditional doesn't mean every click reloads a page by royal
+          decree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Progressive enhancement can be strong in that arrangement.
+          The tradeoff may be maintaining separate server-template and
+          client-component models when the interface becomes highly
+          interactive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But “one language everywhere” is also not a free pass. JavaScript on
+          both sides still runs in different environments with different
+          capabilities and trust boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Next can unify parts of the component model, but the network
+          and server/browser distinction remain. Familiar syntax doesn't
+          eliminate distributed systems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We established that when the form put on its cardigan.</span>
+      </p>
+      <h2 id="where-next-earns-its-place">Where Next Earns Its Place</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now a richer DemoCon: public session pages, request-specific regions,
+          a React team, organizer workflows, and a preference for integrating UI
+          and server behavior within one framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next may fit because several of its central capabilities line up with
+          actual requirements. We want the component model across server and
+          client responsibilities, integrated navigation, and the associated
+          delivery conventions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The team must also be willing to learn and maintain those
+          boundaries, cache policies, and deployment requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choosing it because “we know React” is a starting point, not the
+          whole justification. Next adds concepts React experience alone may not
+          cover.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Conversely, a team that already understands Next may
+          reasonably choose it for a modest project to avoid introducing another
+          tool. Team familiarity is a real cost factor.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Provided we distinguish familiarity from necessity. “This is easiest
+          for our team” can be honest. “Every serious app needs this” is
+          not.</span
+        >
+      </p>
+      <h2 id="operational-complexity-counts">Operational Complexity Counts</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Development speed is one part of cost. We also need to deploy, patch,
+          observe, and recover the system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A server-dependent Next app needs a compatible runtime. Caches may
+          need coordination. Database connections need a strategy. Image
+          processing can consume resources. Those costs don't disappear because
+          deployment has a nice button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A managed platform can handle some operations for us, which
+          may be valuable. Self-hosting gives other kinds of control and
+          responsibility. Neither arrangement is automatically cheapest.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we don't need to choose a hosting company before understanding
+          the application's requirements. Next isn't a Vercel marriage
+          certificate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Check feature support on the intended deployment. A static
+          export has different limits from a Node server, and platform adapters
+          have specific capabilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we select a feature only supported conveniently on one platform,
+          that's a dependency we should acknowledge. Lock-in can be a practical
+          tradeoff, but pretending it doesn't exist makes planning worse.</span
+        >
+      </p>
+      <h2 id="the-cost-of-change">The Cost of Change</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Framework knowledge can become maintenance work as APIs evolve. We
+          saw that with caching advice and middleware becoming Proxy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That doesn't mean change is bad. It means old examples need context,
+          and upgrades need proportionate review.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A team should know which major version and configuration
+          model it's using, keep dependencies patched, and have enough checks to
+          detect important regressions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A simpler architecture can reduce the number of moving parts. But
+          manually assembled glue can also become its own maintenance
+          burden.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. “No framework” doesn't mean “no architecture.” Sometimes a
+          framework replaces fragile custom integration. Sometimes it adds
+          integration we didn't need. We have to inspect the real
+          comparison.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why the sentence “it depends” should be followed by the
+          things it depends on. Otherwise it's just a shrug wearing
+          glasses.</span
+        >
+      </p>
+      <h2 id="a-decision-meeting-with-actual-questions">
+        A Decision Meeting With Actual Questions
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's run the meeting. First question: what must a first-time visitor
+          see before JavaScript loads?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Public session content may need to be available promptly. That points
+          us toward a suitable HTML delivery strategy, but several tools can
+          provide it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Second: how much of the interface needs connected client state?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One favorite button differs from a live drag-and-drop schedule
+          editor. The latter may justify a substantial client application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Third: do we already have a backend with a stable contract?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If yes, we should respect its ownership and assess whether Next adds
+          useful UI integration or redundant server plumbing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fourth: what changes by request or by user?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Public content, private queues, local preferences, and authenticated
+          mutations have different requirements. We shouldn't force one cache or
+          rendering policy across them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fifth: who operates it after launch?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The actual team, not an imaginary senior platform engineer we'll hire
+          once the conference becomes a unicorn. Choose something the real
+          maintainers can explain and repair.</span
+        >
+      </p>
+      <h2 id="a-small-spike-beats-a-large-rewrite">
+        A Small Spike Beats a Large Rewrite
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the answer is uncertain, build the smallest representative slice.
+          One public session page, one interaction, one authenticated mutation,
+          and the intended deployment path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not the whole app twice. We want evidence about the uncertainties
+          that affect the decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Measure the first visit, inspect the client payload, verify
+          the mutation's access checks, and observe freshness after an edit. See
+          whether the deployment supports the needed behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the uncertainty is team comprehension, ask another team member to
+          explain and change the slice. A fast demo maintained by only one
+          person is not necessarily a fast team.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Write down the decision and its conditions in a short
+          architecture note when the project warrants it. No forty-page ceremony
+          required.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as: we chose Next because public HTML, shared React UI, and
+          integrated mutations matter; we accept server operations and explicit
+          cache management; we'll revisit if the product becomes mostly static
+          or backend ownership changes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a defensible decision. It explains why without pretending the
+          choice is eternal.</span
+        >
+      </p>
+      <h2 id="reasons-that-do-not-survive-contact-with-tuesday">
+        Reasons That Do Not Survive Contact With Tuesday
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“It's newer.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Not a requirement.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“The internet says React needs a framework.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A recommendation still needs interpretation for your application. It
+          doesn't mean every React component requires the same framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“It has excellent SEO.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Ask which delivery and metadata behavior you need. A framework
+          doesn't guarantee useful content, discoverability, or ranking.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“It will scale.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Ask what workload, bottleneck, and deployment. A bad data model can
+          scale its invoice more reliably than its throughput.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>“The job market uses it.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A valid reason to learn it. A separate question from whether it
+          belongs in this production system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“I already started, so changing course would mean the experiment
+          failed.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Discovering a simpler fit is a successful experiment. Sunk effort
+          isn't a product requirement.</span
+        >
+      </p>
+      <h2 id="keep-the-useful-architecture-even-if-the-tool-changes">
+        Keep the Useful Architecture Even If the Tool Changes
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our DemoCon lessons survive another framework. Public data should
+          have a clear representation. Sensitive operations need runtime
+          validation and authorization. Independent reads shouldn't wait
+          unnecessarily. Caching needs a freshness policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Forms need understandable feedback. Navigation needs real links.
+          Images need appropriate dimensions and text alternatives. Deployment
+          needs the runtime our chosen features require.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Those aren't Next-specific virtues. Next provides particular
+          mechanisms to implement them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same goes for server/client boundaries. Even if I use PHP
+          templates and browser JavaScript, I still need to know which
+          environment has the data and which caller I trust.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Learning a framework deeply can teach general architecture
+          when we keep asking what problem each feature solves.</span
+        >
+      </p>
+      <h2 id="three-constraints-that-change-the-answer">
+        Three Constraints That Change the Answer
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's change one constraint at a time. First, the conference must
+          deploy to an existing static host, and the organization cannot operate
+          a new server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then request-time Next features aren't available in that deployment
+          as-is. We either choose static-compatible output, use an
+          already-approved backend, or change the deployment requirement through
+          an actual decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We don't select Server Actions and then discover at launch
+          that the host only serves files.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Second constraint: the organization already has a mature
+          server-rendered application with authentication and submissions. It
+          only needs a better public schedule page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A targeted improvement in the existing stack may be much cheaper than
+          introducing another application framework. We can add appropriate
+          browser interaction without replacing everything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Third: the team is already comfortable with Next, has compatible
+          hosting, and wants a small new React application with public pages and
+          mutations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then familiarity and existing operations may make Next efficient,
+          even if another tool could also do the job. The decision is
+          contextual, not a purity test.</span
+        >
+      </p>
+      <h2 id="migration-is-work-too">Migration Is Work Too</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >People often compare a beautiful new prototype with the messy
+          existing application. The prototype has no historical requirements,
+          migrations, or support tickets yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A fair comparison includes the work needed to preserve
+          existing behavior and data. Rewriting the visible pages is only part
+          of migration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >URLs, accessibility, authentication, integrations, forms, analytics,
+          redirects, and operational knowledge all need attention. The old
+          system may contain hard-earned behavior that isn't obvious from a
+          screenshot.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A new framework can be justified, but the benefits need to
+          outweigh that transition cost. Sometimes an incremental migration
+          gives better evidence and lower risk.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as moving one appropriate route or building one new feature with
+          a clear boundary, rather than announcing that every template has
+          ninety days to leave the building.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Preserve working behavior while testing the reasons for
+          change.</span
+        >
+      </p>
+      <h2 id="team-comprehension-is-a-performance-metric">
+        Team Comprehension Is a Performance Metric
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose Next saves the original author a week, but nobody else can
+          explain the cache behavior. How do we account for that?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The saved week may turn into repeated debugging time. We need enough
+          shared understanding to maintain the system, particularly around data
+          freshness and security boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That doesn't mean everyone must become a framework internals
+          expert. They should understand the application conventions they're
+          changing and know where to verify uncertain behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same standard applies to a custom stack. If the routing glue
+          lives in one person's head, “we avoided framework complexity” is a
+          questionable victory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The maintainable choice is the one the actual team can
+          operate, not the one with the fewest logos in the dependency
+          list.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Documentation can be small and concrete: which data is cached, which
+          writes invalidate it, where permissions are enforced, and how the app
+          is deployed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those notes can be more valuable than a long generic architecture
+          manifesto.</span
+        >
+      </p>
+      <h2 id="accessibility-is-not-a-tiebreaker-we-add-later">
+        Accessibility Is Not a Tiebreaker We Add Later
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If two stacks can satisfy the application, accessibility doesn't
+          automatically belong to one of them. We need to examine how the actual
+          implementation behaves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server-rendered content can help some loading scenarios, but
+          a server-rendered div with an inaccessible click handler is still
+          inaccessible. A well-built client app can provide excellent keyboard
+          and assistive technology support.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Navigation announcements, focus, form feedback, loading states, and
+          semantic markup need deliberate work in either approach.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Framework defaults can help, but we should verify the relevant
+          user journeys rather than infer quality from the architecture
+          name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Security is similar. A server framework gives us places to enforce
+          access. It doesn't prove we used them correctly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The comparison should include the team's ability to
+          implement and maintain those requirements, not assume one tool
+          absolves us.</span
+        >
+      </p>
+      <h2 id="cost-includes-the-user-s-device">
+        Cost Includes the User's Device
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We often discuss hosting cost but ignore client cost. Why does that
+          matter?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Shipping more JavaScript can mean more transfer, parsing, and
+          execution on a slower device. A fast development laptop hides that.
+          But moving everything to the server can increase server latency and
+          compute costs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We want an appropriate distribution, not simply the smallest
+          server bill or the smallest client bundle in isolation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A public content page may benefit from minimal client work. An
+          editing tool may benefit from rich local state so every small
+          interaction doesn't wait for the network.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The workload tells us where the value is. Then we measure the
+          important paths under realistic conditions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is a more useful conversation than treating all JavaScript bytes
+          as either sacred or criminal.</span
+        >
+      </p>
+      <h2 id="what-would-make-us-revisit">What Would Make Us Revisit?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A good decision can include conditions for reconsideration. What
+          might change for DemoCon?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The public site could become mostly archival content, making a static
+          approach more attractive. Or the organizer interface could become much
+          more interactive. Or a separate backend could become the authoritative
+          owner of schedule operations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Hosting constraints, team experience, traffic, and freshness
+          requirements might also change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to predict every future feature. We need a design that
+          solves today's problem and clear reasons to revisit it if the
+          important assumptions change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Premature flexibility can cost more than a later targeted
+          change. DemoCon doesn't need every possible architecture hidden behind
+          interfaces just in case.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can keep ordinary boundaries clear without building an abstraction
+          bunker.</span
+        >
+      </p>
+      <h2 id="the-democon-verdict">The DemoCon Verdict</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For our fictional recurring demonstration, Next was useful because we
+          deliberately needed examples of routes, server and client components,
+          rendering, caching, forms, and HTTP endpoints.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a teaching justification. It isn't a claim that every small
+          conference needs those features in one framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For a real small public event site, I'd first consider static output
+          or a content-oriented tool. For an existing backend's rich organizer
+          interface, I'd evaluate a browser-focused React setup. For an
+          integrated React application with public and request-specific content,
+          Next is a serious candidate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a traditional server-rendered stack remains a serious candidate
+          when it fits the team's strengths and the product's interaction
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There. Several reasonable answers, each with a reason. Nobody had to
+          insult somebody else's decade.</span
+        >
+      </p>
+      <h2 id="what-we-can-explain-now">What We Can Explain Now</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can explain why a route file exists. Why a button needs client
+          code while an abstract may not. Why server rendering and request-time
+          rendering aren't synonyms. Why a direct server read can avoid an
+          unnecessary HTTP detour.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why caching can show old data, why invalidation belongs with
+          successful mutations, why Server Actions still need security, and why
+          a separate client still deserves an HTTP contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can also ask whether image optimization, metadata integration,
+          Proxy, and the deployment model are useful for our actual
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's much more valuable than knowing which folder to copy from a
+          tutorial. We can follow the work, identify the boundary, and explain
+          the cost.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which is what this show is for.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I no longer hear “React framework” and assume React failed to
+          complete its furniture certification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Progress.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I hear “a particular set of connected application decisions.” Then I
+          ask whether I want those decisions.</span
+        >
+      </p>
+      <h2 id="final-question-actual-answer">Final Question, Actual Answer</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Do you need Next.js?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If its integrated React architecture solves enough real problems for
+          the product and team to justify the learning and operating costs, it
+          may be a good choice. If simpler tools already meet the requirements,
+          we can use them with a completely straight face.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No ceremonial apology required.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No apology. No lanyard blockchain. No ballroom for one chair.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>DemoCon's architecture committee is adjourned.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. Now someone please update the room assignment. I know
+          exactly which cache to ask about.</span
+        >
+      </p>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

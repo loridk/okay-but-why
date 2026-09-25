@@ -35,7 +35,7 @@ JULES: Biologically accurate.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
@@ -60,19 +60,19 @@ PARISA: Humans with legitimate access.
 
 JULES: Exactly.
 
-Social engineering manipulates people into doing something that benefits the attacker.
+JULES: Social engineering manipulates people into doing something that benefits the attacker.
 
 PARISA: Reveal information.
 
-Approve a login.
+PARISA: Approve a login.
 
-Open a file.
+PARISA: Open a file.
 
-Visit a site.
+PARISA: Visit a site.
 
-Reset an account.
+PARISA: Reset an account.
 
-Change payment details.
+PARISA: Change payment details.
 
 JULES: Or simply trust the wrong person.
 
@@ -80,7 +80,7 @@ PARISA: This is not “people are stupid.”
 
 JULES: Very important.
 
-Good social engineering exploits ordinary human behavior: urgency, authority, curiosity, fear, helpfulness, routine, distraction.
+JULES: Good social engineering exploits ordinary human behavior: urgency, authority, curiosity, fear, helpfulness, routine, distraction.
 
 PARISA: In other words, being a normal person with a job.
 
@@ -95,9 +95,9 @@ JULES: But the principle isn’t limited to email.
 
 PARISA: Fake Microsoft login page.
 
-Fake shipping notice.
+PARISA: Fake shipping notice.
 
-Fake password-expiration warning.
+PARISA: Fake password-expiration warning.
 
 JULES: Exactly.
 
@@ -105,7 +105,7 @@ PARISA: And **spear phishing** is targeted.
 
 JULES: Yes.
 
-Instead of sending the same message to a million people, the attacker researches a person or organization and makes the message more convincing.
+JULES: Instead of sending the same message to a million people, the attacker researches a person or organization and makes the message more convincing.
 
 PARISA: “Hey Parisa, here’s the Figma file for the Miles project.”
 
@@ -126,9 +126,9 @@ PARISA: Big fish.
 
 JULES: Yep.
 
-**Smishing** is phishing by SMS.
+JULES: **Smishing** is phishing by SMS.
 
-**Vishing** is voice phishing.
+JULES: **Vishing** is voice phishing.
 
 PARISA: And QR-code phishing exists because apparently the square can betray us too.
 
@@ -153,7 +153,7 @@ PARISA: “I’m calling from the bank fraud department.”
 
 JULES: Right.
 
-The attacker establishes a context that makes the request seem reasonable.
+JULES: The attacker establishes a context that makes the request seem reasonable.
 
 PARISA: Humans interpret requests through context.
 
@@ -166,7 +166,7 @@ PARISA: Why does “CEO needs this now” work so well?
 
 JULES: Authority plus urgency.
 
-People are less likely to stop and verify when they believe a powerful person expects immediate action.
+JULES: People are less likely to stop and verify when they believe a powerful person expects immediate action.
 
 PARISA: Add secrecy.
 
@@ -237,7 +237,7 @@ PARISA: I think help desks deserve sympathy here.
 
 JULES: Absolutely.
 
-Their job is literally to help people regain access.
+JULES: Their job is literally to help people regain access.
 
 PARISA: Which means attackers can impersonate locked-out employees and manipulate support into resetting credentials or MFA.
 
@@ -321,7 +321,7 @@ PARISA: Which is why “look at the URL” is useful but not a complete anti-phi
 
 JULES: Correct.
 
-Attackers are very good at making URLs visually plausible.
+JULES: Attackers are very good at making URLs visually plausible.
 
 
 ## Deepfakes and AI
@@ -332,9 +332,9 @@ JULES: AI makes impersonation cheaper and more convincing.
 
 PARISA: Voice cloning.
 
-Synthetic video.
+PARISA: Synthetic video.
 
-Personalized phishing copy.
+PARISA: Personalized phishing copy.
 
 JULES: Exactly.
 
@@ -342,13 +342,13 @@ PARISA: But the defense is still not “become a human lie detector.”
 
 JULES: Right.
 
-Use verification processes that don’t depend only on whether a message sounds like the person.
+JULES: Use verification processes that don’t depend only on whether a message sounds like the person.
 
 PARISA: Call back on a known number.
 
-Use an established approval workflow.
+PARISA: Use an established approval workflow.
 
-Require multiple approvers for high-risk financial changes.
+PARISA: Require multiple approvers for high-risk financial changes.
 
 JULES: Strong process beats vibes.
 
@@ -384,7 +384,7 @@ JULES: Please don’t do this.
 
 PARISA: Attackers test messages professionally.
 
-They exploit timing, trust, authority, and context.
+PARISA: They exploit timing, trust, authority, and context.
 
 JULES: And even experts get tired, rushed, distracted, or unlucky.
 
@@ -405,13 +405,13 @@ JULES: That’s a strong way to frame it.
 
 PARISA: Attacker studies the user.
 
-Creates a believable flow.
+PARISA: Creates a believable flow.
 
-Removes friction.
+PARISA: Removes friction.
 
-Adds urgency.
+PARISA: Adds urgency.
 
-Designs a conversion funnel.
+PARISA: Designs a conversion funnel.
 
 JULES: Except the conversion event is “steal your account.”
 
@@ -443,7 +443,7 @@ JULES: Phishing is broad. Spear phishing is targeted. Smishing uses SMS. Vishing
 
 PARISA: Pretexting manufactures a believable scenario.
 
-BEC abuses trusted business communication.
+PARISA: BEC abuses trusted business communication.
 
 JULES: MFA can still be attacked through fatigue, phishing, and recovery flows.
 

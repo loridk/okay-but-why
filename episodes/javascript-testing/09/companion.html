@@ -1,0 +1,1529 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 9: Unit, Integration, End-to-End — Which Wires Are Connected? —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 9: Unit, Integration, End-to-End — Which Wires Are Connected?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/26ab095c-8eba-4bac-a1af-858ccaa06167"
+      ></script>
+      <div class="redcirclePlayer-26ab095c-8eba-4bac-a1af-858ccaa06167"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#names-are-a-starting-point">Names Are a Starting Point</a>
+        </li>
+        <li>
+          <a href="#three-views-of-one-promise">Three Views of One Promise</a>
+        </li>
+        <li>
+          <a href="#integration-means-real-cooperation"
+            >Integration Means Real Cooperation</a
+          >
+        </li>
+        <li>
+          <a href="#an-api-test-can-catch-the-trust-boundary"
+            >An API Test Can Catch the Trust Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#set-up-data-without-making-a-second-journey"
+            >Set Up Data Without Making a Second Journey</a
+          >
+        </li>
+        <li>
+          <a href="#a-browser-journey-in-plain-terms"
+            >A Browser Journey in Plain Terms</a
+          >
+        </li>
+        <li>
+          <a href="#what-did-that-journey-actually-prove"
+            >What Did That Journey Actually Prove?</a
+          >
+        </li>
+        <li><a href="#waiting-in-a-browser">Waiting in a Browser</a></li>
+        <li>
+          <a href="#the-pyramid-is-a-heuristic">The Pyramid Is a Heuristic</a>
+        </li>
+        <li>
+          <a href="#put-the-bug-at-the-lowest-useful-scope"
+            >Put the Bug at the Lowest Useful Scope</a
+          >
+        </li>
+        <li>
+          <a href="#third-parties-are-boundaries-not-props"
+            >Third Parties Are Boundaries, Not Props</a
+          >
+        </li>
+        <li>
+          <a href="#failure-diagnosis-changes-with-scope"
+            >Failure Diagnosis Changes with Scope</a
+          >
+        </li>
+        <li>
+          <a href="#a-practical-test-plan-for-the-restaurant"
+            >A Practical Test Plan for the Restaurant</a
+          >
+        </li>
+        <li>
+          <a href="#listener-workshop-classify-by-contents"
+            >Listener Workshop — Classify by Contents</a
+          >
+        </li>
+        <li>
+          <a href="#a-deployment-boundary-the-component-cannot-see"
+            >A Deployment Boundary the Component Cannot See</a
+          >
+        </li>
+        <li>
+          <a href="#the-database-cleanup-puzzle">The Database Cleanup Puzzle</a>
+        </li>
+        <li>
+          <a href="#avoid-repeating-the-same-expensive-proof"
+            >Avoid Repeating the Same Expensive Proof</a
+          >
+        </li>
+        <li>
+          <a href="#a-name-that-helps-the-next-developer"
+            >A Name That Helps the Next Developer</a
+          >
+        </li>
+        <li><a href="#the-scope-sentence">The Scope Sentence</a></li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The pricing function works. The API handler works. The cart component
+          works.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Does checkout work?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It charges twenty hundred dollars.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Ah. Dollars met cents.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Individually excellent components have assembled into a financially
+          aggressive website.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Today we connect the wires. Unit
+          tests, integration tests, end-to-end tests, and choosing evidence for
+          the risk we actually have.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We will not be settling this by drawing a triangle and declaring the
+          triangle correct.</span
+        >
+      </p>
+      <h2 id="names-are-a-starting-point">Names Are a Starting Point</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A unit test usually examines a small behavior with unrelated
+          dependencies controlled. Integration tests examine collaborating parts
+          and their boundaries. End-to-end tests follow a broader workflow
+          through a system from an external entry point.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those categories overlap, and teams draw boundaries differently. Tell
+          me what actually runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Is the database real? Is the HTTP client real? Is the server
+          running? Is the browser real? Are third-party responses
+          replaced?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“End-to-end” can hide a very large footnote. If payment is stubbed,
+          say so. The test may still be valuable, but it hasn't verified the
+          actual payment provider.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A concrete scope statement is more useful than winning a
+          label argument.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, a real browser doesn't automatically make a test end-to-end.
+          Last episode's component could run in a browser with all network
+          requests replaced.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Environment and scope are separate. And a server integration
+          test can exercise important real components without any browser at
+          all.</span
+        >
+      </p>
+      <h2 id="three-views-of-one-promise">Three Views of One Promise</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our promise is that an eligible order gets the right delivery fee and
+          the customer sees the accepted total.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >At the small scope, test the fee calculation across boundary inputs.
+          Fast, clear failures, lots of examples.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At the integration scope, call the quote or order endpoint with a
+          controlled cart and verify that it loads prices, computes the fee, and
+          returns the intended response shape.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Include the real collaborators whose connection matters. If the bug
+          is cents versus dollars at the API boundary, the test needs that
+          conversion path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At the broad workflow scope, a browser adds a pizza, reviews
+          checkout, submits an order in an isolated test system, and observes
+          confirmation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That checks a longer chain, including wiring and user interaction.
+          It's more expensive and can have more potential failure causes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The scopes answer related but different questions. One broad
+          test doesn't replace all the focused boundary examples, and fifty
+          focused tests don't prove the user journey is connected.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Microscope, workbench, walk through the restaurant. Each view misses
+          things the others can see.</span
+        >
+      </p>
+      <h2 id="integration-means-real-cooperation">
+        Integration Means Real Cooperation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose a quote service receives a repository dependency. If we
+          replace the repository with a fake returning prices, we test the
+          service's response to those prices.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But not the query that gets them from the database. If the query
+          reads the wrong column, our fake politely conceals the problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A database integration test can use the real query code against an
+          isolated instance of the actual database technology, with controlled
+          data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we can observe constraints, serialization, transactions, and
+          query semantics the in-memory fake may not reproduce.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The setup costs more, but it buys evidence at a meaningful
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Don't replace a production PostgreSQL database with a convenient
+          in-memory database and assume every behavior transfers. Different
+          engines can differ in types, constraints, SQL, and concurrency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Sometimes a substitute is an intentional compromise.
+          Document what it excludes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Integration testing isn't “all dependencies must always be real.”
+          It's “the collaborators relevant to this question cooperate for real.”
+          We can still isolate unrelated external services.</span
+        >
+      </p>
+      <h2 id="an-api-test-can-catch-the-trust-boundary">
+        An API Test Can Catch the Trust Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser sends a total of one cent for a twenty-dollar pizza. What
+          should the server do?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Apply its authoritative pricing rules and input validation. It
+          mustn't trust the submitted total merely because our client has a
+          tested calculator.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An API integration test can submit a tampered request and verify the
+          specified behavior: reject inconsistent data or ignore untrusted price
+          fields and calculate authoritatively, depending on the API
+          contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The expected behavior needs to be explicit. Don't invent a status
+          code in the test because it sounds stern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Another important case: one customer's credentials request
+          another customer's order. The server should enforce the actual
+          authorization policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A component test showing no View other order button cannot establish
+          that. We must exercise the protected server operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And test relevant denial cases as well as allowed cases. Security
+          rules often live in the paths users are not supposed to
+          complete.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These tests still aren't a complete security review. But they protect
+          specific boundaries where a UI-only suite can leave a dangerous blind
+          spot.</span
+        >
+      </p>
+      <h2 id="set-up-data-without-making-a-second-journey">
+        Set Up Data Without Making a Second Journey
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For an order-confirmation browser test, should every test create an
+          account through the registration UI, verify email, sign in, create
+          menu items, and then order?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not necessarily. That makes every test depend on every preceding
+          feature. Use controlled setup through an appropriate test API or
+          fixture when registration isn't the question.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then keep separate tests for registration and sign-in
+          themselves.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Arrange the necessary state efficiently, then exercise the
+          actual behavior under test. The setup method should be available only
+          in an appropriate test environment and shouldn't create a production
+          backdoor.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good boundary. Synthetic accounts, unique records, and isolated
+          storage help prevent tests colliding.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially in parallel execution. Two tests editing the same cart can
+          manufacture a race unrelated to the intended scenario.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cleanup or disposable environments can help. Database transactions
+          are useful in some test setups, but not every application request
+          shares the test's transaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the server uses another connection, rolling back my setup
+          connection may not undo its writes. Understand the actual
+          lifecycle.</span
+        >
+      </p>
+      <h2 id="a-browser-journey-in-plain-terms">
+        A Browser Journey in Plain Terms
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a Playwright-shaped example for a hypothetical local test
+          application. It assumes a seeded twenty-dollar Mushroom pizza and an
+          isolated order endpoint. It's an illustration of the journey, not an
+          executable test of this podcast repository.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>import { test, expect } from '@playwright/test';
+
+test('a customer can place the seeded pickup order', async ({ page }) =&gt; {
+  await page.goto('/menu');
+  await page.getByRole('button', { name: 'Add Mushroom pizza' }).click();
+  await page.getByRole('link', { name: 'Checkout' }).click();
+  await expect(page.getByRole('status')).toHaveText('Total: $20.00');
+  await page.getByRole('button', { name: 'Place pickup order' }).click();
+  await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
+});</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Page comes from Playwright's test fixture. The braces in the callback
+          parameter use JavaScript object destructuring. Async and await are
+          JavaScript. GetByRole, goto, and the browser assertions are Playwright
+          APIs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The relative URL assumes a configured baseURL for an
+          isolated local test application. That setup and seeded data must exist
+          before this card can run.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Audio sequence: open menu, add the named pizza, open checkout, verify
+          the total, place the pickup order, and wait for confirmation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We used pickup to avoid silently inventing address and delivery-fee
+          requirements for this separate fixture. The earlier delivery
+          calculation remains a different explicit scenario.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And no real payment is charged. The test system must make that
+          boundary safe and clear.</span
+        >
+      </p>
+      <h2 id="what-did-that-journey-actually-prove">
+        What Did That Journey Actually Prove?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser saw the expected confirmation. Does that prove the order
+          exists in durable storage?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not necessarily. The interface could display confirmation
+          prematurely. If persistence is part of this test's purpose, verify it
+          through an appropriate observable boundary, such as retrieving the
+          confirmed order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Or cover persistence in a separate integration test, while
+          this journey focuses on the user path. The claim should match the
+          assertions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The code card checks a particular seeded path and visible states. It
+          doesn't prove all payment, cancellation, or outage behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It also doesn't prove every supported browser works unless we
+          actually run configured browser projects and evaluate their
+          outcomes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor all viewport sizes. A desktop pass doesn't guarantee a mobile
+          checkout isn't trapped behind a fixed footer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Broader environments increase evidence but also execution and
+          maintenance cost. Choose based on support requirements and risk.</span
+        >
+      </p>
+      <h2 id="waiting-in-a-browser">Waiting in a Browser</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser tools can wait for actionability and retry certain
+          assertions. That's more useful than inserting sleeps between every
+          interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But know which operations wait and what they wait for. A click being
+          possible doesn't mean the order is saved afterward.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Await a meaningful confirmation or other state. Use
+          resilient locators based on roles, labels, or explicit stable test
+          contracts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Long CSS paths are like directions that say turn left at the chair we
+          might move tomorrow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And forcing a click can bypass useful checks. Sometimes necessary for
+          a particular scenario, but don't use it to ignore an overlay that
+          would block a real user.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A failing actionability check may be a product bug, a timing problem,
+          or a wrong target. Investigate before disabling the guard.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Screenshots, traces, and logs help reconstruct what happened. Use
+          them deliberately, and avoid sensitive information in test
+          artifacts.</span
+        >
+      </p>
+      <h2 id="the-pyramid-is-a-heuristic">The Pyramid Is a Heuristic</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Let's confront the triangle.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A test pyramid suggests many cheap focused tests, fewer integration
+          tests, and fewer expensive broad workflow tests. It's a heuristic
+          about feedback and maintenance costs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not an instruction to count test files until they form a sacred
+          ratio.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Some applications benefit heavily from integration tests
+          because most risk lies in composition. Different teams use different
+          shapes to emphasize that.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A thin CRUD application may have little complex pure logic but
+          important database and authorization boundaries. Forcing thousands of
+          unit tests could create mock-heavy noise.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A library with complex deterministic algorithms may benefit from many
+          focused cases. The useful distribution follows the system's
+          responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Speed matters, but so does what the test can detect. A test that's
+          extremely fast because it replaced every relevant behavior isn't
+          necessarily efficient.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Think in terms of confidence, diagnostic value, execution
+          cost, and maintenance cost. Not test-count aesthetics.</span
+        >
+      </p>
+      <h2 id="put-the-bug-at-the-lowest-useful-scope">
+        Put the Bug at the Lowest Useful Scope
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A delivery threshold comparison is wrong. Where do you reproduce
+          it?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A focused function test can express the boundary precisely. I don't
+          need to click through checkout for every integer around twenty
+          dollars.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The server reads cents as dollars?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Integration test through the serialization or adapter boundary where
+          the mismatch occurs. A pure calculation test with correctly prepared
+          cents won't catch that wiring bug.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The confirmation button is covered by a sticky footer only at a
+          narrow viewport?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Real-browser or visual/layout evaluation in that viewport. Jsdom
+          doesn't reproduce the layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. “Lowest useful scope” means the narrowest test that includes
+          the actual failure mechanism, not always a unit test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And sometimes a broader regression test remains worthwhile even after
+          adding the narrow one, especially for a critical journey. But don't
+          duplicate every case at every layer automatically.</span
+        >
+      </p>
+      <h2 id="third-parties-are-boundaries-not-props">
+        Third Parties Are Boundaries, Not Props
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What about payment providers, email services, and identity providers
+          in end-to-end tests?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choose intentionally. Most frequent tests should avoid unnecessary
+          real external calls. Use controlled responses for application
+          behavior, and targeted sandbox integration tests for the actual
+          adapter where needed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A sandbox is useful but not identical to production. Keep that
+          limitation visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And tests mustn't charge real cards, email customers, or alter real
+          accounts unless an explicitly authorized operational check is designed
+          for that purpose. Ordinary development tests should be isolated.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Network restrictions and least-privilege test credentials can help
+          enforce the intended boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also distinguish contract tests from broad journeys. A contract check
+          can verify request and response compatibility without walking through
+          the entire interface.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A schema match alone may miss semantics: a field can be the
+          right type but the wrong units or meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Twenty hundred dollars has returned, wearing a valid number
+          type.</span
+        >
+      </p>
+      <h2 id="failure-diagnosis-changes-with-scope">
+        Failure Diagnosis Changes with Scope
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A small calculation test fails. You have a short list of likely
+          causes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Function behavior, expectation, or setup. Often one clear
+          assertion.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A broad checkout journey fails at confirmation. Many causes are
+          possible: browser interaction, frontend state, network request, server
+          validation, persistence, test data, or environment availability.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the cost of including more wires. Good diagnostics matter
+          more. Capture where the workflow stopped and the relevant request or
+          application state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And don't interpret every broad-test failure as a flaky test. It
+          might have caught a real integration problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, don't blame the product before checking whether test data
+          was stale or setup failed. Evidence needs interpretation at every
+          scope.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A layered suite can help localize failures. If fee tests pass but the
+          API quote fails, investigate the connection rather than rewriting
+          arithmetic blindly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Multiple views help diagnosis as well as detection.</span>
+      </p>
+      <h2 id="a-practical-test-plan-for-the-restaurant">
+        A Practical Test Plan for the Restaurant
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's spend a limited testing budget. What gets focused tests?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Delivery thresholds, discount eligibility, order-state transitions,
+          and validation rules with many meaningful boundary cases.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Integration tests?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >API parsing and serialization, authoritative pricing, database
+          persistence and constraints, authorization, and the adapters
+          connecting our code to external contracts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Browser journeys?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A small set of critical paths: placing an order, recovering from a
+          rejected request, editing a cart, and relevant keyboard navigation.
+          Add supported browser or viewport coverage where the product needs
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Manual exploration?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Absolutely. Wording, confusing transitions, real assistive-technology
+          use, unexpected combinations, and new risks nobody has encoded
+          yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Operational checks?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Appropriate monitoring and deployment verification for the actual
+          system. A pre-deployment test suite doesn't tell us whether today's
+          production dependency is healthy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a test strategy shaped by responsibilities rather than a
+          package catalog.</span
+        >
+      </p>
+      <h2 id="listener-workshop-classify-by-contents">
+        Listener Workshop — Classify by Contents
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A test runs a real browser, renders one React component, and
+          intercepts all HTTP calls. What is it?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A browser-based component test with controlled network responses.
+          Calling it end-to-end would hide the missing server path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A test calls an HTTP endpoint backed by the real database in a
+          disposable environment, no browser?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An API integration test. It can cover important application and
+          persistence boundaries without testing the user interface.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A test calls the fee function with three subtotal values?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A focused unit-style test of the fee rule. Its narrowness is exactly
+          why it can be fast and diagnostic.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which is best?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>For what question? That is the whole episode, Jules.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I wanted you to say it.</span>
+      </p>
+      <h2 id="a-deployment-boundary-the-component-cannot-see">
+        A Deployment Boundary the Component Cannot See
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our React route works when reached by clicking a link, but refreshing
+          that URL returns a server error. Which test could have caught
+          it?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A browser or deployment check that loads the route directly through
+          the actual serving setup. A memory-router component test doesn't
+          include the server's route fallback behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The component can be correct while deployment wiring is
+          wrong.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same with asset paths, caching headers, authentication redirects, or
+          an API base URL. A local component fixture may bypass those decisions
+          entirely.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So a small smoke test against an isolated deployed environment can be
+          valuable. It doesn't need to repeat every arithmetic case; it checks
+          that the assembled system starts and its critical entry points
+          work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But be clear about the environment. A local server with development
+          fallbacks may behave differently from the production hosting
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The more the check resembles the relevant deployment boundary,
+          the more it can tell us about that boundary. It still needs safe data
+          and appropriate permissions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if a deployment smoke test fails, don't immediately change
+          application logic. Check configuration, routing, dependency
+          availability, and the artifact that was actually deployed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Different scope, different likely causes.</span>
+      </p>
+      <h2 id="the-database-cleanup-puzzle">The Database Cleanup Puzzle</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have two parallel integration tests. Each creates an order, and
+          each cleans up by deleting every order afterward. I foresee a social
+          problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One test can delete the other's data while it's still running. The
+          cleanup is broader than the test's ownership.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use unique identifiers and remove only owned data, or provide
+          separate databases, schemas, or disposable environments where
+          appropriate. The best choice depends on the application's setup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also account for background jobs that may still access the
+          data after the request returns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the order triggers an asynchronous worker, deleting the record
+          immediately can create unrelated errors. Either control that worker
+          boundary or wait for the intended lifecycle before cleanup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A broad test's arrange and teardown need the same care as its
+          assertions. Otherwise the suite creates its own incidents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And please don't point cleanup code at a database chosen by a
+          convenient default. Require an explicit test environment and verify
+          the target through safe configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Isolation is part of test design, not an optional convenience
+          after the code works.</span
+        >
+      </p>
+      <h2 id="avoid-repeating-the-same-expensive-proof">
+        Avoid Repeating the Same Expensive Proof
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A team has fifty delivery-fee boundary cases, each running through
+          the browser. They're slow. What would you change?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Move the exhaustive decision examples to focused tests of the actual
+          fee function. Keep a smaller number of integration cases that verify
+          units and data flow, plus the critical browser journey.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Would you delete all browser checks involving totals?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. The display and checkout connection still matter. I'd remove
+          redundant combinations, not the evidence that the real interface uses
+          the right result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another team has five hundred unit tests with mocks and no
+          integration test. Their server serializes dates incorrectly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Add a check through the real serialization boundary. More mock-heavy
+          unit cases won't necessarily include the failure mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So optimization isn't simply making the suite smaller or
+          larger.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's moving effort to where it buys evidence. Sometimes that means
+          fewer broad cases and more focused ones. Sometimes it means adding the
+          integration test everyone avoided because setup was
+          inconvenient.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if setup is repeatedly painful, improving the test environment
+          may have a high payoff.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes, as a concrete need. Not a giant testing platform commissioned
+          before we know which checks we're trying to run.</span
+        >
+      </p>
+      <h2 id="a-name-that-helps-the-next-developer">
+        A Name That Helps the Next Developer
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >How would you name a script that runs browser component tests with a
+          mocked network?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Something that says browser components, with documentation explaining
+          the network replacement. I wouldn't call it all-e2e and let the
+          footnote live in one person's memory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And a suite against a real local database?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Integration database or similarly clear wording, plus prerequisites
+          and isolation rules. The exact naming convention matters less than
+          making its scope discoverable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Useful reports can list those groups separately too.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Then when we say a check passed, the listener knows which part
+          of the system was exercised. Precision is not pedantry when it changes
+          the confidence we should have.</span
+        >
+      </p>
+      <h2 id="the-scope-sentence">The Scope Sentence</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Before choosing a tool, finish this sentence: this test runs these
+          parts for real and replaces these other parts so we can learn this
+          specific thing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the sentence is hard to finish, the test may need a clearer
+          purpose. It can also expose a missing boundary before we spend time
+          writing setup.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For example: real quote endpoint and database, controlled external
+          availability response, checking authoritative pricing and
+          persistence.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or real browser and component, replaced network, checking keyboard
+          interaction and rendering. Both useful, different claims.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That sentence travels well across runners, frameworks, and testing
+          philosophies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unlike a triangle, it tells me which wires are actually
+          connected.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test scopes exist because we need different views of behavior:
+          decisions, connections, and complete workflows.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Describe what runs for real and what's replaced. Choose the narrowest
+          useful scope, keep critical connections represented, and don't mistake
+          a testing shape for a universal recipe.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next, the finale: coverage percentages, mutation testing, and
+          everything a green dashboard cannot promise.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have connected the wires. Now we refuse to worship the
+          meter.</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 12: Do You Actually Need Any of This Shit? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 12: Do You Actually Need Any of This Shit?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/57b62cb5-40dc-4563-b58d-9dcac3123f10"
+      ></script>
+      <div class="redcirclePlayer-57b62cb5-40dc-4563-b58d-9dcac3123f10"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#requirements-before-equipment"
+            >Requirements Before Equipment</a
+          >
+        </li>
+        <li><a href="#a-static-portfolio">A Static Portfolio</a></li>
+        <li>
+          <a href="#a-small-wordpress-or-drupal-site"
+            >A Small WordPress or Drupal Site</a
+          >
+        </li>
+        <li>
+          <a href="#react-frontend-and-an-api">React Frontend and an API</a>
+        </li>
+        <li><a href="#growing-saas">Growing SaaS</a></li>
+        <li>
+          <a href="#large-distributed-application"
+            >Large Distributed Application</a
+          >
+        </li>
+        <li>
+          <a href="#uptime-and-compliance-change-the-questions"
+            >Uptime and Compliance Change the Questions</a
+          >
+        </li>
+        <li>
+          <a href="#put-our-podcast-back-on-earth"
+            >Put Our Podcast Back on Earth</a
+          >
+        </li>
+        <li>
+          <a href="#a-decision-you-can-defend">A Decision You Can Defend</a>
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We have learned about servers, VMs, containers, images, Compose,
+          deployment pipelines, Kubernetes, cloud services, and infrastructure
+          as code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And now I'm deleting our fictional architecture diagram down to the
+          parts we can justify.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A moving graduation ceremony.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? The final episode of Containers and
+          Infrastructure asks: do you actually need any of this shit?</span
+        >
+      </p>
+      <h2 id="requirements-before-equipment">Requirements Before Equipment</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some infrastructure always exists. The useful question is which parts
+          we should directly choose and operate, and which services should
+          manage them for us.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Start with what the application does. Does it serve prepared files?
+          Run a backend? Store user data? Perform background work? Need
+          persistent connections? Those are different requirements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then ask about expected usage, acceptable downtime, recovery time,
+          data loss tolerance, budget, team skills, and any contractual or
+          regulatory requirements the organization actually has.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Actual requirements, not “what if we become the world's largest
+          company next Thursday?” Growth can be a reason to leave room for
+          change without paying for Thursday in advance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And name the operator. Who patches it, handles failures, reviews
+          access, and restores data? If the answer is one person who also has a
+          full-time job, that should influence the architecture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An architecture that requires an imaginary operations team is already
+          missing a dependency.</span
+        >
+      </p>
+      <h2 id="a-static-portfolio">A Static Portfolio</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First example: a portfolio built into HTML, CSS, browser JavaScript,
+          and images. No private backend required.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Static hosting with encrypted connections and appropriate caching may
+          handle it well. A CDN can help delivery. If Node builds the files,
+          that doesn't mean we must run Node in production.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Containers might make a build environment more repeatable, but the
+          deployed site doesn't inherently need a container service. Kubernetes
+          would need a specific operational justification that this description
+          hasn't supplied.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keep deployment repeatable, protect the account, check links, and
+          make the site accessible. A broken keyboard menu isn't repaired by
+          moving the files into a cluster.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if we add a contact form, we can evaluate that one need. It
+          doesn't automatically require replacing every other part of the
+          hosting setup.</span
+        >
+      </p>
+      <h2 id="a-small-wordpress-or-drupal-site">
+        A Small WordPress or Drupal Site
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A CMS changes the picture. Now we need the supported runtime,
+          database, writable files, scheduled tasks where applicable, backups,
+          and a maintenance process.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suitable shared hosting or managed CMS hosting may provide those
+          well. Verify the actual runtime support, resource limits, update
+          responsibilities, staging options, and recovery arrangements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >DDEV or Lando can still be excellent locally even if production uses
+          managed hosting without exposing containers to us. Development
+          convenience doesn't dictate the production platform.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A VM offers more control if the site needs it, but brings
+          operating-system administration. Containers can package consistent
+          environments, but someone must still manage storage, upgrades, and the
+          host or platform.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And editing a paragraph shouldn't require the editor to become a
+          deployment engineer. The infrastructure should support the content
+          workflow, not consume it.</span
+        >
+      </p>
+      <h2 id="react-frontend-and-an-api">React Frontend and an API</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now our familiar frontend, API, database example. A static frontend
+          may use static hosting; a server-rendered frontend needs an
+          appropriate execution environment. The API needs somewhere to
+          run.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A PaaS or managed container service may accept the application with
+          relatively little machinery for us to operate. A managed database can
+          reduce a separate set of responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compose can describe the local environment. For a modest production
+          workload, a well-managed single VM with Compose might also be
+          reasonable if its failure and maintenance limits are acceptable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The phrase “well-managed” contains actual work. TLS, patches,
+          restarts, restricted ports, logs, backups, and recovery. If one host
+          fails, all the services on it may be affected together.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A low resource bill isn't the entire cost. A managed service
+          can be worth more cash if it saves operational labor and reduces risks
+          we aren't equipped to handle.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Serverless could fit some API or event-driven workloads too. Check
+          execution limits, latency, persistent-connection needs, and
+          predictable costs rather than treating the name as a universal
+          upgrade.</span
+        >
+      </p>
+      <h2 id="growing-saas">Growing SaaS</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the application becomes a paid service with more customers.
+          Now we have evidence about traffic, slow requests, background jobs,
+          and failure impact.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We might first improve queries, caching, or resource sizing. Scaling
+          API replicas doesn't help if one expensive query is the
+          bottleneck.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then separate components when their scaling or reliability
+          requirements justify it. Use managed capabilities where they fit.
+          Automate repeatable deployments and make recovery a tested
+          procedure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Infrastructure as code becomes especially useful when we have
+          multiple environments or enough settings that manual recreation is
+          error-prone. That can happen long before Kubernetes is relevant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. IaC and Kubernetes aren't a package deal. You can manage a small
+          set of cloud resources declaratively without running any
+          cluster.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, writing hundreds of lines to reproduce a single trivial
+          setting may be more ceremony than benefit. Evaluate the lifecycle, not
+          just today's object count.</span
+        >
+      </p>
+      <h2 id="large-distributed-application">Large Distributed Application</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now imagine many services, multiple teams, frequent deployments,
+          placement requirements, changing capacity, and a platform team capable
+          of operating a shared environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We finally have plausible reasons to evaluate Kubernetes: a common
+          workload model, scheduling across machines, reconciliation, service
+          discovery, and rollout control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Managed Kubernetes may reduce some maintenance, while managed
+          container platforms may meet the requirements with less direct
+          Kubernetes exposure. Compare the actual controls and operating
+          burden.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There's still no magic threshold where container number one hundred
+          activates a legal obligation to use Kubernetes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And Kubernetes itself doesn't fix service boundaries,
+          unreliable dependencies, poor deployment compatibility, or missing
+          operational ownership. It coordinates what we tell it to
+          coordinate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we have a distributed mess, we can orchestrate the mess with
+          impressive consistency.</span
+        >
+      </p>
+      <h2 id="uptime-and-compliance-change-the-questions">
+        Uptime and Compliance Change the Questions
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An organization may also have significant uptime, access-control,
+          audit, or data-location requirements even with moderate traffic.
+          Complexity isn't only about popularity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we need evidence: who can change production, how actions are
+          recorded, how data is protected, where it's stored, and whether
+          recovery meets the organization's requirements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Redundancy, failure-domain placement, backups, recovery exercises,
+          and vendor capabilities may matter. A cloud product's certifications
+          or features don't automatically establish the organization's own
+          compliance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does “we run it ourselves” prove stronger security. It changes
+          who must do the work and demonstrate that it's done.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Involve the relevant specialists for specific obligations. Our
+          conceptual series gives developers better questions, not a substitute
+          for an organization's assessment.</span
+        >
+      </p>
+      <h2 id="put-our-podcast-back-on-earth">Put Our Podcast Back on Earth</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's return to our ordinary fictional podcast application. A page
+          listing episodes, an API if we actually need one, a modest database,
+          and audio files. We invented absurd popularity to understand
+          orchestration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The actual requirements may be met by a small managed setup. We
+          probably don't need to operate Kubernetes. We might not need the API
+          at all if prepared pages cover the real feature set.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's not deleting the learning. Now we can explain why a simpler
+          choice is sufficient, which is a stronger position than choosing it
+          because the other nouns were scary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Containers might still improve local consistency. Compose might help
+          coordinate development services. A pipeline might make releases safer.
+          IaC might preserve useful infrastructure decisions. Each can earn its
+          place independently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And each can be declined independently. We don't have to purchase the
+          entire infrastructure cinematic universe.</span
+        >
+      </p>
+      <h2 id="a-decision-you-can-defend">A Decision You Can Defend</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a useful sentence: we chose this arrangement because it meets
+          these requirements, this person or service owns operations, and we
+          will reconsider when this measurable condition changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For example: managed hosting meets our current runtime and recovery
+          needs. We will reassess if we need an unsupported background service
+          or demonstrated capacity beyond the plan. That's more useful than “we
+          need a modern stack.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Write down the tradeoffs too. A single host has a shared failure
+          boundary. A managed service imposes constraints. Provider-specific
+          features create dependencies. Operating a cluster costs expertise and
+          attention.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then ask what we can remove without violating a requirement. That's
+          not laziness. That's less software to maintain and fewer places for a
+          mystery to live.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We began with files on a laptop. Those files became processes,
+          running on machines, with environments, networks, data, and
+          operational responsibilities around them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Containers make part of that environment portable and predictable.
+          Orchestration coordinates workloads. Cloud services let us choose what
+          others manage. Infrastructure as code records intended infrastructure.
+          None of them changes the obligation to understand the problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the final question isn't “do professional developers use
+          Kubernetes?”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's “what operational problem would Kubernetes solve for this
+          application?” If the answer is none, congratulations. You have
+          successfully not adopted Kubernetes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>An underrated milestone.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This has been Okay, But Why? Keep the parts that help. Know who owns
+          the rest. And let the laptop close when you go to lunch.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          What operational problem would this technology solve for this
+          application? “None” is a valid reason not to adopt it.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>Operational ownership</strong></dt>
+          <dd>Who maintains, monitors, protects, and restores the service.</dd>
+          <dt><strong>Recovery requirements</strong></dt>
+          <dd>
+            How quickly service must return and how much data loss is tolerable.
+          </dd>
+          <dt><strong>Total cost</strong></dt>
+          <dd>
+            Service charges plus engineering effort, support, risk, and
+            maintenance.
+          </dd>
+          <dt><strong>Reconsideration trigger</strong></dt>
+          <dd>
+            An observed requirement or constraint that would justify changing
+            the arrangement.
+          </dd>
+        </dl>
+        <h3>Starting points, not prescriptions</h3>
+        <ul>
+          <li>
+            <strong>Static portfolio:</strong> static hosting and appropriate
+            delivery; no inherent production container requirement.
+          </li>
+          <li>
+            <strong>Small WordPress/Drupal site:</strong> suitable shared or
+            managed CMS hosting, with updates and tested backups.
+          </li>
+          <li>
+            <strong>Frontend plus API:</strong> evaluate PaaS, managed
+            containers, serverless, or a managed VM against workload needs.
+          </li>
+          <li>
+            <strong>Growing SaaS:</strong> measure bottlenecks, improve releases
+            and recovery, scale justified components.
+          </li>
+          <li>
+            <strong>Large distributed application:</strong> orchestration may
+            help if workload coordination and team capacity justify it.
+          </li>
+          <li>
+            <strong>Significant uptime/compliance requirements:</strong> assess
+            controls and recovery evidence with relevant specialists, regardless
+            of traffic.
+          </li>
+        </ul>
+        <h3>A short decision record</h3>
+        <ol>
+          <li>What must the application do?</li>
+          <li>What downtime and data loss are acceptable?</li>
+          <li>Who owns operations and what can they sustain?</li>
+          <li>Which option meets the requirements with manageable cost?</li>
+          <li>What tradeoff are we accepting?</li>
+          <li>What evidence would make us reconsider?</li>
+        </ol>
+        <p>
+          Compose, containers, IaC, managed hosting, and Kubernetes can each be
+          adopted or declined independently. Learning Kubernetes does not create
+          a requirement to operate it.
+        </p>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a href="https://aws.amazon.com/types-of-cloud-computing/"
+              >Cloud service responsibilities and categories</a
+            >
+          </li>
+          <li>
+            <a href="https://kubernetes.io/docs/concepts/overview/"
+              >Kubernetes overview</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

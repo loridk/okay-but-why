@@ -37,19 +37,19 @@ PARISA: I was afraid of that.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Today we’re talking cryptography.
 
-Encryption.
+PARISA: Encryption.
 
-Hashing.
+PARISA: Hashing.
 
-Signatures.
+PARISA: Signatures.
 
-Keys.
+PARISA: Keys.
 
 JULES: And most importantly, what problem each one solves.
 
@@ -101,7 +101,7 @@ JULES: Encryption transforms plaintext into ciphertext using an algorithm and ke
 
 PARISA: Plaintext is readable input.
 
-Ciphertext is the scrambled output.
+PARISA: Ciphertext is the scrambled output.
 
 JULES: Right.
 
@@ -139,13 +139,13 @@ JULES: Exactly.
 
 JULES: **Asymmetric cryptography** uses a key pair.
 
-Public key.
+JULES: Public key.
 
-Private key.
+JULES: Private key.
 
 PARISA: Public key can be shared.
 
-Private key must be protected.
+PARISA: Private key must be protected.
 
 JULES: Right.
 
@@ -172,9 +172,9 @@ PARISA: Give me a metaphor that does not lie too badly.
 
 JULES: Imagine everyone has a special padlock they can hand out publicly.
 
-Anyone can put something in a box and lock it with your public padlock.
+JULES: Anyone can put something in a box and lock it with your public padlock.
 
-Only your private key can open it.
+JULES: Only your private key can open it.
 
 PARISA: Good for encryption intuition.
 
@@ -207,7 +207,7 @@ JULES: Right.
 
 PARISA: Encryption is reversible with a key.
 
-Hashing is not supposed to be reversible.
+PARISA: Hashing is not supposed to be reversible.
 
 JULES: Exactly.
 
@@ -218,15 +218,15 @@ PARISA: Integrity checking.
 
 JULES: Yes.
 
-If you publish a file and its hash, users can compute the hash of what they downloaded.
+JULES: If you publish a file and its hash, users can compute the hash of what they downloaded.
 
-If the values differ, the file changed.
+JULES: If the values differ, the file changed.
 
 PARISA: But a plain hash doesn’t prove who published it.
 
 JULES: Important.
 
-An attacker who can replace both the file and the posted hash can fool you.
+JULES: An attacker who can replace both the file and the posted hash can fool you.
 
 PARISA: So for authenticity, we need signatures or some trusted channel.
 
@@ -299,7 +299,7 @@ PARISA: Not Mandatory Access Control this time.
 
 JULES: Right.
 
-A **Message Authentication Code** uses a secret key to produce a tag that helps verify integrity and authenticity.
+JULES: A **Message Authentication Code** uses a secret key to produce a tag that helps verify integrity and authenticity.
 
 PARISA: HMAC.
 
@@ -320,7 +320,7 @@ JULES: Digital signatures use asymmetric cryptography.
 
 PARISA: Sign with the private key.
 
-Verify with the public key.
+PARISA: Verify with the public key.
 
 JULES: Exactly.
 
@@ -336,7 +336,7 @@ PARISA: This is not encryption.
 
 JULES: Very important.
 
-A signature does not inherently make the content secret.
+JULES: A signature does not inherently make the content secret.
 
 PARISA: Public signed document can still be public.
 
@@ -349,9 +349,9 @@ PARISA: This matters for software distribution.
 
 JULES: Very much.
 
-A developer or vendor can sign a release.
+JULES: A developer or vendor can sign a release.
 
-Users or systems verify the signature.
+JULES: Users or systems verify the signature.
 
 PARISA: If malware modifies the package, signature verification should fail.
 
@@ -370,17 +370,17 @@ JULES: Cryptographic algorithms are often the easy part compared with managing k
 
 PARISA: Generate them securely.
 
-Store them securely.
+PARISA: Store them securely.
 
-Distribute them securely.
+PARISA: Distribute them securely.
 
-Rotate them.
+PARISA: Rotate them.
 
-Revoke them.
+PARISA: Revoke them.
 
-Back them up where appropriate.
+PARISA: Back them up where appropriate.
 
-Destroy them when needed.
+PARISA: Destroy them when needed.
 
 JULES: Exactly.
 
@@ -399,9 +399,9 @@ PARISA: Bigger isn’t universally better.
 
 JULES: Right.
 
-Different algorithms have different security properties.
+JULES: Different algorithms have different security properties.
 
-You can’t directly compare a 256-bit symmetric key to a 256-bit RSA key.
+JULES: You can’t directly compare a 256-bit symmetric key to a 256-bit RSA key.
 
 PARISA: Because the underlying mathematical problems differ.
 
@@ -449,9 +449,9 @@ PARISA: Do I need to memorize implementation details?
 
 JULES: Not for this episode.
 
-The important idea: many encryption schemes require unique or unpredictable auxiliary values.
+JULES: The important idea: many encryption schemes require unique or unpredictable auxiliary values.
 
-Reusing them incorrectly can catastrophically weaken security.
+JULES: Reusing them incorrectly can catastrophically weaken security.
 
 PARISA: So library says “give me a nonce,” I do not just hard-code `1234`.
 
@@ -464,11 +464,11 @@ PARISA: Common security phrase.
 
 JULES: **Data at rest** is stored data.
 
-Disk.
+JULES: Disk.
 
-Database.
+JULES: Database.
 
-Backup.
+JULES: Backup.
 
 PARISA: **Data in transit** is moving between systems.
 
@@ -476,7 +476,7 @@ JULES: Exactly.
 
 PARISA: TLS protects data in transit.
 
-Disk or database encryption can protect data at rest.
+PARISA: Disk or database encryption can protect data at rest.
 
 JULES: Right.
 
@@ -608,7 +608,7 @@ PARISA: We have to mention quantum, don’t we?
 
 JULES: Briefly.
 
-Large fault-tolerant quantum computers could break some widely used public-key algorithms.
+JULES: Large fault-tolerant quantum computers could break some widely used public-key algorithms.
 
 PARISA: RSA, traditional elliptic-curve systems.
 
@@ -618,7 +618,7 @@ PARISA: Not “all encryption becomes useless tomorrow.”
 
 JULES: Correct.
 
-Symmetric cryptography is affected differently, and post-quantum algorithms are being standardized and deployed.
+JULES: Symmetric cryptography is affected differently, and post-quantum algorithms are being standardized and deployed.
 
 PARISA: So the practical lesson is cryptographic agility and paying attention to standards.
 
@@ -641,11 +641,11 @@ JULES: Correct.
 
 PARISA: Encryption protects confidentiality.
 
-Hashing gives a one-way digest useful for integrity and other constructions.
+PARISA: Hashing gives a one-way digest useful for integrity and other constructions.
 
-HMAC gives integrity and authenticity using a shared secret.
+PARISA: HMAC gives integrity and authenticity using a shared secret.
 
-Digital signatures give integrity and authenticity using asymmetric keys.
+PARISA: Digital signatures give integrity and authenticity using asymmetric keys.
 
 JULES: Exactly.
 
@@ -679,11 +679,11 @@ JULES: That matters more than memorizing a name in isolation.
 
 PARISA: Encryption is reversible with the proper key.
 
-Hashing is designed to be one-way.
+PARISA: Hashing is designed to be one-way.
 
 JULES: Symmetric crypto uses a shared secret and is efficient for bulk data.
 
-Asymmetric crypto uses public/private key pairs and helps with key exchange, encryption, and signatures depending on the algorithm.
+JULES: Asymmetric crypto uses public/private key pairs and helps with key exchange, encryption, and signatures depending on the algorithm.
 
 PARISA: Digital signatures provide integrity and authenticity, not secrecy.
 

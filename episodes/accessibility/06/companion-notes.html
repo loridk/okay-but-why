@@ -1,0 +1,45 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice"><strong>A Lighthouse accessibility score of 100 is not proof that a site is completely accessible.</strong> It summarizes scored automated checks, not every requirement, page state, interaction, or human experience. This developer pass is not a formal audit or conformance certificate.</p>
+<h3>Developer accessibility-testing checklist</h3>
+<ol>
+<li><strong>Define a real task and scope.</strong> Record page/route, user state, viewport, browser, relevant versions, and tool configuration. Use safe test data. Include initial, open, invalid, loading, success, and failure states where relevant.</li>
+<li><strong>Run automated checks.</strong> Use Lighthouse and/or axe-based checks deliberately; account for overlap. Run scans after relevant state changes, not only on the initial page. Investigate failures and incomplete/manual-review results.</li>
+<li><strong>Put away the mouse.</strong> Complete the essential journey with Tab, Shift+Tab, and the appropriate activation/widget keys. Check every action has a usable keyboard path; test results, not only event firing.</li>
+<li><strong>Check focus.</strong> Is it visible and unobscured? Does the order make sense? Do dialogs have an entry, containment while modal, an exit, and a logical return? Do routine updates preserve the user's position?</li>
+<li><strong>Enlarge and reflow.</strong> Check text resizing, narrow effective layout, wrapping, clipping, sticky content, dialogs, and error recovery. See Episode 5 for scoped reference values.</li>
+<li><strong>Review visual meaning.</strong> Check contrast in actual states/themes, color-independent information, useful labels, target size/spacing, and reduced-motion behavior. Investigate backgrounds and states automation cannot evaluate reliably.</li>
+<li><strong>Inspect the accessibility tree.</strong> Check computed role, name, state, description, and relevant ID relationships. Inspect before/after activation and correction; identify which naming source actually won.</li>
+<li><strong>Use a screen reader.</strong> Learn basic commands for one supported combination, then follow the task. Navigate both document structure and controls. Check names, groups, instructions, errors, announcements, and final outcome. Record environment and modes.</li>
+<li><strong>Think like a human.</strong> Is alternative text appropriate in context? Are names and headings useful? Are instructions, interaction effects, and recovery understandable? Developer testing complements experienced-user involvement.</li>
+<li><strong>Report, fix, and verify.</strong> Record steps, expected/actual behavior, impact, and evidence. Add a meaningful regression check when it can protect the behavior. Recheck the failure and related states. Document untested scope.</li>
+</ol>
+<h3>What each tool contributes</h3>
+<dl>
+<dt><strong>Lighthouse</strong></dt><dd>A convenient automated page snapshot and repeatable checks. The accessibility score excludes manual checks and does not measure complete WCAG conformance or journey success.</dd>
+<dt><strong>axe-core / axe DevTools</strong></dt><dd>Axe-core is an automated rules engine that can run in browser testing and other tools. DevTools products provide testing interfaces. Scan rendered states; supplement with behavior and manual evaluation.</dd>
+<dt><strong>WAVE</strong></dt><dd>Visual annotations for errors, alerts, and structural information. Interpret categories and context; an alert needs investigation, not automatic deletion.</dd>
+<dt><strong>Browser accessibility inspectors</strong></dt><dd>Evidence of the browser's computed accessibility information. They help explain wrong names, missing roles, and stale state; they do not reproduce every screen-reader announcement.</dd>
+<dt><strong>Linters and framework warnings</strong></dt><dd>Early source-level checks. Custom components may need configuration; runtime content, CSS, and interaction remain outside many static checks.</dd>
+<dt><strong>Interaction tests</strong></dt><dd>Exercise known keyboard/focus/application outcomes and protect regressions. Test selection and assertions limit what a green result establishes.</dd>
+<dt><strong>Manual and experienced-user evaluation</strong></dt><dd>Inspect context, task completion, reading/navigation, presentation changes, and usability that automated rules cannot settle.</dd>
+</dl>
+<h3>Screen-reader starting workflow</h3>
+<ul><li>Choose a supported browser/screen-reader combination; record versions and settings.</li><li>Learn start/stop, speech interruption, heading navigation, control navigation, and reading versus interaction modes from its own guide.</li><li>Practice on a familiar structured page before diagnosing your application.</li><li>Test reading structure as well as Tab navigation. A screen reader's reading cursor and DOM focus are not identical.</li><li>Check available name/role/state and useful outcomes rather than requiring identical wording across products.</li><li>Do not treat five minutes of developer use as a substitute for experienced-user testing.</li></ul>
+<h3>Reusable bug report</h3>
+<figure class="card code"><figcaption>Evidence template<span>text</span></figcaption><pre tabindex="0"><code>Task and affected page/component:
+Environment: browser, OS, assistive technology, versions, settings
+Initial state and safe test data:
+Steps and exact keys/actions:
+Expected behavior:
+Actual behavior:
+Barrier / task impact:
+Evidence: automated finding, tree properties, manual observation
+Fix owner and relevant regression check:
+Verification result and remaining untested scope:</code></pre></figure>
+<h3>Keep checks inside development</h3>
+<p>Design decisions → semantic HTML → accessible interaction → state-based automated checks → manual journey verification → regression protection and continued evaluation. A component can pass alone while its composition or content fails; check important journeys too.</p>
+<h3>Tool and workflow references</h3>
+<ul><li><a href="https://developer.chrome.com/docs/lighthouse/accessibility/scoring">Chrome: Lighthouse accessibility scoring</a></li><li><a href="https://github.com/dequelabs/axe-core">Deque: axe-core</a></li><li><a href="https://wave.webaim.org/help">WebAIM: WAVE help</a></li><li><a href="https://developer.chrome.com/docs/devtools/accessibility/reference">Chrome DevTools: Accessibility reference</a></li><li><a href="https://github.com/jsx-eslint/eslint-plugin-jsx-a11y">JSX accessibility linting</a></li><li><a href="https://download.nvaccess.org/documentation/userGuide.html">NVDA User Guide and keyboard commands</a></li><li><a href="https://support.apple.com/guide/voiceover/welcome/mac">Apple VoiceOver User Guide</a></li><li><a href="https://www.w3.org/WAI/test-evaluate/">WAI: Evaluating Web Accessibility</a></li></ul>
+<p>Check current documentation and privacy requirements before sending private pages or data to hosted testing services.</p>
+</section>

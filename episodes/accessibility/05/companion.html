@@ -1,0 +1,1617 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 5: Your Design Is Lying to You — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Accessibility episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: Your Design Is Lying to You</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/23885ef6-20b4-4cec-80a1-d1be38b23b51"
+      ></script>
+      <div class="redcirclePlayer-23885ef6-20b4-4cec-80a1-d1be38b23b51"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#correct-information-can-still-be-unavailable"
+            >Correct Information Can Still Be Unavailable</a
+          >
+        </li>
+        <li>
+          <a href="#contrast-is-a-relationship">Contrast Is a Relationship</a>
+        </li>
+        <li><a href="#red-is-not-a-sentence">Red Is Not a Sentence</a></li>
+        <li>
+          <a href="#zoom-is-not-just-a-smaller-phone"
+            >Zoom Is Not Just a Smaller Phone</a
+          >
+        </li>
+        <li>
+          <a href="#the-box-has-to-yield-to-the-content"
+            >The Box Has to Yield to the Content</a
+          >
+        </li>
+        <li>
+          <a href="#motion-can-have-a-physical-cost"
+            >Motion Can Have a Physical Cost</a
+          >
+        </li>
+        <li>
+          <a href="#a-tiny-target-is-a-precision-requirement"
+            >A Tiny Target Is a Precision Requirement</a
+          >
+        </li>
+        <li>
+          <a href="#an-error-is-a-recovery-conversation"
+            >An Error Is a Recovery Conversation</a
+          >
+        </li>
+        <li>
+          <a href="#labels-that-don-t-evaporate">Labels That Don't Evaporate</a>
+        </li>
+        <li>
+          <a href="#cognitive-load-is-also-design"
+            >Cognitive Load Is Also Design</a
+          >
+        </li>
+        <li>
+          <a href="#one-design-review-with-better-evidence"
+            >One Design Review with Better Evidence</a
+          >
+        </li>
+        <li>
+          <a href="#review-the-same-form-in-four-states"
+            >Review the Same Form in Four States</a
+          >
+        </li>
+        <li>
+          <a href="#obvious-to-me-is-a-starting-hypothesis"
+            >Obvious to Me Is a Starting Hypothesis</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The checkout has labels, buttons, keyboard access, and synchronized
+          ARIA state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Lovely. I have enlarged the text.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why did your voice change?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Because the Place order button has left the country.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It's probably just below the fold.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. It's inside a fixed-height container with hidden overflow. The
+          fold has an extradition policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>All right. New bug.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same feature. New way of discovering that our design assumes everyone
+          sees exactly what we see.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today's episode title feels accusatory.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Your Design Is Lying to You. It's affectionate accountability for
+          rectangles.</span
+        >
+      </p>
+      <h2 id="correct-information-can-still-be-unavailable">
+        Correct Information Can Still Be Unavailable
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We've discussed semantics, focus, and ARIA.
+          Today: how can an interface look obvious to us while hiding
+          information or blocking a task for someone else?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And before anyone says “but the screen reader can read it,” some
+          people need visual access. A programmatic label doesn't excuse
+          illegible visible text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Accessibility isn't a choice between the accessibility tree and the
+          screen. We need to preserve information through the actual ways people
+          perceive and use the interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My favorite example is the label that is technically present, styled
+          in pale gray, tiny, and positioned where it overlaps the user's input.
+          The DOM has a label. The human has a problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or a keyboard-accessible dialog that fits beautifully at one size but
+          loses its close control under zoom.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We didn't complete accessibility last episode. We learned one part of
+          the interface contract. Now the design has to honor it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's keep our pizza checkout and examine contrast, color,
+          enlargement, motion, target size, and error recovery as parts of that
+          same journey.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A surprisingly eventful career for a form that just wants an
+          address.</span
+        >
+      </p>
+      <h2 id="contrast-is-a-relationship">Contrast Is a Relationship</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Contrast isn't a property of a text color in isolation. It's a
+          relationship between foreground and background.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Our brand gray passes” is incomplete. On what background? At what
+          size and weight? In which state?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Normal text at WCAG AA generally needs a contrast ratio of
+          at least four and a half to one. Large text has a three-to-one
+          threshold. The companion gives the precise size definition and links
+          the criterion rather than making listeners remember it all.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Large doesn't mean “looks reasonably large on my monitor.” There is a
+          defined threshold. And a thin font can still be hard to read even when
+          the nominal measurements pass.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Contrast requirements address a barrier, but a number isn't the
+          entire readability experience. Typeface, spacing, glare, and context
+          can all affect use.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Think about our total price. On the design board it's black on white.
+          In the application it's gray on a translucent panel over a promotional
+          pizza photograph.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the background varies. One sample point doesn't establish that
+          every part of the text has enough contrast.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The mozzarella is attacking the typography.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can simplify the design: use a solid background, a sufficiently
+          opaque backing, or another treatment that preserves contrast across
+          the content. Don't ask a shadow to solve every possible photo.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also check states. Placeholder text, hover text, error messages,
+          selected tabs, and focus indicators. A color token passing in its
+          default pair doesn't prove all the combinations the design system
+          allows.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And component boundaries and meaningful graphics have non-text
+          contrast requirements in relevant cases. Text passing doesn't
+          automatically mean the field boundary or selected state is
+          visible.</span
+        >
+      </p>
+      <h2 id="red-is-not-a-sentence">Red Is Not a Sentence</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our postal-code field turns red when invalid. What's missing?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Information that doesn't depend only on distinguishing the color. An
+          explicit error message tells the user what's wrong and how to correct
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An icon can reinforce the state, but an unexplained icon isn't always
+          enough. A little triangle can mean “warning,” “expand,” or “we bought
+          a large icon pack.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Combine clear text with appropriate visual treatment and programmatic
+          state. The same idea applies to charts and delivery availability.
+          Don't distinguish delivery areas only through red and green
+          dots.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use labels, shapes, patterns, or another redundant channel
+          appropriate to the information. The goal is retaining meaning if color
+          perception differs or color isn't available.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And don't confuse color independence with contrast. A red error
+          message can have excellent contrast but still be the only indication
+          of an error if the text itself is just the original field label.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, adding the word Error doesn't help much if the word is
+          unreadable. These checks complement each other.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Links are another practical case. A subtle color change from body
+          text may not make them distinguishable. An underline is a familiar
+          useful cue.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Designers sometimes remove underlines because the page looks quieter.
+          It becomes extremely quiet if nobody knows the words are
+          interactive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can design a strong visual system without removing the information
+          that makes it usable.</span
+        >
+      </p>
+      <h2 id="zoom-is-not-just-a-smaller-phone">
+        Zoom Is Not Just a Smaller Phone
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's return to the disappearing button. People often say, “We have
+          responsive CSS, so enlargement is handled.” Why isn't that
+          enough?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Responsive layouts are a helpful foundation, but you still need to
+          test enlargement. Browser zoom changes the effective space available.
+          Text resizing can stress components differently. Long content and user
+          spacing adjustments can reveal constraints your phone screenshot never
+          exercised.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A media query doesn't guarantee that a fixed-height address card
+          grows with its text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or that a navigation bar wraps, that error messages remain visible,
+          or that a sticky footer doesn't cover half the usable screen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The WCAG reference includes text resizing up to two hundred percent
+          and reflow at a narrow effective viewport. A common practical reflow
+          check is four hundred percent zoom from a window about twelve hundred
+          and eighty CSS pixels wide, giving roughly three hundred and twenty
+          CSS pixels of layout width.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those are related but distinct checks. They aren't magic percentages
+          that replace checking the actual content and task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And reflow isn't “no horizontal scrolling anywhere under any
+          circumstances.” Some content genuinely needs two-dimensional layout,
+          like a data table or map. The exception doesn't justify horizontal
+          scrolling for the entire checkout form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A sensible pattern can keep a wide table scrollable within its own
+          region while the surrounding page reflows normally. But that region
+          must remain usable and understandable too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our address form has no legitimate reason to become a two-dimensional
+          navigation puzzle. I should not scroll right to find Submit and left
+          to remember what I'm submitting.</span
+        >
+      </p>
+      <h2 id="the-box-has-to-yield-to-the-content">
+        The Box Has to Yield to the Content
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What usually causes the clipping?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fixed heights, absolutely positioned text, assumptions about line
+          length, unbreakable strings, and overflow hidden applied as a broom
+          for layout problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes min-width constraints in flex or grid children also prevent
+          shrinking. The fix depends on the layout, but the principle is that
+          text and controls need room to grow and wrap.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In the Modern CSS series we treated intrinsic sizing as useful layout
+          behavior. Here we can see the access consequence. Content-driven
+          sizing isn't only tidier CSS. It can preserve someone's ability to
+          finish a form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use relative sizing where appropriate, avoid unnecessary rigid
+          dimensions, and test realistic long content. A label translated into
+          another language can expose the same assumption as enlarged
+          text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again, overlap is useful without pretending every situation is the
+          same. A design that handles variation is less fragile.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Try user text-spacing changes too. Increasing line height or letter
+          spacing should not cause content or functionality to vanish. The
+          companion links the specific spacing values for a focused check.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Don't force those values on every user as the one correct design.
+          Support users applying them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a helpful distinction: accessibility can mean allowing
+          preferences rather than choosing the supposedly perfect presentation
+          for everyone.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't disable browser zoom to protect your layout. That is the
+          layout winning an argument against the person who needs to read
+          it.</span
+        >
+      </p>
+      <h2 id="motion-can-have-a-physical-cost">
+        Motion Can Have a Physical Cost
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our order confirmation currently zooms the entire page toward a
+          flying pizza.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I can see why the fictional stakeholders approved it. I can also see
+          why someone might need it to stop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Vestibular conditions can make some motion uncomfortable or
+          sickening. Reduced-motion support isn't only a preference for
+          restrained aesthetics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser can expose an operating-system preference through the CSS
+          media query prefers-reduced-motion. That gives us a way to choose a
+          less motion-heavy presentation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can make the nonmoving state the default and add nonessential
+          motion only when the preference allows it.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>.confirmation {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .confirmation {
+    animation: confirm-in 180ms ease-out;
+  }
+}
+
+@keyframes confirm-in {
+  from { opacity: 0; transform: translateY(0.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is ordinary CSS. The message remains present without the
+          animation. The animation isn't carrying essential information that
+          disappears in the reduced-motion version.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And for JavaScript-driven motion, use the corresponding preference
+          check and handle changes as appropriate. A CSS media query doesn't
+          automatically stop an animation implemented somewhere else.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we assume one media query solves every moving thing.
+          Autoplaying content may need pause or stop controls. Flashing hazards
+          are a distinct issue. Some interaction-triggered motion can be
+          replaced with a simple state change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Don't globally set every animation duration to nearly zero without
+          understanding the effects. Some code depends on animation events, and
+          some motion communicates progress or state. Remove or replace
+          nonessential motion deliberately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can preserve feedback without pretending the browser is a
+          theme-park ride.</span
+        >
+      </p>
+      <h2 id="a-tiny-target-is-a-precision-requirement">
+        A Tiny Target Is a Precision Requirement
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our basket has a remove control: a small cross near the item
+          name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A classic place where the visible icon and actual target size can
+          differ. The icon can be modest while the button's usable area is
+          larger.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >More space and separation can reduce precision demands, especially
+          for people with tremor, limited dexterity, or alternative pointing
+          devices. It also reduces accidental activation of adjacent
+          actions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >WCAG 2.2 has an AA target-size criterion based on twenty-four by
+          twenty-four CSS pixels, with exceptions and spacing alternatives. The
+          companion explains that reference; it isn't a mandate to make every
+          control exactly twenty-four pixels and call it excellent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Larger targets can be more comfortable. The enhanced AAA target-size
+          criterion uses forty-four by forty-four, again with its own
+          exceptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Minimum and comfortable aren't synonyms. Particularly for a
+          destructive action next to something routine.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test on actual touch input where relevant. A desktop pointer can make
+          a tiny target feel more manageable than it is on a phone.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also don't make a hover-only tooltip the only way to discover what
+          the icon does. Touch users and some keyboard users may never receive
+          that explanation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Visible text often improves discoverability. If we choose an
+          icon-only control, it still needs an appropriate accessible name and a
+          visual design people can understand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There's our Episode 4 connection. Naming solves a specific
+          information gap. It doesn't enlarge the hit area or teach an ambiguous
+          icon to every sighted user.</span
+        >
+      </p>
+      <h2 id="an-error-is-a-recovery-conversation">
+        An Error Is a Recovery Conversation
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's submit the form with a missing postal code. Our old design
+          draws a red border and leaves the rest to the imagination.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The improved version gives a specific message, associates it with the
+          field, indicates invalid state, and makes the error discoverable after
+          submission.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Enter a postal code before continuing” is useful. “Invalid input”
+          tells me the computer has developed an opinion but won't explain
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the input has a format requirement, explain the expected
+          format. Don't demand an unfamiliar pattern only after someone fails
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We also need restraint about assumptions. Names and addresses are
+          varied. Rejecting real information because it doesn't resemble the
+          developer's address isn't improved by an accessible error
+          message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client-side validation can help users recover quickly, but the server
+          still validates submitted data. Accessibility doesn't change that
+          security boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >When server validation fails, preserve correct entries where
+          possible, show useful messages, and restore a coherent focus and
+          information state. Don't drop someone at the top of a blank form as
+          punishment for one missing field.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Aria-describedby can connect an inline error to its input, as we
+          showed last episode. A summary can link to errors on a longer form. A
+          live announcement can help when appropriate, but choose a coordinated
+          approach.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The user needs to identify the problem, understand it, reach it, and
+          fix it. Four steps. Red border covers maybe a fraction of the
+          first.</span
+        >
+      </p>
+      <h2 id="labels-that-don-t-evaporate">Labels That Don't Evaporate</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why is a placeholder such a tempting label replacement?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It makes the empty screenshot look clean. Then the first character
+          deletes the instructions. Wonderful optimization for the one state the
+          user spends the least time in.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Persistent labels help someone review information after entry, resume
+          after an interruption, or distinguish fields with similar-looking
+          values.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A phone number and an order number can both be strings of digits. “I
+          could tell before I typed” isn't useful during correction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Placeholder examples can still supplement a label, but don't put
+          essential instructions only there. They may disappear precisely when
+          needed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Floating labels can preserve the words, but the implementation needs
+          testing. Does the label become tiny? Does it overlap autofilled
+          content? Does zoom break the position? Is the programmatic association
+          still correct?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Again, there's no blanket verdict based only on the screenshot. Test
+          the actual states: empty, focused, filled, autofilled, invalid,
+          disabled where relevant, and enlarged.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That sounds like a lot until you compare it with shipping a form
+          whose label physically overlaps somebody's address. The states were
+          always part of the component. We just weren't looking at them.</span
+        >
+      </p>
+      <h2 id="cognitive-load-is-also-design">Cognitive Load Is Also Design</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We promised practical cognitive considerations without pretending
+          this episode covers an entire discipline.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Start with clear language. Name the action from the user's task.
+          “Save delivery address” is more informative than “Proceed with
+          mutation.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep navigation and terminology consistent. If the same destination
+          is Basket on one screen and Purchase staging area on another, you're
+          asking the user to maintain an unnecessary translation table.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Make changes predictable. Selecting a delivery option shouldn't
+          unexpectedly submit the entire order. Opening help shouldn't erase the
+          form. A control's effect needs to match its label and context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Break complex tasks into understandable steps when that helps, but
+          don't split a simple form into ten screens solely to make each
+          screenshot look calm.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >More steps can mean more memory, more navigation, and more
+          opportunities to lose context. Simplicity is about the task, not the
+          amount of whitespace.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Give people useful confirmation and recovery. If an action can be
+          undone, make that path understandable. If a timeout matters,
+          communicate it and design the options thoughtfully.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And avoid blaming the user in error copy. “You entered your
+          information incorrectly” is less useful than identifying the field and
+          correction. We are building a checkout, not conducting a performance
+          review.</span
+        >
+      </p>
+      <h2 id="one-design-review-with-better-evidence">
+        One Design Review with Better Evidence
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's do a compact review of our revised checkout. We enlarge it and
+          the sections stack. Labels wrap. The action remains reachable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Error text stays next to the relevant field and is associated
+          programmatically. The summary has a meaningful focus strategy. Red
+          reinforces the error but isn't the only information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The total has a stable background and tested contrast. Links remain
+          distinguishable. Focus is visible even when sticky content is
+          present.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The confirmation is understandable with motion disabled. Remove
+          buttons have usable target areas and space between them. Instructions
+          remain visible after entering values.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then someone suggests adding a tooltip containing all the help text
+          to save space.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We ask who can discover it, how it opens, whether it can be
+          dismissed, whether it stays available while needed, and what happens
+          with touch and zoom. Maybe the help belongs visibly in the page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those are implementation questions, not hostility toward
+          design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Design is deciding how people use the thing. Accessibility
+          is part of whether that decision works.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a design system can capture good defaults: label patterns, error
+          placement, motion preferences, focus treatment, and tested color
+          pairs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the page still needs review. Components can be composed into an
+          inaccessible experience. A cabinet of individually excellent drawers
+          can still block the front door.</span
+        >
+      </p>
+      <h2 id="review-the-same-form-in-four-states">
+        Review the Same Form in Four States
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's do a design review someone could actually reproduce. We have a
+          two-column checkout: delivery details on the left, order summary on
+          the right, and a sticky payment bar at the bottom.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >At the default desktop size, it looks balanced. Every visible label
+          is present. The total and Place order fit in the payment bar.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >State one: the customer enters a long address and a long name. What
+          happens?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The design originally set a fixed height on the address preview to
+          align it with the summary. The last line is clipped, including the
+          apartment number.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's not just imperfect typography. The review step conceals
+          information the customer needs to verify. Let the content determine
+          enough height and allow wrapping. If we truncate for a compact
+          overview, there must be a usable way to inspect the full value before
+          committing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >State two: the postal code fails validation. The error text is longer
+          than the field label, and it appears beneath the input.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does it push later content down naturally, or overlap the next field?
+          Is it visible without depending on a tooltip? Is it associated with
+          the input? Can the person understand the correction?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In our broken version, the error is absolutely positioned because the
+          designer wanted the fields not to move.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Stable layout can be useful, but overlapping instructions aren't
+          stability. Reserve sufficient flexible space if necessary, or let the
+          content flow. The layout needs to accommodate the information the task
+          requires.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >State three: the person zooms in. The two columns become one, but the
+          sticky payment bar remains the same height in screen space and covers
+          the focused postal-code field.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then our responsive breakpoint solved one problem and left another.
+          We need to check how much of the viewport the sticky area occupies and
+          whether focused content stays visible. Perhaps the bar stops being
+          sticky at constrained sizes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That would preserve the action at the end of the form without
+          permanently occupying the little space available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Sticky isn't a business requirement. Being able to find and
+          use the payment action is. We can change the presentation to preserve
+          the goal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >State four: the person returns after an interruption. The inputs
+          contain values, but the original design used placeholders for
+          labels.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now they have a collection of filled rectangles and a memory test.
+          Persistent visible labels identify the fields. If a value needs
+          formatting guidance, keep that guidance available while they
+          edit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is where cognitive and visual concerns meet. The words haven't
+          merely become harder to see; some of the necessary context has
+          disappeared.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. We don't need to assign a diagnosis to the person to identify
+          an avoidable memory demand. We can design the form so reviewing it
+          doesn't depend on remembering the empty version.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now let's add a preference change. Reduced motion is enabled while
+          the customer is on the page, and the confirmation uses JavaScript
+          animation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does the implementation notice the preference, including changes when
+          relevant? Does the confirmation remain clear without movement? Don't
+          assume our CSS example controls a separate animation library.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if we replace the animation with nothing, make sure we haven't
+          also removed the visible confirmation message.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Reduce the motion, preserve the meaning. A status message
+          and an order reference don't need to fly in from another postal
+          district.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What should the design handoff contain after this review?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important states and rules, not only screenshots at two widths.
+          Labels persist. Errors wrap and remain associated. Content grows.
+          Sticky controls yield when they obscure the task. Focus remains
+          visible. Reduced motion preserves the result. Target areas stay
+          usable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those rules are more resilient than specifying the exact pixel height
+          of every card.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the developer can explain why an implementation needs
+          flexibility. “This card grows because the address and error message
+          must remain available” is a concrete reason, not an aesthetic
+          disagreement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We can still care about the visual rhythm.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Absolutely. We just need the rhythm to survive actual content. Real
+          users keep inconsiderately having names and addresses instead of
+          placeholder strings.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Should we test every imaginable name and viewport?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. Use representative difficult cases and the known requirements. If
+          one reveals a fragile assumption, fix the assumption. Don't create a
+          thousand screenshots of the same problem and call that coverage.</span
+        >
+      </p>
+      <h2 id="obvious-to-me-is-a-starting-hypothesis">
+        Obvious to Me Is a Starting Hypothesis
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What's the practical takeaway?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Visual clarity to the designer isn't proof that information is
+          available or understandable to everyone. We need to test what changes
+          when presentation and input conditions change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Semantics and visual design support the same task. Neither excuses
+          failures in the other.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we don't need a dramatic accessibility redesign after launch if
+          these questions are present while choosing labels, layout, colors,
+          motion, and errors.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: how do we know whether we've done it well? Lighthouse,
+          axe, WAVE, browser inspectors, linters, and manual testing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >With a special guest appearance by the number one hundred, which has
+          been making claims it cannot support.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The number itself is innocent.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine. Its press department is under investigation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did we find the Place order button?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. We let the container grow. It turns out dinner was trapped by a
+          height declaration.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          These are selected WCAG 2.2 reference points, not a complete checklist
+          or conformance claim. Read each linked criterion for its conditions
+          and exceptions.
+        </p>
+        <h3>Visual and interaction reference values</h3>
+        <dl>
+          <dt><strong>Text contrast — 1.4.3, AA</strong></dt>
+          <dd>
+            Generally 4.5:1 for normal text and 3:1 for large text. Large means
+            at least 18pt regular (24 CSS px) or 14pt bold (about 18.67 CSS px),
+            or equivalent sizing for relevant scripts. Exceptions include
+            incidental text and logotypes. Check actual foreground/background
+            combinations and states.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html"
+              >Contrast Minimum</a
+            >.
+          </dd>
+          <dt><strong>Essential non-text visuals — 1.4.11, AA</strong></dt>
+          <dd>
+            Relevant visual information identifying controls/states and
+            meaningful graphics needs 3:1 against adjacent colors, subject to
+            the criterion's exceptions. A passing text color does not establish
+            this.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html"
+              >Non-text Contrast</a
+            >.
+          </dd>
+          <dt><strong>Color is not the only signal — 1.4.1, A</strong></dt>
+          <dd>
+            Add meaningful text, shape, pattern, or another channel. “Postal
+            code is required” communicates more than a red border.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html"
+              >Use of Color</a
+            >.
+          </dd>
+          <dt><strong>Resize text — 1.4.4, AA</strong></dt>
+          <dd>
+            Support resizing text up to 200% without loss of content/function,
+            with specified exceptions.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html"
+              >Resize Text</a
+            >.
+          </dd>
+          <dt><strong>Reflow — 1.4.10, AA</strong></dt>
+          <dd>
+            For vertically scrolling content, check an effective width of 320
+            CSS px without loss or required scrolling in both dimensions, except
+            content needing two-dimensional layout. A 1280-CSS-px-wide starting
+            viewport at 400% zoom is a common test. Horizontally scrolling
+            content has the corresponding 256-CSS-px-height condition.
+            <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html"
+              >Reflow</a
+            >.
+          </dd>
+          <dt><strong>Text spacing — 1.4.12, AA</strong></dt>
+          <dd>
+            Support user overrides together: line height 1.5 times font size,
+            paragraph spacing 2 times font size, letter spacing 0.12 times font
+            size, word spacing 0.16 times font size, without loss. These are
+            supported overrides, not required default styling.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html"
+              >Text Spacing</a
+            >.
+          </dd>
+          <dt><strong>Targets — 2.5.8, AA</strong></dt>
+          <dd>
+            24×24 CSS px minimum or applicable exceptions. The spacing exception
+            uses 24px-diameter circles centered on undersized targets: circles
+            must not overlap other targets or another undersized target's
+            circle. Other exceptions cover equivalent controls, inline targets,
+            unmodified user-agent controls, and essential presentation. Larger
+            comfortable targets remain useful.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"
+              >Target Size Minimum</a
+            >.
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html"
+              >Target Size Enhanced (AAA)</a
+            >
+            uses 44×44 CSS px with its own exceptions.
+          </dd>
+        </dl>
+        <h3>Review states, not just screenshots</h3>
+        <ul>
+          <li>
+            Empty, focused, filled, autofilled, invalid, corrected, loading,
+            successful, and unavailable states.
+          </li>
+          <li>
+            Enlarged text, narrow effective viewport, user text spacing, and
+            long labels/content.
+          </li>
+          <li>
+            Default and alternate themes, focus visibility, background images,
+            overlays, and sticky content.
+          </li>
+          <li>
+            Reduced motion, touch input, keyboard operation, and persistent
+            labels after entry.
+          </li>
+        </ul>
+        <h3>Error recovery recipe</h3>
+        <ol>
+          <li>
+            Identify the affected field and the problem in useful visible text.
+          </li>
+          <li>
+            Associate the help/error with the control; keep its accessible name
+            clear.
+          </li>
+          <li>
+            Update invalid state and remove obsolete errors when corrected.
+          </li>
+          <li>
+            Use a deliberate summary/focus/announcement strategy rather than
+            competing mechanisms.
+          </li>
+          <li>Preserve correct entries and validate again on the server.</li>
+        </ol>
+        <h3>Motion and understandable UX</h3>
+        <p>
+          Honor <code>prefers-reduced-motion</code> for relevant CSS and
+          JavaScript motion. Keep essential information available without
+          animation. Separately consider pause/stop controls and flashing
+          hazards. Clear labels, consistent navigation, predictable effects, and
+          recovery reduce avoidable cognitive demands.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion"
+              >MDN: prefers-reduced-motion</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/tutorials/forms/notifications/"
+              >WAI: User Notifications</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/WCAG22/quickref/"
+              >Full WCAG 2.2 quick reference</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

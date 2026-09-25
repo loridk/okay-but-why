@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 10: Drupal 10/11: What Changed, What Stayed &amp; Should We Use a
+      CMS? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 10: Drupal 10/11: What Changed, What Stayed &amp; Should We Use
+        a CMS?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/9059ab30-eab4-4bf7-a09a-276e4ba85efd"
+      ></script>
+      <div class="redcirclePlayer-9059ab30-eab4-4bf7-a09a-276e4ba85efd"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#the-part-that-stayed">The Part That Stayed</a></li>
+        <li>
+          <a href="#modern-php-didn-t-remove-the-cms"
+            >Modern PHP Didn't Remove the CMS</a
+          >
+        </li>
+        <li>
+          <a href="#version-numbers-need-dates">Version Numbers Need Dates</a>
+        </li>
+        <li>
+          <a href="#upgrade-is-a-compatibility-project"
+            >Upgrade Is a Compatibility Project</a
+          >
+        </li>
+        <li>
+          <a href="#frontend-modernization-has-a-purpose"
+            >Frontend Modernization Has a Purpose</a
+          >
+        </li>
+        <li>
+          <a href="#admin-and-editorial-direction"
+            >Admin and Editorial Direction</a
+          >
+        </li>
+        <li>
+          <a href="#performance-improvements-still-need-measurement"
+            >Performance Improvements Still Need Measurement</a
+          >
+        </li>
+        <li>
+          <a href="#scenario-one-a-small-research-group"
+            >Scenario One: A Small Research Group</a
+          >
+        </li>
+        <li>
+          <a href="#scenario-two-a-publication-with-familiar-work"
+            >Scenario Two: A Publication With Familiar Work</a
+          >
+        </li>
+        <li>
+          <a href="#scenario-three-bellweather-s-whole-public-estate"
+            >Scenario Three: Bellweather's Whole Public Estate</a
+          >
+        </li>
+        <li>
+          <a href="#scenario-four-a-specialized-application"
+            >Scenario Four: A Specialized Application</a
+          >
+        </li>
+        <li>
+          <a href="#scenario-five-several-channels-and-an-independent-frontend"
+            >Scenario Five: Several Channels and an Independent Frontend</a
+          >
+        </li>
+        <li>
+          <a href="#the-questions-that-change-the-answer"
+            >The Questions That Change the Answer</a
+          >
+        </li>
+        <li>
+          <a href="#translate-the-drupal-one-last-time"
+            >Translate the Drupal One Last Time</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have reached the architecture decision.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. I have prepared five cards: static site, WordPress,
+          Drupal, custom application, and headless CMS.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which one wins?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have prepared a sixth card that says “What are the requirements?”
+          and a small spray bottle for anyone who ignores it.</span
+        >
+      </p>
+      <h2 id="the-part-that-stayed">The Part That Stayed</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? This is the final episode of Modern CMS
+          Development. We aren't reading a changelog aloud. We're using what
+          we've learned to reason about a real choice.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our fictional Bellweather University needs people to manage
+          information reliably. That's still the problem, even after we have
+          learned enough nouns to qualify for a conference badge.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal's central model remains recognizable: entities, bundles,
+          fields, references, Views, modules, configuration, permissions, and
+          caching. Those ideas didn't disappear when the PHP and frontend
+          tooling evolved.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Entity type: broad kind of managed data object. Bundle: configured
+          subtype. Entity: individual object. Field: structured information.
+          Reference: relationship. Those are now things I can translate into
+          database and application reasoning.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A View selects and presents results. A view mode describes a named
+          entity presentation. A render array carries output structure and
+          cacheability through rendering. A module extends behavior; a theme
+          presents it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And configuration isn't the same as content, even when both are
+          edited in the browser and stored in the database. That one should be
+          printed above the deployment button.</span
+        >
+      </p>
+      <h2 id="modern-php-didn-t-remove-the-cms">
+        Modern PHP Didn't Remove the CMS
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal's modernization includes current PHP capabilities and Symfony
+          foundations. Namespaces, interfaces, typed dependencies, and
+          attributes give developers more explicit ways to describe code and its
+          relationships.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The language feature and the framework convention are still
+          different. PHP attributes attach structured metadata. Drupal decides
+          that a particular attribute identifies a hook or plugin
+          implementation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Services and dependency injection make collaborators
+          visible. Composer coordinates package versions and autoloading. These
+          are improvements to how the application is assembled and maintained,
+          not replacements for its editorial purpose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A project can have beautifully injected services and a terrible
+          content model. Technical modernization doesn't absolve us from asking
+          whether editors can find the room field.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a procedural hook in an existing module isn't automatic evidence
+          that the whole project is obsolete. Drupal 11's object-oriented hooks
+          coexist with legacy implementations and documented procedural
+          exceptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should modernize where the supported API, maintenance benefit, and
+          tests justify it. Not because a file extension caused aesthetic
+          distress.</span
+        >
+      </p>
+      <h2 id="version-numbers-need-dates">Version Numbers Need Dates</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We're producing this in September 2026. Drupal 11.4 is the current
+          stable feature line reflected in the release documentation we've
+          checked. Drupal 10's final minor line is 10.6, and its published
+          end-of-life date is December ninth, 2026.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's close enough that a team maintaining Drupal 10 should have a
+          concrete upgrade plan. It doesn't mean we announce a random emergency
+          based only on the number ten. We inspect supported versions, security
+          releases, and the site's actual dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Drupal's schedule also shows the next major release in
+          development for December. A scheduled beta or future release is not a
+          reason to describe it as the stable production baseline today.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an episode isn't an update service. When listeners act on this
+          later, check the current release schedule and advisories. The
+          companion records our research date so the temporal claim has a
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For Drupal 11, PHP 8.3 is the minimum across the current eleven-four
+          compatibility matrix, with newer supported versions listed. Exact
+          supported and recommended versions depend on the Drupal minor and its
+          dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't hear “Drupal 11 uses modern PHP” and assume the old hosting
+          plan already supports everything. Check PHP, database, extensions,
+          Composer, and contributed packages before planning the upgrade.</span
+        >
+      </p>
+      <h2 id="upgrade-is-a-compatibility-project">
+        Upgrade Is a Compatibility Project
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The path from Drupal 10 to 11 is generally an update within the
+          modern architecture, not the same kind of rebuild as moving from
+          Drupal 7's older architecture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But generally manageable doesn't mean press a button and ignore
+          custom code. Audit deprecated APIs, module and theme compatibility,
+          platform requirements, and the actual user journeys.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Update tools and compatibility analysis can help identify work.
+          Composer constraints reveal dependency conflicts. A staging upgrade
+          tells you whether the whole site behaves correctly with its content
+          and configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a contributed module has no supported compatible release, that's a
+          real project decision. Replace it, help update it, maintain a
+          justified alternative, or adjust the feature. Don't force the
+          dependency solver and pretend the risk disappeared.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, passing static checks doesn't verify the editor can publish a
+          translated event. Test the workflows and outputs people rely on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Including recovery. The best time to learn whether we can restore the
+          database is before the deployment that needs restoration.</span
+        >
+      </p>
+      <h2 id="frontend-modernization-has-a-purpose">
+        Frontend Modernization Has a Purpose
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SDC gives reusable components a discoverable home with metadata,
+          Twig, and optional assets. It became stable in Drupal 10.3, so it's
+          part of the modern Drupal 10 story as well as Drupal 11.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Its purpose is component organization and contracts. It doesn't
+          automatically turn every Drupal site into a React application, isolate
+          all CSS, or give editors a visual builder.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Recipes package setup and configuration actions. They reduce repeated
+          assembly work, but applying a recipe isn't an ongoing subscription to
+          every future change in that recipe.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >APIs let content serve other consumers. They don't require abandoning
+          integrated rendering, and they don't remove authorization or
+          cache-invalidation work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >These changes solve different problems. Grouping them under modern is
+          convenient marketing, but we should still ask which one helps our
+          project.</span
+        >
+      </p>
+      <h2 id="admin-and-editorial-direction">Admin and Editorial Direction</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What should a frontend developer know about the current editor
+          experience without memorizing a product launch schedule?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal core's administrative navigation has evolved; the 11.4 release
+          announcement describes Navigation being enabled in the standard
+          administrative interface. Existing sites can have different
+          configuration and administration themes, so don't expect identical
+          screenshots everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And Drupal CMS is a separately versioned assembled product built on
+          core. Drupal CMS 2.0 launched with Canvas, a visual building
+          experience. Canvas is also its own project with compatibility
+          requirements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. These efforts aim to reduce setup and authoring friction.
+          They don't make every existing Drupal site automatically adopt a new
+          editing model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Evaluate the editor's actual task. Can they create a well-structured
+          page, understand its state, preview it, and publish it accessibly? A
+          more visual interface helps only if it improves that work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And new AI-assisted features, where used, still require review of
+          accuracy, access, privacy, and the external services involved. Their
+          presence isn't evidence that the underlying content is
+          trustworthy.</span
+        >
+      </p>
+      <h2 id="performance-improvements-still-need-measurement">
+        Performance Improvements Still Need Measurement
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Recent Drupal releases have reduced internal database and cache work
+          and improved asset handling. The 11.4 announcement specifically
+          describes field-loading optimizations and better asset
+          compression.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good improvements, but we should not turn a core benchmark into a
+          promise that every university site becomes a fixed percentage faster.
+          Custom queries, contributed modules, media, network conditions, and
+          cache configuration still matter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Measure representative pages and user states. A warm
+          anonymous homepage, a personalized dashboard, and an editor form
+          stress different parts of the system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And performance includes the human task. A form that takes four
+          seconds to load and ten minutes to understand has more than one
+          problem.</span
+        >
+      </p>
+      <h2 id="scenario-one-a-small-research-group">
+        Scenario One: A Small Research Group
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Six pages, occasional publications, two technically comfortable
+          maintainers, and no formal approval workflow. What would you
+          consider?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A static site. Write content in a manageable format, build HTML, and
+          host it simply. If the maintainers can comfortably use the workflow,
+          that might be the smallest useful arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Benefits include simple public delivery and fewer moving application
+          parts. But editing, previews, forms, search, and deployment still need
+          suitable solutions where required.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Static doesn't mean maintenance-free or impossible to
+          compromise. The build pipeline and dependencies still exist. It means
+          a different public runtime shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if the maintainers change and the new people don't use
+          Git?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Revisit the authoring workflow. A CMS-backed static site could be
+          appropriate, or a conventional CMS. The architecture should serve the
+          current team, not preserve the original developer's comfort as a
+          monument.</span
+        >
+      </p>
+      <h2 id="scenario-two-a-publication-with-familiar-work">
+        Scenario Two: A Publication With Familiar Work
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A campus magazine publishes articles, author profiles, images, and a
+          few custom content types. Its editors already know WordPress, and its
+          team has a reliable maintenance arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >WordPress is a strong candidate. Its publishing model and ecosystem
+          fit the job. We'd review plugin choices, permissions, structured
+          fields, accessibility, and backup and update procedures.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What would make you pause?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Requirements for unusually complex relationships, granular workflows,
+          or integrations that require layers of awkward customization. But I'd
+          examine actual implementation options, not reject WordPress because
+          someone once installed twelve conflicting plugins.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So its popularity is useful context, not the entire decision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Availability of people and tools matters. Suitability still
+          has to be demonstrated.</span
+        >
+      </p>
+      <h2 id="scenario-three-bellweather-s-whole-public-estate">
+        Scenario Three: Bellweather's Whole Public Estate
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Shared people, departments, programs, courses, events, locations,
+          several languages, many editors, and approval rules. Content appears
+          in several contexts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Drupal is a serious candidate because its structured content,
+          references, Views, display systems, and editorial capabilities align
+          with those needs. We'd still prototype the difficult workflows and
+          integrations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And budget for the expertise required to build and operate it.
+          Configurability can save custom implementation, but it adds concepts
+          and maintenance responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should ask editors to test the model early. If they need to open
+          seven forms to correct one public fact, we haven't earned the
+          architecture's complexity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if the organization has no Drupal maintenance capacity?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then staffing, a suitable partner, or a different platform is part of
+          the decision. Choosing software without an operating plan is choosing
+          future panic on installments.</span
+        >
+      </p>
+      <h2 id="scenario-four-a-specialized-application">
+        Scenario Four: A Specialized Application
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A system manages complex laboratory reservations with resource
+          conflicts, approvals, transaction rules, and specialized integrations.
+          Public editorial content is a small part of it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A custom application or an existing specialist product may fit
+          better. Start from the domain's core operations instead of forcing
+          everything into content fields because the CMS already has a login
+          screen.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal can support application behavior, but technical possibility
+          isn't the same as an economical model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And custom application means we own more: admin interfaces,
+          validation, audit trails, access control, and maintenance. We
+          shouldn't choose it merely to avoid learning a CMS vocabulary and then
+          rebuild the same capabilities badly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We might integrate a CMS for public information while a specialized
+          system owns reservations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A boundary that matches responsibilities can be better than making
+          one product do everything.</span
+        >
+      </p>
+      <h2 id="scenario-five-several-channels-and-an-independent-frontend">
+        Scenario Five: Several Channels and an Independent Frontend
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Public website, mobile app, campus screens, and an established
+          frontend team that needs independent release cycles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A headless CMS approach deserves evaluation. Drupal could be the
+          content backend, or another CMS might fit. We compare content
+          modeling, editor experience, API capabilities, preview, access,
+          hosting, cost, and portability.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the separate frontend owns its rendering, routing integration,
+          accessibility, and cache behavior. Publication freshness and preview
+          need explicit contracts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We also test an outage. Can the public frontend serve appropriate
+          cached content? What happens to previews? What does the editor see if
+          a publish webhook fails? Two systems create coordination work even
+          when each is individually good.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the only reason is that the team likes React, is that
+          enough?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Team expertise is legitimate evidence, but we should include the full
+          cost. Preference can influence a decision without becoming a universal
+          architectural law.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Choice              Strong candidate when...          Work you still own
+Static site         Small, manageable publishing      Editing/build workflow
+WordPress           Familiar publishing requirements  Plugin/theme upkeep
+Drupal              Shared structured editorial data Modeling/config/operations
+Custom application  Specialized domain behavior      Application/admin/security
+Headless CMS        Multiple consumers or deliberate API/preview/cache contracts
+                    frontend separation
+
+These categories overlap. A static frontend can use a headless CMS.
+A Drupal site can keep its theme while also exposing an API.</code></pre>
+      </figure>
+      <h2 id="the-questions-that-change-the-answer">
+        The Questions That Change the Answer
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Before choosing, ask who edits, what they edit, how often, and who
+          approves. Ask which content is shared, which relationships matter, and
+          which languages and channels must be supported.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask what data is sensitive, what systems are authoritative, what
+          failure looks like, and who will maintain the result. Ask how we'll
+          migrate out if our needs change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then build a small example around the hardest real requirement. Not
+          only a pretty homepage, which most systems can produce.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For Bellweather, that might be a translated event with a pending room
+          change, a restricted internal note, a public listing, and an API
+          consumer. Can the editor complete the workflow? Does the visitor see
+          the correct approved information? Does the cache update?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a much better experiment than comparing how fast five products
+          can display a hero image.</span
+        >
+      </p>
+      <h2 id="translate-the-drupal-one-last-time">
+        Translate the Drupal One Last Time
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I open unfamiliar Drupal code now, I can ask whether I'm looking
+          at data structure, query configuration, output preparation,
+          presentation, extension behavior, or deployment state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then identify the layer: PHP syntax, Drupal API, Symfony component,
+          Twig template, Composer dependency, JavaScript behavior, or
+          contributed functionality.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I don't need to memorize every class. I need a map that lets me ask
+          the next useful question and look up the correct contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the goal. Expertise includes knowing what to inspect and when
+          to check documentation, especially as versions evolve.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the original CMS problem remains gloriously unglamorous: help
+          people maintain correct information without making every update a
+          developer emergency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The system should serve the content, the editors, and the people
+          trying to use the result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So before the framework preference, the procurement spreadsheet, the
+          drag-and-drop demo, or the enthusiastic announcement that everything
+          is now an entity—</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>One question.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What problem are we actually solving?</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Choose the architecture by editorial work, data relationships,
+          delivery needs, maintenance capacity, and failure costs. Ask what
+          problem is actually being solved.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 10 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Static site</th>
+              <td>
+                A delivery approach that can be paired with several authoring
+                systems.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">WordPress</th>
+              <td>
+                A strong publishing-oriented candidate whose extensions and
+                operations still need review.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Drupal</th>
+              <td>
+                A configurable structured-content platform whose complexity
+                needs a matching benefit.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Custom application</th>
+              <td>
+                A domain-specific solution with more application and
+                administrative responsibilities to own.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Headless CMS</th>
+              <td>
+                Content management behind an API boundary, with explicit
+                frontend integration responsibilities.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Version snapshot: September 16, 2026</h3>
+        <ul>
+          <li>Drupal 11.4 is the stable feature line discussed here.</li>
+          <li>
+            Drupal 10.6 is the final Drupal 10 minor line; the published
+            end-of-life date is December 9, 2026.
+          </li>
+          <li>
+            OOP hooks were introduced in 11.1, with procedural exceptions.
+          </li>
+          <li>SDC became stable in 10.3.</li>
+          <li>Drupal CMS and Canvas have release tracks distinct from core.</li>
+        </ul>
+        <p>
+          Release schedules and supported dependency matrices can change. Follow
+          the authoritative links below when making an upgrade decision.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li><strong>Code card 1:</strong> Compare the actual problem</li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Write down the hardest actual workflow before choosing a platform.
+          </li>
+          <li>
+            Prototype publication, translation, access, previews, and cache
+            freshness.
+          </li>
+          <li>
+            Include staffing, upgrades, backups, migration, and exit costs.
+          </li>
+          <li>
+            Recheck the current release schedule before acting on dated version
+            notes.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.drupal.org/about/core/policies/core-release-cycles/schedule"
+              >Current schedule and Drupal 10 end of life, checked September 16,
+              2026</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/blog/drupal-11-4-0"
+              >Drupal 11.4 release</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/getting-started/system-requirements/php-requirements"
+              >Current PHP matrix</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x"
+              >Hook API and procedural exceptions</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/blog/drupal-10-3-0"
+              >SDC and Workspaces stable in 10.3</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/blog/drupal-cms-20-is-here-visual-building-ai-and-site-templates-transform-drupal"
+              >Drupal CMS 2.0</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/project/canvas"
+              >Canvas compatibility</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

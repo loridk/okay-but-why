@@ -1,0 +1,1305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Calling an API From JavaScript — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Calling an API From JavaScript</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/ee560196-4bfe-40e0-84f6-5498683dcc19"
+      ></script>
+      <div class="redcirclePlayer-ee560196-4bfe-40e0-84f6-5498683dcc19"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-code-follows-the-story">The Code Follows the Story</a>
+        </li>
+        <li>
+          <a href="#a-promise-is-a-future-result"
+            >A Promise Is a Future Result</a
+          >
+        </li>
+        <li>
+          <a href="#async-and-await-belong-to-javascript"
+            >Async and Await Belong to JavaScript</a
+          >
+        </li>
+        <li>
+          <a href="#a-small-request-function">A Small Request Function</a>
+        </li>
+        <li><a href="#why-two-awaits">Why Two Awaits?</a></li>
+        <li><a href="#what-the-options-mean">What the Options Mean</a></li>
+        <li>
+          <a href="#loading-is-a-user-visible-state"
+            >Loading Is a User-Visible State</a
+          >
+        </li>
+        <li>
+          <a href="#failure-has-several-addresses"
+            >Failure Has Several Addresses</a
+          >
+        </li>
+        <li>
+          <a href="#a-race-you-can-lose-while-everything-succeeds"
+            >A Race You Can Lose While Everything Succeeds</a
+          >
+        </li>
+        <li>
+          <a href="#test-the-outcomes-not-just-the-happy-path"
+            >Test the Outcomes, Not Just the Happy Path</a
+          >
+        </li>
+        <li>
+          <a href="#read-the-timeline-not-just-the-indentation"
+            >Read the Timeline, Not Just the Indentation</a
+          >
+        </li>
+        <li>
+          <a href="#catch-and-finally-have-different-jobs"
+            >Catch and Finally Have Different Jobs</a
+          >
+        </li>
+        <li>
+          <a href="#two-requests-that-don-t-depend-on-each-other"
+            >Two Requests That Don't Depend on Each Other</a
+          >
+        </li>
+        <li>
+          <a href="#don-t-turn-every-failure-into-a-retry"
+            >Don't Turn Every Failure Into a Retry</a
+          >
+        </li>
+        <li>
+          <a href="#the-user-has-left-the-page">The User Has Left the Page</a>
+        </li>
+        <li>
+          <a href="#walk-through-a-failure-without-blaming-the-user"
+            >Walk Through a Failure Without Blaming the User</a
+          >
+        </li>
+        <li>
+          <a href="#the-helper-isn-t-a-whole-data-platform"
+            >The Helper Isn't a Whole Data Platform</a
+          >
+        </li>
+        <li>
+          <a href="#the-incantation-becomes-a-story"
+            >The Incantation Becomes a Story</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I wrote a loading spinner.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Does it stop?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's the next milestone.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What happens if the request fails?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The spinner develops a long-term relationship with the
+          customer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today: how to make a request, understand the result, and release the
+          customer from spinner marriage.</span
+        >
+      </p>
+      <h2 id="the-code-follows-the-story">The Code Follows the Story</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We know the underlying story now. Ask the
+          service for order 42. Receive an HTTP response. Read the body.
+          Interpret the data. Show something useful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means the code shouldn't be a collection of ceremonial words.
+          Each step exists because something real happens between our button and
+          our pizza status.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We'll use browser JavaScript and a fictional same-origin
+          endpoint at slash api slash orders slash 42. Same-origin means we're
+          contacting the same scheme, host, and port as the page. CORS gets its
+          own episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server must authenticate the customer and authorize access. Our
+          example assumes that server-side contract exists. The number 42 is not
+          a permission slip.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And this is plain JavaScript. No React, TypeScript, or framework is
+          necessary to explain the request.</span
+        >
+      </p>
+      <h2 id="a-promise-is-a-future-result">A Promise Is a Future Result</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Start with fetch returning a promise. Why not return the data?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because the data isn't available yet. The environment needs time to
+          perform the request. A promise represents an operation that is
+          pending, then either fulfilled with a value or rejected with a
+          reason.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So fetch gives my code something it can use to arrange what happens
+          later, instead of making the whole page stop while the network
+          thinks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The promise isn't the data itself. And fulfilled doesn't
+          mean “every business objective succeeded.” Fetch can fulfill with an
+          HTTP error response because a response arrived.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The result of the request mechanism and the result described by the
+          server are different layers. We've earned that distinction now.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Promises can be handled with then and catch. Async and await provide
+          another syntax for working with them. The underlying waiting hasn't
+          disappeared.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Await looks sequential. It doesn't turn the network into a
+          synchronous local function call.</span
+        >
+      </p>
+      <h2 id="async-and-await-belong-to-javascript">
+        Async and Await Belong to JavaScript
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Marking a function async makes it return a promise. Inside it, await
+          pauses that function's continuation until the awaited value settles.
+          The surrounding environment can keep doing other work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't freeze the browser. And it doesn't make CPU-heavy
+          JavaScript automatically move to another thread.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. It's a way to express asynchronous control flow, not a
+          general performance spell.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the awaited promise rejects, that behaves like an exception at the
+          await point, so a try/catch can handle it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. But if fetch fulfills with a 404 response, nothing has
+          rejected yet. We need to inspect the response ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where copying four lines without understanding the layers
+          creates very confident bugs.</span
+        >
+      </p>
+      <h2 id="a-small-request-function">A Small Request Function</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>async function getOrderSummary(signal) {
+  const response = await fetch(&quot;/api/orders/42&quot;, {
+    headers: { Accept: &quot;application/json&quot; },
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`Order request failed (${response.status}).`);
+  }
+
+  const order = await response.json();
+  const allowedStatuses = [&quot;preparing&quot;, &quot;baking&quot;, &quot;out-for-delivery&quot;, &quot;delivered&quot;];
+
+  if (
+    order === null ||
+    typeof order !== &quot;object&quot; ||
+    Array.isArray(order) ||
+    order.id !== 42 ||
+    !allowedStatuses.includes(order.status)
+  ) {
+    throw new Error(&quot;The order response had an unexpected shape.&quot;);
+  }
+
+  return order;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For listeners: start a request, reject unsuccessful HTTP responses,
+          parse the JSON, check the fields this small example relies on, and
+          return the checked result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's several meaningful stages. The browser performs the request.
+          Response.ok checks the HTTP status range. Json reads and parses the
+          body. Our own conditions check whether the value resembles the
+          contract we need.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Those checks are deliberately small, not a complete schema
+          for a production ordering system. If we use more fields, we need to
+          validate those too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The signal argument lets a caller request cancellation through an
+          AbortController. And the standalone word signal in the options object
+          is modern JavaScript property shorthand. It means the property named
+          signal gets the value of the variable named signal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good catch. The backtick string is a JavaScript template literal. It
+          inserts the response status into the error message. Neither syntax is
+          TypeScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And throw makes the async function's promise reject. A caller
+          awaiting getOrderSummary can then handle that failure.</span
+        >
+      </p>
+      <h2 id="why-two-awaits">Why Two Awaits?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We await fetch and then await response.json. Explain that without
+          saying “because the docs do it.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fetch provides a Response when status and headers are available. The
+          body may still be arriving. Reading it completely and parsing it is
+          another asynchronous operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the first wait is for the response object. The second wait is for
+          the body consumption and parsing result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Body consumption generally isn't something you casually repeat
+          on the same response. If you consume the body once, you can't assume
+          it's still unread for another parser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful when somebody adds a debugging read and accidentally empties
+          the body before the real code gets it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And our endpoint contract says success returns JSON. If we
+          were calling an operation returning 204 No Content, we'd handle that
+          outcome instead of blindly parsing an absent body.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The request helper should fit the actual operation. We aren't
+          building one magic function that assumes every successful response in
+          the universe is JSON.</span
+        >
+      </p>
+      <h2 id="what-the-options-mean">What the Options Mean</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fetch uses GET by default here. Accept says we can accept JSON. It
+          doesn't force a server to obey, and it doesn't prove the response is
+          valid.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For a request that sends JSON, we choose an appropriate method, set
+          Content-Type to application/json, and use JSON.stringify for the
+          body.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>const options = {
+  method: &quot;POST&quot;,
+  headers: {
+    &quot;Content-Type&quot;: &quot;application/json&quot;,
+    Accept: &quot;application/json&quot;
+  },
+  body: JSON.stringify({ menuItemId: &quot;margherita&quot;, quantity: 1 })
+};
+// Add the application's required authentication and CSRF protection.
+// Use only with an endpoint that defines and accepts this request.</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This card only illustrates options. It doesn't execute a purchase,
+          supply complete security, or define what the server must charge.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A real cookie-authenticated state change needs the application's CSRF
+          protections. We shouldn't copy this into checkout and assume
+          Content-Type is the security department.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And browser fetch includes same-origin credentials by
+          default where applicable. Cross-origin credential behavior has
+          additional options and rules; adding include everywhere isn't a
+          general fix.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We will earn that discussion in the authentication and CORS
+          episodes.</span
+        >
+      </p>
+      <h2 id="loading-is-a-user-visible-state">
+        Loading Is a User-Visible State
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the request function needs an interface. The user should know a
+          check is in progress and whether it finished.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A real button. A status region that can announce concise updates. A
+          result that doesn't rely on color alone. And we keep the rest of the
+          page usable.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;button id=&quot;check-order&quot; type=&quot;button&quot;&gt;Check order status&lt;/button&gt;
+&lt;p id=&quot;order-status&quot; role=&quot;status&quot; aria-atomic=&quot;true&quot;&gt;Ready to check.&lt;/p&gt;
+&lt;script src=&quot;order-status.js&quot; defer&gt;&lt;/script&gt;</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const button = document.querySelector(&quot;#check-order&quot;);
+const status = document.querySelector(&quot;#order-status&quot;);
+const labels = {
+  preparing: &quot;Your order is being prepared.&quot;,
+  baking: &quot;Your pizza is in the oven.&quot;,
+  &quot;out-for-delivery&quot;: &quot;Your order is out for delivery.&quot;,
+  delivered: &quot;Your order has been delivered.&quot;
+};
+
+if (button &amp;&amp; status) {
+  button.addEventListener(&quot;click&quot;, async function () {
+    button.disabled = true;
+    status.textContent = &quot;Checking your order…&quot;;
+    const controller = new AbortController();
+    const timer = setTimeout(function () { controller.abort(); }, 10000);
+
+    try {
+      const order = await getOrderSummary(controller.signal);
+      status.textContent = labels[order.status];
+    } catch (error) {
+      status.textContent = controller.signal.aborted
+        ? &quot;The check took too long. Please try again.&quot;
+        : &quot;We couldn't check your order. Please try again.&quot;;
+    } finally {
+      clearTimeout(timer);
+      button.disabled = false;
+    }
+  });
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners, pressing the button announces checking, starts a
+          bounded wait, and then presents the result or a useful failure
+          message. Finally restores the button whether the operation succeeded
+          or failed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The ten-second timeout is an illustrative product choice, not an HTTP
+          requirement. AbortController requests cancellation of the client
+          operation. It doesn't guarantee that remote work was undone.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This particular interaction retrieves data, so retrying doesn't
+          intentionally create another order. We would think much harder about
+          retries for a purchase.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The native disabled state prevents another click while this
+          one is in progress. The live status region announces the text update
+          without us moving focus into it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we should test this with keyboard and assistive technology in the
+          real page. Adding an ARIA attribute isn't the end of accessibility
+          work.</span
+        >
+      </p>
+      <h2 id="failure-has-several-addresses">Failure Has Several Addresses</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's diagnose four different failures. First, the device is offline.
+          Fetch can't provide the response. The operation rejects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Second, the server returns 403. Fetch provides the response; our
+          explicit status check throws. The app may need a more specific message
+          about permission.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third, the server returns an HTML login page after a redirect. The
+          final status may be successful, but parsing as JSON fails.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fourth, valid JSON arrives with an unsupported status field. Our
+          shape check rejects it. Different causes, same broad user-facing
+          failure in this intentionally small example.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A larger application should preserve useful diagnostic distinctions
+          internally and choose appropriate user messages. For example, an
+          expired session may invite sign-in, while a temporary outage may
+          invite retry later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But don't put stack traces, secrets, or private payloads into a
+          visible error box. The person checking dinner doesn't need our
+          infrastructure's autobiography.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Diagnostics for maintainers and communication for users have
+          different audiences.</span
+        >
+      </p>
+      <h2 id="a-race-you-can-lose-while-everything-succeeds">
+        A Race You Can Lose While Everything Succeeds
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our button disables during the check. What about a search field that
+          starts a request as the user types?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Two requests may finish out of order. The result for the older query
+          could arrive last and overwrite the newer result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Both servers succeeded. The application still shows the wrong
+          thing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You can cancel obsolete requests and, where necessary, track
+          which request is current so an old response cannot overwrite the
+          active state. Cancellation alone isn't a complete proof against every
+          race.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why asynchronous code requires thinking about time, not
+          merely writing await in the correct places.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A component framework can help organize state, and a data
+          library can manage caching and requests. But those tools embody
+          policies. We still need to understand which result belongs to which
+          interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the last known order status is useful, a refresh failure might
+          preserve it while saying it couldn't be updated. Our tiny example
+          replaces the message for clarity; a production design should choose
+          intentionally.</span
+        >
+      </p>
+      <h2 id="test-the-outcomes-not-just-the-happy-path">
+        Test the Outcomes, Not Just the Happy Path
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What would you check before calling this interaction finished?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Success, a slow response, a rejected request, an HTTP error, invalid
+          JSON, and valid JSON with an unexpected shape. I'd verify that the
+          button becomes usable again in every case.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also that the status announcement makes sense, keyboard focus remains
+          sensible, and unexpected order text isn't treated as executable
+          markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our example uses textContent and known labels. It doesn't insert the
+          response directly as HTML. Good default for plain status text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we don't need to hit a live paid service to exercise every UI
+          state. Controlled responses can test those branches.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important test isn't whether fetch appears in the source. It's
+          whether the application behaves honestly when the network isn't having
+          a perfect day.</span
+        >
+      </p>
+      <h2 id="read-the-timeline-not-just-the-indentation">
+        Read the Timeline, Not Just the Indentation
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's narrate our function in time. I call getOrderSummary. What
+          exists immediately?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A promise returned by the async function. The function begins running
+          and reaches its first await. While it waits for fetch, the caller can
+          await that promise or arrange other handling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I write const order equals getOrderSummary without await, order
+          holds the promise, not the eventual order data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's a common source of logging something unexpected or
+          trying to read a property before the value exists. The name order
+          doesn't transform the value into an order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then fetch fulfills, the function resumes, and we inspect the HTTP
+          status. If that check passes, we start reading the body and wait
+          again.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. After parsing and validation, return order fulfills the async
+          function's promise with that result. If a step throws and isn't
+          handled inside the function, the promise rejects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This lets us separate the data operation from the UI. The helper
+          doesn't need to know which paragraph shows the error; it reports a
+          result or failure to the caller.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That separation can make testing easier without introducing
+          a framework. One function knows the endpoint contract; another
+          coordinates the interaction on the page.</span
+        >
+      </p>
+      <h2 id="catch-and-finally-have-different-jobs">
+        Catch and Finally Have Different Jobs
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If catch handles errors, why also finally?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Catch runs when control reaches it through a thrown error in the try
+          block. Finally runs when that try-and-catch sequence exits, whether
+          the operation succeeded or failed. It's useful for cleanup that must
+          happen either way.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as clearing our timer and restoring the button. Otherwise the
+          happy path might work while the failed path leaves the button disabled
+          forever.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You could duplicate the cleanup in both success and failure
+          branches, but finally makes the shared responsibility visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the failure message should reflect what we know. If we timed out
+          waiting, we shouldn't claim the server is definitely offline. We know
+          our operation didn't complete within the chosen time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Good error wording avoids pretending we have information the
+          client doesn't possess.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What if an error happens inside the catch block itself?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can propagate too. Error-handling code is ordinary code and can
+          fail. Keep it simple, and avoid introducing complicated operations
+          that obscure the original problem.</span
+        >
+      </p>
+      <h2 id="two-requests-that-don-t-depend-on-each-other">
+        Two Requests That Don't Depend on Each Other
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the screen needs a public menu and the customer's order
+          summary. Neither request depends on the other's result. Must we wait
+          for one before starting the other?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. Starting both can avoid an unnecessary waterfall. But we should
+          decide how the UI behaves if one succeeds and the other fails.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Promise.all is a JavaScript tool for awaiting several
+          operations together. It rejects if one rejects, but it doesn't
+          automatically cancel the others. Promise.allSettled lets us inspect
+          each outcome separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those are language tools, not fetch options. And concurrency is
+          useful only when the operations are actually independent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If we need the result of the first request to construct the
+          second, pretending they're parallel doesn't remove that
+          dependency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we start fifty requests at once because parallel sounds
+          fast. We can overwhelm the service, hit rate limits, or create a bad
+          experience on a constrained device.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Coordination includes resource use, not just syntax.
+          Sometimes one endpoint returning the right representation is better
+          than a burst of small requests.</span
+        >
+      </p>
+      <h2 id="don-t-turn-every-failure-into-a-retry">
+        Don't Turn Every Failure Into a Retry
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The fetch failed. Should our helper automatically try again?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It depends on the operation and the failure. A transient retrieval
+          failure may justify a small, bounded retry policy. A forbidden request
+          probably needs a permission decision, not repeated identical
+          requests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a malformed body will remain malformed until we fix it. Waiting
+          half a second isn't schema validation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Rate-limit responses may provide retry guidance.
+          State-changing operations require particular care because the server
+          may have performed the action before the response was lost.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our status check is a read. A checkout submission is not
+          interchangeable just because both use fetch. A generic retry helper
+          can erase that distinction if we design it carelessly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Keep the operation's semantics visible. Where the API
+          supports idempotency keys, use them according to its contract. Don't
+          assume a header has magical effects the server never
+          implemented.</span
+        >
+      </p>
+      <h2 id="the-user-has-left-the-page">The User Has Left the Page</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What happens if the user navigates away while the request is in
+          progress?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The surrounding application may cancel the request or ignore its
+          result. In a component-based application, cleanup often ensures that
+          obsolete work doesn't update a view that no longer represents the
+          original request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our plain page example doesn't need a component lifecycle, but the
+          principle still applies: a response belongs to a particular
+          interaction and context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the user changes accounts or selects another order, an
+          old result shouldn't overwrite the new state. Track which request is
+          current and clear sensitive data appropriately when identity
+          changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's both correctness and privacy. Showing the previous customer's
+          order for a moment after an account switch is not merely a cosmetic
+          flicker.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Client state needs to respect the same identity boundaries as
+          the requests that populate it.</span
+        >
+      </p>
+      <h2 id="walk-through-a-failure-without-blaming-the-user">
+        Walk Through a Failure Without Blaming the User
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say a customer presses Check order on a train. The connection
+          drops. What should they experience?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Immediate feedback that a check started, then a clear failure or
+          timeout message. The action becomes available again. If we retain an
+          older status, identify it as the last known result rather than
+          pretending it was freshly retrieved.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if they use a screen reader, the message should be announced
+          appropriately without dragging focus away from their current task. A
+          retry button should have a meaningful label and remain keyboard
+          accessible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The browser's network condition isn't a moral failing.
+          “Invalid user request” would be a terrible message if the actual
+          problem was connectivity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the server instead returns a session-expired response, we can
+          explain that sign-in is needed and preserve relevant work. Different
+          failure, different recovery.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Our small example uses a general message because it introduces
+          the structure. A production interface should refine the outcomes it
+          can reliably distinguish.</span
+        >
+      </p>
+      <h2 id="the-helper-isn-t-a-whole-data-platform">
+        The Helper Isn't a Whole Data Platform
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Should we immediately turn getOrderSummary into a configurable
+          request factory with eighteen options?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. We have one small operation. Keep it understandable. Repeated,
+          genuinely shared requirements may later justify an abstraction or a
+          maintained data-fetching library.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as coordinating caching, deduplication, background refresh, and
+          many screens. But adding those before they're needed can make one
+          request harder to understand than the network itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Learn the underlying behavior first. Then a library becomes
+          a set of useful policies you can evaluate rather than a curtain hiding
+          the entire process.</span
+        >
+      </p>
+      <h2 id="the-incantation-becomes-a-story">
+        The Incantation Becomes a Story
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fetch starts a request. A promise represents its future result. Async
+          and await let us write the sequence clearly. The response has a status
+          and a body; those need separate handling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Parsing JSON gives us values, not permission to trust them. Runtime
+          checks establish the shape we need. The UI communicates waiting,
+          success, and failure, and cleans up after all three.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's the mental model behind the familiar few lines.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My spinner now has a retirement plan.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, the other side. What code receives the request and builds
+          the response?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A server written by people who also occasionally forget the finally
+          block.</span
+        >
+      </p>
+    </main>
+    <footer>4 code cards · 0 terminal cards</footer>
+  </body>
+</html>

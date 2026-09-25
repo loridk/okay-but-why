@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 2: Why Did We Need Web APIs? — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: Why Did We Need Web APIs?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/1b283cc2-5a72-4753-98a6-e26b891b448b"
+      ></script>
+      <div class="redcirclePlayer-1b283cc2-5a72-4753-98a6-e26b891b448b"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-server-already-did-things"
+            >The Server Already Did Things</a
+          >
+        </li>
+        <li>
+          <a href="#follow-a-form-submission">Follow a Form Submission</a>
+        </li>
+        <li>
+          <a href="#the-page-was-a-package-deal">The Page Was a Package Deal</a>
+        </li>
+        <li>
+          <a href="#ajax-was-a-pattern-not-a-new-planet"
+            >AJAX Was a Pattern, Not a New Planet</a
+          >
+        </li>
+        <li>
+          <a href="#what-actually-changed-for-order-42"
+            >What Actually Changed for Order 42?</a
+          >
+        </li>
+        <li>
+          <a href="#why-ask-for-data-without-the-page"
+            >Why Ask for Data Without the Page?</a
+          >
+        </li>
+        <li>
+          <a href="#one-backend-several-clients"
+            >One Backend, Several Clients</a
+          >
+        </li>
+        <li>
+          <a href="#sharing-logic-does-not-mean-returning-everything"
+            >Sharing Logic Does Not Mean Returning Everything</a
+          >
+        </li>
+        <li><a href="#separation-has-costs">Separation Has Costs</a></li>
+        <li>
+          <a href="#no-separate-domain-required">No Separate Domain Required</a>
+        </li>
+        <li>
+          <a href="#a-small-before-and-after-story"
+            >A Small Before-and-After Story</a
+          >
+        </li>
+        <li>
+          <a href="#what-does-the-server-know-about-the-screen"
+            >What Does the Server Know About the Screen?</a
+          >
+        </li>
+        <li>
+          <a href="#when-the-extra-interface-isn-t-worth-it"
+            >When the Extra Interface Isn't Worth It</a
+          >
+        </li>
+        <li><a href="#the-useful-shift">The Useful Shift</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I have a radical architecture proposal.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I'm already tired.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A user requests a page. We run some server code. That code gets the
+          data, puts it into HTML, and sends the HTML to the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's the website I built in PHP.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It has excellent initial content delivery.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Still the website I built in PHP.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could give the approach a name and announce that it solves browser
+          rendering overhead.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you sell my old website back to me with a subscription, I'm
+          changing the Wi-Fi password.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today's subject: if that approach worked, why did we start asking
+          servers for data separately?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A question that does not require setting the old approach on fire. I
+          like it already.</span
+        >
+      </p>
+      <h2 id="the-server-already-did-things">The Server Already Did Things</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Last episode, API stopped meaning a
+          mysterious building somewhere on the internet. It's an interface code
+          can use. Today we're narrowing the question: why web APIs?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we should avoid a misleading history. There wasn't an era when
+          servers could only send HTML, followed by someone inventing data.
+          Systems exchanged structured information before browser applications
+          became common.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are following a familiar web developer's experience, not claiming
+          that a JavaScript library invented computers talking to each
+          other.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Start with our fictional Nervous Robot Pizza Delivery
+          website. A customer opens the page for order 42.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In the traditional server-rendered version, a request reaches the
+          server. The server identifies the requested order, checks whether this
+          customer can see it, reads its status, and builds a page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The response contains HTML saying the pizza is in the oven.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser understands the HTML and presents it. We can send CSS and
+          images and enhance the experience with JavaScript. Server-rendered
+          does not mean there are no styles or interactions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And dynamic doesn't necessarily mean generated in the browser. That
+          HTML can be built using fresh database information on the
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you. A PHP page wasn't a stone tablet. We had variables.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Several, allegedly.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And databases. Occasionally even indexes. It was a rich cultural
+          period.</span
+        >
+      </p>
+      <h2 id="follow-a-form-submission">Follow a Form Submission</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What happens if the customer needs to update delivery
+          instructions?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There can be an HTML form. A label, a text field, a submit button.
+          The form says where to send the submission and which method to use.
+          The browser sends the data. Server code validates it, checks
+          permission, and saves an allowed change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Then it returns another page?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can. A common successful pattern redirects to a page showing the
+          result, which also helps avoid casually repeating the same form
+          submission when the user refreshes. Validation failures can return a
+          page with the user's input and helpful errors.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the browser already knows how to collect form controls and send a
+          request. We don't have to write fetch for a form to be capable of
+          doing anything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Correct. And a server receiving an ordinary form still needs to
+          distrust its input. The fact that our page offered a polite text field
+          doesn't prevent somebody from sending an entirely different
+          request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That boundary was always there.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Neither validation nor authorization began with JSON. If I let
+          someone change somebody else's order in 2004, it was still a bug. It
+          just had a gradient button.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;form action=&quot;/orders/42/instructions&quot; method=&quot;post&quot;&gt;
+  &lt;label for=&quot;instructions&quot;&gt;Delivery instructions&lt;/label&gt;
+  &lt;textarea id=&quot;instructions&quot; name=&quot;instructions&quot;&gt;&lt;/textarea&gt;
+  &lt;!-- A real cookie-authenticated form needs the application's CSRF protection. --&gt;
+  &lt;button type=&quot;submit&quot;&gt;Save instructions&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For listeners, that card has a labeled field and a button. The
+          browser handles the submission. It's illustrative markup, not a
+          complete secured ordering system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server must verify the customer, enforce access to order 42,
+          validate the field, and protect the state-changing request against
+          forgery. CSRF means a malicious site trying to make the browser send
+          an unwanted authenticated request. We'll revisit credentials
+          later.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The action path is our fictional route, not a feature supplied by
+          HTML. Someone has to implement its behavior on the server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which will remain true after we change the response format. That's
+          the thread I want people to hold onto.</span
+        >
+      </p>
+      <h2 id="the-page-was-a-package-deal">The Page Was a Package Deal</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In that version, the server sends both the information and
+          instructions for presenting it as a document. The order status arrives
+          inside the page's markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It might include the header, navigation, account links, an order
+          summary, and a footer explaining that our fictional restaurant's
+          opening hours are governed by existential dread.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A complete document can be exactly what a visitor needs. But now
+          imagine the customer wants to check the status repeatedly while
+          keeping the rest of the page in place.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A full navigation could ask the server for the whole document again,
+          even though the thing we care about is one small status message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser might reuse cached assets, so we shouldn't pretend it
+          downloads every image again every time. Still, a document navigation
+          and a targeted update are different interactions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And sometimes the page has unfinished work. The customer has
+          scrolled, opened a section, or started typing. Rebuilding their entire
+          view to update one fact can be disruptive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's one pressure: ask for the changing information without
+          replacing the whole document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another pressure is just responsiveness. While we're waiting on that
+          information, maybe the rest of the page can remain usable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But “can remain usable” is a design possibility, not something
+          granted automatically by an acronym.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have used asynchronous applications that were asynchronously
+          terrible.</span
+        >
+      </p>
+      <h2 id="ajax-was-a-pattern-not-a-new-planet">
+        AJAX Was a Pattern, Not a New Planet
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is where AJAX enters our story. The name expands to Asynchronous
+          JavaScript and XML.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >People encounter that name now and wonder whether XML is compulsory.
+          It isn't. The historical name survived a much broader range of
+          response formats.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >AJAX describes a technique: JavaScript requests information, and the
+          page can update without a full document navigation. XMLHttpRequest was
+          a major browser interface for doing that. Fetch is a newer interface
+          commonly used for browser requests now.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And those browser APIs are the mechanisms our code uses to send
+          requests. The application endpoint on the other end is a separate
+          interface, with its own purpose.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. One API helps you communicate with another. Our first
+          episode's tiny forklift has found employment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Please explain asynchronous before it becomes wallpaper.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In this context, our code starts an operation and can continue
+          without waiting synchronously for the remote answer. When the result
+          is available, code can handle it. We don't freeze the whole
+          interaction while the network does its work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But a response arriving later creates coordination work. Loading
+          indicators. Failure messages. Maybe two responses arriving in a
+          different order than the requests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We gained flexibility and inherited responsibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, this doesn't mean JavaScript suddenly performs every operation
+          simultaneously. We're describing how waiting for an external result
+          fits into the program. Promises and async/await get their own
+          practical explanation in Episode Six.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good boundary. Today we need the reason, not a field trip through the
+          entire event loop.</span
+        >
+      </p>
+      <h2 id="what-actually-changed-for-order-42">
+        What Actually Changed for Order 42?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's run the status check again. The original page has already
+          loaded. The customer presses Check order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JavaScript starts a request for the current status. The server still
+          verifies access, finds the order, and decides which information may be
+          returned.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server did not stop being a server. It still performs the trusted
+          work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. But this response can contain only the information our
+          interface needs. Our code receives it and updates the status
+          area.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the response is structured data, the browser code decides how that
+          data becomes text and markup. If the response is an HTML fragment, the
+          server may already have done much of that presentation work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. AJAX doesn't require returning JSON. Some systems deliberately
+          request rendered HTML fragments. Others request structured data. Both
+          can support targeted page updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's important because “the choice is full page or giant JavaScript
+          application” is a false binary. There are smaller steps between
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We can enhance one interaction on an otherwise
+          server-rendered site.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And for accessibility, the existing page doesn't necessarily announce
+          that a quiet patch of text changed. We need an understandable loading
+          state and an appropriate way to announce the result when
+          necessary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also sensible focus behavior. Updating order status isn't a reason to
+          throw keyboard focus back to the top of the document.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should a failed refresh erase the last known status and leave an
+          empty box. “Couldn't refresh; last checked at this time” tells the
+          customer what happened.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That is part of the product behavior we take on when our code manages
+          the interaction.</span
+        >
+      </p>
+      <h2 id="why-ask-for-data-without-the-page">
+        Why Ask for Data Without the Page?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Now the pizza business wants a mobile app.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Of course it does. We have successfully delivered one fictional pizza
+          and immediately diversified.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The mobile app also needs to know that order 42 is in the oven. Does
+          it need our website's header and footer?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. Its interface is different. It might use native controls and its
+          own navigation. Parsing our website's HTML to extract a status would
+          tie it to presentation details.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We change the website's layout and accidentally break the app.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because the app treated a visual structure as though it were a stable
+          data contract. This is the problem with scraping a page you don't
+          control, too. A cosmetic change may become a data outage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A deliberately designed web API can expose the order information with
+          a supported structure. The website and mobile app can both use that
+          information, each presenting it appropriately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We're separating a shared fact from one specific way of displaying
+          the fact.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The status code might be preparing, baking, or
+          out-for-delivery. Each client can map that into its own presentation,
+          provided the meanings are documented.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Careful with “code” there. Status code in our business data, like
+          baking, isn't necessarily an HTTP status code. We'll meet the HTTP
+          kind next episode.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good catch. Same ordinary word, two layers. Our order status
+          describes the pizza. The HTTP status describes the request's
+          outcome.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The pizza can be baking while the request succeeds. We are not
+          assigning the oven a 200 response.</span
+        >
+      </p>
+      <h2 id="one-backend-several-clients">One Backend, Several Clients</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Add a support dashboard. Staff need to inspect allowed order
+          information. Add an integration that shows a delivery estimate on an
+          approved partner's service. Add a scheduled process generating a daily
+          report.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They are all clients in the sense that they request a capability.
+          Client doesn't exclusively mean browser, customer, or person paying an
+          invoice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A client can be another server process. It can run without a
+          human looking at a screen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The backend is the part handling our server-side responsibilities:
+          business rules, trusted decisions, persistence, and interfaces. It is
+          not necessarily one machine or one program.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And frontend describes the user-facing application. In a browser
+          application, some frontend code runs on the user's device. With server
+          rendering, producing the user interface can involve server work
+          too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So those labels describe responsibilities more usefully than they
+          describe a neat physical map of where every line runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. For our example, the important split is between consumers of
+          order information and the service responsible for managing it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That shared service can enforce “orders cannot be edited after
+          dispatch” in one trusted place. The website can communicate the rule,
+          but it cannot be the only place enforcing it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Otherwise the mobile app, a script, or a manually crafted request
+          could bypass the website's disabled button.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The disabled button is helpful feedback. It is not a security
+          checkpoint with a tiny uniform.</span
+        >
+      </p>
+      <h2 id="sharing-logic-does-not-mean-returning-everything">
+        Sharing Logic Does Not Mean Returning Everything
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Wouldn't the easiest API just return the whole database row?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Easiest for approximately forty-five seconds. What's in that
+          row?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Order ID, current status, customer address, internal notes, maybe
+          payment-related references.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we have several different disclosure decisions disguised as one
+          convenient object. A public tracking view should not inherit every
+          column someone later adds to a database table.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So we choose the fields intentionally.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. An API response is a representation designed for an allowed use.
+          It needn't mirror storage. And different callers can have different
+          permissions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The support dashboard may need information the customer status widget
+          doesn't. That doesn't mean every client gets the superset and politely
+          hides it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Once private data reaches the browser, CSS cannot make it secret
+          again. Hiding an element is presentation, not access control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is also another benefit of a boundary. We can reorganize
+          internal storage while keeping the supported response stable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Provided we actually preserve the meaning, not merely the property
+          names. Changing estimatedMinutes from “until arrival” to “until the
+          driver leaves” would be a nasty surprise with perfectly valid
+          JSON.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And terrible dinner planning.</span>
+      </p>
+      <h2 id="separation-has-costs">Separation Has Costs</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So far, independent data sounds wonderful. What's the bill?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client code now needs to understand the response contract and manage
+          the interaction. A separately deployed frontend and backend may need
+          coordinated changes. A network request introduces waiting and failure
+          possibilities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a client might be old. The website updates when we deploy it, but
+          a mobile app may remain installed for months without an update.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Changing a field or removing an operation can break
+          consumers you don't update at the same moment. Compatibility becomes
+          an ongoing responsibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why “we separated the frontend and backend” doesn't mean
+          “the teams never need to talk again.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It means they need a reliable agreement about the boundary. The
+          separation can support independent work, but it's not a treaty ending
+          communication.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What about performance? Is fetching data always faster than fetching
+          HTML?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. A smaller response can help. But you may introduce extra round
+          trips, more client code, or a sequence where data can't be requested
+          until JavaScript loads. An efficient server-rendered page might
+          deliver useful content earlier.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a very chatty API can require six requests to reconstruct what
+          one page response already contained.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Measure the actual interaction. The format alone doesn't
+          settle performance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My favorite architecture benchmark: what happened to the human trying
+          to use it?</span
+        >
+      </p>
+      <h2 id="no-separate-domain-required">No Separate Domain Required</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's a common picture of a frontend on one domain and an API on
+          another. That can be an arrangement, but it isn't a requirement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our website could have ordinary pages at some paths and data
+          endpoints at others, served from the same application and
+          origin.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. An origin is based on scheme, host, and port; we'll give that
+          proper attention in the CORS episode. For now, different kinds of
+          responses don't demand different companies, repositories, or
+          machines.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I can add a route returning data to a PHP application. I don't have
+          to acquire Node to earn the right to send JSON.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. PHP, JavaScript on the server, Python, Ruby, Java, and
+          many other languages can implement web APIs. HTTP doesn't ask what
+          language wrote the response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The two sides agree on the messages. Their internal language choices
+          can differ.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is one reason web APIs are useful for integrations. The partner
+          doesn't have to use our application framework to use our supported
+          interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should our API documentation require the partner to understand
+          our folder structure. “It's obvious if you read the controller” is not
+          a friendly external contract.</span
+        >
+      </p>
+      <h2 id="a-small-before-and-after-story">
+        A Small Before-and-After Story
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's compare two versions of one feature, without declaring a
+          winner. In version one, the customer follows a link to check the
+          order. The server returns a complete page with the latest
+          status.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Benefits: ordinary navigation, useful HTML, fewer custom interaction
+          responsibilities. It can be robust and straightforward. The trade is
+          that checking again involves another document navigation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In version two, the customer is already on the order page. A button
+          starts a request for status data. JavaScript updates a clearly
+          identified status region.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Benefits: the surrounding page stays in place, we can tailor
+          feedback, and the same data operation may support another client.
+          Costs: custom loading, error handling, update announcements, and
+          coordination between response data and display.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Both versions need permission checks and truthful order information.
+          The business problem hasn't changed. The distribution of work
+          has.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And there's a hybrid: a server-rendered page that works normally,
+          enhanced with a targeted update when JavaScript is available and
+          appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Progressive enhancement means building on a useful baseline
+          rather than making the baseline an empty apology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But we still test the actual fallback. Writing “progressive
+          enhancement” in a README doesn't cause a form to submit
+          correctly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Our README elves remain on strike.</span>
+      </p>
+      <h2 id="what-does-the-server-know-about-the-screen">
+        What Does the Server Know About the Screen?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we return data, does the server become completely unaware of
+          presentation?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not necessarily. Designing useful responses requires understanding
+          consumers' needs. An endpoint may be tailored to a screen or a class
+          of clients. The question is which coupling is intentional.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So separation doesn't mean purity. It means we can reason about who
+          owns which decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Suppose the website needs a small public order summary, and
+          staff need a detailed internal view. We might design distinct
+          operations instead of making one universal response do
+          everything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we don't need to force the mobile app to reproduce the website's
+          page layout just because the backend once served that page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. At the same time, clients shouldn't each reinvent critical
+          business calculations. If the authoritative delivery charge is
+          calculated on the server, an attractive client-side estimate must not
+          become the only amount we trust.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Presentation can differ while authoritative rules stay consistent. My
+          app can show a compact price; your site can show a detailed breakdown.
+          Neither gets to charge whatever a stranger typed into a request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a good example of what “shared backend” buys us when designed
+          carefully.</span
+        >
+      </p>
+      <h2 id="when-the-extra-interface-isn-t-worth-it">
+        When the Extra Interface Isn't Worth It
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's rescue a small website before somebody turns it into eight
+          services. We have a public menu, an opening-hours page, and a basic
+          contact form. Do we need a separately consumed data API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Maybe not. If server-rendered pages meet the requirements and no
+          other client needs the data, extra separation may create more work
+          than value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The fact that an API could exist is not a requirement that it should
+          exist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Conversely, if a mobile app and several approved integrations
+          genuinely need stable access to order operations, a web API may
+          directly solve that need.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or if one page needs a live-ish status update, a small endpoint can
+          solve that specific need without converting the entire site into a
+          different architecture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We can choose the smallest useful boundary and expand when
+          the requirements justify it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like that “why” has an answer besides “the diagram looks
+          modern.”</span
+        >
+      </p>
+      <h2 id="the-useful-shift">The Useful Shift</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's the shift this episode is trying to make visible. A
+          traditional web interaction often asks the server for a presentation
+          of information: a document to show.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A data-oriented web API lets software ask for information or an
+          operation through a supported contract, so the caller can use the
+          result in its own context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That context might be a webpage update, a mobile screen, a support
+          workflow, or another automated system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We wanted smaller updates, shared capabilities, and consumers that
+          didn't all want the same HTML. APIs let us separate those needs where
+          it was useful.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we still need the parts that made the older system work:
+          trustworthy server behavior, validation, access checks, understandable
+          responses, and an experience designed for people.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My PHP application was already doing meaningful server work. The
+          change wasn't “we discovered backends.” It was “more callers need a
+          stable way to use the work without accepting this particular
+          page.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's why the traditional web background helps explain the
+          evolution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. My experience has survived another rebranding
+          exercise.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next episode, we follow one actual request. URL, method, headers,
+          body, response. What is happening underneath fetch?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A tour of the delivery vehicle. No forklift license required.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>You really are keeping the loading dock.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's the only piece of infrastructure we haven't overcomplicated
+          yet.</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

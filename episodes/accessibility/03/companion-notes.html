@@ -1,0 +1,21 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<h3>Keyboard quick reference</h3>
+<p>These are common desktop web patterns, not universal commands for every component. Browser, operating-system, and assistive-technology settings can affect key handling.</p>
+<dl>
+<dt><strong>Tab / Shift+Tab</strong></dt><dd>Move forward/backward through the sequential focus order. Composite widgets may have one entry point rather than a stop on every item.</dd>
+<dt><strong>Enter</strong></dt><dd>Activate a focused link or button. Form submission behavior also depends on the form and focused control.</dd>
+<dt><strong>Space</strong></dt><dd>Activate a native button or toggle a checkbox; on an ordinary link or document it typically scrolls rather than activates.</dd>
+<dt><strong>Escape</strong></dt><dd>Commonly dismiss a dialog or popup when that pattern supports dismissal. A custom component must implement its intended behavior.</dd>
+<dt><strong>Arrow keys</strong></dt><dd>Navigate within appropriate controls such as radio groups, tabs, and menus. Use the component's established pattern; do not intercept arrows across the whole page.</dd>
+</dl>
+<h3>Focus terms and tabindex</h3>
+<ul><li><strong>Keyboard focus:</strong> the current input target; not necessarily the screen reader's reading cursor.</li><li><strong>Focus indicator:</strong> the visible marker showing that target.</li><li><strong>Focus order:</strong> the meaningful route between targets.</li><li><strong>Programmatic focus:</strong> code moving focus for a justified workflow transition.</li><li><code>tabindex="0"</code>: participates in normal sequential navigation; supplies neither role nor activation.</li><li><code>tabindex="-1"</code>: generally outside sequential navigation but available as a programmatic focus destination; not disabled or hidden.</li><li><strong>Positive tabindex:</strong> creates a competing priority order; fix document structure instead wherever possible.</li></ul>
+<h3>Dialog and dynamic-interface checks</h3>
+<ol><li>Opening a modal moves focus to an appropriate place inside it.</li><li>Focus stays within the active modal while it is open; background interaction is unavailable.</li><li>A clear keyboard-operable close control and appropriate Escape behavior provide an exit.</li><li>Closing returns focus to the opener or a logical next destination if it no longer exists.</li><li>Names and instructions are available. The close control survives zoom and small viewports.</li><li>Routine asynchronous updates do not steal focus.</li><li>Client-side navigation updates context deliberately: title, structure, and an appropriate focus strategy.</li></ol>
+<p>Native <code>dialog.showModal()</code> provides important modal behavior; <code>show()</code> and a bare <code>open</code> attribute are not equivalent. Custom <code>role="dialog"</code> and <code>aria-modal="true"</code> do not implement focus handling or inertness.</p>
+<h3>One useful keyboard journey</h3>
+<p>Reload → activate skip link → complete fields → open/close delivery options → trigger errors → correct errors → open/close address dialog → complete a simulated order. Repeat relevant navigation backward. Record the exact key, focus location, expected result, actual result, and environment for failures.</p>
+<h3>Resources</h3>
+<ul><li><a href="https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/">APG: Keyboard Interface</a></li><li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">APG: Modal Dialog Pattern</a></li><li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/">APG: Tabs Pattern</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/tabindex">MDN: tabindex</a></li></ul>
+</section>

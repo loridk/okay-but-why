@@ -25,7 +25,7 @@ PARISA: Fair.
 
 PARISA: Injection.
 
-The family of bugs where the application confuses untrusted data with instructions.
+PARISA: The family of bugs where the application confuses untrusted data with instructions.
 
 JULES: Exactly.
 
@@ -34,13 +34,13 @@ JULES: Exactly.
 
 JULES: A system builds a command in some language.
 
-SQL.
+JULES: SQL.
 
-Shell.
+JULES: Shell.
 
-LDAP query.
+JULES: LDAP query.
 
-Template expression.
+JULES: Template expression.
 
 PARISA: Attacker controls part of the string.
 
@@ -55,15 +55,15 @@ JULES: Same conceptual family as XSS, different interpreter.
 
 PARISA: Classic example.
 
-Unsafe query concatenation:
+PARISA: Unsafe query concatenation:
 
-`SELECT * FROM users WHERE name = '` plus `name` plus `'`.
+PARISA: `SELECT * FROM users WHERE name = '` plus `name` plus `'`.
 
 JULES: Attacker provides input containing SQL syntax.
 
 PARISA: Maybe changes the WHERE clause.
 
-Maybe adds a second statement if the driver permits it.
+PARISA: Maybe adds a second statement if the driver permits it.
 
 JULES: Exactly.
 
@@ -80,13 +80,13 @@ JULES: The primary defense is parameterization.
 
 PARISA: Prepared statements.
 
-Placeholders.
+PARISA: Placeholders.
 
-Bound parameters.
+PARISA: Bound parameters.
 
 JULES: Right.
 
-The database receives query structure separately from values.
+JULES: The database receives query structure separately from values.
 
 PARISA: So input like `' OR 1=1 --` remains a value instead of becoming SQL syntax.
 
@@ -137,9 +137,9 @@ JULES: Any interpreter with structured syntax can be abused if data is inserted 
 
 PARISA: LDAP filters.
 
-NoSQL query objects.
+PARISA: NoSQL query objects.
 
-XPath.
+PARISA: XPath.
 
 JULES: Template engines.
 
@@ -158,7 +158,7 @@ PARISA: Important distinction from simply putting attacker text into a template 
 
 JULES: Yes.
 
-Safe variable interpolation is different from treating user input as the template itself.
+JULES: Safe variable interpolation is different from treating user input as the template itself.
 
 
 ## Input Validation Helps, But It Is Not the Primary Boundary
@@ -177,7 +177,7 @@ JULES: Exactly.
 
 PARISA: Input validation enforces business expectations.
 
-Parameterization enforces code/data separation.
+PARISA: Parameterization enforces code/data separation.
 
 JULES: Beautiful distinction.
 
@@ -201,7 +201,7 @@ JULES: They may reveal table names, syntax, framework details, or query structur
 
 PARISA: Developers need useful logs.
 
-Users need safe error messages.
+PARISA: Users need safe error messages.
 
 JULES: Exactly.
 
@@ -241,7 +241,7 @@ JULES: Yep.
 
 PARISA: We intend attacker input to be data.
 
-The interpreter sees part of it as instructions.
+PARISA: The interpreter sees part of it as instructions.
 
 JULES: Exactly.
 
@@ -258,7 +258,7 @@ JULES: It changes how the database parses the operation.
 
 PARISA: The SQL structure is parsed as SQL.
 
-The values are supplied separately.
+PARISA: The values are supplied separately.
 
 JULES: Exactly.
 
@@ -275,11 +275,11 @@ JULES: Correct.
 
 PARISA: What about dynamic sorting?
 
-User chooses `name`, `date`, or `price`.
+PARISA: User chooses `name`, `date`, or `price`.
 
 JULES: Values can be parameterized easily.
 
-Identifiers like column names often cannot be parameterized the same way.
+JULES: Identifiers like column names often cannot be parameterized the same way.
 
 PARISA: So whitelist allowed identifiers.
 
@@ -325,7 +325,7 @@ JULES: Right.
 
 PARISA: Data enters database as text.
 
-Later an admin report builds dynamic SQL using that stored value.
+PARISA: Later an admin report builds dynamic SQL using that stored value.
 
 JULES: And the payload becomes active then.
 
@@ -344,11 +344,11 @@ PARISA: What if the application doesn’t print database errors or query results
 
 JULES: Injection can still exist.
 
-**Blind SQL injection** infers information from application behavior.
+JULES: **Blind SQL injection** infers information from application behavior.
 
 PARISA: True condition returns one response.
 
-False condition returns another.
+PARISA: False condition returns another.
 
 JULES: Or time-based techniques cause measurable delays.
 
@@ -363,7 +363,7 @@ PARISA: Shell execution has subtleties too.
 
 JULES: Yes.
 
-Avoiding a shell eliminates many metacharacter parsing problems.
+JULES: Avoiding a shell eliminates many metacharacter parsing problems.
 
 PARISA: But an attacker-controlled argument might still change the behavior of the invoked program.
 
@@ -399,11 +399,11 @@ PARISA: Good to distinguish categories without pretending they are unrelated.
 
 PARISA: We just did XSS.
 
-How is server-side template injection different?
+PARISA: How is server-side template injection different?
 
 JULES: XSS reaches the browser’s JavaScript or HTML execution context.
 
-Server-side template injection reaches the template engine on the server.
+JULES: Server-side template injection reaches the template engine on the server.
 
 PARISA: Which may have much more dangerous server privileges.
 
@@ -422,7 +422,7 @@ PARISA: Does insecure deserialization fit this same mental family?
 
 JULES: Adjacent.
 
-The application treats attacker-controlled serialized data as trusted object structure.
+JULES: The application treats attacker-controlled serialized data as trusted object structure.
 
 PARISA: Which can sometimes trigger unexpected code paths or object construction behavior.
 
@@ -441,7 +441,7 @@ JULES: If special filter syntax is concatenated unsafely, input may change the s
 
 PARISA: Same disease.
 
-Different interpreter.
+PARISA: Different interpreter.
 
 JULES: Exactly.
 
@@ -452,7 +452,7 @@ PARISA: I remember the phase where people said MongoDB meant SQL injection was g
 
 JULES: SQL injection, specifically, perhaps.
 
-Injection as a class? No.
+JULES: Injection as a class? No.
 
 PARISA: If an API accepts JSON and the code passes unvalidated objects directly into a query, attackers may inject query operators.
 
@@ -488,7 +488,7 @@ PARISA: Validation and safe execution APIs solve different layers.
 
 PARISA: Let’s make least privilege concrete.
 
-Application only needs SELECT, INSERT, UPDATE on three tables.
+PARISA: Application only needs SELECT, INSERT, UPDATE on three tables.
 
 JULES: Don’t connect as a database superuser.
 
@@ -542,7 +542,7 @@ JULES: JavaScript template literals made strings nicer, not safer as query build
 
 PARISA: Thank you.
 
-Backticks are not a security feature.
+PARISA: Backticks are not a security feature.
 
 JULES: Wait, That’s Just JavaScript: template literals are JavaScript syntax, not query parameterization.
 

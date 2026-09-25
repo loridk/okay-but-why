@@ -1,0 +1,1271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: JSON: Why Are We Passing This Stuff Around Everywhere? —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: JSON: Why Are We Passing This Stuff Around Everywhere?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/e7b869bf-4f73-41e4-b6c2-5498f960c5d8"
+      ></script>
+      <div class="redcirclePlayer-e7b869bf-4f73-41e4-b6c2-5498f960c5d8"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#you-cannot-mail-a-memory-address"
+            >You Cannot Mail a Memory Address</a
+          >
+        </li>
+        <li><a href="#object-here-text-there">Object Here, Text There</a></li>
+        <li><a href="#what-json-can-describe">What JSON Can Describe</a></li>
+        <li>
+          <a href="#wait-that-s-not-quite-javascript"
+            >Wait, That's Not Quite JavaScript</a
+          >
+        </li>
+        <li><a href="#stringify-makes-choices">Stringify Makes Choices</a></li>
+        <li><a href="#why-not-xml">Why Not XML?</a></li>
+        <li><a href="#text-becomes-bytes">Text Becomes Bytes</a></li>
+        <li>
+          <a href="#parsing-is-not-validation">Parsing Is Not Validation</a>
+        </li>
+        <li>
+          <a href="#numbers-can-survive-the-format-and-still-lose-precision"
+            >Numbers Can Survive the Format and Still Lose Precision</a
+          >
+        </li>
+        <li>
+          <a href="#missing-null-and-empty-aren-t-interchangeable"
+            >Missing, Null, and Empty Aren't Interchangeable</a
+          >
+        </li>
+        <li>
+          <a href="#don-t-execute-the-delivery-instructions"
+            >Don't Execute the Delivery Instructions</a
+          >
+        </li>
+        <li>
+          <a href="#inspect-the-value-at-each-stage"
+            >Inspect the Value at Each Stage</a
+          >
+        </li>
+        <li>
+          <a href="#the-server-doesn-t-need-to-speak-javascript"
+            >The Server Doesn't Need to Speak JavaScript</a
+          >
+        </li>
+        <li>
+          <a href="#a-date-is-an-agreement-about-time"
+            >A Date Is an Agreement About Time</a
+          >
+        </li>
+        <li>
+          <a href="#choose-a-public-shape-on-purpose"
+            >Choose a Public Shape on Purpose</a
+          >
+        </li>
+        <li>
+          <a href="#when-json-isn-t-the-best-parcel"
+            >When JSON Isn't the Best Parcel</a
+          >
+        </li>
+        <li>
+          <a href="#follow-the-whole-conversion">Follow the Whole Conversion</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The server returns a JavaScript object.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does it?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It returns JSON.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Those aren't the same sentence.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Fine. The server returns a textual representation of structured data
+          that our JavaScript can parse into a value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Much better. Slightly less marketable.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Our slogan needs a larger mug.</span>
+      </p>
+      <h2 id="you-cannot-mail-a-memory-address">
+        You Cannot Mail a Memory Address
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Today, JSON. Not an architectural style,
+          not a protocol, and not a small person employed by your backend.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It stands for JavaScript Object Notation. It's a text-based data
+          interchange format. The problem it solves starts before any curly
+          braces: one program has data, and another program needs a
+          representation it can interpret.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In one JavaScript process, I can pass an object reference to a
+          function. Both pieces of code are operating in that environment. A PHP
+          server on another machine doesn't share that object reference.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A reference to memory in your process isn't a portable
+          description of the order. We need to encode the information into
+          something that can be transferred or stored.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Serialization means turning data into that transferable
+          representation. Deserialization means interpreting the representation
+          back into values.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It isn't necessarily text. Binary formats serialize data too.
+          JSON happens to use text, which is convenient to inspect and widely
+          supported.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A packing list, not the original living room. If I serialize a chair,
+          I haven't given the receiving program the actual chair from my
+          memory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we should choose what goes on the packing list. Sending every
+          private field merely because an object has it isn't an API design
+          strategy.</span
+        >
+      </p>
+      <h2 id="object-here-text-there">Object Here, Text There</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>const order = { id: 42, status: &quot;baking&quot;, estimatedMinutes: 18 };
+const text = JSON.stringify(order);
+const receivedOrder = JSON.parse(text);</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is JavaScript, not TypeScript. Const declares bindings we won't
+          reassign. The first value is a JavaScript object. Stringify produces a
+          string containing JSON text. Parse reads that text and produces a
+          JavaScript value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners: we had an object, made a textual description, and read
+          that description back into a new value. No HTTP request is happening
+          in that card.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. JSON can be used in files, messages, configuration, and other
+          places. Its relationship with HTTP is common, not exclusive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And receivedOrder is not a live connection to order. If I change one,
+          the other doesn't automatically change. We've reconstructed data
+          rather than shared an object identity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That distinction matters for remote communication. Updating
+          your local copy doesn't update the server unless you make a supported
+          request that asks the server to do so.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server cannot hear me muttering at my variables. A relief for
+          everyone involved.</span
+        >
+      </p>
+      <h2 id="what-json-can-describe">What JSON Can Describe</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSON has objects with string member names, arrays, strings, numbers,
+          booleans, and null. Those are the core data shapes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Objects group named values. Arrays hold an ordered sequence. Booleans
+          are true or false. Null is an explicit empty value whose application
+          meaning we still need to define.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Objects can contain arrays and other objects, so the
+          structure can be nested. A valid top-level JSON value doesn't have to
+          be an object; an array, string, or other JSON value can also be
+          valid.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But our API might require a particular top-level shape. “Valid JSON”
+          and “valid order request” are different tests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The format tells us how to read the structure. The
+          application contract tells us which structure is acceptable and what
+          it means.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
+  &quot;id&quot;: 42,
+  &quot;status&quot;: &quot;baking&quot;,
+  &quot;estimatedMinutes&quot;: 18,
+  &quot;contactless&quot;: true,
+  &quot;deliveredAt&quot;: null,
+  &quot;items&quot;: [
+    { &quot;menuItemId&quot;: &quot;margherita&quot;, &quot;quantity&quot;: 1 }
+  ]
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That describes an order. It doesn't contain a function that
+          calculates its delivery estimate or a method that calls the
+          driver.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. JSON is data. If we need an operation, the receiving
+          application implements it. Sending a property called function doesn't
+          turn the string into executable behavior.</span
+        >
+      </p>
+      <h2 id="wait-that-s-not-quite-javascript">
+        Wait, That's Not Quite JavaScript
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The syntax resembles a JavaScript object literal closely enough to
+          cause trouble.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSON member names require double quotes. Strings use double quotes
+          too. Standard JSON doesn't allow comments or trailing commas.
+          JavaScript object literals allow several things JSON doesn't.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No undefined value. No function values. No symbol values. No BigInt
+          value. No special NaN or Infinity numbers in the JSON grammar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And JSON doesn't contain a Date type. A date usually crosses
+          the boundary as an agreed string or number, then the receiver
+          interprets it according to the contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we send a string saying Friday, the parser hasn't secretly figured
+          out which Friday, whose timezone, and whether lunch counts as a
+          business day.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sadly, no. We choose a defined date-time representation and document
+          the interpretation. The JSON format doesn't solve calendar
+          semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor currency. An amount called 1299 needs a currency and a unit.
+          Cents? Dollars? Loyalty points issued by an unstable pizza
+          monarchy?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The monarchy has been dissolved. Please use documented minor currency
+          units where appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A format can preserve a number while the API completely fails to
+          explain it. This is why I don't want people confusing parseable with
+          meaningful.</span
+        >
+      </p>
+      <h2 id="stringify-makes-choices">Stringify Makes Choices</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a trap: JSON.stringify doesn't preserve every JavaScript value
+          unchanged. Object properties whose values are undefined or functions
+          are normally omitted. In arrays, unsupported values such as undefined
+          become null.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means a round trip can silently change the shape if we assume
+          our entire JavaScript object is representable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Non-finite numbers such as NaN and Infinity are serialized as
+          null. BigInt values normally cause an error unless you deliberately
+          provide custom handling. Circular references also cause an
+          error.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Circular meaning an object eventually refers back to itself. A
+          tree-shaped textual representation can't simply keep following the
+          loop forever.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Dates have defined serialization behavior in JavaScript,
+          commonly producing a string through their toJSON method. Parsing that
+          string does not automatically reconstruct a Date object.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So stringify and parse are not a universal cloning spell. They are a
+          data conversion process with rules and losses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. When designing an API, explicitly create the transferable data
+          shape. Don't assume whatever happens to be in memory makes a good
+          contract.</span
+        >
+      </p>
+      <h2 id="why-not-xml">Why Not XML?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before JSON became the default mental picture, I used XML. We should
+          explain it without staging a retirement party.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >XML is another text-based way to represent structured information. It
+          uses elements and attributes and supports capabilities such as
+          namespaces. It's useful in document-oriented and established
+          integration systems, among other contexts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A small order response in XML might have an order element, a status
+          element, and an estimated-minutes element. In JSON, similar
+          information might be named values in an object.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSON's smaller set of constructs and close fit with common
+          programming data structures made it convenient for many web API
+          payloads. JavaScript developers also found its syntax familiar, and
+          other languages developed broad support.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That doesn't mean JSON won a scientific contest proving all angle
+          brackets bad. Existing standards, document needs, tooling, and
+          interoperability can justify XML.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. CSV can be useful for flat tables. Binary formats can
+          prioritize compactness, speed, or explicit schemas. Plain text might
+          be sufficient for a simple value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The choice depends on what the systems need to exchange. Sending JSON
+          because that's what both sides support is sensible. Sending it because
+          every other format is ancient witchcraft is less persuasive.</span
+        >
+      </p>
+      <h2 id="text-becomes-bytes">Text Becomes Bytes</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's one layer underneath “JSON is text.” Networks and files store
+          or carry bytes. The text must be encoded.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >UTF-8 is the interoperable encoding required for JSON exchanged
+          between systems outside a closed ecosystem. Which helps everyone agree
+          how characters become bytes and back.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. An HTTP Content-Type of application/json identifies JSON
+          content. That label doesn't perform the conversion by itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I attach that label to an HTML error page, the body is still an
+          HTML error page. The label is a claim that the content needs to
+          fulfill.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And strings require escaping for characters such as
+          quotation marks and line breaks. Use the language's serializer rather
+          than manually concatenating a response string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because the customer can have an apostrophe, a quote, an emoji, or a
+          line break in a perfectly reasonable value. “It worked with Bob” is
+          not an encoding strategy.</span
+        >
+      </p>
+      <h2 id="parsing-is-not-validation">Parsing Is Not Validation</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose we parse this response successfully: order ID 42, status
+          baking, estimated minutes negative seven hundred.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Valid JSON. Extremely optimistic delivery service.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Parsing established that the text conformed to JSON syntax.
+          It didn't establish our business rules or expected field types.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The response might have a string where we expect a number, an unknown
+          status, or fields that aren't there. We need runtime checks where that
+          data crosses a trust boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a TypeScript assertion doesn't inspect a remote response. It can
+          tell the compiler what we claim, but the server didn't sign a pact
+          with our type definition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our program must actually check the data if it depends on the shape.
+          A schema validator is one tool, but even a schema doesn't
+          automatically answer whether this caller may see this order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Syntax, shape, business validity, and authorization are
+          separate concerns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like a format that does one job. I dislike assigning it four jobs
+          and then blaming it for the three it never accepted.</span
+        >
+      </p>
+      <h2 id="numbers-can-survive-the-format-and-still-lose-precision">
+        Numbers Can Survive the Format and Still Lose Precision
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSON's number syntax can represent numbers that a receiving
+          language's ordinary numeric type cannot represent exactly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JavaScript's Number type uses floating-point representation. Integers
+          beyond its safe range can lose precision. That matters for long
+          identifiers even if nobody does arithmetic with them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An API may transmit identifiers as strings to preserve their
+          exact characters across implementations. The contract must make that
+          choice consistently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And money deserves an explicit precision policy. A decimal-looking
+          value in JSON doesn't somehow fix floating-point arithmetic in every
+          consumer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Integer minor units can work within a suitable range; decimal
+          strings or decimal-aware libraries can be appropriate in other
+          designs. Explain the representation instead of hoping every language
+          makes the same assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which takes us back to the actual API contract. JSON supplies the
+          envelope's grammar. We supply the meaning.</span
+        >
+      </p>
+      <h2 id="missing-null-and-empty-aren-t-interchangeable">
+        Missing, Null, and Empty Aren't Interchangeable
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our deliveredAt field is null because the order hasn't been
+          delivered. What if we omit it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That might mean something different. Perhaps the field wasn't
+          requested, isn't known, or isn't available to this caller. Or the API
+          may define omission and null as equivalent. The important thing is to
+          choose and document the behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An empty string is a third possibility. It may mean a value is
+          present but empty. If we use all three randomly, clients start writing
+          archaeology instead of applications.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Update operations make this especially important. Missing could mean
+          leave unchanged; null could mean clear the value. If the server mixes
+          them up, a small patch can delete information unintentionally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And duplicate member names in one JSON object are another
+          interoperability hazard. Different parsers may handle them
+          differently. Emit unique names rather than relying on whichever value
+          wins today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Well-behaved data exchange avoids ambiguous structures, not
+          merely invalid syntax.</span
+        >
+      </p>
+      <h2 id="don-t-execute-the-delivery-instructions">
+        Don't Execute the Delivery Instructions
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Historically, some code evaluated JSON-looking text as JavaScript.
+          Don't do that. Use a JSON parser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Parsing data and executing code are profoundly different invitations.
+          A response from outside your program should not become arbitrary
+          instructions merely because it resembles an object literal.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And parsing safely doesn't make every later use safe. Put a string
+          into the DOM as text when it's meant to be text. If you deliberately
+          support HTML, handle that as a separate security decision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Likewise, JSON values used in database queries still need safe query
+          construction. A serializer is not a universal disinfectant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also keep payload sizes and nesting within reasonable
+          limits. A valid format can still carry an unreasonably expensive
+          input.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“It's just data” has never prevented data from ruining an
+          afternoon.</span
+        >
+      </p>
+      <h2 id="inspect-the-value-at-each-stage">
+        Inspect the Value at Each Stage
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want to debug a common confusion. I log something and the console
+          shows curly braces. How do I know whether it's an object or JSON
+          text?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Inspect the actual value and its type. Developer tools may render an
+          object attractively. A string can contain characters that look exactly
+          like an object literal. Visual resemblance isn't the runtime
+          type.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I ask where it came from. Did I just call JSON.stringify? Then I
+          expect a string. Did I call JSON.parse or await response.json? Then I
+          expect the resulting JavaScript value, which might be an object or
+          something else allowed by JSON.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Naming variables can help: responseText for the text,
+          orderData for the parsed representation. Names don't enforce
+          correctness, but they reduce cognitive confusion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if I stringify something that's already JSON text, I don't get a
+          more official JSON object. I get a JSON string value containing the
+          original characters, with necessary escaping.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Double serialization is why people sometimes see extra
+          quotation marks and backslashes and start removing them
+          manually.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which can corrupt valid data. The fix is understanding how many
+          serialization boundaries we crossed, not deleting punctuation until
+          the console looks comforting.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Ask what the next interface expects: a JavaScript value, a
+          string, or already encoded bytes. Let each layer do its own conversion
+          once.</span
+        >
+      </p>
+      <h2 id="the-server-doesn-t-need-to-speak-javascript">
+        The Server Doesn't Need to Speak JavaScript
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Picture a PHP server building an associative structure with an order
+          identifier and status. It uses its JSON encoder, then sends the
+          resulting representation with the appropriate response metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser parses that JSON into JavaScript values. It doesn't
+          receive a PHP array, and it doesn't need a PHP runtime to understand
+          the response.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A Python client could parse the same representation into its
+          own dictionaries, lists, and primitive values. A mobile app uses its
+          platform's parser and types.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is the real interoperability benefit. We agree at the boundary
+          without requiring identical internal objects.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. But each runtime can have different limits and behavior,
+          particularly around numbers, duplicate members, and
+          application-specific types. Designing interoperable data means staying
+          within the shared guarantees we need.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why a giant numeric account identifier may be better
+          represented as a string. It isn't a number we're adding or averaging.
+          It's an exact label whose digits must survive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The format choice should reflect semantics, not merely whether
+          the value happens to contain digits.</span
+        >
+      </p>
+      <h2 id="a-date-is-an-agreement-about-time">
+        A Date Is an Agreement About Time
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's make the date problem concrete. The server sends deliveredAt as
+          a string with a date and time but no timezone offset. What can the
+          client infer?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Only what the contract defines. Without a clear rule, one client
+          might interpret it as local time and another as UTC. The same text
+          could produce different moments.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So use a documented representation that communicates the intended
+          instant or local date-time semantics. A delivery completion timestamp
+          and a restaurant's recurring opening time are different kinds of time
+          data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An opening time of nine in the morning may belong to a
+          location's timezone and calendar rules. It isn't automatically the
+          same kind of value as the instant a payment completed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JSON happily carries both as strings. It doesn't know the difference.
+          We do, or at least we are now aware that we need to.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when displaying the result, the client can format it for the
+          user's locale. The transferable representation and human presentation
+          have different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't force every API consumer to parse a friendly phrase such as
+          yesterday around lunchtime. Unless we're deliberately designing an API
+          for poets.</span
+        >
+      </p>
+      <h2 id="choose-a-public-shape-on-purpose">
+        Choose a Public Shape on Purpose
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the internal order object includes a customer address,
+          fraud-review notes, and a function used to calculate a discount.
+          Stringify omits the function. Does that make the result safe to
+          expose?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Absolutely not. It can still include the sensitive data fields.
+          Accidental omission of one unsupported value isn't a security
+          policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Build the response representation explicitly and select
+          fields based on the caller's permission and the operation's
+          purpose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This also makes evolution easier. If we add an internal warehouseNote
+          next month, it doesn't automatically appear in every client's response
+          because somebody serialized the whole database entity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A deliberate response boundary protects both confidentiality
+          and compatibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same applies to input. Parsing a JSON object doesn't mean we
+          should copy every property into storage. The caller might send fields
+          our interface never offered.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Serialization connects systems; validation and authorization
+          constrain what that connection permits.</span
+        >
+      </p>
+      <h2 id="when-json-isn-t-the-best-parcel">
+        When JSON Isn't the Best Parcel
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Could we send a photo in JSON?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could encode binary data as text, for example using base64, but
+          that adds size and processing overhead. A direct upload, multipart
+          request, or separate object storage flow may be more appropriate
+          depending on the system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a huge stream of measurements might benefit from a different
+          representation or streaming design. We shouldn't put an entire growing
+          universe into one enormous JSON array just because our parser
+          understands brackets.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. JSON is convenient for many ordinary structured messages. It
+          doesn't guarantee compactness, efficient random access, or incremental
+          parsing in every client API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Choosing the format means considering message size, schema needs,
+          available tools, readability, and how receivers consume the data. The
+          right answer can be boring and familiar, including JSON, as long as it
+          fits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We wanted the format to become understandable, not
+          compulsory.</span
+        >
+      </p>
+      <h2 id="follow-the-whole-conversion">Follow the Whole Conversion</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The server has trusted order information in its own runtime. It
+          selects allowed fields and serializes a defined representation. HTTP
+          carries the bytes with relevant metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The client receives the body, decodes and parses it, checks the
+          expected shape, then uses the resulting values. That client may be
+          JavaScript, Swift, Python, or something else with JSON support.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Shared representation lets different internal systems
+          communicate without sharing object identity or implementation
+          language.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is why JSON is everywhere. It's a widely understood, fairly
+          small data format that fits many ordinary application exchanges. Not
+          because every server is secretly JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And not because every API has to use it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next episode, we put the pieces together in frontend code. Fetch,
+          promises, async and await, and the delicate art of admitting a request
+          failed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Loading states included.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The spinner cannot be our permanent answer to uncertainty.</span>
+      </p>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

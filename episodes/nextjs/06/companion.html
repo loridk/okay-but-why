@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Caching: Why Is My Website Lying to Me? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Caching: Why Is My Website Lying to Me?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/5b63abd4-56eb-45c9-8f58-6f6a9fb7f3d6"
+      ></script>
+      <div class="redcirclePlayer-5b63abd4-56eb-45c9-8f58-6f6a9fb7f3d6"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#reuse-is-a-promise-about-freshness"
+            >Reuse Is a Promise About Freshness</a
+          >
+        </li>
+        <li><a href="#name-the-model-first">Name the Model First</a></li>
+        <li><a href="#cache-one-public-read">Cache One Public Read</a></li>
+        <li>
+          <a href="#what-the-lifetime-describes">What the Lifetime Describes</a>
+        </li>
+        <li>
+          <a href="#a-room-change-step-by-step">A Room Change, Step by Step</a>
+        </li>
+        <li>
+          <a href="#stale-while-revalidating-is-another-contract"
+            >Stale While Revalidating Is Another Contract</a
+          >
+        </li>
+        <li>
+          <a href="#paths-and-tags-answer-different-questions"
+            >Paths and Tags Answer Different Questions</a
+          >
+        </li>
+        <li>
+          <a href="#the-layers-we-might-be-seeing"
+            >The Layers We Might Be Seeing</a
+          >
+        </li>
+        <li>
+          <a href="#keep-private-information-out-of-shared-public-results"
+            >Keep Private Information Out of Shared Public Results</a
+          >
+        </li>
+        <li>
+          <a href="#adapt-the-page-to-the-chosen-model"
+            >Adapt the Page to the Chosen Model</a
+          >
+        </li>
+        <li>
+          <a href="#what-if-cache-components-is-off"
+            >What If Cache Components Is Off?</a
+          >
+        </li>
+        <li>
+          <a href="#test-the-freshness-story">Test the Freshness Story</a>
+        </li>
+        <li>
+          <a href="#failure-and-truthfulness">Failure and Truthfulness</a>
+        </li>
+        <li>
+          <a href="#a-timeline-with-two-different-policies"
+            >A Timeline With Two Different Policies</a
+          >
+        </li>
+        <li>
+          <a href="#keys-tags-and-collisions">Keys, Tags, and Collisions</a>
+        </li>
+        <li>
+          <a href="#a-successful-write-with-failed-follow-up-work"
+            >A Successful Write With Failed Follow-Up Work</a
+          >
+        </li>
+        <li>
+          <a href="#development-can-mislead-us">Development Can Mislead Us</a>
+        </li>
+        <li>
+          <a href="#shared-public-data-is-the-easy-case"
+            >Shared Public Data Is the Easy Case</a
+          >
+        </li>
+        <li>
+          <a href="#how-much-staleness-can-humans-tolerate"
+            >How Much Staleness Can Humans Tolerate?</a
+          >
+        </li>
+        <li>
+          <a href="#why-keep-the-cache-at-all">Why Keep the Cache at All?</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I moved the talk to Room B.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The database agrees.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The website says Room A.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It's remembering.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So am I, and I'm becoming less pleasant about it.</span>
+      </p>
+      <h2 id="reuse-is-a-promise-about-freshness">
+        Reuse Is a Promise About Freshness
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? A cache stores a result so later work can
+          reuse it. That can save time, computation, and pressure on a database
+          or service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It also creates another place containing a version of the truth. That
+          version can become old.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Caching isn't just “make it fast.” We decide which result
+          can be reused, how to identify it, how long to trust it, and what
+          event makes it obsolete.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For DemoCon, the public abstract can probably tolerate some delay. A
+          last-minute room assignment deserves a different conversation. A
+          booking operation must verify availability even if the display looked
+          fresh.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The cache policy follows the product's requirements. A correct
+          cached response isn't always the newest possible value; it's a value
+          within the freshness contract we've deliberately chosen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if we never chose that contract, “eventual consistency” can
+          become an elegant name for surprising people.</span
+        >
+      </p>
+      <h2 id="name-the-model-first">Name the Model First</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next.js caching advice changes across versions and configuration. Our
+          explicit choice today is Next.js 16 with Cache Components enabled.
+          That choice is not universal to all Next 16 apps.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Until this episode, our examples used the ordinary App Router
+          baseline. We are changing configuration now, not retroactively
+          pretending the earlier pages already used this mode.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>js</span></figcaption>
+        <pre tabindex="0"><code>// next.config.mjs
+const nextConfig = {
+  cacheComponents: true,
+};
+
+export default nextConfig;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The object and export are JavaScript. CacheComponents is a Next
+          configuration option. Use cache, the directive we'll add to a
+          function, belongs to Next's caching system. It is not React's cache
+          function and not a generic JavaScript keyword.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This choice also affects rendering. Uncached asynchronous or
+          request-dependent work needs an appropriate boundary, while reusable
+          work can be included in prepared output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Enabling a flag isn't permission to mix every older
+          route-level cache recipe into the new model. Some segment options used
+          without Cache Components are disabled or unsupported with it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if a tutorial gives me export const dynamic equals force-dynamic,
+          I first check which model it teaches. I don't keep adding
+          contradictory flags until the build becomes too intimidated to
+          argue.</span
+        >
+      </p>
+      <h2 id="cache-one-public-read">Cache One Public Read</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll wrap the existing public query rather than cache every
+          operation in the module. Mutations and private reads should not
+          accidentally inherit the same policy.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre tabindex="0"><code>// app/lib/cached-sessions.js
+import 'server-only';
+import { cacheLife, cacheTag } from 'next/cache';
+import { getPublicSessions } from './sessions';
+
+export async function getCachedPublicSessions() {
+  'use cache';
+  cacheLife('minutes');
+  cacheTag('public-sessions');
+  return getPublicSessions();
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >GetPublicSessions is our application database helper from last time.
+          This new function says its result may be reused, assigns the named
+          minutes lifetime profile, and attaches a tag describing what should
+          invalidate it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The profile is a collection of timing settings, not a
+          plain-English guarantee that every caller sees a value refreshed
+          precisely each minute.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And the tag is not the cache key.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The framework identifies cached work using the function
+          identity and supported inputs, including relevant captured values. A
+          tag lets us find related entries for invalidation. Many entries can
+          share one tag.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like attaching “public schedule” labels to several saved results so a
+          schedule edit can invalidate the relevant family. The label doesn't
+          decide whether two different function arguments are the same
+          request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If a cached detail reader takes a slug, different slugs can
+          have different entries. We might attach a per-session tag as well as a
+          broader schedule tag.</span
+        >
+      </p>
+      <h2 id="what-the-lifetime-describes">What the Lifetime Describes</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CacheLife profiles distinguish several ideas, including client reuse,
+          server revalidation, and expiration. Those aren't interchangeable
+          timers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give me the conceptual difference without dictating a table of
+          numbers that might change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client staleness guidance affects when cached navigation content can
+          be reused without checking the server. Revalidation governs when
+          server-side cached data should refresh. Expiration establishes when
+          stale reuse must give way to waiting for a fresh result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a lifetime profile describes behavior at multiple points. I should
+          inspect the current profile definition and pick it deliberately.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Our minutes profile is a teaching choice for ordinary public
+          schedule data, not a guarantee about urgent room changes. An explicit
+          invalidation event is useful when we know a write just happened.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And cache storage depends on deployment. A cached function isn't a
+          promise that one durable entry survives every restart and appears
+          instantly on every server instance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Self-hosting and distributed deployments need a coherent cache
+          strategy if they depend on shared invalidation. We'll return to
+          deployment in Episode Nine.</span
+        >
+      </p>
+      <h2 id="a-room-change-step-by-step">A Room Change, Step by Step</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >At ten o'clock, someone loads our public schedule. The cache stores
+          Room A. At ten past, the organizer changes the room in the database.
+          What happens automatically?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The database change doesn't inherently notify every cache in the
+          application. We must connect the write to the appropriate invalidation
+          policy, or wait for the configured freshness mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “the database is correct” doesn't prove “the read path will show
+          the new value.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a user mutation where the person should see their own
+          change on the next read, updateTag is designed to expire matching
+          entries immediately. In Next 16, it is restricted to Server
+          Actions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We will teach the full action next episode. For now, the order is
+          authorize, validate, persist successfully, then expire affected cached
+          data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Don't invalidate first and claim the edit succeeded if the
+          database write later fails.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// Inside an authorized Server Action, after a successful write:
+updateTag('public-sessions');</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is an excerpt, not a complete action. UpdateTag must be imported
+          from next slash cache. It doesn't save the room, authenticate the
+          organizer, or push a message to every open tab.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. It affects subsequent reads of that cached data. Other tabs
+          don't become live subscribers merely because we invalidated an
+          entry.</span
+        >
+      </p>
+      <h2 id="stale-while-revalidating-is-another-contract">
+        Stale While Revalidating Is Another Contract
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >RevalidateTag with the max profile marks matching data stale so a
+          subsequent request can trigger background revalidation while receiving
+          the previous value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A useful choice when serving a slightly old result quickly is
+          acceptable. Not the same promise as “your edit is visible on the very
+          next read.”</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// For background freshness where briefly stale content is acceptable:
+revalidateTag('public-sessions', 'max');</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This can be used from supported server contexts including Route
+          Handlers. The invalidation call doesn't eagerly regenerate every page.
+          Visits drive the refresh work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the old one-argument revalidateTag examples are deprecated
+          behavior. We shouldn't teach them as the default Next 16 recipe.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. When a Route Handler needs immediate expiration and
+          updateTag is unavailable, the current API supports an explicit
+          expire-zero profile. That choice means a subsequent read blocks for
+          fresh data instead of receiving a stale result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So pick the semantic behavior: tolerate stale while updating, or
+          require fresh after invalidation. Then pick the API allowed in that
+          context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Names alone are not enough. Revalidate and update sound
+          similar until someone is standing at the wrong room.</span
+        >
+      </p>
+      <h2 id="paths-and-tags-answer-different-questions">
+        Paths and Tags Answer Different Questions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where does revalidatePath fit?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It targets a path or a route pattern's rendered data relationship.
+          Tags identify data that may be shared across routes. A public session
+          can appear on its own page and in a list, so data-oriented tagging can
+          express that relationship.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Revalidating one detail path doesn't automatically mean every other
+          page showing the same session gets the same treatment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Think about all the views affected by the write. Avoid both
+          under-invalidation, where stale views remain, and unnecessarily broad
+          invalidation, where one small edit throws away unrelated reusable
+          work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And router refresh?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A client router refresh requests updated server-rendered output for
+          the current route. It doesn't inherently invalidate the underlying
+          server data cache. If the server reuses the same cached value, the
+          refreshed view can still show that value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “I refreshed it” is not evidence that I asked the original source
+          for fresh data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. We need to know which layer the refresh reached.</span>
+      </p>
+      <h2 id="the-layers-we-might-be-seeing">The Layers We Might Be Seeing</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There can be reuse during a render, server cached data or output,
+          client router memory, and browser or intermediary HTTP caches. An
+          external API may have its own cache too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means changing a Next tag won't purge an unrelated CDN cache
+          unless our deployment connects those operations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Neither will it invalidate a third-party query library's
+          client cache automatically. Similar names don't create a shared
+          nervous system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our debugging question becomes “which saved result supplied this
+          screen?” rather than “why is caching evil?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Check the database value, the application read, any server
+          cache, the route response, and the client state. Find the first place
+          where the expected update disappears.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's much calmer than deleting every cache directory in the
+          county.</span
+        >
+      </p>
+      <h2 id="keep-private-information-out-of-shared-public-results">
+        Keep Private Information Out of Shared Public Results
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our cached function returns published session data. It doesn't read
+          the current user's cookies or combine private preferences into a
+          result shared with everyone.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The public schedule and my favorite state are different data classes.
+          Mixing them inside one shared cached result would be a very bad
+          shortcut.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Ordinary use cache scopes can't directly read runtime
+          request APIs such as cookies and headers. Runtime values can be read
+          outside and passed as arguments where appropriate, but that requires
+          careful keying and privacy design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We aren't teaching a private caching variant today. Our deliberately
+          simple design leaves personalized work uncached and under an
+          appropriate Suspense boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Separating public reusable data from authenticated
+          request-specific data makes the policy understandable. And an
+          authorization check still belongs near protected access even if some
+          public data is cached.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A correct cache key doesn't prove permission. It merely separates
+          entries according to inputs. A malicious caller can still ask for
+          somebody else's identifier unless the operation checks.</span
+        >
+      </p>
+      <h2 id="adapt-the-page-to-the-chosen-model">
+        Adapt the Page to the Chosen Model
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >After enabling Cache Components, our sessions page can use the
+          explicit cached public helper. A fresh request-specific region should
+          sit below a boundary that can wait.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>import { Suspense } from 'react';
+import { getCachedPublicSessions } from '../lib/cached-sessions';
+
+async function SessionList() {
+  const sessions = await getCachedPublicSessions();
+  return &lt;ul&gt;{sessions.map(s =&gt; &lt;li key={s.id}&gt;{s.title}&lt;/li&gt;)}&lt;/ul&gt;;
+}
+
+export default function SessionsPage() {
+  return (
+    &lt;main id=&quot;main-content&quot;&gt;
+      &lt;h1&gt;DemoCon sessions&lt;/h1&gt;
+      &lt;Suspense fallback={&lt;p role=&quot;status&quot;&gt;Loading sessions…&lt;/p&gt;}&gt;
+        &lt;SessionList /&gt;
+      &lt;/Suspense&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This card simplifies the list markup to focus on caching and the
+          boundary. In our actual page design, the session titles remain links
+          as established earlier.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Cached work can participate in prepared output. The boundary
+          also gives us a place to wait when needed. It doesn't itself
+          invalidate anything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For the dynamic detail route, route params and any uncached read also
+          need treatment consistent with the mode. We can't just flip the flag
+          and assume every earlier example is a complete migration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A detail page can place the params-reading async child below
+          Suspense, or prepare known params as appropriate. The rule is to
+          account for the dependency, not silence the diagnostic.</span
+        >
+      </p>
+      <h2 id="what-if-cache-components-is-off">
+        What If Cache Components Is Off?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Listeners will open existing Next 16 projects without this flag. What
+          should they remember?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Don't assume every server fetch is persistently cached by default.
+          Current fetch defaults differ from early App Router tutorials. Without
+          Cache Components, explicit fetch cache and revalidation options and
+          route-level behavior matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But “fetch isn't persistently cached by default” also doesn't prove
+          the page always reads fresh data on every visit. The route might have
+          been prepared during the build.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Fetch-level reuse and route output reuse are different.
+          Consult the documentation for the model actually in use. Server fetch
+          cache options also describe framework caching, not simply the browser
+          HTTP cache of the same name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why we named our model before presenting code. Otherwise a
+          listener merges two reasonable tutorials into one unreasonable
+          configuration.</span
+        >
+      </p>
+      <h2 id="test-the-freshness-story">Test the Freshness Story</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's design a small check for our room change without building a
+          testing empire.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Warm the public schedule read, change a room through the authorized
+          write path, and observe the next read under the chosen policy. If we
+          chose immediate expiration, we expect fresh data after the successful
+          mutation. If we chose stale-while-revalidate, we explicitly allow the
+          first stale result and verify eventual refresh.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also inspect a second route showing the same data. That's how we
+          catch a missing shared tag.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And another open tab, so nobody mistakes invalidation for live push.
+          We should understand when that tab requests new content.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test production behavior, not only development hot reload.
+          Development caching and prefetch behavior can differ in ways that make
+          a manual experiment misleading.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we run multiple server instances, our check must eventually
+          include that deployment shape. A perfect single-process result doesn't
+          prove distributed invalidation works.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Keep the check proportionate to the feature and
+          environment.</span
+        >
+      </p>
+      <h2 id="failure-and-truthfulness">Failure and Truthfulness</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What if refreshing the cached result fails because the database is
+          temporarily unavailable?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We need to understand the mechanism's failure behavior and decide
+          what the product can tolerate. A stale public abstract might still be
+          useful. A stale permission decision may be unacceptable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the interface can communicate a last-updated value when that
+          helps, but a timestamp isn't permission to misrepresent critical
+          information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And cache invalidation isn't a substitute for a transactional
+          write. If two organizers edit the same room, the database operation
+          still needs whatever concurrency rules the product requires.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cache is a copy. It isn't the referee for concurrent
+          updates.</span
+        >
+      </p>
+      <h2 id="a-timeline-with-two-different-policies">
+        A Timeline With Two Different Policies
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's use an imaginary sequence. An attendee loads the schedule and
+          receives Room A. The organizer successfully changes it to Room B. We
+          invalidate the public tag with a stale-while-revalidate policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The next read may still receive Room A while triggering fresh work. A
+          later read can receive Room B after that work finishes. That's
+          expected under the policy, not necessarily a broken
+          invalidation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Now use immediate expiration after the action. The next
+          cache read must obtain fresh data rather than reuse that expired Room
+          A entry.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But an already-open browser tab isn't automatically notified. If it
+          never requests anything again, its DOM can remain old.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server cache freshness and client refresh scheduling are
+          separate. Live updates would need an additional mechanism, such as
+          deliberate polling or another supported update channel.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to add that to our demo. We need to stop promising it
+          as a side effect of a tag function.</span
+        >
+      </p>
+      <h2 id="keys-tags-and-collisions">Keys, Tags, and Collisions</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose a cached detail helper accepts a slug. Boring-deployments and
+          accessible-forms should identify distinct results.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inputs help distinguish cache entries. If we accidentally use a
+          helper with no relevant argument and read changing external context
+          invisibly, we make its reuse contract harder to reason about.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Make the inputs explicit. Tags then express which entries a
+          mutation affects. A shared tag can cover both list and detail data if
+          that matches our design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A per-session tag can narrow an individual edit, while a list tag
+          handles membership or ordering changes. We shouldn't invalidate a
+          detail entry and forget the list still contains the old title.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Nor should we assume giving two entries the same tag merges
+          their values. Tags organize invalidation; they aren't an alternative
+          keying system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the distinction I want on the mental index card. Key: which
+          result? Tag: which group should stop being trusted after this
+          event?</span
+        >
+      </p>
+      <h2 id="a-successful-write-with-failed-follow-up-work">
+        A Successful Write With Failed Follow-Up Work
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What if the database write succeeds but a later cache-related
+          operation fails? The user sees an error and retries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We need to distinguish persistence success from response or follow-up
+          failure. The write may already be committed. A retry-safe mutation and
+          clear recovery behavior matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So cache invalidation doesn't turn a multi-step operation into a
+          database transaction. If there are separate systems involved, there
+          can be a gap between them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a small app, a straightforward write-then-invalidate
+          path may be enough. More demanding systems may need durable event
+          handling or reconciliation. The point is to recognize the gap, not add
+          infrastructure before it's justified.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we log the failure, we should retain enough safe context to repair
+          it. “Something happened” is not a useful operational message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. An identifier and operation name can help without dumping
+          sensitive submitted content into logs.</span
+        >
+      </p>
+      <h2 id="development-can-mislead-us">Development Can Mislead Us</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine you change code, reload, and see fresh data. What have you
+          established?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That this development path produced fresh data at that moment. Not
+          that the production cache expires correctly after an organizer
+          edit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Hot reload can change the circumstances. A production build
+          may prepare output, prefetch routes differently, or reuse data in a
+          way the development experiment didn't exercise.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our meaningful check warms the relevant cache, performs the actual
+          write path, then reads through the path users use. Otherwise we might
+          test only cold misses and declare invalidation perfect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A cache that has never stored anything cannot demonstrate
+          whether we invalidated the correct entry.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And clearing everything manually before every test removes the exact
+          condition we're trying to investigate.</span
+        >
+      </p>
+      <h2 id="shared-public-data-is-the-easy-case">
+        Shared Public Data Is the Easy Case
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Public session descriptions are a relatively simple cache case
+          because all visitors are allowed to receive the same
+          representation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Private organizer views complicate the dimensions: user, permission,
+          perhaps organization, and changes to those permissions. We
+          deliberately avoid caching those views in this teaching example.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If a real product needs private caching, it requires an
+          explicit model for identity, authorization, storage scope, and
+          invalidation. We don't infer safety from a user identifier appearing
+          in an argument.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because permission can change even if the identifier doesn't. A
+          former organizer mustn't keep access merely because a cached result
+          remembers a more generous time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Public caching is not a template to copy blindly into
+          protected data access.</span
+        >
+      </p>
+      <h2 id="how-much-staleness-can-humans-tolerate">
+        How Much Staleness Can Humans Tolerate?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The abstract changing from “practical” to “very practical” can wait.
+          A cancellation or accessibility-related venue change may need a much
+          stronger freshness policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a useful product distinction. We can separate data or
+          invalidation paths when their freshness needs differ, rather than
+          giving the whole schedule one arbitrary duration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should also avoid displaying an unjustified “live” badge. If the
+          page refreshes only on navigation, live would imply something we
+          haven't built.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A last-updated timestamp can help if its meaning is
+          accurate: when the underlying schedule changed, not merely when we
+          formatted the page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the point where caching becomes communication. The interface
+          should tell the truth about what it knows and how current it is.</span
+        >
+      </p>
+      <h2 id="why-keep-the-cache-at-all">Why Keep the Cache at All?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because not every request needs to repeat every expensive operation.
+          Public schedule data can be reused many times, reducing load and
+          improving response time.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We earn those benefits by being specific: public data only, named
+          lifetime, tags tied to real write events, and known client refresh
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If data is cheap and must always be current, leaving it
+          uncached can be the simpler answer. Caching isn't mandatory
+          homework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if we can't explain why a stale result is acceptable, we
+          shouldn't casually choose a policy that serves one.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the episode. The website isn't intentionally lying; it's
+          honoring a reuse policy we may have failed to understand or connect to
+          mutations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, mutations. We're going to put a server function near a
+          component and ask whether the backend has moved into the
+          furniture.</span
+        >
+      </p>
+    </main>
+    <footer>5 code cards · 0 terminal cards</footer>
+  </body>
+</html>

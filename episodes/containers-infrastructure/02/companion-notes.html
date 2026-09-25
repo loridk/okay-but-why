@@ -1,0 +1,15 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Virtualization lets isolated machine environments share physical hardware. Sharing a physical host remains a common failure boundary.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Hypervisor</strong></dt><dd>Creates and manages virtual machines and mediates access to physical resources.</dd>
+<dt><strong>VM</strong></dt><dd>A virtualized machine environment with a guest operating system and kernel.</dd>
+<dt><strong>VPS</strong></dt><dd>A hosted private server environment; implementation, management, and guarantees vary by provider.</dd>
+<dt><strong>Isolation</strong></dt><dd>Boundaries around visibility, changes, permissions, and resource use—not a promise that failures cannot cross any boundary.</dd></dl>
+<h3>Conceptual hierarchy</h3><p>Physical hardware supports a hypervisor, which manages VMs. Each VM has a guest OS that runs applications. Hosted hypervisors also involve a host OS.</p><figure class="card code"><figcaption>Virtualization hierarchy<span>Text diagram</span></figcaption><pre tabindex="0"><code>Physical machine
+└─ Hypervisor
+   ├─ VM A → guest OS/kernel → podcast application
+   └─ VM B → guest OS/kernel → another application</code></pre></figure><h3>Questions for a hosting plan</h3><ul><li>Who patches the OS and runtime?</li><li>Which resources are allocated, shared, or capped?</li><li>What happens after host failure?</li><li>Who creates backups and tests restoration?</li></ul>
+<h3>Official sources and further reading</h3><ul><li><a href="https://aws.amazon.com/what-is/hypervisor/">AWS: What is a hypervisor?</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

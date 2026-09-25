@@ -1,0 +1,55 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<h3>Practical ARIA decision guide</h3>
+<ol>
+<li><strong>Can native HTML express this correctly?</strong> Use it: button, link, checkbox, details/summary, dialog, label, fieldset/legend, and appropriate document structure.</li>
+<li><strong>What semantic information is missing?</strong> Identify the specific role, name, description, state, or relationship. Add only attributes supported by that element/role.</li>
+<li><strong>What behavior is still missing?</strong> Implement the relevant keyboard pattern, focus management, visibility, and activation behavior. ARIA does not implement these.</li>
+<li><strong>Can the state change?</strong> Derive visible and exposed state from the same decision. Test every opening, closing, selection, validation, and failure path.</li>
+<li><strong>What does the browser expose?</strong> Inspect the computed role/name/state and references, then test the actual interaction and relevant assistive-technology experience.</li>
+<li><strong>Cannot explain the attribute's job?</strong> Look it up before adding it. Attribute count is not an accessibility measure.</li>
+</ol>
+<h3>Naming and descriptions: choose deliberately</h3>
+<dl>
+<dt><strong>Visible native label / button text</strong></dt><dd>First choice where appropriate. Associate a label with its input; use meaningful button text. Visible labels help people beyond screen-reader users.</dd>
+<dt><strong>aria-labelledby</strong></dt><dd>Uses text from referenced element IDs as a name. Useful for naming a dialog from its visible heading or combining necessary visible context. IDs must be unique and references valid.</dd>
+<dt><strong>aria-label</strong></dt><dd>Supplies a name string directly when a supported element needs one and suitable visible text is unavailable, such as an icon-only close button. It does not create a visible label.</dd>
+<dt><strong>Naming precedence</strong></dt><dd>For ordinary supported controls, valid <code>aria-labelledby</code> takes priority over <code>aria-label</code>, which can override native/text naming. Element-specific computation rules matter. Prefer one intentional strategy and inspect the computed name.</dd>
+<dt><strong>Visible words stay in the name</strong></dt><dd>A visible “Remove” control can be named “Remove margherita pizza.” Avoid renaming visible “Pay now” as “Complete transaction.” Mismatches can obstruct voice control.</dd>
+<dt><strong>aria-describedby</strong></dt><dd>References supplementary help or error text. It describes rather than replaces the name. Keep important information available visually too. Changing a description is not a guaranteed immediate announcement.</dd>
+</dl>
+<figure class="card code"><figcaption>Original naming examples<span>html</span></figcaption><pre tabindex="0"><code>&lt;!-- Native visible name: no extra ARIA name needed --&gt;
+&lt;button type="submit"&gt;Place order&lt;/button&gt;
+
+&lt;!-- Icon-only action: prefer visible text if the icon is unclear --&gt;
+&lt;button type="button" aria-label="Close address dialog"&gt;
+  &lt;span aria-hidden="true"&gt;×&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;!-- Reuse visible text for a dialog's name --&gt;
+&lt;dialog aria-labelledby="address-title"&gt;
+  &lt;h2 id="address-title"&gt;Edit delivery address&lt;/h2&gt;
+  &lt;!-- Add real fields, close behavior, and deliberate focus handling. --&gt;
+&lt;/dialog&gt;</code></pre></figure>
+<p>The dialog fragment demonstrates naming only; it is not a complete dialog implementation. The transcript contains a complete single-disclosure example with synchronized visibility and expanded state.</p>
+<h3>States and relationships quick reference</h3>
+<dl>
+<dt><strong>role</strong></dt><dd>Identifies semantics such as dialog or status. Native HTML often supplies an implicit role. Assigning a role creates expectations; it does not supply the interaction.</dd>
+<dt><strong>aria-expanded</strong></dt><dd>Reports whether controlled content is expanded. Put it on the appropriate controlling element and synchronize it with actual visibility.</dd>
+<dt><strong>aria-controls</strong></dt><dd>References the controlled element's ID. It does not toggle, move focus, or guarantee an assistive-technology shortcut. It is optional in the APG disclosure pattern.</dd>
+<dt><strong>aria-selected</strong></dt><dd>Selection state for supported roles such as tab or option. Distinguish focus from selection; implement the widget's keyboard pattern.</dd>
+<dt><strong>aria-checked</strong></dt><dd>Checked state for supported custom checkable roles. Prefer native checkbox/radio controls and their native <code>checked</code> state. Mixed state belongs only where supported and meaningful.</dd>
+<dt><strong>aria-pressed</strong></dt><dd>Pressed state for a toggle button. It is not a substitute for expanded, selected, or a checkbox's checked state.</dd>
+<dt><strong>aria-disabled</strong></dt><dd>Communicates unavailability without disabling activation or changing tab order by itself. Enforce every activation path. Native <code>disabled</code> has its own behavior and form-submission consequences.</dd>
+<dt><strong>aria-current</strong></dt><dd>Identifies the current item in a set, for example <code>page</code> for the current navigation link or <code>step</code> in a process. It does not navigate or select a widget option.</dd>
+<dt><strong>aria-invalid</strong></dt><dd>Marks a detected invalid value. Update it with validation state and associate useful error text. Do not declare untouched fields invalid merely because they are initially empty.</dd>
+<dt><strong>aria-hidden</strong></dt><dd>Excludes an element and its subtree from the accessibility tree. It does not visually hide or disable them. Never leave focusable controls within an aria-hidden subtree. A child set to false cannot undo a true ancestor.</dd>
+</dl>
+<h3>Visibility is not one switch</h3>
+<ul><li><code>hidden</code> normally hides content visually and from accessibility exposure. It is an HTML boolean attribute: <code>hidden="false"</code> still means present. The JavaScript <code>element.hidden</code> property accepts a boolean.</li><li><code>aria-hidden="false"</code> is an ARIA value, not the same boolean-attribute mechanism. It cannot override another reason content is hidden.</li><li><code>inert</code> prevents interaction/focus and removes a subtree from accessibility exposure; it does not itself create visual styling.</li><li>Visually hidden text can intentionally remain available to assistive technology. Do not confuse that pattern with <code>display: none</code>.</li></ul>
+<h3>Live updates without stealing focus</h3>
+<dl><dt><strong>role="status"</strong></dt><dd>Useful for nonurgent results such as “Item added to cart” or “Six delivery slots available”; implicitly polite, with atomic announcement semantics.</dd><dt><strong>role="alert"</strong></dt><dd>Assertive, atomic live semantics for urgent information. Avoid using it for routine updates or combining multiple announcement mechanisms unnecessarily.</dd><dt><strong>aria-live="polite" / "assertive"</strong></dt><dd>Specify update-announcement priority on an appropriate region. These are not guaranteed speech delivery or exact timing APIs.</dd></dl>
+<ul><li>Create the region before changing its content; test timing and browser/assistive-technology combinations.</li><li>Announce confirmed results, not merely attempted operations.</li><li>Keep messages concise, relevant, and available for later review when needed.</li><li>Do not announce a whole refreshed page or sensitive values such as the copied password.</li><li>Check repeated identical messages, rapid updates, and concurrent focus changes.</li></ul>
+<h3>References for the next real component</h3>
+<ul><li><a href="https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/">APG: Names and Descriptions</a></li><li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/">APG: Disclosure Pattern</a></li><li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/">APG: Component Patterns</a></li><li><a href="https://www.w3.org/TR/wai-aria-1.2/">WAI-ARIA 1.2: role and attribute definitions</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions">MDN: Live regions</a></li><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html">WCAG: Label in Name</a></li></ul>
+</section>

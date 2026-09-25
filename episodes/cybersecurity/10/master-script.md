@@ -23,23 +23,23 @@ PARISA: One thing leads to another.
 
 JULES: Reconnaissance.
 
-Initial access.
+JULES: Initial access.
 
-Execution.
+JULES: Execution.
 
-Persistence.
+JULES: Persistence.
 
-Privilege escalation.
+JULES: Privilege escalation.
 
-Credential access.
+JULES: Credential access.
 
-Discovery.
+JULES: Discovery.
 
-Lateral movement.
+JULES: Lateral movement.
 
-Exfiltration.
+JULES: Exfiltration.
 
-Impact.
+JULES: Impact.
 
 PARISA: There’s the PowerPoint.
 
@@ -49,17 +49,17 @@ JULES: I promise reality is messier.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Today we’re connecting the pieces.
 
-Not just “what is phishing?”
+PARISA: Not just “what is phishing?”
 
-Not just “what is a vulnerability?”
+PARISA: Not just “what is a vulnerability?”
 
-What does an actual attack progression look like?
+PARISA: What does an actual attack progression look like?
 
 JULES: Exactly.
 
@@ -68,7 +68,7 @@ JULES: Exactly.
 
 JULES: Security news often compresses incidents into one sentence.
 
-“Attackers exploited a vulnerability.”
+JULES: “Attackers exploited a vulnerability.”
 
 PARISA: Which makes it sound like one button labeled HACK.
 
@@ -76,15 +76,15 @@ JULES: In reality, compromise often requires several steps.
 
 PARISA: Find target.
 
-Get foothold.
+PARISA: Get foothold.
 
-Gain more privileges.
+PARISA: Gain more privileges.
 
-Find valuable systems.
+PARISA: Find valuable systems.
 
-Move.
+PARISA: Move.
 
-Steal or damage something.
+PARISA: Steal or damage something.
 
 JULES: Exactly.
 
@@ -147,13 +147,13 @@ PARISA: Having credentials is not always the same as running code.
 
 JULES: Right.
 
-**Execution** means getting malicious commands or code to run.
+JULES: **Execution** means getting malicious commands or code to run.
 
 PARISA: Malware attachment.
 
-Remote command execution vulnerability.
+PARISA: Remote command execution vulnerability.
 
-Malicious script.
+PARISA: Malicious script.
 
 JULES: Exactly.
 
@@ -166,19 +166,19 @@ JULES: Attackers often want a way back in.
 
 PARISA: Create account.
 
-Steal refresh token.
+PARISA: Steal refresh token.
 
-Install service.
+PARISA: Install service.
 
-Scheduled task.
+PARISA: Scheduled task.
 
-Web shell.
+PARISA: Web shell.
 
 JULES: Cloud access key.
 
-SSH key.
+JULES: SSH key.
 
-OAuth application consent.
+JULES: OAuth application consent.
 
 PARISA: Modern persistence can be identity persistence.
 
@@ -193,11 +193,11 @@ JULES: So attacker tries to gain more.
 
 PARISA: Exploit local vulnerability.
 
-Misconfigured sudo.
+PARISA: Misconfigured sudo.
 
-Over-permissive cloud IAM.
+PARISA: Over-permissive cloud IAM.
 
-Stored admin credentials.
+PARISA: Stored admin credentials.
 
 JULES: Exactly.
 
@@ -210,13 +210,13 @@ JULES: Attackers love credentials because legitimate credentials blend in.
 
 PARISA: Dump password hashes.
 
-Steal browser tokens.
+PARISA: Steal browser tokens.
 
-Read secrets from environment variables.
+PARISA: Read secrets from environment variables.
 
 JULES: Search config files.
 
-Query cloud metadata if exposed.
+JULES: Query cloud metadata if exposed.
 
 PARISA: And once they have credentials, controls may think they are legitimate.
 
@@ -229,19 +229,19 @@ PARISA: “Where am I and what else exists?”
 
 JULES: Exactly.
 
-Enumerate users.
+JULES: Enumerate users.
 
-Groups.
+JULES: Groups.
 
-Hosts.
+JULES: Hosts.
 
-Cloud accounts.
+JULES: Cloud accounts.
 
-Network connections.
+JULES: Network connections.
 
-Running services.
+JULES: Running services.
 
-Security tools.
+JULES: Security tools.
 
 PARISA: This is the internal version of reconnaissance.
 
@@ -254,7 +254,7 @@ PARISA: Move from first compromised system to another.
 
 JULES: Right.
 
-Use stolen credentials, remote administration tools, shared services, trust relationships.
+JULES: Use stolen credentials, remote administration tools, shared services, trust relationships.
 
 PARISA: Which is why segmentation matters.
 
@@ -279,7 +279,7 @@ PARISA: Find valuable data.
 
 JULES: **Collection** gathers it.
 
-**Exfiltration** moves it out.
+JULES: **Exfiltration** moves it out.
 
 PARISA: Could be over HTTPS, cloud storage, DNS tunneling, email—
 
@@ -296,17 +296,17 @@ PARISA: Ransomware.
 
 JULES: Destruction.
 
-Service disruption.
+JULES: Service disruption.
 
-Fraud.
+JULES: Fraud.
 
-Data manipulation.
+JULES: Data manipulation.
 
 PARISA: Sometimes attackers just steal information and leave quietly.
 
 JULES: Right.
 
-Not every compromise ends with a dramatic ransom note.
+JULES: Not every compromise ends with a dramatic ransom note.
 
 
 ## Cyber Kill Chain vs. MITRE ATT&CK
@@ -315,7 +315,7 @@ PARISA: Framework names.
 
 JULES: Lockheed Martin’s Cyber Kill Chain describes broad attack stages.
 
-MITRE ATT&CK is a much larger knowledge base of adversary tactics and techniques observed in real operations.
+JULES: MITRE ATT&CK is a much larger knowledge base of adversary tactics and techniques observed in real operations.
 
 PARISA: ATT&CK is not a checklist every attacker follows.
 
@@ -349,19 +349,19 @@ JULES: Much.
 
 PARISA: I think this is the important developer bit.
 
-One “medium” vulnerability can become serious when chained.
+PARISA: One “medium” vulnerability can become serious when chained.
 
 JULES: Exactly.
 
-Maybe an information leak reveals a username.
+JULES: Maybe an information leak reveals a username.
 
-A weak password gets the account.
+JULES: A weak password gets the account.
 
-That account has excessive permissions.
+JULES: That account has excessive permissions.
 
-A service account secret is stored in a readable file.
+JULES: A service account secret is stored in a readable file.
 
-That secret reaches production.
+JULES: That secret reaches production.
 
 PARISA: No single step necessarily looked catastrophic.
 
@@ -378,17 +378,17 @@ PARISA: Defense in depth means we have opportunities to catch the attacker at se
 
 JULES: Exactly.
 
-Phishing filter at initial access.
+JULES: Phishing filter at initial access.
 
-EDR at execution.
+JULES: EDR at execution.
 
-Identity alerts at suspicious authentication.
+JULES: Identity alerts at suspicious authentication.
 
-Segmentation at lateral movement.
+JULES: Segmentation at lateral movement.
 
-DLP or network monitoring at exfiltration.
+JULES: DLP or network monitoring at exfiltration.
 
-Backups and recovery at impact.
+JULES: Backups and recovery at impact.
 
 PARISA: One missed control does not have to mean game over.
 
@@ -403,7 +403,7 @@ JULES: Purple teaming emphasizes collaboration between offensive and defensive p
 
 PARISA: “Here’s how we got in.”
 
-“Great, how would we detect that?”
+PARISA: “Great, how would we detect that?”
 
 JULES: Exactly.
 

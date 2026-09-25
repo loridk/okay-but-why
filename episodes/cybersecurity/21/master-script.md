@@ -30,13 +30,13 @@ JULES: Security governance defines how an organization directs and oversees secu
 
 PARISA: Policies.
 
-Roles.
+PARISA: Roles.
 
-Accountability.
+PARISA: Accountability.
 
-Risk appetite.
+PARISA: Risk appetite.
 
-Standards.
+PARISA: Standards.
 
 JULES: Exactly.
 
@@ -72,7 +72,7 @@ JULES: Identify assets, threats, vulnerabilities, likelihood, impact, controls.
 
 PARISA: Quantitative if useful.
 
-Qualitative if that’s more realistic.
+PARISA: Qualitative if that’s more realistic.
 
 JULES: Exactly.
 
@@ -87,19 +87,19 @@ PARISA: Companion.
 
 JULES: Avoid.
 
-Transfer.
+JULES: Transfer.
 
-Mitigate.
+JULES: Mitigate.
 
-Accept.
+JULES: Accept.
 
 PARISA: Avoid: stop doing risky activity.
 
-Transfer: insurance or contract shifts financial consequences.
+PARISA: Transfer: insurance or contract shifts financial consequences.
 
-Mitigate: controls reduce likelihood or impact.
+PARISA: Mitigate: controls reduce likelihood or impact.
 
-Accept: knowingly live with it.
+PARISA: Accept: knowingly live with it.
 
 JULES: Exactly.
 
@@ -125,7 +125,7 @@ PARISA: Security and privacy overlap but are not identical.
 
 JULES: Security asks whether data is protected from unauthorized harm.
 
-Privacy asks broader questions about collection, use, consent, retention, sharing, rights.
+JULES: Privacy asks broader questions about collection, use, consent, retention, sharing, rights.
 
 PARISA: A perfectly encrypted database can still be a privacy nightmare if we never should have collected the data.
 
@@ -147,11 +147,11 @@ JULES: Usually, yes.
 
 PARISA: Public.
 
-Internal.
+PARISA: Internal.
 
-Confidential.
+PARISA: Confidential.
 
-Restricted.
+PARISA: Restricted.
 
 JULES: Organizations use classifications to drive handling requirements.
 
@@ -175,11 +175,11 @@ JULES: Yes.
 
 PARISA: PCI DSS.
 
-HIPAA.
+PARISA: HIPAA.
 
-GDPR.
+PARISA: GDPR.
 
-SOC 2.
+PARISA: SOC 2.
 
 JULES: Different things with different scopes and legal status.
 
@@ -200,13 +200,13 @@ JULES: Their security becomes part of our risk.
 
 PARISA: Contracts.
 
-Assessments.
+PARISA: Assessments.
 
-Security requirements.
+PARISA: Security requirements.
 
-Breach notification.
+PARISA: Breach notification.
 
-Data-processing terms.
+PARISA: Data-processing terms.
 
 JULES: Exactly.
 
@@ -215,7 +215,7 @@ JULES: Exactly.
 
 PARISA: Policy says MFA everywhere.
 
-Legacy system can’t support it.
+PARISA: Legacy system can’t support it.
 
 JULES: Document exception, assess risk, implement compensating controls, assign expiration/review.
 

@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 3: React Runs WHERE? — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: React Runs WHERE?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/ddd7e853-6bd2-40f6-bdbc-43a20493de88"
+      ></script>
+      <div class="redcirclePlayer-ddd7e853-6bd2-40f6-bdbc-43a20493de88"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#two-environments-different-capabilities"
+            >Two Environments, Different Capabilities</a
+          >
+        </li>
+        <li>
+          <a href="#content-with-one-interactive-piece"
+            >Content With One Interactive Piece</a
+          >
+        </li>
+        <li>
+          <a href="#the-import-graph-is-the-border"
+            >The Import Graph Is the Border</a
+          >
+        </li>
+        <li><a href="#what-can-cross">What Can Cross?</a></li>
+        <li>
+          <a href="#follow-the-initial-request">Follow the Initial Request</a>
+        </li>
+        <li>
+          <a href="#why-it-is-not-simply-php-again"
+            >Why It Is Not Simply PHP Again</a
+          >
+        </li>
+        <li>
+          <a href="#browser-apis-need-a-browser-moment"
+            >Browser APIs Need a Browser Moment</a
+          >
+        </li>
+        <li>
+          <a href="#guard-the-dependency-direction"
+            >Guard the Dependency Direction</a
+          >
+        </li>
+        <li><a href="#debug-the-boundary">Debug the Boundary</a></li>
+        <li><a href="#a-small-design-review">A Small Design Review</a></li>
+        <li>
+          <a href="#the-wrapper-thought-experiment"
+            >The Wrapper Thought Experiment</a
+          >
+        </li>
+        <li>
+          <a href="#a-button-that-calls-the-server-later"
+            >A Button That Calls the Server Later</a
+          >
+        </li>
+        <li>
+          <a href="#the-bundle-has-an-import-history"
+            >The Bundle Has an Import History</a
+          >
+        </li>
+        <li>
+          <a href="#state-ownership-is-still-react"
+            >State Ownership Is Still React</a
+          >
+        </li>
+        <li><a href="#what-we-would-inspect">What We Would Inspect</a></li>
+        <li><a href="#why-this-boundary-helps">Why This Boundary Helps</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I added a click handler to our session page, and the framework
+          objected.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Was it a Server Component?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It was a component. In a file. On my computer. I had not assigned it
+          a geopolitical identity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we establish borders.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wonderful. My button needs a passport.</span>
+      </p>
+      <h2 id="two-environments-different-capabilities">
+        Two Environments, Different Capabilities
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? In Next's App Router, pages and layouts are
+          Server Components by default. They execute in a server environment,
+          which can include build time. Their component implementation isn't
+          shipped to the browser as interactive client code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Location, not timing. Server doesn't automatically mean a fresh
+          execution for every request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A Server Component can access server-side resources through
+          suitable code. It cannot directly handle a visitor's DOM click or use
+          browser state Hooks as though it lived in the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because something in the browser has to notice that click. It might
+          then send a request to a server, but the server isn't sitting inside
+          my mouse.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A Client Component supplies browser interactivity: state, event
+          handlers, effects, and appropriate access to browser APIs. Now the
+          naming trap: Client Components can also participate in server
+          prerendering for an initial page load.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Client Component does not mean “this function can never execute on a
+          server.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It means the component belongs to the client-capable part of
+          the application. That's why reading window during render can fail even
+          in a file marked use client.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The directive isn't a request to switch off HTML generation. Good.
+          That misconception makes every subsequent explanation wobble.</span
+        >
+      </p>
+      <h2 id="content-with-one-interactive-piece">
+        Content With One Interactive Piece
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >DemoCon's detail page contains a title, a speaker, an abstract, and a
+          favorite button. Only the button needs local interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The abstract is perfectly happy being a paragraph. It doesn't need to
+          attend a state-management retreat.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the page reads public data on the server and renders a small
+          FavoriteButton Client Component. It passes only what the button needs,
+          such as a public title.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not the entire database row, including an unpublished speaker email
+          and our internal scheduling notes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Anything serialized to the client is available to the user,
+          even if our visible interface doesn't display every field.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server execution gives us somewhere to keep secrets. It doesn't make
+          the result secret after we send it to somebody.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That's why a public data representation is valuable. Our
+          getPublicSession helper should return the fields intended for public
+          use. We don't ask every component to remember which pieces to
+          remove.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A clear contract beats a collection of optimistic omissions.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>// app/components/FavoriteButton.jsx
+'use client';
+
+import { useState } from 'react';
+
+export default function FavoriteButton({ title }) {
+  const [favorite, setFavorite] = useState(false);
+  return (
+    &lt;button
+      type=&quot;button&quot;
+      aria-pressed={favorite}
+      onClick={() =&gt; setFavorite(value =&gt; !value)}
+    &gt;
+      Favorite: {title}
+    &lt;/button&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Spoken version: begin unfavorited, then toggle the Boolean when
+          someone activates the button. Expose the pressed state and keep a
+          stable label naming the talk.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Syntax customs inspection. Use client is a React directive supported
+          by the framework's build integration. It goes before imports. UseState
+          is React. Destructuring, arrow functions, and the exclamation mark for
+          Boolean negation are JavaScript. The element expression is JSX.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >onClick is React's event prop, and aria-pressed is an accessibility
+          attribute represented in the resulting HTML. Type button avoids an
+          accidental submission if this component later appears in a form.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The updater receives the previous state, so the toggle doesn't depend
+          on an old captured state value. And this version is deliberately
+          local. Reloading can reset it. It doesn't follow me to another
+          device.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Persistence would be a separate requirement. We are not
+          claiming that one useState call created account preferences.</span
+        >
+      </p>
+      <h2 id="the-import-graph-is-the-border">
+        The Import Graph Is the Border
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What exactly does use client apply to? The screen rectangle occupied
+          by the button?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It establishes a module boundary. The module and its imported
+          dependencies enter the client graph where applicable. Put it high in
+          your import tree and you can include much more code than
+          intended.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So putting it on the root layout because one tiny button needs state
+          is a fairly expensive way to avoid thinking about the button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Often, yes. Extract the appropriate interactive piece. You don't need
+          the directive on every file already imported under a client
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But everything visually nested inside a Client Component isn't
+          necessarily client implementation code?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The rendered tree and the import graph are different. A
+          Server Component can prepare server-rendered content and pass that
+          content as children to a client wrapper.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Such as a server page giving session details to a client panel that
+          controls whether those details are expanded.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The client panel owns the open state. It doesn't import the
+          server-only database module to generate the details in the
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “inside” has two meanings: imported by this module, or appearing
+          inside its rendered output. We must specify which one we mean.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Otherwise people see a client wrapper and assume every paragraph
+          beneath it has become browser code. Composition lets us arrange output
+          without moving every implementation across the boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My button passport metaphor has encountered international shipping
+          law.</span
+        >
+      </p>
+      <h2 id="what-can-cross">What Can Cross?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The title string is easy to pass. More generally, props crossing from
+          server to client must use values React supports serializing across
+          that boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Often simple data: strings, numbers, arrays, suitable objects. But
+          “exactly JSON and nothing else” is too narrow for React's supported
+          set.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Still, arbitrary class instances, database connections, and
+          ordinary function closures aren't a transport format. Design a small
+          public data shape instead of handing the browser a live server
+          object.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And when we later pass a Server Function reference, that works
+          because React and Next provide a particular remote invocation
+          mechanism. It doesn't mean all JavaScript closures can teleport.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We will distinguish those references from normal callback
+          props within client code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Data size counts too. A server can do the query and still send an
+          enormous array to a client filter. “The query ran on the server”
+          doesn't make the array disappear from the network.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Fewer client implementation bytes and fewer transferred data
+          bytes are related performance goals, but one doesn't guarantee the
+          other.</span
+        >
+      </p>
+      <h2 id="follow-the-initial-request">Follow the Initial Request</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Someone directly opens boring-deployments. The server renders the
+          Server Component tree into a React-specific representation, commonly
+          called the RSC payload. It contains output and the information needed
+          to connect Client Components into the tree.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React Server Components payload. Not simply a fancy name for the HTML
+          document.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. For the initial request, the framework also produces HTML
+          the browser can display. The browser uses React's coordination data
+          and client code to reconcile the tree and hydrate the interactive
+          components.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hydration connects the interactive behavior to existing rendered UI.
+          The Server Component itself isn't downloaded and revived in the
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Its implementation remains on the server side. The Client
+          Component implementation is the part needed for browser
+          interactions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And later navigation may request updated React server output and
+          merge it into the existing application. That's different from throwing
+          away the whole document on every internal link.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. You don't need to memorize the wire format, but understanding
+          that there is a coordination protocol explains why this is more than a
+          template returning an HTML string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It also explains why my browser log and server log don't show the
+          same events. They belong to different execution environments.</span
+        >
+      </p>
+      <h2 id="why-it-is-not-simply-php-again">
+        Why It Is Not Simply PHP Again
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's what is familiar: server-side code accesses data and produces
+          UI. We can avoid asking the browser to do work it doesn't need to do.
+          That motivation is old and sensible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Completely. Servers were not invented at a React conference.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank God. Someone would have given them a gradient logo and a
+          waitlist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The different part is this particular integration with React
+          components, client navigation, streamed output, and explicit client
+          boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Traditional server-rendered applications can also stream and use rich
+          JavaScript. We aren't claiming Next owns those ideas. We're describing
+          how this system connects them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A PHP template doesn't ordinarily participate in the React
+          Server Component protocol just because it returns HTML. Familiar
+          motivation, different implementation contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The analogy helps me reason about trusted data access and initial
+          content. It stops helping if I assume a complete document response and
+          page reload for every interaction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a good boundary for the analogy itself. We keep the familiar
+          part without forcing the new system into the old implementation.</span
+        >
+      </p>
+      <h2 id="browser-apis-need-a-browser-moment">
+        Browser APIs Need a Browser Moment
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose we eventually save favorites in localStorage. Can I just read
+          that in the state initializer?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not safely without thinking through server rendering and the initial
+          client render. The server has no access to a visitor's localStorage,
+          and the initial markup must agree across the handoff.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a common simple approach is a consistent initial value, then
+          reading browser storage in an effect and handling the update. But that
+          may visibly change after hydration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. That's a tradeoff, not magic. If a preference controls important
+          initial content, we might need a different design, perhaps something
+          the server can know through a request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Effects run on the client after commit. They are useful for
+          synchronization with external browser systems. They aren't a rule that
+          every piece of data must be fetched after the page appears.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Our session description is already available through server
+          data access. Fetching it again in an effect just because useEffect is
+          familiar can add a waterfall and duplicate work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The API we know best isn't automatically the place every requirement
+          belongs.</span
+        >
+      </p>
+      <h2 id="guard-the-dependency-direction">
+        Guard the Dependency Direction
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A server data module can import the server-only marker to help catch
+          accidental use from the client graph during a build.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A guardrail, not encryption or permission enforcement.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. It can catch a database module entering client code. It
+          cannot stop us deliberately returning sensitive fields, or replace
+          validation and authorization.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does TypeScript make returned data safe. A typed object
+          containing someone's private email is a very precisely described
+          privacy mistake.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And publicly exposed environment variables are public. A name
+          containing environment doesn't make a value secret. Keep credentials
+          in server configuration and out of client bundles, responses, and
+          careless logs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can also avoid overly powerful helpers. The public session reader
+          should select published content. An organizer reader needs its own
+          permission checks. The component's location isn't proof the current
+          caller is an organizer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A server can receive requests from anyone. Server-side is the
+          place to enforce trust, not evidence that trust has already been
+          established.</span
+        >
+      </p>
+      <h2 id="debug-the-boundary">Debug the Boundary</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Three symptoms. First, useState produces an error in our page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Ask whether that whole page needs to be interactive. Usually extract
+          the piece requiring state into an appropriate Client Component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Second, window is not defined even with use client.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Check when the access occurs. Client-component rendering can run
+          during server prerendering. Place browser-only work in a suitable
+          client lifecycle or event rather than assuming the directive disables
+          initial rendering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Third, a button suddenly needs our database package.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Follow the imports. Something crossed into the client graph
+          incorrectly. Keep the read on the server and pass its minimal public
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >None of those starts with “disable everything until the red box
+          stops.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Error messages become more useful when we understand which
+          environment and dependency path they describe.</span
+        >
+      </p>
+      <h2 id="a-small-design-review">A Small Design Review</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say the organizer requests a live character count on the
+          proposal form. Does that force the action that stores a proposal into
+          client code?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. The character counter is client behavior. The mutation still
+          belongs on the server. We can compose them through the framework's
+          form machinery, which we'll reach later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about a session list with a client-side search field?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Decide how much data is reasonable to send. For a small public list,
+          passing the public records to a client filter can be simple. For
+          thousands of records or private information, query-driven server
+          filtering might fit better.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we can't answer by counting interactive controls. We need the data
+          size, privacy, and user experience.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. What if the entire application is a highly interactive
+          editing canvas? Then a substantial client subtree can be reasonable.
+          Server Components aren't a contest to reach zero client code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. A framework shouldn't make us ashamed of the browser doing
+          browser things.</span
+        >
+      </p>
+      <h2 id="the-wrapper-thought-experiment">
+        The Wrapper Thought Experiment
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want to test the composition idea because it's where the words get
+          slippery. We have a client component called ExpandablePanel. It owns
+          whether a panel is open. We also have server-rendered session
+          details.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The server page can create those details and pass them into
+          ExpandablePanel as children. The wrapper can show or hide the supplied
+          content without knowing how the server obtained it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if ExpandablePanel directly imports a module that queries the
+          database, we're crossing a different boundary. That's not the same
+          arrangement just because the screen looks identical.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Same possible visual result, different dependency graph. The
+          client wrapper should not import server-only data access. The server
+          parent does the composition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Is the hidden content necessarily secret because the panel is
+          closed?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. If it was sent to the client as part of the result, the user may
+          inspect it. A collapsed panel is a display choice, not an
+          authorization mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Not currently visible” and “not delivered” are different
+          claims.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If information requires separate authorization, enforce that
+          before returning it. Don't rely on a client toggle to protect
+          already-delivered content.</span
+        >
+      </p>
+      <h2 id="a-button-that-calls-the-server-later">
+        A Button That Calls the Server Later
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our favorite is local now. Suppose we later save it to an account.
+          Does the button become a Server Component because it talks to the
+          server?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. It still handles browser interaction. It can invoke an
+          appropriate server operation, but the event handler and local feedback
+          remain client behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “communicates with the server” isn't the definition of Server
+          Component. Almost every browser app communicates with a server at some
+          point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server Component describes where that component's
+          implementation executes in this model. A Client Component can request
+          server work without becoming server implementation itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the server operation rechecks the user and session identifier. It
+          doesn't trust the button's props as proof that saving that favorite is
+          allowed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The browser is an untrusted caller even if we wrote the UI.
+          The action can return success or an expected failure, and the client
+          can update feedback accordingly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pending and failure states enter the design. A local toggle was
+          immediate. A persisted toggle now has latency and uncertainty.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Persistence is more than adding one await. It's a changed
+          product promise with a changed failure model.</span
+        >
+      </p>
+      <h2 id="the-bundle-has-an-import-history">
+        The Bundle Has an Import History
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine the favorite imports a general utilities file. That file
+          imports a large formatting library and unrelated helpers. What should
+          we ask?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether the browser bundle includes more than the button needs. Tree
+          shaking can remove some unused code, but we shouldn't assume every
+          package structure makes that perfect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Keep imports purposeful and inspect the resulting bundle if
+          size matters. A tiny visual component can pull a large dependency
+          graph.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some pure utilities can work in both environments. Others contain
+          secrets or browser-only assumptions and belong on a particular
+          side.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Even a pure formatting function can produce different output
+          if server and browser defaults differ.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Dates and timezones. A conference schedule is a particularly bad
+          place to discover that the server and attendee disagree about what
+          local means.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Explicit display rules help both hydration consistency and
+          user understanding.</span
+        >
+      </p>
+      <h2 id="state-ownership-is-still-react">
+        State Ownership Is Still React
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if two favorite controls need to display the same local
+          preference on one page?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We need a shared source of client state at an appropriate common
+          owner, or another deliberate mechanism. Server Components don't
+          synchronize independent useState calls.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Familiar React rules still apply within the client subtree.
+          Context can supply client values, but Server Components don't consume
+          browser context as though they ran there.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A client provider can wrap an interactive region while
+          server-rendered content passes through by composition. But server data
+          access can't consult a value existing only in the visitor's
+          memory.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. If the server needs a preference, it must arrive through an
+          appropriate request or server-readable state, with the usual trust
+          checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Separate where state lives for interaction from what must cross the
+          network for an operation. Otherwise someone eventually imports a
+          browser store into a database helper.</span
+        >
+      </p>
+      <h2 id="what-we-would-inspect">What We Would Inspect</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The initial document can show useful HTML arriving. Network requests
+          reveal client assets and later navigation. Browser and server logs
+          reveal different execution paths.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But a single log isn't proof of the entire model. Development tools
+          may rerun work, and caches can avoid work. We need to correlate the
+          request with the path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A production claim needs a production check. We can also
+          inspect whether private fields appear in responses rather than
+          assuming a clean-looking page has a clean payload.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And use a keyboard on the favorite. Space should activate the native
+          button, focus should be visible, and the pressed state should be
+          available.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's evidence about both sides of the boundary: the data we deliver
+          and the interaction users actually receive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Much better than awarding ourselves points for placing a directive in
+          a small file.</span
+        >
+      </p>
+      <h2 id="why-this-boundary-helps">Why This Boundary Helps</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server Components can keep data access near server resources and
+          avoid shipping some implementation code to the browser. Client
+          Components provide the interactivity users need. The benefit comes
+          from assigning responsibilities deliberately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A slow query remains slow. An enormous client dependency remains
+          enormous. But now we have a clear place to ask which work belongs
+          where.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. DemoCon's page reads public data. FavoriteButton owns local
+          interaction. The props are small and public. That is a useful working
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use client marks a module boundary. It doesn't mean no server HTML.
+          Visual nesting is not the import graph. And server output can expose
+          anything we include in it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The button has its papers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, SSR, SSG, CSR, hydration, streaming. The acronym drawer
+          has fallen down the stairs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We'll label the pieces.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Please use actual words on some of the labels.</span>
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

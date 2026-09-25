@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Modern Drupal Frontend: Twig, Themes &amp; Components —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Modern Drupal Frontend: Twig, Themes &amp; Components</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/9cef84ea-65d5-427c-a2ce-5ee1ebf99424"
+      ></script>
+      <div class="redcirclePlayer-9cef84ea-65d5-427c-a2ce-5ee1ebf99424"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#a-theme-has-responsibilities"
+            >A Theme Has Responsibilities</a
+          >
+        </li>
+        <li>
+          <a href="#twig-is-the-template-language"
+            >Twig Is the Template Language</a
+          >
+        </li>
+        <li>
+          <a href="#how-does-drupal-pick-this-template"
+            >How Does Drupal Pick This Template?</a
+          >
+        </li>
+        <li>
+          <a href="#attributes-regions-and-blocks"
+            >Attributes, Regions, and Blocks</a
+          >
+        </li>
+        <li>
+          <a href="#assets-need-dependencies">Assets Need Dependencies</a>
+        </li>
+        <li>
+          <a href="#javascript-that-can-attach-more-than-once"
+            >JavaScript That Can Attach More Than Once</a
+          >
+        </li>
+        <li>
+          <a href="#single-directory-components">Single Directory Components</a>
+        </li>
+        <li><a href="#build-one-event-card">Build One Event Card</a></li>
+        <li>
+          <a href="#where-render-arrays-meet-components"
+            >Where Render Arrays Meet Components</a
+          >
+        </li>
+        <li>
+          <a href="#components-aren-t-automatically-an-editor-ui"
+            >Components Aren't Automatically an Editor UI</a
+          >
+        </li>
+        <li>
+          <a href="#verify-the-actual-output">Verify the Actual Output</a>
+        </li>
+        <li>
+          <a href="#a-frontend-we-can-locate">A Frontend We Can Locate</a>
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have found the markup. It was behind a template suggestion, a
+          preprocess function, and a cache.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>But you found it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. I would like the markup to know I respect its privacy, but this
+          is its job.</span
+        >
+      </p>
+      <h2 id="a-theme-has-responsibilities">A Theme Has Responsibilities</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Today we're taking Drupal's structured
+          output and giving it a frontend. A theme provides presentation:
+          templates, assets, regions, and related conventions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It shouldn't secretly own the university's business rules. If
+          changing the colors removes the event content type, we've attached
+          functionality to the wrong lifecycle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A theme can adapt output, but durable application behavior
+          generally belongs in modules or services. We're building a
+          presentation layer that consumes Drupal's render system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And this is still web development. The final browser receives HTML,
+          CSS, and JavaScript. Drupal doesn't create a fourth kind of padding
+          that only works on government websites.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Theme setup includes an info YAML file describing compatibility,
+          base-theme choice, libraries, and regions. Starterkit is a core tool
+          for generating a starting theme rather than making every project
+          depend forever on a shared base theme's exact markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Generated starting code becomes our code to maintain. That's
+          different from inheriting future changes automatically through a
+          base-theme dependency.</span
+        >
+      </p>
+      <h2 id="twig-is-the-template-language">Twig Is the Template Language</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Twig is a template engine from the broader PHP ecosystem, used by
+          Drupal. It isn't PHP with different punctuation and isn't JSX.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Expressions output values. Template tags control things like
+          conditions and loops. A filter transforms a value. Those are Twig
+          language features. Drupal adds variables, filters, functions, and
+          rendering integration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The double braces you see in a Twig template mean evaluate
+          and output an expression. They don't mean JavaScript is running in the
+          browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Autoescaping helps with ordinary values, but it doesn't make every
+          possible operation safe. Adding a raw filter to silence escaping
+          because the output looks inconvenient is a dangerous reflex.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal render arrays and processed text can represent output intended
+          for rendering. If you're handling plain editor input or external
+          strings, keep the appropriate escaping and filtering. Don't
+          manufacture trusted markup casually.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And templates should mostly compose prepared data and renderable
+          pieces. If Twig is becoming our database-access layer, we should move
+          that work to an appropriate Drupal layer where access and cacheability
+          can be handled.</span
+        >
+      </p>
+      <h2 id="how-does-drupal-pick-this-template">
+        How Does Drupal Pick This Template?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Template suggestions are candidate template names that let Drupal
+          select more specific presentation for a context. A node template can
+          have a more specific suggestion for a content type and view
+          mode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So an Event teaser can have a specialized template without replacing
+          every node's output. We use the actual suggestions Drupal provides,
+          often inspected with development debugging enabled.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Don't guess endlessly at hyphens. Enable suitable development
+          settings, inspect the suggestions, and keep debug output out of
+          production. After adding a new template, rebuild caches so discovery
+          sees it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Preprocessing happens before the template renders. It can prepare
+          variables, classes, and other presentation data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. In themes you'll encounter procedural preprocess functions in a
+          dot-theme file. Don't assume Drupal's object-oriented module-hook
+          direction means every theme preprocess function has become a class
+          method.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a useful boundary. Modern Drupal still contains conventions
+          with different histories. We need the API contract for the particular
+          extension point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if preprocessing derives output from entities or configuration,
+          preserve the dependencies. A string doesn't become cache-correct
+          merely because it was created close to Twig.</span
+        >
+      </p>
+      <h2 id="attributes-regions-and-blocks">
+        Attributes, Regions, and Blocks
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Twig templates often print an attributes variable next to an HTML
+          element. Is that just a string of attributes?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal commonly provides an Attribute object, which supports methods
+          such as adding classes and renders attributes appropriately. Preserve
+          relevant existing attributes rather than replacing them with a
+          hand-built string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That matters for classes and other integration details. And values
+          still need to make sense: an escaped URL isn't automatically an
+          approved destination, and an ARIA attribute isn't useful merely
+          because it's syntactically valid.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Regions are named areas a theme exposes, such as header,
+          content, or footer. Blocks can be placed into those regions with
+          visibility and configuration rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A region is a placement area, not a content entity. A block's output
+          can come from a plugin or content. Our vocabulary episode is paying
+          dividends.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Theme changes can also affect region mappings and placements. A
+          redesign needs to verify the site still has navigation, messages, and
+          primary content where users can find them.</span
+        >
+      </p>
+      <h2 id="assets-need-dependencies">Assets Need Dependencies</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal libraries group CSS and JavaScript and declare dependencies. A
+          theme can attach a library globally or a render array or template can
+          attach it where needed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is asset coordination. The library definition tells Drupal what
+          to include and what has to be available first. It doesn't necessarily
+          imply npm or a bundler.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. You can use a frontend build tool, but that is your tooling
+          choice. Drupal libraries still need to reference the produced assets
+          and declare runtime dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a script uses Drupal behaviors and the once utility, declare those
+          dependencies instead of relying on another page component to happen to
+          load them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Otherwise the feature works on one page and fails on another
+          with a completely innocent design.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>yaml</span></figcaption>
+        <pre tabindex="0"><code># bellweather.libraries.yml
+site:
+  css:
+    theme:
+      css/site.css: {}</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>twig</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>{{ attach_library('bellweather/site') }}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those snippets assume an installed theme named bellweather and a real
+          CSS file at that path. We're showing the wiring, not promising that
+          two fragments constitute a complete theme.</span
+        >
+      </p>
+      <h2 id="javascript-that-can-attach-more-than-once">
+        JavaScript That Can Attach More Than Once
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal behaviors provide a way to attach JavaScript to page content,
+          including content inserted later through Drupal's AJAX
+          mechanisms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So relying only on the browser's initial DOM-ready event can miss new
+          content. But attaching the same click listener repeatedly can make one
+          click behave like a small crowd.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's why behaviors receive a context and why the once utility is
+          useful. Process relevant elements within the context, and mark
+          initialization so repeated attachment doesn't duplicate it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The behavior object is a Drupal convention. The function, event
+          listener, and DOM operations are JavaScript. An arrow function is
+          modern JavaScript, not special Drupal syntax.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some widgets also need detach behavior when content is removed or
+          moved, especially if they hold external resources. A tiny button
+          doesn't need a miniature framework, but a richer widget may need
+          cleanup.</span
+        >
+      </p>
+      <h2 id="single-directory-components">Single Directory Components</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I heard “find the template, now find the CSS, now find the
+          JavaScript,” and I brought a folder.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is either a solution or how this problem started.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >A Single Directory Component puts a reusable component's Twig,
+          metadata, and optional CSS and JavaScript together. The metadata
+          describes its inputs. The point is that changing one component doesn't
+          require a treasure hunt across the theme.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SDC entered Drupal 10.1 experimentally and became stable in Drupal
+          10.3. On modern supported Drupal 10 and 11 sites, it is part of core's
+          theme system. Old instructions to enable an experimental SDC module
+          need their version context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What makes this a Drupal component rather than four files we happen
+          to put in a directory?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Drupal discovers it through conventions, resolves its namespaced
+          component name, uses its metadata, and integrates its assets and
+          rendering. The folder is an interface to the theme system, not just
+          tidiness.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Props are structured inputs, like a title or a boolean. Slots hold
+          renderable content that can be composed inside the component. They let
+          the caller supply something richer than a plain string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Similar vocabulary to other component systems, different runtime.
+          This is server-rendered Twig composition. It doesn't automatically
+          create React state, hydration, Shadow DOM, or isolated CSS.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Exactly. Class naming still matters. A component's stylesheet can
+          affect other markup if its selectors are too broad. Colocation isn't
+          encapsulation magic.</span
+        >
+      </p>
+      <h2 id="build-one-event-card">Build One Event Card</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our example is an event card with a title, detail URL, displayed
+          date, a details slot, and an optional local save toggle. It assumes an
+          installed bellweather theme on Drupal 11.4 or another supported
+          version with stable SDC.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It is intentionally a component example. The caller supplies a
+          correctly formatted date and a permitted URL. It doesn't query
+          entities, authorize access, or invent a time zone.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>text</span></figcaption>
+        <pre tabindex="0"><code>web/themes/custom/bellweather/
+  components/
+    event-card/
+      event-card.component.yml
+      event-card.twig
+      event-card.css
+      event-card.js</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>yaml</span></figcaption>
+        <pre tabindex="0"><code>name: Event card
+status: stable
+props:
+  type: object
+  required: [title, url, date_label]
+  properties:
+    title:
+      type: string
+    url:
+      type: string
+    date_label:
+      type: string
+slots:
+  details:
+    title: Event details
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 5">
+        <figcaption>Code card 5<span>twig</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;article{{ attributes.addClass('bw-event-card') }}&gt;
+  &lt;h3 class=&quot;bw-event-card__title&quot;&gt;&lt;a href=&quot;{{ url }}&quot;&gt;{{ title }}&lt;/a&gt;&lt;/h3&gt;
+  &lt;p&gt;{{ date_label }}&lt;/p&gt;
+  &lt;div class=&quot;bw-event-card__details&quot;&gt;{{ details }}&lt;/div&gt;
+  &lt;button class=&quot;bw-event-card__save&quot; type=&quot;button&quot;
+          aria-pressed=&quot;false&quot; hidden&gt;Save {{ title }} for this visit&lt;/button&gt;
+&lt;/article&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The heading is level three because this example sits beneath a
+          level-two events section. If the component goes elsewhere, we must
+          choose an appropriate heading structure. A reusable card doesn't get
+          to declare itself the page's main heading.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The link text is the event's title. No row of identical “read more”
+          links. The save control is a real button with a stable accessible name
+          and a pressed state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And it starts hidden because the enhancement isn't useful until its
+          JavaScript works. The event information and link remain available
+          without JavaScript.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 6">
+        <figcaption>Code card 6<span>css</span></figcaption>
+        <pre tabindex="0"><code>.bw-event-card {
+  border: 1px solid #767676;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #202124;
+  background: #fff;
+}
+.bw-event-card a { color: #174ea6; }
+.bw-event-card__save:not([hidden]) {
+  margin-block-start: 1rem;
+  padding: 0.65rem 1rem;
+  color: #fff;
+  background: #174ea6;
+  border: 2px solid #174ea6;
+  border-radius: 0.25rem;
+}
+.bw-event-card__save[aria-pressed=&quot;true&quot;] {
+  color: #174ea6;
+  background: #fff;
+  text-decoration: underline;
+}
+.bw-event-card :focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 3px;
+}</code></pre>
+      </figure>
+
+      <figure class="card code" aria-label="Code card 7">
+        <figcaption>Code card 7<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>((Drupal, once) =&gt; {
+  Drupal.behaviors.bellweatherEventCard = {
+    attach(context) {
+      once('bw-event-save', '.bw-event-card__save', context)
+        .forEach((button) =&gt; {
+          button.addEventListener('click', () =&gt; {
+            const pressed = button.getAttribute('aria-pressed') === 'true';
+            button.setAttribute('aria-pressed', String(!pressed));
+          });
+          button.hidden = false;
+        });
+    },
+  };
+})(Drupal, once);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This remembers only the state of that button in the current page. It
+          doesn't save to an account, persist after reload, or synchronize
+          matching cards. The label makes that limited promise visible.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The code compares an attribute string with the string true, flips the
+          boolean, then converts it back to a string. That's ordinary
+          JavaScript. The once call prevents duplicate listener registration
+          when Drupal attaches behaviors again.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The component's matching CSS and JavaScript files are discovered
+          automatically. The metadata adds the dependencies needed by the
+          JavaScript. We aren't also attaching a second copy through a global
+          theme library.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 8">
+        <figcaption>Code card 8<span>twig</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;section aria-labelledby=&quot;upcoming-events-heading&quot;&gt;
+  &lt;h2 id=&quot;upcoming-events-heading&quot;&gt;Upcoming events&lt;/h2&gt;
+  {{ include('bellweather:event-card', {
+    title: 'Moss After Dark',
+    url: '/events/moss-after-dark',
+    date_label: 'October 15, 2026, 6:30 p.m. Eastern time',
+    details: 'Meet at the Greenhouse. Step-free entrance on the east side.'
+  }, with_context = false) }}
+&lt;/section&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That URL assumes the demonstration page exists. In real rendering,
+          generate the entity's URL through Drupal and supply prepared field
+          output. Don't copy these hard-coded values into every event
+          template.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, use that section identifier once per page. If you render
+          multiple sections, give each an appropriate unique identifier.</span
+        >
+      </p>
+      <h2 id="where-render-arrays-meet-components">
+        Where Render Arrays Meet Components
+      </h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Can we pass the location field into the details slot instead of
+          flattening it to text?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, that's an important integration pattern. Prepared field output
+          can remain renderable so its formatter, access decisions, and cache
+          metadata participate. The component shouldn't reload the location from
+          a raw ID just to rebuild the same output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And props that we derive as plain values still need their
+          dependencies accounted for by the surrounding render structure. A prop
+          schema validates shape; it doesn't discover every entity that
+          influenced the value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Component boundaries and cache boundaries aren't
+          automatically identical. Preserve Drupal's rendering contract when
+          adapting entity output into component inputs.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I like that separation. The component knows how to present an event
+          card. The caller knows which event, what access is allowed, and how
+          the data was prepared.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a defensible frontend architecture. It also means I can
+          inspect a component without finding a surprise database query behind
+          the heading.</span
+        >
+      </p>
+      <h2 id="components-aren-t-automatically-an-editor-ui">
+        Components Aren't Automatically an Editor UI
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SDC provides developer-facing component infrastructure. Installing a
+          component doesn't, by itself, guarantee every editor gets a visual
+          drag-and-drop component browser.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Tools can build that experience on top. Drupal Canvas is a separate
+          project with its own requirements. Drupal CMS 2.0 includes Canvas as
+          part of its editing direction. Those aren't synonyms for SDC or for
+          every Drupal core installation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. “Drupal supports components” and “this site's editors can
+          visually compose these components” are different claims to
+          verify.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a visual builder still needs guardrails: meaningful headings,
+          usable link names, coherent layouts, and limits that match the design
+          system. Giving an editor every possible option can be less empowering
+          than giving them a reliable set of choices.</span
+        >
+      </p>
+      <h2 id="verify-the-actual-output">Verify the Actual Output</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For our card, I would test without JavaScript, with a keyboard, and
+          with a screen reader. The link should work, the save button should
+          appear only when ready, and its pressed state should change without
+          moving focus.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I'd attach behaviors twice and confirm one click changes the state
+          once. Then put the card in AJAX-inserted content and check it
+          initializes there too.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >I'd check narrow-screen layout, long titles, and repeated cards. Then
+          verify the actual entity-backed version updates correctly with warm
+          caches and doesn't expose restricted fields.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a real component check. A folder containing four files isn't
+          the finish line.</span
+        >
+      </p>
+      <h2 id="a-frontend-we-can-locate">A Frontend We Can Locate</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Themes organize presentation. Twig composes markup. Suggestions
+          choose the right template. Preprocessing prepares variables. Libraries
+          coordinate assets. Behaviors attach JavaScript appropriately. SDC
+          packages reusable component contracts and assets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And underneath all that, HTML still needs to mean something. No
+          framework can make a clickable div feel bad enough to become a button
+          on its own.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>I put the button in the folder already.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent folder. I withdraw my earlier suspicion.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, modules, hooks, services, and Symfony. Which part is
+          Drupal, and which part is the PHP ecosystem doing its job?</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          SDC organizes reusable Drupal presentation contracts and assets. It
+          does not automatically provide a client framework, CSS isolation, or a
+          visual editor.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 6 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Twig</th>
+              <td>
+                Server-side template language integrated with Drupal rendering.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Template suggestion</th>
+              <td>A candidate template selected for a particular context.</td>
+            </tr>
+            <tr>
+              <th scope="row">Preprocess</th>
+              <td>Preparation of presentation variables before a template.</td>
+            </tr>
+            <tr>
+              <th scope="row">Library</th>
+              <td>Declared CSS/JavaScript assets and dependencies.</td>
+            </tr>
+            <tr>
+              <th scope="row">Behavior / once</th>
+              <td>
+                Drupal attachment lifecycle / utility preventing duplicate
+                initialization.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">SDC props / slots</th>
+              <td>Structured input values / supplied renderable content.</td>
+            </tr>
+            <tr>
+              <th scope="row">Region</th>
+              <td>Named theme placement area for output such as blocks.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Version and layer comparison</h3>
+        <table>
+          <caption>
+            Related features with different responsibilities
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Feature</th>
+              <th scope="col">Boundary</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">SDC</th>
+              <td>
+                Experimental in 10.1; stable in 10.3 and included in modern core
+                theming.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Drupal behavior</th>
+              <td>
+                A Drupal JavaScript lifecycle convention, not a React component.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Drupal Canvas</th>
+              <td>
+                A separate visual-building project with its own compatibility
+                requirements.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The complete event-card files are above. The save button is
+          intentionally local to that page instance and does not persist or
+          synchronize.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li>
+            <strong>Code card 1:</strong> Traditional theme-library wiring,
+            separate from the SDC example below
+          </li>
+          <li>
+            <strong>Code card 2:</strong> Attach the named library from a Twig
+            template
+          </li>
+          <li>
+            <strong>Code card 3:</strong> Add these files under the installed
+            theme
+          </li>
+          <li>
+            <strong>Code card 4:</strong> event-card.<wbr />component.<wbr />yml
+          </li>
+          <li><strong>Code card 5:</strong> event-card.<wbr />twig</li>
+          <li><strong>Code card 6:</strong> event-card.<wbr />css</li>
+          <li><strong>Code card 7:</strong> event-card.<wbr />js</li>
+          <li>
+            <strong>Code card 8:</strong> Standalone illustrative use inside an
+            existing Twig template
+          </li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Use the component within an installed bellweather theme; verify the
+            sample route exists.
+          </li>
+          <li>
+            Test keyboard focus and the save toggle with JavaScript enabled and
+            disabled.
+          </li>
+          <li>Attach behaviors twice and insert a new card through AJAX.</li>
+          <li>
+            Check heading level, long titles, narrow screens, and unique section
+            IDs.
+          </li>
+          <li>
+            For entity-backed use, retain access decisions, render structures,
+            and cache metadata.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/single-directory-components-quickstart"
+              >Current SDC quickstart, checked September 16, 2026</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/blog/drupal-10-3-0"
+              >SDC stable in 10.3</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/docs/develop/theming-drupal"
+              >Theming</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/drupal-apis/javascript-api/javascript-api-overview"
+              >JavaScript API</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x"
+              >Hook procedural exceptions</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/blog/drupal-cms-20-is-here-visual-building-ai-and-site-templates-transform-drupal"
+              >Drupal CMS 2.0</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/project/canvas"
+              >Canvas is a separate project</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>8 code cards · 0 terminal cards</footer>
+  </body>
+</html>

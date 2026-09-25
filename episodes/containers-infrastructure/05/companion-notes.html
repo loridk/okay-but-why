@@ -1,0 +1,17 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Identify the caller before choosing an address. In an ordinary isolated container network, localhost points back into that container’s network context.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Published port</strong></dt><dd>A route from a host address and port to a container port.</dd>
+<dt><strong>Environment variable</strong></dt><dd>A process configuration mechanism, not a secret vault.</dd>
+<dt><strong>Writable layer</strong></dt><dd>Container-specific changes; survives restart of the same container but is removed with that container.</dd>
+<dt><strong>Named volume / bind mount</strong></dt><dd>Docker-managed storage / a specified host path mounted into a container.</dd></dl>
+<h3>Address by caller</h3><ul><li><strong>Laptop browser:</strong> uses the published host URL.</li><li><strong>API container:</strong> uses db and the database port on their shared network.</li><li><strong>Browser JavaScript:</strong> cannot automatically resolve private Compose service names.</li><li><strong>Container to host:</strong> needs a host-reachable address; Docker Desktop supplies host.docker.internal for this use.</li></ul><figure class="card code"><figcaption>Read a local development mapping<span>Shell command fragment</span></figcaption><pre tabindex="0"><code>-p 127.0.0.1:8080:3000
+# Host loopback address : host port : container port
+# Browser uses http://localhost:8080
+# Application listens on an appropriate container interface at 3000</code></pre></figure><h3>Persistence decision</h3><p>Mount the named volume at the database image’s documented data directory. Replacements can reuse it when versions and configuration are compatible. A persistent volume is not a backup; use supported database backup and restore procedures. Publishing the database port is unnecessary for API-to-database traffic on their shared network.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://docs.docker.com/engine/network/">Docker: Networking overview</a></li>
+<li><a href="https://docs.docker.com/engine/storage/volumes/">Docker: Volumes</a></li>
+<li><a href="https://docs.docker.com/desktop/features/networking/">Docker Desktop: Networking features</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

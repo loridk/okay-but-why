@@ -44,13 +44,13 @@ JULES: But every dependency adds trust.
 
 PARISA: Maintainer account.
 
-Repository.
+PARISA: Repository.
 
-Package registry.
+PARISA: Package registry.
 
-Build pipeline.
+PARISA: Build pipeline.
 
-Transitive dependencies.
+PARISA: Transitive dependencies.
 
 JULES: Exactly.
 
@@ -251,11 +251,11 @@ JULES: Therefore it is high-value.
 
 PARISA: GitHub Actions token permissions.
 
-Third-party actions.
+PARISA: Third-party actions.
 
-Build secrets.
+PARISA: Build secrets.
 
-Artifact signing.
+PARISA: Artifact signing.
 
 JULES: All part of supply-chain security.
 

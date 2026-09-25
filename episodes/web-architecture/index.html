@@ -1,27 +1,200 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Web Architecture Series — Okay, But Why?</title>
-  <link rel="stylesheet" href="../styles.css">
-</head>
-<body class="index-page">
-  <header><p><a href="../index.html">← All podcast series</a></p><p class="eyebrow">Episode guide</p><h1>Web Architecture Series</h1><p class="intro">Start at Episode 1 or jump directly to any Web Architecture topic. Each page includes the audio, transcript, and code cards.</p></header>
-  <main><ul><li><a class="card" href="01/companion.html"><strong>Episode 1: What Even Is Web Architecture?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="02/companion.html"><strong>Episode 2: Client vs Server — Whose Computer Is This?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="03/companion.html"><strong>Episode 3: The Request/Response Cycle — I Pressed Enter, Now What?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="04/companion.html"><strong>Episode 4: Static Sites, Server Rendering, and the Allegedly Dead Web</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="05/companion.html"><strong>Episode 5: How We Got SPAs — The Page Refuses to Leave</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="06/companion.html"><strong>Episode 6: APIs — A Boundary With a Job Description</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="07/companion.html"><strong>Episode 7: Authentication, Sessions, Cookies, and Tokens — Do You Know Me?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="08/companion.html"><strong>Episode 8: Databases and Application State — Where Does the Truth Live?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="09/companion.html"><strong>Episode 9: Monoliths — One Application, Several Responsibilities</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="10/companion.html"><strong>Episode 10: Microservices — Congratulations, Your Function Call Has Weather</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="11/companion.html"><strong>Episode 11: Caching and CDNs — Yesterday's Pizza, Today's Problem</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="12/companion.html"><strong>Episode 12: Scaling — More Pizza, Not Automatically More Services</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="13/companion.html"><strong>Episode 13: SSR, CSR, SSG, and Hydration — When Does the HTML Happen?</strong><span class="meta">Transcript · audio pending</span></a></li>
-<li><a class="card" href="14/companion.html"><strong>Episode 14: Build an Architecture in Your Head — Reasons Before Rectangles</strong><span class="meta">Transcript · audio pending</span></a></li></ul></main>
-  <footer>Okay, But Why? — Tech concepts without the ceremonial fog.</footer>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web Architecture Series — Okay, But Why?</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+
+  <body class="index-page">
+    <header>
+      <p><a href="../index.html">← All podcast series</a></p>
+      <p class="eyebrow">Episode guide</p>
+      <h1>Web Architecture Series</h1>
+      <p class="intro">
+        Start at Episode 1 or jump directly to any Web Architecture topic. Each
+        page includes the audio, transcript, and code cards.
+      </p>
+    </header>
+
+    <main>
+      <ul>
+        <li>
+          <a class="card" href="01/companion.html">
+            <strong>Episode 1: What Even Is Web Architecture?</strong>
+            <span class="meta">
+              Architecture as responsibilities, boundaries, and tradeoffs; use
+              Nervous Robot Pizza Delivery to explain the reasons behind the
+              boxes.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="02/companion.html">
+            <strong>
+              Episode 2: Client vs Server — Whose Computer Is This?
+            </strong>
+            <span class="meta">
+              Separate browser capabilities from authoritative server decisions,
+              including validation, permissions, prices, and secrets.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="03/companion.html">
+            <strong>
+              Episode 3: The Request/Response Cycle — I Pressed Enter, Now What?
+            </strong>
+            <span class="meta">
+              Follow a URL through DNS, connections, HTTP requests, responses,
+              redirects, and browser diagnostics.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="04/companion.html">
+            <strong>
+              Episode 4: Static Sites, Server Rendering, and the Allegedly Dead
+              Web
+            </strong>
+            <span class="meta">
+              Compare prepared static pages and request-time server rendering;
+              forms, sessions, progressive enhancement, and operational costs.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="05/companion.html">
+            <strong>
+              Episode 5: How We Got SPAs — The Page Refuses to Leave
+            </strong>
+            <span class="meta">
+              Why SPAs exist and which jobs move into the browser: routing,
+              state, loading, request races, focus, and navigation.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="06/companion.html">
+            <strong>Episode 6: APIs — A Boundary With a Job Description</strong>
+            <span class="meta">
+              APIs as contracts covering methods, data, validation, errors,
+              compatibility, pagination, CORS, and safe retries.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="07/companion.html">
+            <strong>
+              Episode 7: Authentication, Sessions, Cookies, and Tokens — Do You
+              Know Me?
+            </strong>
+            <span class="meta">
+              Distinguish identity, authentication, sessions, and authorization;
+              cookies, tokens, CSRF, expiry, and object-level permissions.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="08/companion.html">
+            <strong>
+              Episode 8: Databases and Application State — Where Does the Truth
+              Live?
+            </strong>
+            <span class="meta">
+              Persistent state, relational models, transactions, concurrency,
+              indexes, migrations, backups, and data ownership.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="09/companion.html">
+            <strong>
+              Episode 9: Monoliths — One Application, Several Responsibilities
+            </strong>
+            <span class="meta">
+              Organize a monolith into deliberate modules; understand coupling,
+              shared releases, scaling, and when extraction is justified.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="10/companion.html">
+            <strong>
+              Episode 10: Microservices — Congratulations, Your Function Call
+              Has Weather
+            </strong>
+            <span class="meta">
+              Service boundaries and independent deployment versus network
+              failures, distributed data, events, retries, idempotency, and
+              operational overhead.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="11/companion.html">
+            <strong>
+              Episode 11: Caching and CDNs — Yesterday's Pizza, Today's Problem
+            </strong>
+            <span class="meta">
+              Caching and CDNs as conditional reuse; freshness, validation,
+              cache keys, invalidation, private data, and stampedes.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="12/companion.html">
+            <strong>
+              Episode 12: Scaling — More Pizza, Not Automatically More Services
+            </strong>
+            <span class="meta">
+              Measure bottlenecks before scaling; vertical/horizontal capacity,
+              state, queues, backpressure, load testing, and graceful
+              degradation.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="13/companion.html">
+            <strong>
+              Episode 13: SSR, CSR, SSG, and Hydration — When Does the HTML
+              Happen?
+            </strong>
+            <span class="meta">
+              Separate where rendering happens from when it happens; SSR, CSR,
+              SSG, hydration, islands, streaming, and hybrid choices.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="14/companion.html">
+            <strong>
+              Episode 14: Build an Architecture in Your Head — Reasons Before
+              Rectangles
+            </strong>
+            <span class="meta">
+              Design a modest architecture from requirements, walk success and
+              failure paths, and explain when added complexity earns its cost.
+            </span>
+          </a>
+        </li>
+      </ul>
+    </main>
+
+    <footer>Okay, But Why? — Tech concepts without the ceremonial fog.</footer>
+  </body>
 </html>

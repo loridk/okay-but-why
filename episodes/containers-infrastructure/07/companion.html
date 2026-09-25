@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 7: From Git Push to Production — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 7: From Git Push to Production</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/bb7bb4ae-c293-494d-b087-e9d4b588d524"
+      ></script>
+      <div class="redcirclePlayer-bb7bb4ae-c293-494d-b087-e9d4b588d524"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#git-is-the-beginning-of-this-journey"
+            >Git Is the Beginning of This Journey</a
+          >
+        </li>
+        <li>
+          <a href="#build-something-we-can-identify"
+            >Build Something We Can Identify</a
+          >
+        </li>
+        <li><a href="#what-does-cd-mean-today">What Does CD Mean Today?</a></li>
+        <li>
+          <a href="#deployment-has-a-destination"
+            >Deployment Has a Destination</a
+          >
+        </li>
+        <li>
+          <a href="#after-the-green-checkmark">After the Green Checkmark</a>
+        </li>
+        <li>
+          <a href="#repeatable-doesn-t-mean-thoughtless"
+            >Repeatable Doesn't Mean Thoughtless</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I pushed the code.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is the podcast application deployed?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>No, but the code has traveled.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A lovely holiday for the code. Our listeners remain
+          unimpressed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We have an image and a description of our
+          related services. Today we follow a change all the way to a running
+          production application.</span
+        >
+      </p>
+      <h2 id="git-is-the-beginning-of-this-journey">
+        Git Is the Beginning of This Journey
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Git records changes. Pushing sends commits to a remote repository.
+          Nothing about Git itself says “start this application on that
+          server.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A hosting platform may connect a push to deployment, but
+          that's an integration somebody configured. Let's say we change our
+          fictional API so episode results sort correctly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We review the change, test it, and merge it. We want the same steps
+          every time, not “Jules remembers the command and happens to be
+          awake.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That problem leads us to CI: continuous integration. Developers
+          integrate changes regularly, with automated checks helping detect
+          problems when changes come together.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not merely owning an account on a CI website. If everyone avoids
+          integration for six weeks, a green badge isn't going to resolve the
+          social situation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The automation runs a pipeline: defined steps such as fetching
+          source, installing dependencies, testing, and building an artifact.
+          GitHub Actions is one concrete system that can run those steps after
+          repository events.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Its workflow file is YAML configuration. Jobs run on runner machines.
+          Those machines don't know our project through friendship; the workflow
+          has to prepare the environment and execute the relevant
+          commands.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a runner is not automatically our production server. It may be
+          temporary infrastructure that exists just long enough to run the
+          job.</span
+        >
+      </p>
+      <h2 id="build-something-we-can-identify">
+        Build Something We Can Identify
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our tests verify the sorting behavior. Then we build the API image
+          from the reviewed source and its dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can also test the built image so we're checking the packaged
+          result, not only the code outside its deployment environment.
+          Different checks catch different failures.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A successful unit test doesn't prove the server starts. A successful
+          startup doesn't prove the sort order. Automated accessibility checks
+          for the frontend are useful too, but don't replace keyboard and
+          assistive-technology review where needed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The pipeline gives repeatable evidence, not omniscience. If
+          required checks fail, we stop the release path and investigate rather
+          than faithfully deploying the failure faster.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The successful build becomes an artifact: an image we can identify,
+          store, and promote. We push it to a registry.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then deployment tells the production environment to fetch and run
+          that known image, with production settings. Ideally we promote the
+          tested artifact instead of rebuilding an allegedly equivalent one
+          separately for each environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same digest, known package. Still different database address and
+          credentials in staging versus production.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Runtime configuration can vary without changing the image.
+          Some frontend settings are embedded at build time, so “build once”
+          requires deliberate handling there; a static bundle doesn't
+          automatically read the server's environment after it has reached a
+          browser.</span
+        >
+      </p>
+      <h2 id="what-does-cd-mean-today">What Does CD Mean Today?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CI slash CD is one of those abbreviations people say like it's a
+          single appliance. What's CD?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can mean continuous delivery or continuous deployment. Delivery
+          keeps changes in a releasable state through an automated process,
+          often with an explicit production approval. Deployment automatically
+          releases qualifying changes to production.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if someone says “we do CD,” ask where the release decision
+          happens. Neither expansion means every branch gets immediate access to
+          the production database.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Review, environment protections, and restricted credentials
+          are part of the design. The pipeline's ability to deploy is a powerful
+          permission.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially if an outside contributor can change code that a workflow
+          executes. Untrusted pull-request code shouldn't casually inherit
+          production secrets.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use narrowly scoped identities, protect deployment paths, and prefer
+          short-lived authentication where the platform supports it. Keep secret
+          values out of images, source, logs, and downloadable artifacts.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“It's encrypted in the settings screen” is not the end of the threat
+          model. The process receiving it can still misuse or print it.</span
+        >
+      </p>
+      <h2 id="deployment-has-a-destination">Deployment Has a Destination</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now we actually deploy. The destination could be a VM, a managed
+          application platform, a container service, or something more
+          elaborate. No Kubernetes requirement has appeared.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The destination needs a compatible runtime environment, permission to
+          pull the image, production configuration, network access to
+          dependencies, and storage arrangements. Somebody also handles the
+          domain and encrypted web connections.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The pipeline might start a replacement instance, check it,
+          and switch traffic. Or it might perform a simpler stop-and-start
+          deployment with a short outage if that's acceptable. The strategy
+          follows the requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And “process started” is insufficient. Can it accept requests? Can a
+          listener load the episode list? Are error rates rising?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Health checks supply signals to the platform. Readiness asks whether
+          an instance should receive traffic. A basic process check may be much
+          narrower than an end-to-end request through the system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should know what each check proves. If the homepage is static but
+          every API request fails, the homepage returning success is cold
+          comfort.</span
+        >
+      </p>
+      <h2 id="after-the-green-checkmark">After the Green Checkmark</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Logging tells us what the application reports happening. Metrics
+          summarize behavior over time: request rates, errors, latency, resource
+          usage. Alerts should point us toward failures somebody can act
+          on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Preserve logs somewhere useful when instances are replaced. Otherwise
+          the container crashes, vanishes, and takes its last words with
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >While keeping personal information and secrets out of those logs.
+          Observability isn't permission to record everything a user ever
+          did.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's give the release a concrete failure. The new sorting code works
+          in tests but is painfully slow with production-sized data. Requests
+          pile up.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We compare the timing with the release, inspect evidence, and may
+          roll back to the previous known image while investigating. Rollback is
+          a prepared recovery action, not frantic editing on the server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if the release also changed the database schema, the older code
+          might not understand the new schema. Reverting the image doesn't
+          reverse the database automatically.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Database migrations and data changes need compatibility and
+          recovery planning. Some changes should be rolled forward with a fix
+          rather than reversed. Backups matter, but restoring a backup can lose
+          newer writes and isn't a casual undo button.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why we practice recovery while the imaginary podcast isn't
+          on fire.</span
+        >
+      </p>
+      <h2 id="repeatable-doesn-t-mean-thoughtless">
+        Repeatable Doesn't Mean Thoughtless
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compare this with manually uploading changed files. The goal isn't to
+          sneer at older workflows. It's to reduce unrecorded steps and make the
+          released state identifiable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A carefully managed traditional deployment can be disciplined. A
+          pipeline can automate absolute nonsense. YAML doesn't confer
+          judgment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But a good pipeline records which source produced which image, what
+          checks ran, where it went, and whether the deployment succeeded. That
+          makes collaboration and recovery easier.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our route is now code, Git, CI checks and build, image, registry,
+          deployment, running application. The links are configured actions;
+          arrows don't do work by themselves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And deployment isn't the finish line for operating the service.
+          Somebody maintains dependencies, monitors behavior, protects data, and
+          responds when reality changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The app is finally somewhere people can use it. Next time we pretend
+          it becomes absurdly popular and our modest setup grows into a small
+          logistical crisis.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Kubernetes: who asked for this?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, we will have an answer other than “a job description.”</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          A push transfers source history. A configured pipeline can check it,
+          build a known artifact, and deploy that artifact to an actual runtime
+          environment.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>CI</strong></dt>
+          <dd>Frequent integration supported by automated checks.</dd>
+          <dt><strong>Continuous delivery</strong></dt>
+          <dd>
+            A process that keeps changes releasable, commonly with an explicit
+            production release decision.
+          </dd>
+          <dt><strong>Continuous deployment</strong></dt>
+          <dd>Automatically releases qualifying changes to production.</dd>
+          <dt><strong>Runner / registry / deployment target</strong></dt>
+          <dd>
+            Executes pipeline jobs / stores images / runs the released
+            application.
+          </dd>
+        </dl>
+        <h3>Release path</h3>
+        <p>
+          Each arrow represents a configured action; Git itself does not deploy
+          software.
+        </p>
+        <figure class="card code">
+          <figcaption>
+            One reviewed change to production<span>Text diagram</span>
+          </figcaption>
+          <pre
+            tabindex="0"
+          ><code>Code → Git → CI checks → build image → test artifact
+                                      │
+                                      ▼
+                                  Registry
+                                      │ deploy known digest
+                                      ▼
+                            Production runtime
+                            + configuration
+                            + restricted secrets
+                            + data and networking
+                                      │
+                                      ▼
+                             Health and monitoring</code></pre>
+        </figure>
+        <h3>Release questions</h3>
+        <ul>
+          <li>Which source revision and image digest are deployed?</li>
+          <li>What did the checks actually verify?</li>
+          <li>Which identity can release, and what can it access?</li>
+          <li>How do we detect failure and preserve useful logs?</li>
+          <li>Can old and new code coexist with database changes?</li>
+          <li>What recovery action has been tested?</li>
+        </ul>
+        <p>
+          Untrusted workflow code must not inherit production secrets. Rolling
+          back an image does not reverse database changes.
+        </p>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a
+              href="https://docs.github.com/en/actions/get-started/understand-github-actions"
+              >GitHub Actions concepts</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

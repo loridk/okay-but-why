@@ -54,21 +54,21 @@ JULES: Organizations need several security capabilities.
 
 PARISA: Prevent.
 
-Detect.
+PARISA: Detect.
 
-Respond.
+PARISA: Respond.
 
-Recover.
+PARISA: Recover.
 
-Govern.
+PARISA: Govern.
 
 JULES: Build securely.
 
-Test defenses.
+JULES: Test defenses.
 
-Manage identity.
+JULES: Manage identity.
 
-Understand risk.
+JULES: Understand risk.
 
 PARISA: No one person can deeply specialize in all of it.
 
@@ -103,7 +103,7 @@ PARISA: Collaboration.
 
 JULES: Red shares attack methods.
 
-Blue builds detections and defenses.
+JULES: Blue builds detections and defenses.
 
 PARISA: Less “gotcha,” more improvement.
 
@@ -162,9 +162,9 @@ JULES: Detection engineers design logic that identifies suspicious behavior.
 
 PARISA: SIEM queries.
 
-Telemetry pipelines.
+PARISA: Telemetry pipelines.
 
-Threat-informed detections.
+PARISA: Threat-informed detections.
 
 JULES: Exactly.
 
@@ -235,7 +235,7 @@ JULES: Absolutely.
 
 PARISA: Secret scanning with clear fix: useful.
 
-Scanner dumps unexplained warnings: ignored.
+PARISA: Scanner dumps unexplained warnings: ignored.
 
 JULES: Secure paved roads matter.
 
@@ -254,9 +254,9 @@ PARISA: Developers can move into AppSec, product security, security tooling, clo
 
 JULES: Systems admins may move into infrastructure security.
 
-Auditors into GRC.
+JULES: Auditors into GRC.
 
-Analysts into detection or incident response.
+JULES: Analysts into detection or incident response.
 
 PARISA: Existing technical background matters.
 
@@ -267,19 +267,19 @@ JULES: Very much.
 
 PARISA: Networking.
 
-Operating systems.
+PARISA: Operating systems.
 
-Web development.
+PARISA: Web development.
 
-Cloud.
+PARISA: Cloud.
 
-Databases.
+PARISA: Databases.
 
-Human behavior.
+PARISA: Human behavior.
 
-Law.
+PARISA: Law.
 
-Business risk.
+PARISA: Business risk.
 
 JULES: Security sits across all of them.
 
@@ -342,7 +342,7 @@ JULES: Good.
 
 PARISA: Security isn’t a pile of unrelated acronyms.
 
-It’s managing risk across systems, identities, software, people, infrastructure, and organizations.
+PARISA: It’s managing risk across systems, identities, software, people, infrastructure, and organizations.
 
 JULES: Exactly.
 
@@ -355,7 +355,7 @@ JULES: And collaborate when things are working well.
 
 JULES: This episode is the map.
 
-Use it to connect operations, architecture, IAM, risk, incident response, vulnerability management, secure development, and governance.
+JULES: Use it to connect operations, architecture, IAM, risk, incident response, vulnerability management, secure development, and governance.
 
 PARISA: Next episode: the actual exam.
 

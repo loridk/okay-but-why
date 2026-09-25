@@ -1,0 +1,25 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Desired replicas: 3. Actual replicas: 2. Controllers work toward restoring the missing replica; successful scheduling, startup, and readiness are separate steps.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Cluster / node</strong></dt><dd>The coordinated Kubernetes system / a physical or virtual machine that can run Pods.</dd>
+<dt><strong>Pod / container</strong></dt><dd>Scheduled unit sharing a networking context / application process environment within it.</dd>
+<dt><strong>Deployment / ReplicaSet</strong></dt><dd>Manages a replicated workload and rollout / maintains its set of Pods.</dd>
+<dt><strong>Service</strong></dt><dd>A stable network abstraction for changing endpoints; does not create the application Pods.</dd></dl>
+<h3>Read the hierarchy</h3><p>The cluster includes a control plane and nodes. A node runs Pods, and each Pod contains one or more containers. The diagram is conceptual; it does not imply a production-ready placement strategy.</p><figure class="card code"><figcaption>Where the application executes<span>Text diagram</span></figcaption><pre tabindex="0"><code>Cluster
+├─ Control plane (coordination and desired state)
+└─ Nodes
+   ├─ Node A → Pod 1 → API container
+   └─ Node B → Pod 2 → API container
+
+Desired: 3 Pods; observed here: 2
+Controller requests replacement → scheduler chooses eligible node
+→ node starts containers → readiness determines traffic eligibility</code></pre></figure><figure class="card code"><figcaption>Desired count in a larger Deployment definition<span>Kubernetes YAML fragment</span></figcaption><pre tabindex="0"><code># Fragment only—not a complete manifest.
+spec:
+  replicas: 3</code></pre></figure><h3>Three probes</h3><ul><li><strong>Startup:</strong> allows initialization before liveness/readiness probing takes over.</li><li><strong>Readiness:</strong> controls eligibility for normal Service traffic; failure does not itself restart the container.</li><li><strong>Liveness:</strong> repeated failure can trigger a container restart.</li></ul><p>Containers in one Pod share localhost. Different Pods do not. A Deployment progress deadline reports a stalled rollout; automatic rollback requires additional action or automation.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployments</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/">Services</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/pods/probes/">Container probes</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

@@ -1,0 +1,13 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">What operational problem would this technology solve for this application? “None” is a valid reason not to adopt it.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Operational ownership</strong></dt><dd>Who maintains, monitors, protects, and restores the service.</dd>
+<dt><strong>Recovery requirements</strong></dt><dd>How quickly service must return and how much data loss is tolerable.</dd>
+<dt><strong>Total cost</strong></dt><dd>Service charges plus engineering effort, support, risk, and maintenance.</dd>
+<dt><strong>Reconsideration trigger</strong></dt><dd>An observed requirement or constraint that would justify changing the arrangement.</dd></dl>
+<h3>Starting points, not prescriptions</h3><ul><li><strong>Static portfolio:</strong> static hosting and appropriate delivery; no inherent production container requirement.</li><li><strong>Small WordPress/Drupal site:</strong> suitable shared or managed CMS hosting, with updates and tested backups.</li><li><strong>Frontend plus API:</strong> evaluate PaaS, managed containers, serverless, or a managed VM against workload needs.</li><li><strong>Growing SaaS:</strong> measure bottlenecks, improve releases and recovery, scale justified components.</li><li><strong>Large distributed application:</strong> orchestration may help if workload coordination and team capacity justify it.</li><li><strong>Significant uptime/compliance requirements:</strong> assess controls and recovery evidence with relevant specialists, regardless of traffic.</li></ul><h3>A short decision record</h3><ol><li>What must the application do?</li><li>What downtime and data loss are acceptable?</li><li>Who owns operations and what can they sustain?</li><li>Which option meets the requirements with manageable cost?</li><li>What tradeoff are we accepting?</li><li>What evidence would make us reconsider?</li></ol><p>Compose, containers, IaC, managed hosting, and Kubernetes can each be adopted or declined independently. Learning Kubernetes does not create a requirement to operate it.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://aws.amazon.com/types-of-cloud-computing/">Cloud service responsibilities and categories</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/overview/">Kubernetes overview</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

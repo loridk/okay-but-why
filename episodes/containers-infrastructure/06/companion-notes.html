@@ -1,0 +1,40 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Compose describes related services together. Startup ordering, readiness, application behavior, and production operations remain distinct concerns.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Compose service</strong></dt><dd>A named component with an image/build definition and runtime settings.</dd>
+<dt><strong>YAML</strong></dt><dd>A data notation whose nesting uses indentation; Compose defines the meaning of these keys.</dd>
+<dt><strong>Network</strong></dt><dd>Provides a communication context; connected services can discover one another by service name.</dd>
+<dt><strong>DDEV / Lando</strong></dt><dd>Development tools that add conventions, recipes, routing, and workflows over container infrastructure.</dd></dl>
+<h3>Conceptual three-service arrangement</h3><p>Browser → frontend server/proxy → API → database. The frontend server and API share edge; the API and database share backend. The database has a named volume.</p><p><strong>Illustrative, incomplete Compose YAML; do not run as supplied.</strong> Frontend and API images are fictional. Frontend proxy routing, API behavior, database credentials, secret delivery, health checks, and startup dependencies are deliberately omitted. The frontend must actually be configured to proxy its API path to api:3000. PostgreSQL 17 is selected to make this example’s data-directory path explicit; check the image documentation when changing major versions.</p><figure class="card code"><figcaption>Relationships, not a functioning application<span>Docker Compose YAML</span></figcaption><pre tabindex="0"><code>services:
+  frontend:
+    image: example.invalid/obw/frontend:illustration
+    ports:
+      - &quot;127.0.0.1:8080:80&quot;
+    networks: [edge]
+  api:
+    image: example.invalid/obw/api:illustration
+    environment:
+      DB_HOST: db
+    networks: [edge, backend]
+  db:
+    image: postgres:17
+    volumes:
+      - podcast-data:/var/lib/postgresql/data
+    networks: [backend]
+
+networks:
+  edge: {}
+  backend: {}
+volumes:
+  podcast-data: {}</code></pre></figure><h3>Commands in a real configured project</h3><figure class="card code"><figcaption>Identify the command’s job<span>Shell commands</span></figcaption><pre tabindex="0"><code>docker compose up -d   # create/start in the background
+docker compose ps      # inspect status
+docker compose logs    # inspect output; avoid logging secrets
+docker compose stop    # stop existing service containers</code></pre></figure><p>A configured service_healthy dependency condition can wait for readiness at initial startup. Runtime failures still require application retries and reconnection. Do not add volume-removal cleanup flags without understanding which data they delete.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://docs.docker.com/compose/how-tos/networking/">Compose networking</a></li>
+<li><a href="https://docs.docker.com/compose/how-tos/startup-order/">Compose startup order</a></li>
+<li><a href="https://docs.ddev.com/en/stable/users/usage/architecture/">How DDEV works</a></li>
+<li><a href="https://docs.lando.dev/landofile/services.html">Lando services</a></li>
+<li><a href="https://hub.docker.com/_/postgres">Official PostgreSQL image</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

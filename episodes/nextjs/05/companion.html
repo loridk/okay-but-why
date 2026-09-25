@@ -1,0 +1,1372 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: Why Am I Fetching My Own Data Over HTTP? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: Why Am I Fetching My Own Data Over HTTP?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/214152f7-efbe-463d-a411-2ffc8977de5a"
+      ></script>
+      <div class="redcirclePlayer-214152f7-efbe-463d-a411-2ffc8977de5a"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-browser-needed-a-door">The Browser Needed a Door</a>
+        </li>
+        <li><a href="#async-is-javascript">Async Is JavaScript</a></li>
+        <li>
+          <a href="#put-rules-where-callers-cannot-forget-them"
+            >Put Rules Where Callers Cannot Forget Them</a
+          >
+        </li>
+        <li>
+          <a href="#direct-does-not-mean-unrestricted"
+            >Direct Does Not Mean Unrestricted</a
+          >
+        </li>
+        <li>
+          <a href="#when-http-is-the-right-boundary"
+            >When HTTP Is the Right Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#fetch-is-a-web-api-with-framework-integration"
+            >Fetch Is a Web API With Framework Integration</a
+          >
+        </li>
+        <li>
+          <a href="#the-waterfall-we-accidentally-built"
+            >The Waterfall We Accidentally Built</a
+          >
+        </li>
+        <li>
+          <a href="#not-every-sequence-is-a-mistake"
+            >Not Every Sequence Is a Mistake</a
+          >
+        </li>
+        <li>
+          <a href="#memoization-is-not-persistent-caching"
+            >Memoization Is Not Persistent Caching</a
+          >
+        </li>
+        <li>
+          <a href="#streaming-and-fetching-cooperate"
+            >Streaming and Fetching Cooperate</a
+          >
+        </li>
+        <li>
+          <a href="#where-the-data-is-still-matters"
+            >Where the Data Is Still Matters</a
+          >
+        </li>
+        <li><a href="#a-practical-data-review">A Practical Data Review</a></li>
+        <li>
+          <a href="#compare-the-two-call-paths">Compare the Two Call Paths</a>
+        </li>
+        <li>
+          <a href="#what-does-parallel-actually-mean-here"
+            >What Does Parallel Actually Mean Here?</a
+          >
+        </li>
+        <li>
+          <a href="#the-public-representation-is-a-design-tool"
+            >The Public Representation Is a Design Tool</a
+          >
+        </li>
+        <li>
+          <a href="#empty-is-a-successful-answer"
+            >Empty Is a Successful Answer</a
+          >
+        </li>
+        <li>
+          <a href="#a-read-must-remain-a-read">A Read Must Remain a Read</a>
+        </li>
+        <li>
+          <a href="#a-practical-slow-page-investigation"
+            >A Practical Slow-Page Investigation</a
+          >
+        </li>
+        <li><a href="#the-kitchen-is-open">The Kitchen Is Open</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our server component calls our API, which calls our database, which
+          sends data back to our API, which sends it back to the server
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A complete journey.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's standing in its own kitchen and ordering delivery from
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Did it at least tip?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It added latency.</span>
+      </p>
+      <h2 id="the-browser-needed-a-door">The Browser Needed a Door</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Why are we fetching our own data over HTTP?
+          Sometimes there's a good reason. Sometimes we're carrying a
+          browser-era habit into server code without revisiting it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In a browser application, I can't safely put database credentials
+          into the bundle and connect every visitor directly to our database. An
+          HTTP API is the boundary between the untrusted browser and trusted
+          server operations.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. It receives requests, validates them, applies access rules,
+          and returns an appropriate representation. The browser needs that door
+          because it lives outside the server's trust boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But our Server Component already runs in a server environment. It can
+          call an application data-access function directly, assuming it has
+          legitimate access to the resource.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It doesn't need a Route Handler in the same app just to call
+          that same function through HTTP. We can share the underlying
+          data-access function instead.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We preserve the rules. We remove an unnecessary transport
+          detour.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the key distinction. Direct access does not mean bypass
+          validation or permissions. It means put those rules in an appropriate
+          server layer that both callers can use.</span
+        >
+      </p>
+      <h2 id="async-is-javascript">Async Is JavaScript</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A Server Component can be an async function. It can await data, then
+          return JSX describing the UI.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>// app/sessions/page.jsx
+import Link from 'next/link';
+import { getPublicSessions } from '../lib/sessions';
+
+export default async function SessionsPage() {
+  const sessions = await getPublicSessions();
+  return (
+    &lt;main id=&quot;main-content&quot;&gt;
+      &lt;h1&gt;DemoCon sessions&lt;/h1&gt;
+      &lt;ul&gt;
+        {sessions.map(session =&gt; (
+          &lt;li key={session.id}&gt;
+            &lt;Link href={`/sessions/${session.slug}`}&gt;{session.title}&lt;/Link&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Async and await are JavaScript, not TypeScript or a Next invention.
+          Map is an array method. The arrow function describes what to return
+          for each item. The backtick string inserts the slug into a URL.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSX describes the elements, key helps React identify list items, and
+          Link is from Next. Our data helper isn't built in. It belongs in app
+          slash lib slash sessions in this example.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The stable database identifier is a better key than the list position
+          if ordering can change. And the helper should return only published,
+          public session information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. This example is the default App Router model before our
+          explicit Cache Components switch. Later we'll put uncached reads below
+          suitable Suspense boundaries or cache them intentionally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. We're teaching one thing at a time without pretending
+          configuration never affects the example.</span
+        >
+      </p>
+      <h2 id="put-rules-where-callers-cannot-forget-them">
+        Put Rules Where Callers Cannot Forget Them
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What should getPublicSessions actually do?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Query published sessions, order them consistently, select public
+          fields, and return a shape our interface understands.
+          Database-specific details stay inside the data module.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. For illustration, imagine a query builder with a session
+          table. We won't install an ORM just to make a point about where the
+          read happens.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// app/lib/sessions.js — illustrative database adapter
+import 'server-only';
+import { db } from './db';
+
+export async function getPublicSessions() {
+  return db.session.findMany({
+    where: { published: true },
+    select: { id: true, slug: true, title: true, abstract: true },
+    orderBy: { title: 'asc' },
+  });
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is a database-adapter example, not a Next API. Db is
+          infrastructure we'd supply. The JavaScript object describes options to
+          that hypothetical adapter. Server-only helps catch an accidental
+          client import.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A SQL implementation could use a parameterized query. A
+          CMS-backed implementation could call the CMS. The page shouldn't care
+          which storage engine produced the public representation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But abstraction has a limit. We don't need a repository factory
+          factory because there are two reads. One clear function is fine.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Very fine. If we later expose the same public data through a Route
+          Handler, that handler can call this function. We don't need the page
+          to call the handler to achieve reuse.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Share the operation beneath the transport. That principle works in
+          many languages and frameworks.</span
+        >
+      </p>
+      <h2 id="direct-does-not-mean-unrestricted">
+        Direct Does Not Mean Unrestricted
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What if the helper reads unpublished proposals for organizers?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then it needs server-enforced identification and authorization
+          appropriate to that operation. Don't assume a protected-looking layout
+          means every data caller has been authorized.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A person could trigger a different route or operation. The helper
+          itself should have a clear access contract, and protected data access
+          should enforce it close to the read.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Public and organizer representations should be intentionally
+          different. Selecting safe fields early also reduces accidental
+          disclosure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What about a slug in a query? It came from a route, but that doesn't
+          make it trustworthy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Validate its expected shape where useful, use safe query
+          parameterization, and handle a missing record. If the record exists
+          but isn't public, don't return it merely because the slug is
+          correct.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Obscurity is not authorization. Somebody guessing the title of a talk
+          should not get the speaker's private notes.</span
+        >
+      </p>
+      <h2 id="when-http-is-the-right-boundary">
+        When HTTP Is the Right Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Direct access isn't a rule against APIs. Suppose DemoCon uses a
+          separate scheduling service owned by another team. Its HTTP API is the
+          supported contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Calling that service over HTTP makes sense. Reaching directly into
+          its database could violate the ownership boundary and bypass rules its
+          API enforces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Or we're using an external CMS. Or multiple independent
+          clients need a stable representation. Or the backend deploys and
+          scales separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those are actual reasons. “All data must be fetched from slash api
+          because that's where data lives” isn't.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The question is whether the network boundary represents a real
+          architectural boundary. If it does, respect it. If it merely loops
+          back to the same application code, consider a direct call.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There can also be build-time trouble with self-requests. During a
+          build, our application server might not be running at the URL we try
+          to fetch.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A direct data function avoids assuming a live copy of our
+          own app exists during prerendering. It still needs access to its
+          underlying data source, which is a real deployment requirement.</span
+        >
+      </p>
+      <h2 id="fetch-is-a-web-api-with-framework-integration">
+        Fetch Is a Web API With Framework Integration
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When we do call HTTP, fetch returns a response. We need to check its
+          status before treating it as successful data.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre tabindex="0"><code>export async function getRemoteSessions(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Session service unavailable');
+  const data = await response.json();
+  return data;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is a transport illustration, not production validation. Fetch
+          and Response are Web APIs available in modern server environments too.
+          Await and throw are JavaScript. Next integrates server fetching with
+          its rendering and cache facilities.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Fetch rejects for failures such as network errors, but a
+          response with a 404 or 500 status isn't automatically a rejected
+          promise. Check response.ok or handle the specific status.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Parsing JSON only proves that the body is parseable JSON. It doesn't
+          prove it is an array of public sessions with valid fields.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Validate the external response shape at runtime before
+          trusting it. TypeScript annotations don't inspect incoming
+          bytes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the URL in a real helper should be controlled or validated. A
+          public user mustn't be able to make our server fetch arbitrary
+          internal addresses by supplying a convenient parameter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Restrict destinations. Add an appropriate timeout or
+          cancellation policy. Decide what error information the user should see
+          without exposing internal details.</span
+        >
+      </p>
+      <h2 id="the-waterfall-we-accidentally-built">
+        The Waterfall We Accidentally Built
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now imagine we need sessions and speakers. I await sessions, then
+          await speakers. Both queries take time, but neither needs the other's
+          result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That sequence makes the second start after the first finishes. It's a
+          waterfall created by our code, not by the product's
+          dependencies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the operations take two hundred and three hundred milliseconds in
+          an illustrative world, sequential waiting is roughly their sum.
+          Starting independently can make the combined wait closer to the slower
+          one, plus overhead.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Those are explanatory numbers, not measurements from
+          DemoCon.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 4">
+        <figcaption>Code card 4<span>js</span></figcaption>
+        <pre tabindex="0"><code>const [sessions, speakers] = await Promise.all([
+  getPublicSessions(),
+  getPublicSpeakers(),
+]);</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Promise.all is JavaScript. It observes several promises together. The
+          function calls start the work; Promise.all isn't a scheduler that
+          makes synchronous code parallel by wishful thinking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The destructuring assigns the results in input order, not
+          completion order. If one promise rejects, Promise.all rejects, and it
+          doesn't automatically cancel the other operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful when we need both results. If one optional result fails, we
+          might want separate handling or separate streaming boundaries rather
+          than losing the whole page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Concurrency and failure policy belong together.</span>
+      </p>
+      <h2 id="not-every-sequence-is-a-mistake">
+        Not Every Sequence Is a Mistake
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose I need the session record before I know the speaker's
+          identifier. That's a real dependency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. You can't start the second query with information you don't yet
+          have. You might restructure the database query to include the speaker,
+          but that's a data-model decision, not a reason to lie to
+          Promise.all.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if we map over fifty sessions and make one speaker query for
+          each, we've potentially created an N-plus-one problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A batch query or join can be more appropriate than launching
+          fifty independent requests. Concurrently doing unnecessary work
+          doesn't make the work necessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does unlimited concurrency respect database connection limits.
+          “Everything at once” is a load test wearing a feature request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Start with the smallest data shape and sensible query plan.
+          Then use concurrency where dependencies allow and resources can
+          support it.</span
+        >
+      </p>
+      <h2 id="memoization-is-not-persistent-caching">
+        Memoization Is Not Persistent Caching
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another source of confusion: repeated reads during rendering can
+          sometimes be deduplicated or memoized. That is not the same as
+          persisting data across requests for minutes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if two components ask for the same thing during one render,
+          avoiding duplicate work doesn't imply tomorrow's visitor receives
+          yesterday's answer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. React's cache function can memoize suitable server work
+          within its supported request lifecycle. Next's persistent caching
+          mechanisms address a different timescale. The similarly named tools
+          solve different problems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We'll reserve the explicit use cache directive for the next episode.
+          We shouldn't tell people an imported React function and a Next
+          directive are interchangeable because both contain the word
+          cache.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also, deduplication depends on the API and call shape. Don't
+          assume arbitrary database reads magically collapse into one because
+          they return similar data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Observe repeated queries if performance matters. An architectural
+          explanation is not evidence that a particular deployment executed one
+          query.</span
+        >
+      </p>
+      <h2 id="streaming-and-fetching-cooperate">
+        Streaming and Fetching Cooperate
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If session details and optional recommendations can load separately,
+          a Suspense boundary around the recommendation component can let the
+          details arrive first.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if the parent awaits recommendations before returning that child,
+          we've defeated the boundary before it exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Place the waiting work under the boundary. And don't confuse
+          streaming with parallel fetching: one concerns delivery, the other
+          when independent operations start.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They can cooperate. Start independent work appropriately, and let
+          regions arrive according to the interface's needs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The visual result should remain understandable. A missing
+          optional sidebar shouldn't masquerade as an empty result. Distinguish
+          loading, empty, failed, and complete.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An empty schedule means there are no sessions. A failed schedule read
+          means we don't know. Those require different words.</span
+        >
+      </p>
+      <h2 id="where-the-data-is-still-matters">
+        Where the Data Is Still Matters
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Calling a database directly sounds local, but it could be on another
+          continent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Direct means no unnecessary application HTTP layer, not zero
+          network latency. Deployment regions, database placement, connection
+          pooling, and runtime limits still matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a serverless environment may create many function instances.
+          Opening a fresh unbounded database connection from each request can
+          overwhelm the database.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Use the connection strategy supported by the database and
+          hosting environment. We don't need to build it in this series, but we
+          mustn't imply importing db solved operations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Static preparation also moves the requirement earlier. If the build
+          queries the database, the build environment needs an appropriate,
+          limited way to reach the intended data.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Don't give every build broad production write access just
+          because it needs to read public sessions.</span
+        >
+      </p>
+      <h2 id="a-practical-data-review">A Practical Data Review</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's review the path for our public list. What are the
+          checkpoints?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The page calls getPublicSessions. The helper reads published records
+          and selects public fields. The page renders semantic links with stable
+          identifiers. If the read fails, the error experience should say the
+          data couldn't load, not claim the conference is empty.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And if another client needs JSON?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A Route Handler can call the same helper and provide an HTTP
+          representation. The page doesn't have to call that handler merely to
+          share logic.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>If speakers and sessions are independent?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Consider starting both before awaiting both, with an appropriate
+          failure policy. But check whether a better query eliminates redundant
+          work first.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If someone says their TypeScript type validates the CMS
+          response?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask where the runtime validation happens. A type assertion is not a
+          customs officer inspecting the incoming package.</span
+        >
+      </p>
+      <h2 id="compare-the-two-call-paths">Compare the Two Call Paths</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's follow the unnecessary loop once, because I want to know what
+          we're actually removing. The Server Component creates an HTTP request
+          to our own endpoint. That endpoint parses the request, calls a helper,
+          serializes the result, and sends it back. The component parses the
+          response and renders.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. With a direct helper call, the component awaits the
+          operation and receives its result. We avoid the extra transport and
+          serialization layer between two parts of the same application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But if authorization existed only in the endpoint, moving to the
+          helper could accidentally bypass it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's why the refactor must preserve the access contract. Put shared
+          rules in the appropriate server operation rather than assuming
+          removing transport removes the need for those rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the performance improvement isn't permission to make the data
+          layer less safe. We remove redundant travel, not the checks at the
+          destination.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And if the endpoint is actually another service with its own
+          ownership, the travel isn't redundant. The service interface may be
+          the only supported way to access that data.</span
+        >
+      </p>
+      <h2 id="what-does-parallel-actually-mean-here">
+        What Does Parallel Actually Mean Here?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Promise.all doesn't make JavaScript execute two ordinary synchronous
+          loops on separate CPU cores.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It lets us await multiple promises together. Independent
+          asynchronous I/O can overlap while the environment handles the
+          operations. That's different from parallel CPU execution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If getPublicSessions starts a database request when called, calling
+          it before we await another result lets that request begin
+          earlier.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. But if a helper merely returns a function that starts work
+          later, the behavior differs. Know what your API does, rather than
+          treating Promise.all as an acceleration sticker.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a failed promise doesn't cancel the others. If cancellation
+          matters, the underlying APIs need a supported cancellation
+          mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. For an optional external service, we might use a timeout and
+          separate failure handling so it doesn't indefinitely delay the
+          essential page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should also consider load. Ten concurrent requests might improve
+          one page while making the shared database unhappy under a thousand
+          visitors.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Individual latency and system capacity are related, but
+          improving one without considering the other can move the
+          bottleneck.</span
+        >
+      </p>
+      <h2 id="the-public-representation-is-a-design-tool">
+        The Public Representation Is a Design Tool
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What fields does the session list need?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Identifier, slug, title, perhaps speaker and time. Probably not the
+          full abstract of every talk if the list doesn't display it. Definitely
+          not organizer notes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Returning only those fields can reduce database transfer,
+          serialization, and client payload. It's also easier to understand what
+          the interface is allowed to know.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The detail page can request its own suitable representation. We don't
+          need one enormous universal session object for every context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. But we also shouldn't create fifteen nearly identical
+          abstractions prematurely. Start with the public list and detail needs
+          we actually have.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A useful interface names the intent. GetPublicSessions tells me
+          something about the data contract. GetStuff tells me the author had a
+          meeting in two minutes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Names can't enforce privacy, but they can make the policy easier to
+          inspect. The actual query and returned fields must match the
+          name.</span
+        >
+      </p>
+      <h2 id="empty-is-a-successful-answer">Empty Is a Successful Answer</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose the database responds successfully with no published
+          sessions. The page says the schedule hasn't been announced yet. That's
+          an empty state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Suppose the database connection fails. Returning an empty
+          array from a broad catch would make the same message appear, but it
+          would be false.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The conference might have fifty talks. We just failed to read them.
+          So we should let the failure reach an appropriate error path or return
+          a deliberately distinct result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Don't erase failure information merely to keep a return type
+          convenient. The user needs an honest state, and operators need enough
+          diagnostics to investigate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about a missing individual session?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A successful lookup with no permitted public result can go to
+          not-found handling. A transport failure is different. Our helper
+          contract should let callers distinguish those outcomes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That small distinction improves the page, the endpoint, and our
+          debugging. It's not an abstraction for its own sake.</span
+        >
+      </p>
+      <h2 id="a-read-must-remain-a-read">A Read Must Remain a Read</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server rendering can happen in contexts such as prerendering,
+          retries, or navigation preparation. Why does that matter to the data
+          helper?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It shouldn't mutate important state merely because it was called
+          during rendering. Reading the session should not increment a billable
+          counter, publish a proposal, or reserve a seat.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Rendering work should be safe to repeat. Put intentional
+          mutations in the appropriate action or endpoint with explicit
+          semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Analytics also needs thought. Counting every render invocation as a
+          unique human visit can produce nonsense because rendering isn't
+          equivalent to a completed user visit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Choose an observation point that matches the metric. The
+          framework's internal execution count isn't automatically a product
+          event.</span
+        >
+      </p>
+      <h2 id="a-practical-slow-page-investigation">
+        A Practical Slow-Page Investigation
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the public schedule is slow, I start with evidence. Is time spent
+          in the database, an external service, rendering, transfer, or browser
+          work?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the database dominates, inspect query shape and indexes.
+          If requests are unnecessarily sequential, fix the dependency chain. If
+          the result is enormous, reduce it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the server is fast but the browser waits on a giant script,
+          rewriting the database helper won't solve the observed problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And if the same expensive public result is read repeatedly,
+          an explicit cache may help, with the freshness policy we'll discuss
+          next.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can improve a small app without installing an observability
+          cathedral. A focused trace and a reproducible request can answer the
+          first question.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Measure enough to identify the cause, make the targeted
+          change, and verify that the user's path improved.</span
+        >
+      </p>
+      <h2 id="the-kitchen-is-open">The Kitchen Is Open</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Async Server Components let us perform suitable reads in the server
+          environment and render the result. They remove the need for some
+          client fetching and some self-HTTP detours.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They don't remove data-access design. We still choose safe queries,
+          enforce access, validate outside data, manage dependencies, and think
+          about failures.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Sometimes the API is the right boundary. Sometimes a plain
+          function call is the right boundary. Follow the ownership and trust
+          relationships.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, caching. Our schedule will be fast, inexpensive, and
+          possibly wrong about which room contains the talk.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We'll make the freshness policy explicit.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Please. I don't want our optimization to strand people outside a
+          broom cupboard.</span
+        >
+      </p>
+    </main>
+    <footer>4 code cards · 0 terminal cards</footer>
+  </body>
+</html>

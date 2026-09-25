@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 3: Drupal: Why Is Everything an Entity? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: Drupal: Why Is Everything an Entity?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/662a06c0-acf1-4161-b941-23ce5b74f83c"
+      ></script>
+      <div class="redcirclePlayer-662a06c0-acf1-4161-b941-23ce5b74f83c"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#start-with-something-we-know"
+            >Start With Something We Know</a
+          >
+        </li>
+        <li><a href="#four-steps-one-event">Four Steps, One Event</a></li>
+        <li>
+          <a href="#the-definition-is-not-the-content"
+            >The Definition Is Not the Content</a
+          >
+        </li>
+        <li>
+          <a href="#fields-are-more-than-labels">Fields Are More Than Labels</a>
+        </li>
+        <li>
+          <a href="#references-create-relationships"
+            >References Create Relationships</a
+          >
+        </li>
+        <li>
+          <a href="#taxonomy-is-a-system-of-meaning"
+            >Taxonomy Is a System of Meaning</a
+          >
+        </li>
+        <li>
+          <a href="#media-is-not-just-a-filename"
+            >Media Is Not Just a Filename</a
+          >
+        </li>
+        <li>
+          <a href="#users-and-the-block-trap">Users and the Block Trap</a>
+        </li>
+        <li>
+          <a href="#revisions-and-translations-are-capabilities"
+            >Revisions and Translations Are Capabilities</a
+          >
+        </li>
+        <li>
+          <a href="#when-would-we-make-a-custom-entity-type"
+            >When Would We Make a Custom Entity Type?</a
+          >
+        </li>
+        <li><a href="#read-an-unfamiliar-site">Read an Unfamiliar Site</a></li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I've opened the Drupal documentation. Our event is an entity. Its
+          author is an entity. Its photograph has an entity. The configuration
+          may also be an entity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How are you feeling?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like I should check whether my coffee has a bundle.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Only if there are several configured kinds of coffee.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That was dangerously close to making sense. Continue.</span>
+      </p>
+      <h2 id="start-with-something-we-know">Start With Something We Know</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We're translating Drupal. Today the core
+          sequence is entity type, bundle, entity, fields. We'll keep attaching
+          those words to Bellweather University's actual information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In an application I might have an Event object backed by database
+          records. It has a title, date, and location. Why doesn't Drupal simply
+          call it an Event?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can, in the editor interface. Internally, Drupal needs reusable
+          ways to load, save, validate, render, reference, and check access to
+          different kinds of data. An entity is an individual object managed
+          through that system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the abstraction exists because lots of objects need similar
+          infrastructure. We shouldn't write a completely separate revision
+          system for events, people, and news if the common system works for
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Entity type tells Drupal what general kind of object it is
+          dealing with and which handlers and capabilities apply. Bundle
+          supplies a configured subtype where that entity type supports
+          bundles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And a bundle isn't automatically a PHP subclass?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. That is one of today's most useful distinctions. Several
+          content types can use the same underlying node entity implementation.
+          Their field configuration and behavior can differ without each
+          becoming a different PHP class.</span
+        >
+      </p>
+      <h2 id="four-steps-one-event">Four Steps, One Event</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Node is an entity type. Despite the name, this has nothing to do with
+          Node.js. A Drupal node is a kind of content object commonly used for
+          site content.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you. I was not prepared for npm to enter the greenhouse.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Event is a content type, which is a bundle of the node entity type.
+          Moss After Dark is one individual node in that bundle. Its title,
+          date, and location reference are fields or properties represented
+          through the field system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >General kind: node. Configured subtype: Event. Individual record:
+          Moss After Dark. Structured information on that record: its
+          fields.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. News Article could be another node bundle. It shares the broad
+          node infrastructure but has a different field arrangement and
+          different editorial requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I make forty events, I haven't made forty bundles. I've made forty
+          entities using the Event bundle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Bundle defines a kind of thing editors can create. Entity is
+          the thing they created.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>ENTITY TYPE       BUNDLE             INDIVIDUAL ENTITY        FIELDS
+node              event              Moss After Dark          title, start, location
+node              news_article       New greenhouse opens     title, body, topics
+media             image              Greenhouse photograph    image, attribution
+taxonomy_term     subject            Botany                   name, description
+user              no separate        Editor account           name, email, roles
+                  bundle selection
+
+Bundle is a configured subtype, not necessarily a PHP subclass.
+Not every entity type has several bundles or supports all capabilities.</code></pre>
+      </figure>
+      <h2 id="the-definition-is-not-the-content">
+        The Definition Is Not the Content
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Where does Event itself live? Is the content type also a node?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. The content type definition is configuration. In Drupal it is
+          represented by a node-type configuration entity. The individual events
+          are content entities.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So content entities hold the changing information, while
+          configuration entities describe parts of how the site is
+          arranged.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Broadly, yes. Views definitions, roles, and content-type definitions
+          are examples of configuration entities. Not all configuration uses a
+          configuration entity; some is simple configuration. We'll separate
+          those deployment concerns later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But for now, creating the Event type and creating an event are
+          different operations on different things. One changes the
+          application's model; the other adds content to that model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's why an admin click can turn out to be a deployable
+          application change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And entity does not mean one database row. A revisionable, translated
+          object with several fields may span multiple tables.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Think managed data object, not a promise about physical
+          storage. Drupal's entity storage API handles that mapping. Knowing SQL
+          helps you reason about it, but bypassing the API to update one table
+          can leave the larger object inconsistent.</span
+        >
+      </p>
+      <h2 id="fields-are-more-than-labels">Fields Are More Than Labels</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A field has a data type and a definition. A date isn't merely a text
+          input with Date written above it. Its type informs storage,
+          validation, editing widgets, and display formatters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The widget is how an editor supplies the value. The formatter is how
+          the value is displayed. The stored value is neither of those
+          interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You can change a date's display format without changing the
+          meaning of the date. A field can also contain multiple values if its
+          cardinality permits them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Cardinality: how many values the field allows. One venue, several
+          speakers, potentially many topics. Familiar database modeling with an
+          admin form attached.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal distinguishes base fields defined by an entity type from
+          configurable fields attached through configuration. Field storage
+          configuration describes storage-related properties; field
+          configuration on a bundle controls how that field is used there.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to memorize those configuration filenames yet, but the
+          distinction explains why changing a field label is not the same
+          operation as changing the underlying field type.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Some storage changes are restricted after data exists. A
+          convenient dropdown does not make a data migration unnecessary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If someone asks us to turn a multi-value text field full of free-form
+          dates into a proper date field, that is a conversion problem. We need
+          to inspect and migrate the existing values.</span
+        >
+      </p>
+      <h2 id="references-create-relationships">
+        References Create Relationships
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Moss After Dark happens at the Greenhouse. We could copy the building
+          name, address, and directions into every event. Or the event can
+          reference a Location entity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like a foreign-key relationship conceptually. The event identifies
+          another record instead of duplicating all its information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the useful translation. Drupal references can carry additional
+          conventions, and not every integrity rule is enforced by a database
+          foreign-key constraint. We need to understand the entity API and
+          deletion behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important. A reference field does not automatically mean the system
+          prevents every dangling relationship or archives dependent content
+          exactly as we want.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A standard entity reference points to the target entity. It generally
+          doesn't mean “freeze this exact target revision forever.”
+          Revision-specific relationships require the appropriate design or
+          contributed functionality.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So updating the greenhouse address may affect every event that
+          renders the current location. That's helpful unless our requirement
+          was to preserve the historical address as it appeared on the event
+          date.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Shared current information and historical snapshots are
+          different requirements. Reuse is a decision, not a moral virtue.</span
+        >
+      </p>
+      <h2 id="taxonomy-is-a-system-of-meaning">
+        Taxonomy Is a System of Meaning
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's translate taxonomy carefully. We used it in WordPress, and now
+          Drupal has vocabularies and terms.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In Drupal, taxonomy terms are content entities. A vocabulary groups
+          terms and acts as the bundle for the taxonomy-term entity type.
+          Subject could be a vocabulary; Botany and Computer Science could be
+          terms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The vocabulary definition is configuration. The actual terms are
+          content. That's a distinction we will care about when moving a site
+          between environments.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Terms can have their own fields, descriptions, and
+          hierarchy. Taxonomy is structured classification, not just tags
+          appended to articles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A controlled subject list lets news and events share a
+          classification. A visitor can find everything about Botany without us
+          matching random strings in body text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But a Department might deserve a real content record rather than only
+          a classification term if it has substantial editorial information,
+          contact details, people, and its own lifecycle.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or a taxonomy term could be sufficient for a simpler site. We choose
+          based on the work the object must support, not a rule that all nouns
+          become nodes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. Translate the Drupal, then decide whether the model
+          fits.</span
+        >
+      </p>
+      <h2 id="media-is-not-just-a-filename">Media Is Not Just a Filename</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Media is another content entity type. Its bundles are media types,
+          such as Image or Remote Video. A particular photograph is a media
+          entity of the Image type.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The media source determines how it represents the underlying asset. A
+          local image can refer to a managed file; a remote video can refer to
+          an external resource. Different sources, common editorial
+          management.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the file itself can be represented by a file entity. That doesn't
+          mean “file” and “media” are redundant synonyms. One concerns the
+          managed file; the other supplies a reusable media abstraction and
+          associated metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The photo has bytes, a filename, perhaps a credit and rights
+          information, and a role in content. Those are related
+          responsibilities, not necessarily one record.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, referencing restricted media from public content doesn't grant
+          access. Rendering and access checks must respect both sides of a
+          relationship.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I can see a public event, it doesn't follow that I may download
+          every file mentioned somewhere in its editing form.</span
+        >
+      </p>
+      <h2 id="users-and-the-block-trap">Users and the Block Trap</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >User accounts are entities too. They share entity-system
+          capabilities, but they aren't nodes and don't normally present editors
+          with a menu of user bundles like Event and News Article.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What about a Person profile? Our university has people who never log
+          in.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good reason to distinguish a public Person content record from an
+          authentication account. They might be related, but employment
+          information and login identity have different lifecycles and access
+          needs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now blocks. This word seems particularly determined to be several
+          things.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It is. A block plugin supplies a piece of functionality or output,
+          such as a menu or a custom computed panel. A placed block is
+          configuration describing placement and settings. A reusable content
+          block can be a block-content entity with a block type as its
+          bundle.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “move the block” could mean change its placement. “Edit the block”
+          could mean change a content entity. “Build a block” could mean write a
+          plugin. We need the sentence around the noun.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Treating all three as the same object is how someone edits
+          PHP when the actual problem is a visibility setting.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>Block plugin           Produces a kind of block output/behavior
+Placed block config    Chooses where/when an instance appears
+Block content entity   Stores reusable editorial block content
+
+A content block can be displayed through the block system.
+These objects cooperate; they are not interchangeable.</code></pre>
+      </figure>
+      <h2 id="revisions-and-translations-are-capabilities">
+        Revisions and Translations Are Capabilities
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Do all entities have revisions?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Entity types declare capabilities. Some content entities are
+          revisionable or translatable; others aren't. Even when a capability
+          exists, site configuration and code determine how it is used.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A revision is a saved version of an entity. A translation is a
+          language variation of its information. Those are different axes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes, and combining translations with revisions and moderation can get
+          subtle. We should test the exact editorial workflow rather than
+          assuming each translated field is an independent miniature
+          website.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a new pending revision need not be the default revision visitors
+          see. “Latest” and “currently published” aren't always the same record
+          version.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's an important debugging question: which revision did this code
+          load, in which language, under whose access? A correct entity ID alone
+          doesn't answer all three.</span
+        >
+      </p>
+      <h2 id="when-would-we-make-a-custom-entity-type">
+        When Would We Make a Custom Entity Type?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a bundle is so flexible, why ever define a custom entity
+          type?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When the domain needs behavior or storage that doesn't fit existing
+          types well. A specialized application record might need distinct
+          handlers, lifecycle rules, or integration behavior. But custom
+          entities come with work: access, forms, routes, storage definitions,
+          updates, and testing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “our noun isn't Article” is not sufficient reason. A node bundle
+          may already supply the capabilities we need.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We should be able to explain what existing infrastructure
+          we're keeping and what problem justifies new code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, forcing financial transactions into ordinary editorial
+          nodes just because the admin screen is convenient could be a terrible
+          fit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The entity API is extensible; that doesn't make every possible
+          application model a sensible CMS project.</span
+        >
+      </p>
+      <h2 id="read-an-unfamiliar-site">Read an Unfamiliar Site</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose a colleague asks why Moss After Dark has the wrong building.
+          What do you inspect first?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Identify the record and its bundle. Check the location reference
+          value. Inspect the target Location record. Then determine whether the
+          output uses that reference or some separately entered text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good. If the location field doesn't appear in the editor?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check its definition and form display configuration, plus
+          permissions. Don't conclude the database lost it because one form
+          hides it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And if it appears in the editor but not on the public page?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's probably a rendering or access question, not evidence that the
+          field isn't stored. Different layer, different investigation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the payoff. The vocabulary lets us separate problems instead
+          of calling all of them Drupal being weird.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Node, Event, Moss After Dark, start time. Type, bundle, entity,
+          field. I can work with that.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time we'll decide which fields and relationships Bellweather
+          actually needs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My coffee remains unmodeled. I would like one small part of my life
+          to survive this series without configuration export.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Entity type → bundle → entity → fields. Use the general API model
+          without assuming one object equals one database row or every bundle
+          equals a PHP subclass.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 3 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Entity type</th>
+              <td>
+                Kind of managed Drupal data object, with declared capabilities
+                and handlers.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Bundle</th>
+              <td>
+                Configured subtype of an entity type; not every entity type has
+                multiple bundles.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Entity</th>
+              <td>An individual managed data object.</td>
+            </tr>
+            <tr>
+              <th scope="row">Field</th>
+              <td>
+                Structured property/data with a type, storage, validation, and
+                presentation options.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Entity reference</th>
+              <td>
+                Relationship to another entity; ordinary references do not
+                automatically pin a target revision.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Taxonomy</th>
+              <td>Classification using vocabularies and terms.</td>
+            </tr>
+            <tr>
+              <th scope="row">View</th>
+              <td>Query and presentation configuration.</td>
+            </tr>
+            <tr>
+              <th scope="row">View mode</th>
+              <td>Named presentation context for rendering an entity.</td>
+            </tr>
+            <tr>
+              <th scope="row">Module</th>
+              <td>Extension/functionality package.</td>
+            </tr>
+            <tr>
+              <th scope="row">Theme</th>
+              <td>Presentation layer.</td>
+            </tr>
+            <tr>
+              <th scope="row">Service</th>
+              <td>
+                Reusable functionality represented by an object managed by the
+                service container.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Hook</th>
+              <td>An extension point invoked by Drupal.</td>
+            </tr>
+            <tr>
+              <th scope="row">Render array</th>
+              <td>
+                Structured description of output Drupal renders later, with
+                metadata.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Configuration</th>
+              <td>
+                Site/application definitions and settings that can be managed
+                and deployed.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Contrib</th>
+              <td>
+                Community-provided projects, each with its own support and
+                compatibility.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Drush</th>
+              <td>Drupal command-line tooling.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Two distinctions that prevent migrations from going wrong</h3>
+        <p>
+          A public Person profile is not automatically a login account. A media
+          entity is not synonymous with the file bytes it represents. Model
+          their lifecycles and access separately.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li><strong>Code card 1:</strong> Translate the Drupal</li>
+          <li>
+            <strong>Code card 2:</strong> Three block-related responsibilities
+          </li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Identify the entity type, bundle, entity ID, revision, and language
+            for a displayed record.
+          </li>
+          <li>
+            Separate the Event content-type definition from the actual event
+            content.
+          </li>
+          <li>
+            Distinguish vocabulary configuration from taxonomy-term content.
+          </li>
+          <li>
+            When someone says block, identify plugin, placement configuration,
+            or block-content entity.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/drupal-apis/entity-api/introduction-to-entity-api"
+              >Entity API</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/user_guide/en/understanding-data.html"
+              >Content entities and fields</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/user_guide/en/structure-taxonomy.html"
+              >Taxonomy</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/user_guide/en/block-concept.html"
+              >Blocks</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

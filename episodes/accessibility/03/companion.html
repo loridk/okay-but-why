@@ -1,0 +1,1553 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 3: Throw Away Your Mouse — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Accessibility episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: Throw Away Your Mouse</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/d2c127b3-100b-44a0-abfd-c5fa141228eb"
+      ></script>
+      <div class="redcirclePlayer-d2c127b3-100b-44a0-abfd-c5fa141228eb"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#an-action-existing-is-not-enough"
+            >An Action Existing Is Not Enough</a
+          >
+        </li>
+        <li>
+          <a href="#focus-is-where-keyboard-input-goes"
+            >Focus Is Where Keyboard Input Goes</a
+          >
+        </li>
+        <li>
+          <a href="#the-route-the-document-already-provides"
+            >The Route the Document Already Provides</a
+          >
+        </li>
+        <li><a href="#why-minus-one-is-useful">Why Minus One Is Useful</a></li>
+        <li>
+          <a href="#put-a-visible-marker-on-the-current-place"
+            >Put a Visible Marker on the Current Place</a
+          >
+        </li>
+        <li>
+          <a href="#a-skip-link-saves-the-repeated-journey"
+            >A Skip Link Saves the Repeated Journey</a
+          >
+        </li>
+        <li><a href="#when-moving-focus-helps">When Moving Focus Helps</a></li>
+        <li>
+          <a href="#a-modal-is-more-than-a-centered-rectangle"
+            >A Modal Is More Than a Centered Rectangle</a
+          >
+        </li>
+        <li>
+          <a href="#navigation-without-a-full-page-load"
+            >Navigation Without a Full Page Load</a
+          >
+        </li>
+        <li>
+          <a href="#tabs-menus-and-the-keyboard-inside-the-keyboard"
+            >Tabs, Menus, and the Keyboard Inside the Keyboard</a
+          >
+        </li>
+        <li>
+          <a href="#run-a-journey-record-a-failure"
+            >Run a Journey, Record a Failure</a
+          >
+        </li>
+        <li>
+          <a href="#a-focus-bug-you-can-explain-to-a-colleague"
+            >A Focus Bug You Can Explain to a Colleague</a
+          >
+        </li>
+        <li>
+          <a href="#give-people-a-place-to-stand"
+            >Give People a Place to Stand</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The mouse is in a drawer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why did you close the drawer so dramatically?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accountability. If I reach for it during our keyboard test, there
+          will be a noise and a moment of shame.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We don't do shame-based accessibility training.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Fine. A moment of useful evidence.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Much better.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'm on our fictional pizza checkout. I can reach the address field. I
+          can reach the delivery notes. I cannot reach the very large button
+          that opens delivery options.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The button-shaped div from last episode?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Its cousin. Apparently they have a family business.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Does it work when clicked?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Beautifully. Which proves exactly what we said it proves: it works
+          when clicked.</span
+        >
+      </p>
+      <h2 id="an-action-existing-is-not-enough">
+        An Action Existing Is Not Enough
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We know the browser needs useful semantics.
+          Today we ask whether someone can reach and operate the interface
+          without using the pointer path we happened to develop first.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keyboard access matters directly to people who use keyboards. It also
+          supports patterns used by other input methods. We shouldn't assume
+          that testing with a mouse covers switch access, voice control, or
+          assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor does a keyboard pass prove those other experiences. It's one
+          essential part of the picture, and it's remarkably good at exposing
+          assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My inaccessible delivery control is a nice example. The action exists
+          in JavaScript. The click handler exists. But I can't arrive at it
+          through the normal keyboard sequence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which means implementation isn't just the action's function. It
+          includes how people discover it, reach it, understand it, and invoke
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like that because “the handler works” is a very small statement
+          that often dresses up as “the feature works.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's start with the native path. Tab generally moves forward among
+          focusable controls. Shift plus Tab moves backward. Enter follows a
+          focused link or activates a button. Space activates a focused native
+          button and toggles a checkbox.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But Space on a normal link usually scrolls. We don't add custom Space
+          handling to every link because buttons use it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Keys belong to interaction patterns. Escape often dismisses an
+          open popup or dialog. Arrow keys operate within certain widgets, like
+          radio groups or tabs. They don't universally mean “go to the next
+          thing on the page.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The companion has a quick reference. We're not announcing a keyboard
+          inventory over the music.</span
+        >
+      </p>
+      <h2 id="focus-is-where-keyboard-input-goes">
+        Focus Is Where Keyboard Input Goes
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What do we mean by focus?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The element currently receiving relevant keyboard input. If focus is
+          in the delivery notes, typing edits that field. If it's on Place
+          order, Enter can activate the button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the visual focus indicator is how many sighted keyboard users
+          locate that position. It is related to focus, but it isn't focus
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which explains the classic disaster: someone removes the outline and
+          says they removed an ugly border. What they actually removed was the
+          only visible indication of where the keyboard is acting.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Focus still moves. The user just can't see where.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like turning off the cursor in an editor and saying the code looks
+          cleaner now.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Focus order is the sequence someone follows. Programmatic focus is
+          when code intentionally moves focus, for example to a dialog you've
+          just opened.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Four related concepts: the current target, its visible indication,
+          the route between targets, and code moving the target. If we keep
+          those separate, debugging gets less mystical.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's another important distinction: a screen reader can have a
+          reading or virtual cursor that isn't identical to DOM keyboard focus.
+          Someone navigating headings isn't necessarily moving focus to every
+          heading.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't treat “the screen reader is reading this paragraph” as proof
+          that the paragraph is the active element.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Keyboard-only testing and screen-reader navigation overlap,
+          but they are not the same test.</span
+        >
+      </p>
+      <h2 id="the-route-the-document-already-provides">
+        The Route the Document Already Provides
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >By default, the source order gives us a major part of the focus
+          sequence. Which is one reason meaningful HTML order matters before
+          layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS can visually rearrange things without making the keyboard
+          sequence match. A layout that puts the final action at the top
+          visually might still place it last in the DOM.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sometimes that relationship makes sense, sometimes it doesn't. The
+          test is whether the sequence preserves meaning and is understandable,
+          not whether every pixel has a matching coordinate in the tab
+          order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If we need a different logical sequence, fix the structure where
+          possible. Don't immediately assign positive tabindex values to patch
+          the visual arrangement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ah yes. Numbering the entire page like an airport boarding system
+          operated by a spreadsheet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Positive values move elements into a priority sequence before the
+          ordinary zero/default group. Now unrelated components can compete for
+          earlier positions. A new field can require renumbering or produce
+          jumps you didn't expect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a reusable component can't reasonably know the entire page's
+          numbering scheme. Its local fix becomes everyone else's navigation
+          problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep the natural order unless there is a well-understood reason for a
+          specific widget's internal focus strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Internal widget strategy is not a license to assign tabindex
+          forty-two to the checkout button because it's important.</span
+        >
+      </p>
+      <h2 id="why-minus-one-is-useful">Why Minus One Is Useful</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The two tabindex values developers most often need to understand are
+          zero and minus one.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Zero puts an otherwise non-tabbable element into the normal
+          sequential order. It doesn't give it a role or activation
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A div with tabindex zero can receive focus, but it still
+          isn't automatically a button. You have solved reachability and
+          inherited several remaining jobs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Minus one is the interesting one. It generally keeps the element out
+          of sequential Tab navigation while allowing code to focus it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So a page heading or an error summary can be a deliberate destination
+          without becoming an extra stop every time someone tabs through the
+          page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Not a routine stop, but a valid destination when the workflow calls
+          for it.” That makes much more sense than thinking negative means
+          disabled.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It doesn't mean disabled or hidden. And it isn't a security or
+          click-prevention mechanism. Focusability details can vary by element
+          and browser, but that distinction is the working model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose submitting the checkout produces three errors. We can move
+          focus to a clear error summary, with links to the affected fields. The
+          summary may use tabindex minus one so code can focus it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or a simpler form might move focus to the first invalid field,
+          depending on the validation approach. Choose a coherent strategy;
+          don't make a summary, focus a field, and launch several competing
+          announcements at once.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessibility through a coordinated information plan. An unfortunate
+          threat to my collection of random event handlers.</span
+        >
+      </p>
+      <h2 id="put-a-visible-marker-on-the-current-place">
+        Put a Visible Marker on the Current Place
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's return to the indicator. Browser defaults are a useful starting
+          point. If design customizes focus, the replacement needs to remain
+          visible against the actual backgrounds and states.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Including dark mode, selected controls, sticky headers, and the
+          element's hover treatment. A ring that exists in the stylesheet but
+          blends into the component isn't doing much.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The CSS pseudo-class focus-visible helps style focus when the browser
+          determines a visible indicator is needed. It's browser CSS, not an
+          ARIA feature.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And focus-visible isn't an excuse to remove all focus styling without
+          checking. We can add an obvious outline and test actual keyboard
+          use.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>css</span></figcaption>
+        <pre tabindex="0"><code>:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 3px;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is a starting treatment, not a universal color guarantee. You
+          need to check its contrast and whether ancestors clip the
+          outline.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Overflow hidden can crop our nice ring. A sticky banner can cover the
+          focused field. The user doesn't care that our outline technically
+          exists behind the cookie notice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So focus visibility includes whether the focused item is actually
+          exposed in the viewport. Scroll behavior, overlays, and fixed headers
+          can interfere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The test is pleasantly straightforward: keep moving through the task
+          and ask whether you can tell where you are. If you need the mouse to
+          rediscover the keyboard position, something went wrong.</span
+        >
+      </p>
+      <h2 id="a-skip-link-saves-the-repeated-journey">
+        A Skip Link Saves the Repeated Journey
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our checkout has the same header and navigation as every other page.
+          Why add a skip link?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because without one, a keyboard user may have to traverse repeated
+          links before reaching the main task on every visit. A visible-on-focus
+          shortcut can take them directly to the main content.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A main landmark helps some assistive-technology navigation, but a
+          keyboard user without that tool may still need the skip link.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different access mechanisms can complement each other. We don't
+          remove one because another audience has a shortcut.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;a class=&quot;skip-link&quot; href=&quot;#main-content&quot;&gt;Skip to main content&lt;/a&gt;
+&lt;header&gt;&lt;!-- Repeated site navigation --&gt;&lt;/header&gt;
+&lt;main id=&quot;main-content&quot; tabindex=&quot;-1&quot;&gt;
+  &lt;h1&gt;Checkout&lt;/h1&gt;
+  &lt;!-- Checkout content --&gt;
+&lt;/main&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Style the skip link so it's clearly visible when focused, and verify
+          that activation lands meaningfully at the content in supported
+          browsers. The destination's minus-one tabindex helps make it focusable
+          without adding a routine Tab stop.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also verify the next Tab proceeds into the content. Scrolling the
+          page while leaving the keyboard stranded in the header doesn't fulfill
+          the promise very well.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a useful example of why visual inspection alone isn't enough.
+          A jump can look successful while the interaction position isn't where
+          you expected.</span
+        >
+      </p>
+      <h2 id="when-moving-focus-helps">When Moving Focus Helps</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Focus management sounds like a thing an application should do
+          constantly. It is not.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually preserve the user's position. Move focus when the workflow
+          creates a meaningful context change and leaving it behind would be
+          confusing or unusable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Opening a modal dialog is the obvious example. The user asked to edit
+          the delivery address. The dialog appears. Keyboard focus should enter
+          it at a sensible point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That might be the first field, or a static heading if there's
+          substantial content someone needs to read before interacting. “Always
+          focus the first button” isn't a universal rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Especially if the first button is the irreversible action. Please
+          don't welcome someone to a confirmation dialog by making the most
+          destructive choice the path of least resistance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When the dialog closes, return focus to the opener if it still exists
+          and that fits the workflow. If the action removed the opener, choose a
+          logical next location instead.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like deleting a saved address: the exact Edit button may no longer
+          exist. Returning focus to a surviving list control or meaningful
+          heading can preserve orientation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Dynamic insertion by itself isn't enough reason to move focus. If
+          delivery estimates update while someone types their street address,
+          leave them typing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An update can be communicated without grabbing the keyboard. That's
+          what our ARIA live-region discussion will help with.</span
+        >
+      </p>
+      <h2 id="a-modal-is-more-than-a-centered-rectangle">
+        A Modal Is More Than a Centered Rectangle
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native dialog opened with showModal gives you important browser
+          behavior: a modal top-layer presentation and an inert background,
+          along with native focus handling.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whereas adding an open attribute or calling show creates a different,
+          nonmodal situation. “It looks like a modal” doesn't establish
+          modality.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You still need a useful accessible name, deliberate initial focus, a
+          clear close control, and testing of the full workflow. Native support
+          helps; it doesn't decide every product detail.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If you build a custom modal with a div, you own the equivalent
+          behavior. Keyboard focus needs to stay in the active modal while it's
+          open, and background interaction must be unavailable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Escape normally closes a dismissible modal. Tab and Shift plus Tab
+          stay within its focusable content. Closing returns the user somewhere
+          sensible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is keeping focus inside a modal a keyboard trap?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not when there's an understandable, operable way to close it and
+          continue. The harmful trap is being unable to leave. Modal focus
+          containment serves a specific temporary context with an exit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And role dialog or aria-modal true doesn't build all that behavior.
+          We're previewing Episode 4, where we confiscate some magical
+          thinking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The companion links the dialog pattern. We're not going to dictate a
+          production focus-management library over audio.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank you. I would like our listeners to remain conscious.</span>
+      </p>
+      <h2 id="navigation-without-a-full-page-load">
+        Navigation Without a Full Page Load
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Single-page application navigation introduces another focus decision.
+          A route changes, but the browser hasn't necessarily performed a full
+          document navigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the new content can appear while focus stays on a link in a
+          sidebar, or worse, an element that was removed. We need to decide how
+          the new context becomes apparent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Update the document title, provide meaningful structure, and test a
+          focus strategy appropriate to the route transition. Focusing the new
+          main heading is one possible pattern, not a command to focus headings
+          after every state update.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Filtering a list isn't automatically a new page. Loading another
+          result isn't automatically an invitation to steal focus. Treat
+          different changes differently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >History navigation also deserves testing. Going back should make
+          sense, including position and context. A router can offer features
+          here, but we need to know what it actually does.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is exactly our earlier architecture theme: client-side
+          navigation takes over responsibilities that a full browser navigation
+          previously handled. It doesn't make the responsibilities
+          disappear.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And focus can be lost through component remounting even without
+          navigation. Replacing a focused input with a new DOM node on each
+          keystroke can make an otherwise simple form infuriating.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A good reason to test the rendered interaction rather than
+          congratulate the component tree for being elegant.</span
+        >
+      </p>
+      <h2 id="tabs-menus-and-the-keyboard-inside-the-keyboard">
+        Tabs, Menus, and the Keyboard Inside the Keyboard
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some custom widgets are composite controls. Instead of tabbing
+          through every internal item, Tab enters or leaves the widget and arrow
+          keys move within it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Radio groups are a familiar native example. A custom tab interface
+          often uses arrows between tabs, with a deliberate selected state and
+          an associated panel.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Focus and selection can be distinct. In a manual-activation tab
+          pattern, moving focus with arrows doesn't select the panel until Enter
+          or Space activates it. In automatic activation, focus can select,
+          provided the panel appears without disruptive delay.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why copying just role tab gives you approximately the label
+          on the box and none of the furniture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A roving tabindex strategy keeps one internal item at zero and others
+          at minus one, moving that position as the user moves within the
+          widget. Another strategy keeps focus on a container and communicates
+          an active descendant. These are patterns to study when needed, not
+          ingredients to scatter across normal navigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For six ordinary site links, a list of links is still lovely. We
+          don't need to upgrade it into an application menu because someone drew
+          a hamburger icon.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Menus, comboboxes, and tabs have specific expected interactions. Use
+          a tested implementation and the relevant pattern guidance rather than
+          improvising every arrow key.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our job today is to recognize the responsibility. An exhaustive
+          widget workshop is another series wearing a fake moustache.</span
+        >
+      </p>
+      <h2 id="run-a-journey-record-a-failure">
+        Run a Journey, Record a Failure
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's finish the keyboard pass we started. Reload the checkout, set
+          the mouse aside, and begin at a known location.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I reach the skip link, activate it, and enter the form. I can see
+          focus. The sequence follows the questions. I reach delivery options
+          and open it with the button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then change an option, close anything you opened, and continue.
+          Reverse direction too. Shift plus Tab can reveal different containment
+          bugs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Submit with an invalid field. Find the error. Correct it without
+          losing the other information. Open and close the address dialog.
+          Complete the simulated order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Check whether every essential pointer action has a keyboard path.
+          That doesn't necessarily mean replicating a dragging gesture. It could
+          mean providing Move up and Move down buttons for a reorder
+          operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The outcome matters. Forcing someone to emulate the mouse exactly can
+          be the assumption we're trying to remove.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Record a failure concretely: at this step, pressing this key left
+          focus here; the expected result was there. Include the browser and
+          relevant settings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Much more actionable than “keyboard broken,” which is how I describe
+          my own keyboard when I have accidentally enabled Caps Lock.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when a platform has a setting affecting which controls Tab
+          reaches, account for it in your setup. Don't misdiagnose a
+          configuration difference as application behavior, but don't use that
+          possibility to dismiss a reproducible problem either.</span
+        >
+      </p>
+      <h2 id="a-focus-bug-you-can-explain-to-a-colleague">
+        A Focus Bug You Can Explain to a Colleague
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's follow one failure closely enough that we could file a useful
+          issue. The customer opens Edit delivery address. The dialog looks
+          correct. They tab through the fields and press Save.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Save fails validation because the postal code is missing. What
+          happens to focus?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In our broken version, the component replaces the whole form,
+          including the focused Save button, with a fresh copy. The browser no
+          longer has the same focused node.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a clue. The application rendered something visually similar,
+          but continuity of the actual element matters. We should avoid
+          unnecessary replacement and provide a deliberate error
+          destination.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We choose a summary at the top of the dialog that says there's one
+          problem and links to the postal-code field. The summary can receive
+          programmatic focus without becoming another ordinary Tab stop.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the field gets its useful error information. The summary isn't
+          the only copy of the correction instructions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The customer activates the summary link, reaches the field, enters
+          the postal code, and saves again. This time the operation
+          succeeds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now close the dialog and return focus to Edit delivery address,
+          assuming that remains the meaningful opener. Don't leave focus inside
+          removed content or throw it at the first link on the entire
+          page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if the saved address appears in a newly created card and there
+          wasn't an opener because this was Add address?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then choose the logical destination based on the workflow. Perhaps a
+          heading or relevant control for the new address, or the original Add
+          address button if the task naturally returns there. The important
+          thing is that the person can understand where they are and
+          continue.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So “always return to opener” is a strong default with a reason, not a
+          ritual independent of the application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. The reason is continuity. If the original control no longer
+          exists, pretending to focus it doesn't satisfy the reason.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a second failure. While the customer is editing the street
+          address, a background request loads new delivery slots and the
+          application focuses the first slot.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That steals the keyboard mid-entry. The next character may go nowhere
+          or trigger an unexpected action. The person did not request a context
+          change.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Better to leave focus in the address, update the slots, and
+          communicate the availability in a proportionate way.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. If the update makes the current field invalid or requires a
+          decision, design that flow deliberately. Don't use focus as a
+          loudspeaker for every asynchronous event.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third failure: the user opens a delivery dropdown, presses Escape,
+          and the entire dialog closes too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Competing keyboard handlers. The inner popup and outer dialog both
+          reacted without coordinating. Closing the inner temporary context
+          first is often the expected pattern, but it depends on the widget. We
+          need to implement and test the intended event handling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is where “we listen for Escape” is less informative than “Escape
+          closes the correct active context.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Keys are not global slogans. They belong to a focused
+          interaction state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What do we put in the issue report for that one?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Starting state: address dialog open, delivery popup expanded, focus
+          in the popup. Action: press Escape once. Actual result: both popup and
+          dialog close. Expected result: popup closes and focus returns
+          appropriately within the still-open dialog. Add browser details and
+          the component version if relevant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That gives the implementer a reproducible sequence and a specific
+          contract to protect in a regression test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And it doesn't require the implementer to guess what “focus is weird”
+          means. I can personally produce focus-is-weird reports before coffee,
+          but we should aim higher.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One final wrinkle: a customer uses the browser Back button after
+          finishing the address step. Our route code immediately focuses the
+          main heading and scrolls to the top, even though the browser had
+          restored their previous position.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a reason to test history transitions separately. A focus
+          strategy suitable for a new route may be wrong for restoring a prior
+          context. We should understand what the router and browser already
+          preserve before overwriting it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The common thread is that focus isn't a CSS effect. It's part of
+          application state and navigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And it's state shared with the person operating the interface. We
+          don't own it exclusively just because JavaScript lets us call
+          focus.</span
+        >
+      </p>
+      <h2 id="give-people-a-place-to-stand">Give People a Place to Stand</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Today's deeper point is that focus provides continuity. Where am I,
+          what can I do here, and where will I be after I do it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The browser supplies a lot of that for native controls. Our dynamic
+          interfaces need to preserve it when context changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use normal document order, show the current position, use minus one
+          for intentional destinations when appropriate, and move focus with a
+          reason. Those rules now have a mechanism behind them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And custom components need the right keyboard pattern, not just
+          enough handlers to pass one demonstration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which leads us to ARIA. We've made something interactive. How do we
+          communicate what it is and what state it's in?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next episode: ARIA: What Is This Shit Actually For?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have brought questions, a native button, and very limited patience
+          for attributes applied as incense.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Can the mouse come out now?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Yes. It has learned nothing, but we have.</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <h3>Keyboard quick reference</h3>
+        <p>
+          These are common desktop web patterns, not universal commands for
+          every component. Browser, operating-system, and assistive-technology
+          settings can affect key handling.
+        </p>
+        <dl>
+          <dt><strong>Tab / Shift+Tab</strong></dt>
+          <dd>
+            Move forward/backward through the sequential focus order. Composite
+            widgets may have one entry point rather than a stop on every item.
+          </dd>
+          <dt><strong>Enter</strong></dt>
+          <dd>
+            Activate a focused link or button. Form submission behavior also
+            depends on the form and focused control.
+          </dd>
+          <dt><strong>Space</strong></dt>
+          <dd>
+            Activate a native button or toggle a checkbox; on an ordinary link
+            or document it typically scrolls rather than activates.
+          </dd>
+          <dt><strong>Escape</strong></dt>
+          <dd>
+            Commonly dismiss a dialog or popup when that pattern supports
+            dismissal. A custom component must implement its intended behavior.
+          </dd>
+          <dt><strong>Arrow keys</strong></dt>
+          <dd>
+            Navigate within appropriate controls such as radio groups, tabs, and
+            menus. Use the component's established pattern; do not intercept
+            arrows across the whole page.
+          </dd>
+        </dl>
+        <h3>Focus terms and tabindex</h3>
+        <ul>
+          <li>
+            <strong>Keyboard focus:</strong> the current input target; not
+            necessarily the screen reader's reading cursor.
+          </li>
+          <li>
+            <strong>Focus indicator:</strong> the visible marker showing that
+            target.
+          </li>
+          <li>
+            <strong>Focus order:</strong> the meaningful route between targets.
+          </li>
+          <li>
+            <strong>Programmatic focus:</strong> code moving focus for a
+            justified workflow transition.
+          </li>
+          <li>
+            <code>tabindex="0"</code>: participates in normal sequential
+            navigation; supplies neither role nor activation.
+          </li>
+          <li>
+            <code>tabindex="-1"</code>: generally outside sequential navigation
+            but available as a programmatic focus destination; not disabled or
+            hidden.
+          </li>
+          <li>
+            <strong>Positive tabindex:</strong> creates a competing priority
+            order; fix document structure instead wherever possible.
+          </li>
+        </ul>
+        <h3>Dialog and dynamic-interface checks</h3>
+        <ol>
+          <li>
+            Opening a modal moves focus to an appropriate place inside it.
+          </li>
+          <li>
+            Focus stays within the active modal while it is open; background
+            interaction is unavailable.
+          </li>
+          <li>
+            A clear keyboard-operable close control and appropriate Escape
+            behavior provide an exit.
+          </li>
+          <li>
+            Closing returns focus to the opener or a logical next destination if
+            it no longer exists.
+          </li>
+          <li>
+            Names and instructions are available. The close control survives
+            zoom and small viewports.
+          </li>
+          <li>Routine asynchronous updates do not steal focus.</li>
+          <li>
+            Client-side navigation updates context deliberately: title,
+            structure, and an appropriate focus strategy.
+          </li>
+        </ol>
+        <p>
+          Native <code>dialog.showModal()</code> provides important modal
+          behavior; <code>show()</code> and a bare <code>open</code> attribute
+          are not equivalent. Custom <code>role="dialog"</code> and
+          <code>aria-modal="true"</code> do not implement focus handling or
+          inertness.
+        </p>
+        <h3>One useful keyboard journey</h3>
+        <p>
+          Reload → activate skip link → complete fields → open/close delivery
+          options → trigger errors → correct errors → open/close address dialog
+          → complete a simulated order. Repeat relevant navigation backward.
+          Record the exact key, focus location, expected result, actual result,
+          and environment for failures.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/"
+              >APG: Keyboard Interface</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+              >APG: Modal Dialog Pattern</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/"
+              >APG: Tabs Pattern</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/tabindex"
+              >MDN: tabindex</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

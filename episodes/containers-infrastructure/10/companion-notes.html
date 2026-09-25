@@ -1,0 +1,14 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Choose how much infrastructure to operate yourself. Managed services change the division of responsibility; they do not remove your application and data responsibilities.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Compute</strong></dt><dd>Execution capacity: VMs, managed container execution, functions, and other models.</dd>
+<dt><strong>Storage</strong></dt><dd>Block, file, and object interfaces support different workloads.</dd>
+<dt><strong>Load balancer / CDN</strong></dt><dd>Distributes traffic among backends / delivers and caches appropriate content nearer users.</dd>
+<dt><strong>Region / availability zone</strong></dt><dd>Geographic deployment area / provider-defined separated location or failure domain within a region.</dd></dl>
+<h3>Responsibility spectrum</h3><ul><li><strong>IaaS:</strong> infrastructure building blocks; you commonly operate the guest OS and application.</li><li><strong>PaaS:</strong> application platform; more runtime and deployment work is managed.</li><li><strong>SaaS:</strong> a finished hosted application.</li><li><strong>Managed containers:</strong> run images with platform-managed operations that vary by service.</li><li><strong>Managed Kubernetes:</strong> Kubernetes with a service-specific division of cluster responsibilities.</li><li><strong>Serverless:</strong> abstracts server provisioning and capacity management; execution constraints, state, permissions, and costs still matter.</li></ul><h3>Before choosing</h3><p>Compare maintenance ownership, identity permissions, monitoring, recovery, latency, data location, transfer charges, workload limits, and exit costs. Multiple replicas or zones help only when the application and its dependencies are designed to use them.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://aws.amazon.com/types-of-cloud-computing/">AWS: Cloud service categories</a></li>
+<li><a href="https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html">AWS Regions</a></li>
+<li><a href="https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-availability-zones.html">AWS Availability Zones</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

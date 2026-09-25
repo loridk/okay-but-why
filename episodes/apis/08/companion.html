@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 8: Authentication: How Does the API Know Who the Hell I Am? —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 8: Authentication: How Does the API Know Who the Hell I Am?
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/25d3ac65-7854-44ed-a29c-71342ff0c336"
+      ></script>
+      <div class="redcirclePlayer-25d3ac65-7854-44ed-a29c-71342ff0c336"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#who-are-you-and-what-may-you-do"
+            >Who Are You, and What May You Do?</a
+          >
+        </li>
+        <li>
+          <a href="#sessions-a-familiar-arrangement"
+            >Sessions: A Familiar Arrangement</a
+          >
+        </li>
+        <li>
+          <a href="#cookie-flags-have-specific-jobs"
+            >Cookie Flags Have Specific Jobs</a
+          >
+        </li>
+        <li>
+          <a href="#an-api-key-usually-identifies-a-caller-or-project"
+            >An API Key Usually Identifies a Caller or Project</a
+          >
+        </li>
+        <li><a href="#token-is-a-broad-word">Token Is a Broad Word</a></li>
+        <li>
+          <a href="#jwt-is-a-format-not-a-security-verdict"
+            >JWT Is a Format, Not a Security Verdict</a
+          >
+        </li>
+        <li>
+          <a href="#why-use-structured-tokens-at-all"
+            >Why Use Structured Tokens at All?</a
+          >
+        </li>
+        <li>
+          <a href="#expiration-is-a-limit-not-a-force-field"
+            >Expiration Is a Limit, Not a Force Field</a
+          >
+        </li>
+        <li>
+          <a href="#frontend-secrets-aren-t-secret"
+            >Frontend Secrets Aren't Secret</a
+          >
+        </li>
+        <li>
+          <a href="#browser-token-storage-has-tradeoffs"
+            >Browser Token Storage Has Tradeoffs</a
+          >
+        </li>
+        <li>
+          <a href="#https-protects-the-journey">HTTPS Protects the Journey</a>
+        </li>
+        <li>
+          <a href="#follow-an-authorized-request"
+            >Follow an Authorized Request</a
+          >
+        </li>
+        <li>
+          <a href="#the-stolen-credential-thought-experiment"
+            >The Stolen Credential Thought Experiment</a
+          >
+        </li>
+        <li>
+          <a href="#logging-out-has-more-than-one-meaning"
+            >Logging Out Has More Than One Meaning</a
+          >
+        </li>
+        <li>
+          <a href="#revocation-and-rotation-solve-different-problems"
+            >Revocation and Rotation Solve Different Problems</a
+          >
+        </li>
+        <li>
+          <a href="#permission-changes-while-you-re-signed-in"
+            >Permission Changes While You're Signed In</a
+          >
+        </li>
+        <li>
+          <a href="#the-frontend-proxy-needs-a-policy"
+            >The Frontend Proxy Needs a Policy</a
+          >
+        </li>
+        <li>
+          <a href="#ask-better-questions-in-a-design-review"
+            >Ask Better Questions in a Design Review</a
+          >
+        </li>
+        <li>
+          <a href="#know-what-the-credential-means"
+            >Know What the Credential Means</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The request says userId equals administrator.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Convincing.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It also says trusted equals true.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Well, it would be rude to question it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This is why the server needs its own judgment.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today: identity, permission, and the surprisingly large number of
+          things people mean when they say token.</span
+        >
+      </p>
+      <h2 id="who-are-you-and-what-may-you-do">
+        Who Are You, and What May You Do?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Authentication establishes who or what is
+          making a request, based on evidence the system can verify.
+          Authorization decides what that identity is allowed to do.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I can be correctly identified as Parisa and still not be allowed to
+          refund every order in the restaurant. A successful login isn't a
+          promotion to management.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The identity could also be a service account or application
+          rather than a person. The API needs to know which principal, meaning
+          the entity acting, the credential represents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our customer can view their order 42. A different authenticated
+          customer cannot simply change the path to 42 and inherit access.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That requires an object-level authorization check. Checking only that
+          somebody logged in is insufficient.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a staff role might allow reading certain information but not
+          issuing refunds. Authorization can depend on operation, resource,
+          ownership, tenant, and current conditions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A role label is one input to a policy, not the entire
+          policy.</span
+        >
+      </p>
+      <h2 id="sessions-a-familiar-arrangement">
+        Sessions: A Familiar Arrangement
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me start with sessions because I've used them in traditional web
+          applications. The user signs in. After verifying their credentials,
+          the server creates a session record and gives the browser an
+          unpredictable session identifier, commonly in a cookie.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Later requests carry that identifier according to the browser's
+          cookie rules. The server uses it to find the associated session and
+          identity.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser doesn't need to resend the user's password for every
+          order check. The session identifier is now a credential that must be
+          protected.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A cookie is a storage and transport mechanism in the
+          browser. A session is an application arrangement. Those terms aren't
+          synonyms.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the fact that the server remembers a session doesn't make the
+          application bad. We can acknowledge that this differs from strict REST
+          stateless interaction without replacing a useful design merely to win
+          a label.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Security depends on the actual design, configuration, and
+          implementation, not whether the credential came with fashionable
+          punctuation.</span
+        >
+      </p>
+      <h2 id="cookie-flags-have-specific-jobs">
+        Cookie Flags Have Specific Jobs
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Secure limits a cookie to secure transport, with browser-defined
+          handling for local development. HttpOnly prevents JavaScript from
+          reading the cookie through ordinary document.cookie access. SameSite
+          controls aspects of when cookies accompany cross-site requests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different protections. HttpOnly doesn't mean malicious JavaScript
+          already running on our origin becomes harmless. It may still cause
+          requests using the session, even if it can't directly read the
+          cookie.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And SameSite is useful but doesn't replace a complete CSRF
+          design. Cross-site request forgery exploits the browser's ability to
+          send credentials automatically when an unwanted request is
+          triggered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So state-changing cookie-authenticated requests need appropriate CSRF
+          protection, such as validated tokens and origin checks as part of the
+          application's design. We also constrain cookie scope and manage
+          session expiration and rotation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. None of those attributes means “security solved.” Each
+          addresses a particular behavior.</span
+        >
+      </p>
+      <h2 id="an-api-key-usually-identifies-a-caller-or-project">
+        An API Key Usually Identifies a Caller or Project
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now API keys. A service gives me a long string and says include it
+          with requests. What does it prove?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That depends on the service. A key may identify a project, account,
+          integration, or application. It can be used for access, quotas,
+          billing, or some combination. It does not inherently identify the
+          human sitting at a browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If our server uses one shared provider key for all customers, that
+          provider sees our integration's credential. Our server still has to
+          enforce which customer can do what.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Keys can have scopes or restrictions depending on the
+          provider. They need lifecycle management: creation, storage, rotation,
+          revocation, and monitoring.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some services intentionally offer publishable browser keys with
+          constrained capabilities. That doesn't mean a secret server key is
+          safe to put in frontend code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Follow the provider's distinction. A public identifier and a
+          private credential may look similarly string-shaped while carrying
+          very different authority.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >As with knives and breadsticks, shape alone is not the important
+          property.</span
+        >
+      </p>
+      <h2 id="token-is-a-broad-word">Token Is a Broad Word</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A token is a value representing something in a protocol or system.
+          Some tokens are opaque: the client treats them as an unreadable
+          string, while the service looks up or otherwise interprets their
+          meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Other tokens contain structured claims. Claims are statements such as
+          who issued the token, which subject it represents, its intended
+          audience, or when it expires.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A token's format, how it's transported, and how it grants
+          access are separate design choices.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which brings us to bearer. Bearer describes possession-based use:
+          whoever presents a valid bearer token can use the authority it
+          conveys, within the server's checks and the token's limits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If somebody steals a usable bearer token, the server may not
+          be able to distinguish the thief from its legitimate holder merely by
+          seeing the token.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hence keeping it out of logs, URLs, screenshots, source repositories,
+          and other places that don't need it.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>http</span></figcaption>
+        <pre tabindex="0"><code>GET /orders/42 HTTP/1.1
+Host: orders.example
+Authorization: Bearer &lt;short-lived-access-token&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That placeholder is not a real credential. Bearer is the
+          authorization scheme in the header. The token itself might be opaque
+          or have a structured format.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So bearer token does not mean JWT. We have separated two things the
+          internet routinely throws into the same drawer.</span
+        >
+      </p>
+      <h2 id="jwt-is-a-format-not-a-security-verdict">
+        JWT Is a Format, Not a Security Verdict
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JWT stands for JSON Web Token. People often pronounce it jot. A
+          common signed compact JWT contains encoded header information, claims,
+          and a signature.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Encoded does not mean encrypted. With a typical signed JWT, somebody
+          holding it can decode and read the claims. The signature protects
+          integrity when verified correctly; it doesn't hide the content.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Encrypted token formats exist, but we mustn't imply an
+          ordinary signed token is confidential. Avoid putting unnecessary
+          sensitive information into it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And decoding is not verification. Reading a claim that says
+          administrator doesn't establish that a trusted issuer actually issued
+          that claim.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The recipient needs to verify cryptographic integrity with trusted
+          configuration and keys, enforce the expected algorithm, and check
+          relevant claims such as issuer, audience, expiration, and not-before
+          time where applicable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Audience means who the token is intended for. A valid token for one
+          service shouldn't automatically work at a completely different service
+          just because the signature checks out.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Then the API still applies authorization for the requested
+          operation and resource. A valid token is evidence with a scope, not a
+          master key to everything.</span
+        >
+      </p>
+      <h2 id="why-use-structured-tokens-at-all">
+        Why Use Structured Tokens at All?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What's the appeal compared with looking up an opaque session
+          identifier?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In some architectures, a service can verify signed claims without
+          consulting a central session store on every request. That can be
+          useful across services and organizational boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the claims can become stale. If somebody's permission changes
+          while the token remains valid, the system needs a policy for how
+          quickly that change takes effect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Short lifetimes, revocation strategies, introspection, or
+          additional checks can be relevant depending on the design. Stateless
+          verification doesn't automatically provide immediate revocation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And server-side sessions can be convenient to revoke centrally. They
+          have their own scaling and storage considerations. Neither option wins
+          every application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Ask about identity providers, trust boundaries, revocation
+          needs, clients, and deployment. Choosing JWT because it looks modern
+          is not threat modeling.</span
+        >
+      </p>
+      <h2 id="expiration-is-a-limit-not-a-force-field">
+        Expiration Is a Limit, Not a Force Field
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An expiration time limits how long a token should be accepted. The
+          server has to enforce it. A timestamp the recipient never checks is
+          decorative.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Short-lived credentials reduce the window of misuse, but they don't
+          make theft harmless during that window.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Systems may use a separate refresh mechanism to obtain new
+          access tokens. Refresh tokens usually carry longer-lived authority and
+          deserve careful protection. OAuth will give that arrangement context
+          next episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What happens when the access credential expires during a normal
+          user's session?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The client needs a defined recovery path. It may use a permitted
+          refresh flow or ask the user to sign in again. It should avoid retry
+          loops that repeatedly send the same rejected credential.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And preserve the user's work when reasonable. “Your session expired,
+          so we ate your form” is a product failure even if the rejection was
+          correct.</span
+        >
+      </p>
+      <h2 id="frontend-secrets-aren-t-secret">
+        Frontend Secrets Aren't Secret
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our build tool reads an environment variable containing a provider
+          key. We put its value into browser JavaScript. Is it safe because the
+          variable came from an environment file?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. If the value is shipped to the browser, the browser user can
+          inspect it. The build-time origin of the value doesn't make the
+          delivered bundle private.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Minification doesn't help. Hiding it in a network header doesn't help
+          if that request originates from the user's browser. The client must
+          have the credential to send it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A secret service credential generally belongs in an
+          appropriately protected server environment. The server exposes only
+          the operations the browser is allowed to request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But a server proxy isn't automatically safe either. If it forwards
+          any operation from anyone using our powerful key, we've built a public
+          vending machine for our account privileges.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Authenticate and authorize callers, validate requests, limit
+          allowed operations, and apply quotas where needed. Protecting the key
+          is necessary, not sufficient.</span
+        >
+      </p>
+      <h2 id="browser-token-storage-has-tradeoffs">
+        Browser Token Storage Has Tradeoffs
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is localStorage the official home for tokens?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No universal storage choice is best for every architecture.
+          JavaScript-readable storage exposes tokens to malicious scripts
+          running in that origin. HttpOnly cookies protect against direct
+          JavaScript reading but bring automatic credential behavior and
+          associated CSRF considerations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In-memory storage limits persistence, but doesn't prevent active
+          malicious JavaScript from abusing the application. And it changes what
+          happens across reloads.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A backend-for-frontend arrangement can keep some credentials
+          server-side, but it adds a server session boundary to design. We
+          choose based on the application and threat model, using established
+          libraries and provider guidance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The lesson isn't “remember my one storage rule.” It's understand what
+          can read the credential, what sends it, where it's valid, and how it
+          expires or gets revoked.</span
+        >
+      </p>
+      <h2 id="https-protects-the-journey">HTTPS Protects the Journey</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Credentials and private data need protected transport. HTTPS protects
+          the connection's confidentiality and integrity and supports verifying
+          the server's identity through the certificate system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't prove the service is honest, validate our business rules,
+          or stop our own logging code from recording a token after it
+          arrives.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It protects a particular part of the journey. Secrets at
+          rest, browser behavior, server configuration, and access control still
+          matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, putting a secret in a URL can leak through systems beyond the
+          encrypted transport path, including application logs or copied links.
+          Use the protocol's appropriate credential mechanism.</span
+        >
+      </p>
+      <h2 id="follow-an-authorized-request">Follow an Authorized Request</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The customer presents a valid credential through the application's
+          chosen mechanism. The API verifies it and establishes the principal.
+          Then it checks whether that principal may read order 42.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It selects allowed fields, performs the operation, and returns an
+          appropriate response. A missing or invalid credential and a valid
+          identity lacking permission are different situations, commonly
+          reflected in 401 and 403 handling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With deliberate disclosure policies where necessary. The interface
+          should avoid revealing private resource existence accidentally.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No part of that can be replaced by a frontend check that says if
+          loggedIn, show the button. The server is the trusted decision
+          point.</span
+        >
+      </p>
+      <h2 id="the-stolen-credential-thought-experiment">
+        The Stolen Credential Thought Experiment
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's test our understanding. Somebody obtains a usable session
+          cookie. What have they acquired?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Potentially the ability to act through that session until it expires,
+          is revoked, or another control blocks the attempt. The exact authority
+          depends on the session and application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Somebody obtains a bearer access token with permission to read order
+          status. Same broad concern, but bounded by that token's audience,
+          scope, lifetime, and the resource server's checks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Somebody obtains a client ID intended to be public, and they
+          haven't necessarily acquired a credential at all. We must distinguish
+          identifiers from secrets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And somebody changes a decoded JWT claim from customer to
+          administrator. If we verify the signature and claims correctly, that
+          modification should not become a trusted identity statement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. But if our code merely decodes the token and trusts its
+          contents, we've skipped the evidence check. Encoding gives a value a
+          readable representation; it doesn't make the claim authentic.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This thought experiment is more useful than memorizing which string
+          has dots. Ask what possession of the value enables and what the
+          recipient verifies.</span
+        >
+      </p>
+      <h2 id="logging-out-has-more-than-one-meaning">
+        Logging Out Has More Than One Meaning
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A user presses Log out. What must happen?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The application should end the relevant local session and clear
+          client state appropriately. If the server has a session record,
+          invalidate it according to the design. Merely hiding the account menu
+          isn't logout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. With independently valid access tokens, ending a browser
+          session doesn't automatically revoke every issued token everywhere.
+          The architecture needs a defined policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And logging out of our application isn't necessarily logging out of
+          an external identity provider or every other application that uses
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Those are separate sessions and relationships. The user
+          interface should describe what it actually does rather than imply a
+          global effect it doesn't implement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Shared devices make this concrete. Clear sensitive cached state and
+          don't leave the previous user's data visible while the next person
+          signs in.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Authentication lifecycle includes what happens after access
+          ends, not only how the initial credential arrives.</span
+        >
+      </p>
+      <h2 id="revocation-and-rotation-solve-different-problems">
+        Revocation and Rotation Solve Different Problems
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>We keep saying revoke and rotate. Separate them.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Revocation stops accepting a credential or grant before its ordinary
+          expiration, where the system supports that. Rotation replaces
+          credentials or keys as part of lifecycle management.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We might rotate an API key because it could have leaked, or because
+          policy calls for replacement. But creating a new key doesn't
+          automatically invalidate the old one unless we actually revoke or
+          retire it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A safe rollout can require a brief overlap, updating
+          consumers, verifying that they use the new credential, and then
+          disabling the old one. The procedure depends on the system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Signing-key rotation also needs coordination. Recipients may need to
+          obtain the new trusted verification key while still handling tokens
+          signed with an older key during an intended transition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Use established mechanisms and libraries instead of
+          hand-inventing cryptographic distribution. The operational lifecycle
+          is part of the security design.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Credentials are maintained assets. They aren't a string you paste
+          once and then politely forget until an incident.</span
+        >
+      </p>
+      <h2 id="permission-changes-while-you-re-signed-in">
+        Permission Changes While You're Signed In
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A staff member loses refund permission but still has a valid session.
+          What should happen on the next refund request?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server should apply the intended current permission policy. If we
+          only copied permissions into a long-lived credential and never recheck
+          them, the change may not take effect immediately.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's a tradeoff to design consciously. Some systems accept
+          a bounded delay through short token lifetimes; others require an
+          additional current-state check for sensitive operations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same user might still be allowed to view an order. We don't have
+          to treat every permission change as identical to deleting the
+          identity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Identity, session validity, and operation permission can
+          evolve separately. Model them clearly enough that the code doesn't
+          collapse them into one loggedIn boolean.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And high-impact actions can require additional assurance or
+          confirmation. Knowing who someone is doesn't prove a particular action
+          matches their current intent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Authentication evidence and transaction authorization are
+          related but distinct decisions.</span
+        >
+      </p>
+      <h2 id="the-frontend-proxy-needs-a-policy">
+        The Frontend Proxy Needs a Policy
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's inspect the server-proxy idea in detail. Our browser asks our
+          backend to use a paid provider. The provider key stays on our server.
+          What could still go wrong?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The backend might accept arbitrary requests from unauthenticated
+          callers, let users choose unrestricted operations, or fail to
+          constrain cost. It could become a way to spend our provider account's
+          authority without ever revealing the key.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So secrecy of the credential isn't identical to control of its use.
+          We need to restrict what the proxy does on whose behalf.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Check the user's permission, validate the operation, apply
+          reasonable limits, and return only the permitted result. Don't accept
+          an arbitrary destination URL and attach the secret to it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That last one would be a very efficient credential delivery service
+          for attackers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The destination and intended audience matter at each hop. An
+          internal helper that forwards credentials broadly can undermine an
+          otherwise careful frontend design.</span
+        >
+      </p>
+      <h2 id="ask-better-questions-in-a-design-review">
+        Ask Better Questions in a Design Review
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a teammate says “we'll use JWTs,” what should I ask without
+          sounding like I'm starting a fight?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What identity do they represent? Who issues them? Which services
+          accept them? What claims are verified? How long are they valid? What
+          happens when permissions change or the credential leaks?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the answer is sessions, ask where they're stored, how identifiers
+          are generated and protected, how state-changing requests are defended,
+          and how sessions expire or are revoked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If it's an API key, ask whose account it identifies, which
+          operations it permits, where it lives, and how it's rotated. The point
+          isn't to favor one label; it's to expose the actual security
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the code can enforce that model and the tests can challenge it.
+          That's much more useful than choosing the most impressive-looking
+          token format.</span
+        >
+      </p>
+      <h2 id="know-what-the-credential-means">
+        Know What the Credential Means
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Authentication establishes an identity. Authorization applies
+          permission. Sessions, API keys, opaque tokens, bearer use, and JWT
+          formats solve related but different parts of the problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ask what a credential identifies, who issued it, where it's valid,
+          what authority it carries, how long it lasts, and how we can stop
+          accepting it. Suddenly “we use tokens” sounds like the start of a
+          discussion instead of the end.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Next time, delegated authorization. Letting one application
+          access another service without handing it your password.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>OAuth. Many redirects, one surprisingly reasonable problem.</span>
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

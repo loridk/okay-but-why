@@ -43,11 +43,11 @@ JULES: Identify critical processes and consequences of downtime.
 
 PARISA: Payroll can be down how long?
 
-Checkout?
+PARISA: Checkout?
 
-Email?
+PARISA: Email?
 
-Hospital records?
+PARISA: Hospital records?
 
 JULES: Different systems have different criticality.
 
@@ -112,9 +112,9 @@ JULES: Exactly.
 
 PARISA: Three copies.
 
-Two media types.
+PARISA: Two media types.
 
-One offsite.
+PARISA: One offsite.
 
 JULES: Common backup rule of thumb.
 
@@ -170,11 +170,11 @@ JULES: Yes.
 
 PARISA: Tabletop.
 
-Simulation.
+PARISA: Simulation.
 
-Parallel test.
+PARISA: Parallel test.
 
-Full interruption if organization can safely do it.
+PARISA: Full interruption if organization can safely do it.
 
 JULES: Recovery plans need testing.
 

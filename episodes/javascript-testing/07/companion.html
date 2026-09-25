@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 7: React Testing — Stop Interrogating the Furniture — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 7: React Testing — Stop Interrogating the Furniture</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/711f7cb1-93c8-4fd1-829e-2c8700f7472b"
+      ></script>
+      <div class="redcirclePlayer-711f7cb1-93c8-4fd1-829e-2c8700f7472b"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#what-react-adds-to-the-previous-episode"
+            >What React Adds to the Previous Episode</a
+          >
+        </li>
+        <li><a href="#a-component-we-can-hear">A Component We Can Hear</a></li>
+        <li>
+          <a href="#render-interact-observe">Render, Interact, Observe</a>
+        </li>
+        <li>
+          <a href="#the-environment-needs-the-right-pieces"
+            >The Environment Needs the Right Pieces</a
+          >
+        </li>
+        <li>
+          <a href="#why-not-read-the-state-directly"
+            >Why Not Read the State Directly?</a
+          >
+        </li>
+        <li>
+          <a href="#props-are-part-of-the-public-contract"
+            >Props Are Part of the Public Contract</a
+          >
+        </li>
+        <li>
+          <a href="#act-is-not-a-sleep-spell">Act Is Not a Sleep Spell</a>
+        </li>
+        <li>
+          <a href="#effects-strict-mode-and-counting-the-wrong-thing"
+            >Effects, Strict Mode, and Counting the Wrong Thing</a
+          >
+        </li>
+        <li>
+          <a href="#mock-the-network-boundary-not-react"
+            >Mock the Network Boundary, Not React</a
+          >
+        </li>
+        <li>
+          <a href="#providers-and-routers-are-context"
+            >Providers and Routers Are Context</a
+          >
+        </li>
+        <li>
+          <a href="#snapshots-a-receipt-not-an-opinion"
+            >Snapshots: A Receipt, Not an Opinion</a
+          >
+        </li>
+        <li>
+          <a href="#a-refactor-that-should-be-boring"
+            >A Refactor That Should Be Boring</a
+          >
+        </li>
+        <li>
+          <a href="#listener-workshop-loading-isn-t-empty"
+            >Listener Workshop — Loading Isn't Empty</a
+          >
+        </li>
+        <li>
+          <a href="#a-component-is-also-someone-else-s-dependency"
+            >A Component Is Also Someone Else's Dependency</a
+          >
+        </li>
+        <li>
+          <a href="#empty-error-success-different-stories"
+            >Empty, Error, Success: Different Stories</a
+          >
+        </li>
+        <li>
+          <a href="#unmounting-is-an-observable-lifecycle"
+            >Unmounting Is an Observable Lifecycle</a
+          >
+        </li>
+        <li>
+          <a href="#the-refactor-review-meeting">The Refactor Review Meeting</a>
+        </li>
+        <li>
+          <a href="#what-the-counter-does-not-claim"
+            >What the Counter Does Not Claim</a
+          >
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The test says the state setter was called.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Did the cart update?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It doesn't check that.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we know somebody rang the doorbell. We don't know whether
+          anybody opened the door.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Fair.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Today we're testing React
+          components without demanding sworn testimony from every hook.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll render the component, interact with its output, and observe
+          behavior. Plus rerenders, async updates, providers, snapshots, and
+          what these tests still miss.</span
+        >
+      </p>
+      <h2 id="what-react-adds-to-the-previous-episode">
+        What React Adds to the Previous Episode
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Last episode we mounted a plain DOM widget ourselves. In React,
+          components describe UI and React manages rendering and updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the user's goal hasn't changed. They still want to add a pizza,
+          understand the result, and operate the interface without knowing our
+          state variable names.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. React Testing Library helps render React components for
+          tests and provides access to the same family of DOM queries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It isn't a second React implementation. We should let real React
+          state and rendering run in the component test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Replacing useState with a mock just to count setter calls
+          bypasses important behavior. A test can pass while the component
+          renders the wrong result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We want to observe what the component's public inputs and
+          interactions produce. Props, user events, visible output, meaningful
+          effects at boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. “Avoid implementation details” doesn't mean never inspect
+          anything technical. It means don't couple a test to internal structure
+          that isn't part of the intended contract.</span
+        >
+      </p>
+      <h2 id="a-component-we-can-hear">A Component We Can Hear</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our CartCounter starts at zero. It has an Add pizza button. The
+          status says how many pizzas are in the cart.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>import { useState } from 'react';
+
+export function CartCounter() {
+  const [count, setCount] = useState(0);
+  return (
+    &lt;section aria-label=&quot;Pizza cart&quot;&gt;
+      &lt;button type=&quot;button&quot; onClick={() =&gt; setCount(current =&gt; current + 1)}&gt;
+        Add pizza
+      &lt;/button&gt;
+      &lt;p role=&quot;status&quot;&gt;{count} {count === 1 ? 'pizza' : 'pizzas'} in cart&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Syntax checkpoint. Import and export are JavaScript. The array
+          destructuring gets the current count and setter from the value
+          returned by useState. UseState itself is a React API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The angle-bracket markup is JSX. The braces inside JSX embed
+          JavaScript expressions. The conditional choosing pizza or pizzas is
+          JavaScript, not a React-only operator.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And onClick is a React event prop. The arrow passes a handler; it
+          doesn't update the count while we're merely rendering the
+          component.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The inner updater function receives the previous state and returns
+          the next value. That uses React's functional update form, expressed
+          with a JavaScript function.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >None of this is TypeScript. The file is JSX-bearing JavaScript.
+          Please label the costume before the audience wonders whether they
+          missed an entire language.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Audio behavior: each button activation increases the count by one and
+          updates the status, with singular wording at one.</span
+        >
+      </p>
+      <h2 id="render-interact-observe">Render, Interact, Observe</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>// @vitest-environment jsdom
+import { afterEach, expect, test } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
+import { CartCounter } from './CartCounter.jsx';
+
+afterEach(cleanup);
+
+test('two additions update the cart count', async () =&gt; {
+  const user = userEvent.setup();
+  render(&lt;CartCounter /&gt;);
+  const addButton = screen.getByRole('button', { name: 'Add pizza' });
+
+  await user.click(addButton);
+  expect(screen.getByRole('status')).toHaveTextContent('1 pizza in cart');
+  await user.click(addButton);
+  expect(screen.getByRole('status')).toHaveTextContent('2 pizzas in cart');
+});</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We render the real component, activate its button twice, and check
+          the intermediate and final status.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This test intentionally describes a short stateful interaction
+          sequence. We aren't measuring how many times React called the
+          component function or which hook stored the count.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If we later reorganize the state internally while preserving
+          this behavior, the test should still pass.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Render is the React Testing Library helper. The JSX element passed to
+          it identifies the component. Screen is a query helper, not React's
+          screen object, because React doesn't have such a thing here.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Cleanup unmounts rendered components after each test. Some setups
+          register cleanup automatically, but explicit registration here makes
+          the lifecycle clear with our imported Vitest hooks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the test file needs the project's JSX transform configured. The
+          environment comment supplies jsdom; it doesn't by itself explain every
+          JSX processing choice.</span
+        >
+      </p>
+      <h2 id="the-environment-needs-the-right-pieces">
+        The Environment Needs the Right Pieces
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In an existing React/Vite project, use its established configuration.
+          For an isolated exercise, the React plugin is a straightforward way to
+          configure React JSX support.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  test: { environment: 'jsdom' },
+});</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >DefineConfig is a tooling helper. Export default and the object
+          syntax are JavaScript. Plugins and test are configuration keys
+          interpreted by the tools.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The exercise needs compatible React, React DOM, React Testing
+          Library, the React plugin, Vitest, jsdom, user-event, and jest-dom
+          dependencies. It should live in a practice project, not be installed
+          into the podcast audio builder.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In a real application, merge intentionally with the existing config.
+          Don't replace aliases and other plugins with this small card and then
+          wonder where the application went.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Minimal examples explain a need; they aren't universal
+          replacement files for every project.</span
+        >
+      </p>
+      <h2 id="why-not-read-the-state-directly">
+        Why Not Read the State Directly?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I could inspect count directly, wouldn't that be simpler?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It might be narrower, but it misses whether the state reaches the
+          output correctly. A setter can be invoked with the right value while
+          the UI renders stale text or the wrong variable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a component test earns its value by letting the component actually
+          perform its job.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Extracted pure logic can have unit tests. The component can
+          have behavior tests. We don't need to force all assertions through the
+          UI or all assertions through private internals.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If calculating a discount is complicated, test that calculation
+          directly with many examples. Then a smaller number of component tests
+          can check the connection and presentation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's complementary scope. The component shouldn't need
+          forty click sequences to exercise every arithmetic boundary if the
+          decision has a clear pure function.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But at least one connection test matters. Otherwise the perfectly
+          tested discount function can sit unused while the component does its
+          own wrong arithmetic.</span
+        >
+      </p>
+      <h2 id="props-are-part-of-the-public-contract">
+        Props Are Part of the Public Contract
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose a MenuItem component receives a soldOut prop. When true, the
+          add button is disabled and the item communicates that it's
+          unavailable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Test the disabled state and understandable message. If the prop
+          changes from false to true, a rerender test can verify the updated
+          output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React Testing Library provides rerender for updating the rendered
+          element in the same test context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is different from unmounting and mounting a new component. If
+          we're testing how an existing component responds to changed props,
+          preserve the lifecycle we actually mean.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Similarly, if a new prop is only used to initialize state,
+          changing it later may not update state automatically. The intended
+          behavior needs a design decision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A test can expose the ambiguity. Should an edited draft preserve
+          local changes when fresh server data arrives, or reset? That isn't
+          something React can decide for the product.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Write the expected transition before turning it into an
+          assertion.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And disabled controls need meaningful context. “Can't click it” isn't
+          always enough to help the user understand why.</span
+        >
+      </p>
+      <h2 id="act-is-not-a-sleep-spell">Act Is Not a Sleep Spell</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React has a testing helper called act that helps apply pending
+          updates before assertions. Testing Library wraps many of its helpers
+          with the appropriate React testing support.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Act the React API versus Act in Arrange, Act, Assert. Similar word,
+          different level of specificity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An act warning often means some update happened outside the
+          expected test interaction or wasn't properly awaited. Don't silence it
+          blindly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First check whether we awaited user interactions and the async state
+          we're actually testing. Are there timers, promise resolutions, or
+          subscriptions continuing after the test?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Sometimes explicit act is appropriate for directly triggering
+          an update, but it isn't a general replacement for waiting on a
+          meaningful result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we wrap everything in arbitrary delays until the warning
+          disappears. We need to understand what work is pending.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Episode Eight handles controlled promises and timing. Here, our
+          awaited user actions and synchronous state updates keep the example
+          straightforward.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a warning can reveal a missing assertion. Maybe the test ends
+          before the final state ever appears, so it never checks the behavior
+          it claims to check.</span
+        >
+      </p>
+      <h2 id="effects-strict-mode-and-counting-the-wrong-thing">
+        Effects, Strict Mode, and Counting the Wrong Thing
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React development behavior can include extra checks, such as Strict
+          Mode's additional setup and cleanup cycle for effects. Tests
+          configured with Strict Mode may expose missing cleanup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then “this effect runs exactly once” can be a misleading expectation
+          unless the contract and environment really require that.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Test the externally meaningful behavior and proper cleanup.
+          If an effect subscribes to something, verify the lifecycle where it
+          matters instead of treating a development invocation count as a user
+          requirement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should also avoid claiming that every test automatically uses
+          Strict Mode. That's a rendering/configuration choice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Make it explicit. And don't disable useful development
+          checks merely because they exposed an effect that assumes setup can
+          never repeat.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A receipt sent directly from a mount effect deserves a serious design
+          conversation. Rendering a component should not casually trigger
+          irreversible business behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Especially when the actual intent is tied to an explicit user action
+          or server-side workflow.</span
+        >
+      </p>
+      <h2 id="mock-the-network-boundary-not-react">
+        Mock the Network Boundary, Not React
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our menu component fetches availability. Where do we replace
+          things?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Often at the network boundary or a defined data-access dependency.
+          Let the component render and update for real, but provide controlled
+          success, error, or delayed responses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That lets us test loading, success, empty, and failure states without
+          mocking useEffect into pretending it worked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Network interception tools can preserve more of the request
+          path than directly replacing a hook, but still provide a controlled
+          response. Choose the seam based on what the test is supposed to
+          include.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And state clearly whether the real fetching adapter runs. If it's
+          replaced, its serialization and response parsing need other
+          coverage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Avoid tests that replace the custom hook with “loading false,
+          data pizza” and then claim the asynchronous loading workflow works.
+          That test only covers rendering for supplied hook state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which can still be useful if honestly scoped. The problem is the
+          inflated claim.</span
+        >
+      </p>
+      <h2 id="providers-and-routers-are-context">
+        Providers and Routers Are Context
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Components may require theme, router, localization, or data
+          providers. A custom render helper can supply them consistently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful incidental setup. But don't hide decisive scenario
+          information. If the user role changes what the component shows, make
+          the selected role obvious in the test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A default admin provider can accidentally make every
+          authorization-related UI test run as the most privileged user.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And UI role gating isn't the server's authorization boundary. Hiding
+          the staff button doesn't prevent a direct request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Test both responsibilities at their appropriate
+          scopes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Routers have similar nuance. A component test can verify navigation
+          intent or route behavior within a memory-based router. It doesn't
+          necessarily prove deep links load correctly through the deployed
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a great integration boundary for a browser or deployment
+          check.</span
+        >
+      </p>
+      <h2 id="snapshots-a-receipt-not-an-opinion">
+        Snapshots: A Receipt, Not an Opinion
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What about snapshot tests? They save an expected representation and
+          compare later output against it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That can show changes, but it doesn't know whether the saved
+          representation was correct. Someone had to review it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Small focused snapshots can be useful. Huge component-tree
+          snapshots often produce noisy diffs that people approve without
+          understanding.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the workflow is “snapshot failed, press update,” we've created an
+          expensive way to record whatever happened today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Review the change against intent. Use explicit assertions for
+          important behavior, especially things a reader should understand
+          immediately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A snapshot isn't automatically a screenshot either. Many snapshot
+          tools serialize text or DOM structure. Visual regression tools compare
+          rendered images and have different tradeoffs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Know what was captured. A serialized tree won't tell you
+          whether text is clipped on a phone.</span
+        >
+      </p>
+      <h2 id="a-refactor-that-should-be-boring">
+        A Refactor That Should Be Boring
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We replace our internal count state with a reducer. Same button, same
+          status, same increments. What happens to our test?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It should still pass. It describes user behavior and public output,
+          not the choice of state-management hook.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We rename the CSS class on the section?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Same. Our role and name queries don't depend on that class.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We accidentally remove the button text and leave only an unlabeled
+          icon?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The named query should fail. That's useful because we lost the
+          accessible name. A CSS selector might have kept passing while the
+          control became less usable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We replace the button with a clickable div?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The role query fails, and keyboard behavior needs checking too. The
+          failure is not automatically test brittleness; it may be a genuine
+          semantic regression.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the goal isn't “tests never fail during refactors.” It's “tests
+          fail when meaningful behavior changes, and stay stable when incidental
+          structure changes.”</span
+        >
+      </p>
+      <h2 id="listener-workshop-loading-isn-t-empty">
+        Listener Workshop — Loading Isn't Empty
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A menu component initially has no items because its request is
+          pending. Later the response contains an empty list. Should those
+          states look the same?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Usually no. Loading means we don't know yet. Empty means the request
+          completed and there are no items. Failure is another state. The
+          product decides the wording, but the distinction matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What would a good test arrange?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A controlled pending response, then a controlled empty success.
+          Assert the initial loading state, resolve the response, and assert the
+          empty-state message. Use a separate failure scenario too.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Would a mock hook returning an empty array throughout prove that
+          transition?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. It could test empty rendering, but not the actual transition from
+          pending. Keep the claim aligned with what runs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And what accessibility question belongs here?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether state changes are communicated understandably and whether
+          focus remains useful. A DOM test can verify relevant structure and
+          text, with real assistive-technology evaluation for the
+          experience.</span
+        >
+      </p>
+      <h2 id="a-component-is-also-someone-else-s-dependency">
+        A Component Is Also Someone Else's Dependency
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We've been talking about the end user, but a reusable component also
+          has a developer using its API. Is testing a callback prop an
+          implementation detail?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not necessarily. If a component promises to call onSelect with the
+          selected item, that's part of its public contract. Render the
+          component, perform the selection, and observe the callback
+          argument.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So callback assertions can be appropriate at the component boundary,
+          like the receipt interaction in Episode Five. We just shouldn't
+          replace the component's own state behavior and then claim it
+          worked.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a controlled component, the parent owns the value and
+          receives change notifications. A test might use a small real parent to
+          exercise the full controlled interaction, or focus specifically on the
+          callback contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Explain controlled in ordinary terms.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The component receives its current value through props instead of
+          being the sole owner of that value. It reports a requested change, and
+          the parent supplies the updated value. The division of responsibility
+          affects what a test should observe.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I render a controlled input with a fixed value and a mock change
+          callback, typing may call the callback while the displayed value
+          remains fixed. That isn't necessarily a component bug; I didn't
+          provide a parent that updates the prop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The test must model the intended ownership. Otherwise it can
+          mistake a deliberately fixed test setup for broken interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A small parent harness can be useful, but don't let it reimplement
+          the entire application. Keep the state flow visible.</span
+        >
+      </p>
+      <h2 id="empty-error-success-different-stories">
+        Empty, Error, Success: Different Stories
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's review a menu component with four states. Pending request,
+          successful list, successful empty list, failed request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Start each test with the dependency behavior that creates the state.
+          Don't use one giant test that mutates the mock through every possible
+          response unless the transitions themselves are the question.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For success, assert useful menu content. For empty, assert an
+          understandable empty-state message. For failure, assert a recoverable
+          message and any retry control the product provides.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then a dedicated retry test can begin with failure, activate Retry,
+          resolve a later request successfully, and verify that the error gives
+          way to the menu.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's a meaningful sequence, like our two-addition counter
+          test. The sequence itself expresses the behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What happens to the old content while retrying? Does it disappear,
+          remain with a loading indicator, or become unavailable? That's another
+          design decision, not something the test should guess.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And whether the retry control is disabled while a request is pending
+          can matter for duplicate requests. Test the intended behavior instead
+          of assuming every application should handle it identically.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For a read-only menu refresh, duplicate requests may be wasteful. For
+          placing an order, duplicates can be much more serious. Similar-looking
+          buttons, different risk.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good reason to keep testing tied to the domain, not just a generic
+          component checklist.</span
+        >
+      </p>
+      <h2 id="unmounting-is-an-observable-lifecycle">
+        Unmounting Is an Observable Lifecycle
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose the user leaves the page while a request is pending. What
+          does a component test do with that?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the component owns cancellation or subscriptions, we can test the
+          specified cleanup behavior. Render it, begin the operation, unmount
+          it, and observe the relevant boundary or absence of stale updates
+          where appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But don't claim “no memory leaks” because one cancellation callback
+          was invoked. That's another much larger property.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. We verify a specific lifecycle responsibility. The request
+          adapter or subscription system may have its own tests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a request can complete after unmount. The implementation might
+          ignore the result instead of aborting the underlying operation. Both
+          can be legitimate depending on the contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Test the desired effect: don't apply stale state, release
+          owned subscriptions, avoid an unwanted follow-up action. Don't force
+          one internal mechanism without a reason.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >React warnings also change across versions. The absence of a familiar
+          warning isn't proof the lifecycle is correct.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Assertions should observe the intended responsibility, not
+          depend solely on whether the framework complains.</span
+        >
+      </p>
+      <h2 id="the-refactor-review-meeting">The Refactor Review Meeting</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A colleague says our test is too tied to the UI because it searches
+          for Add pizza. They want to use a test ID so wording changes don't
+          fail it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'd ask whether the wording is part of what we intend to protect. A
+          named control is meaningful. If copy changes intentionally, updating a
+          small clear test is reasonable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But if the test's purpose is unrelated to the exact wording?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A suitable stable query may be appropriate. The decision isn't “text
+          always good, IDs always bad.” It's which contract the test should
+          express.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another colleague wants to assert that the DOM contains exactly three
+          nested divs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unless that structure has a real requirement, that's probably
+          incidental. A layout refactor could preserve behavior and break the
+          test needlessly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A third wants to remove the status-role assertion because the text
+          still appears.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the status semantics are intentional, losing them may matter.
+          Behavioral tests can include accessibility relationships, not only
+          visible strings.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So a good review asks why each observation belongs, rather than
+          applying a universal rule about which selector looks modern.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. React testing is still testing. The framework doesn't exempt
+          us from choosing a meaningful question.</span
+        >
+      </p>
+      <h2 id="what-the-counter-does-not-claim">
+        What the Counter Does Not Claim
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Our counter test passes. Have we tested cart persistence?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. This component owns an in-memory count. Reloading would reset it.
+          Persistence isn't implemented or promised in the example.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Server pricing?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also no. A count displayed in React isn't an authoritative accepted
+          order. Those responsibilities belong to the real application
+          boundaries we discussed elsewhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's worth saying because small examples can look like complete
+          features when stripped from their explanation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. The example demonstrates real React interaction and
+          rendering. It's useful for that purpose without quietly becoming a
+          production shopping cart.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >React component tests are useful when they let real components
+          render, accept interactions, and reveal meaningful outcomes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Separate JavaScript, JSX, React APIs, and testing APIs. Don't mock
+          the very state behavior you're trying to verify. Keep providers and
+          async boundaries understandable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next: asynchronous tests. Promises, errors, timers, races, and why
+          “wait a bit” isn't a synchronization strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My least favorite test helper is called maybeTuesday.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

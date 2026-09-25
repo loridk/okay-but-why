@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: Mocks, Stubs, Spies, and Other Lies We Tell Our Code —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: Mocks, Stubs, Spies, and Other Lies We Tell Our Code</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/1e2aa74f-47a9-43c2-9ee9-467ac0e00305"
+      ></script>
+      <div class="redcirclePlayer-1e2aa74f-47a9-43c2-9ee9-467ac0e00305"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#why-replace-anything">Why Replace Anything?</a></li>
+        <li>
+          <a href="#the-vocabulary-is-less-stable-than-the-concept"
+            >The Vocabulary Is Less Stable Than the Concept</a
+          >
+        </li>
+        <li>
+          <a href="#pass-the-dependency-like-ordinary-data"
+            >Pass the Dependency Like Ordinary Data</a
+          >
+        </li>
+        <li>
+          <a href="#is-that-an-implementation-detail"
+            >Is That an Implementation Detail?</a
+          >
+        </li>
+        <li>
+          <a href="#the-negative-case-is-often-the-point"
+            >The Negative Case Is Often the Point</a
+          >
+        </li>
+        <li>
+          <a href="#a-stub-supplies-a-situation">A Stub Supplies a Situation</a>
+        </li>
+        <li>
+          <a href="#spies-can-still-do-the-real-thing"
+            >Spies Can Still Do the Real Thing</a
+          >
+        </li>
+        <li>
+          <a href="#clearing-resetting-restoring"
+            >Clearing, Resetting, Restoring</a
+          >
+        </li>
+        <li>
+          <a href="#module-mocks-have-extra-machinery"
+            >Module Mocks Have Extra Machinery</a
+          >
+        </li>
+        <li>
+          <a href="#fakes-need-their-own-skepticism"
+            >Fakes Need Their Own Skepticism</a
+          >
+        </li>
+        <li>
+          <a href="#when-mocks-make-refactoring-hurt"
+            >When Mocks Make Refactoring Hurt</a
+          >
+        </li>
+        <li>
+          <a href="#the-contract-has-to-meet-reality-somewhere"
+            >The Contract Has to Meet Reality Somewhere</a
+          >
+        </li>
+        <li>
+          <a href="#listener-workshop-which-thing-is-real"
+            >Listener Workshop — Which Thing Is Real?</a
+          >
+        </li>
+        <li>
+          <a href="#rehearsal-a-dangerous-spy">Rehearsal: A Dangerous Spy</a>
+        </li>
+        <li>
+          <a href="#call-order-can-be-meaningful-or-accidental"
+            >Call Order Can Be Meaningful or Accidental</a
+          >
+        </li>
+        <li>
+          <a href="#a-double-that-s-too-helpful">A Double That's Too Helpful</a>
+        </li>
+        <li>
+          <a href="#write-down-the-replacement-boundary"
+            >Write Down the Replacement Boundary</a
+          >
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I ran the test suite and received twelve order receipts.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please tell me they were sent to a test inbox.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In this fictional incident, yes. In my actual emotional state, I have
+          concerns.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Today we replace a dependency so we can test the code without sending
+          real messages.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This sounds like the part where we lie to the software.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>In a controlled and clearly labelled way.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Professional lying, with cleanup
+          afterward.</span
+        >
+      </p>
+      <h2 id="why-replace-anything">Why Replace Anything?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our fictional order code decides whether to request a receipt. The
+          real delivery dependency might contact an email service. We don't want
+          every focused test to require that service or send a message.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Cost, speed, reliability, privacy, and side effects. Also I need to
+          test an email failure on demand, not wait for the provider to have a
+          difficult afternoon.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A test double stands in for a dependency. We control its
+          behavior so the test can ask a specific question about the code around
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like a rehearsal partner who reliably says the cue line. Useful when
+          I'm testing my response, less useful when I'm trying to learn how
+          actual customers behave.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good limitation. The double only behaves as we've programmed it. It
+          cannot prove the real dependency matches our assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So every replacement trades realism for control. We should know where
+          the trade occurs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The goal isn't maximum mocking. It's enough control to isolate
+          the question, while retaining the real behavior we want evidence
+          about.</span
+        >
+      </p>
+      <h2 id="the-vocabulary-is-less-stable-than-the-concept">
+        The Vocabulary Is Less Stable Than the Concept
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Mock, stub, spy, fake. Are these different objects or four words
+          developers use to start arguments?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Both, depending on the conversation. A stub usually supplies
+          predetermined answers. A spy records interactions such as calls and
+          arguments. A fake is often a simplified working implementation, such
+          as an in-memory repository.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>And mock?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes a general name for any double; sometimes specifically an
+          object with expectations about interactions. Libraries use these terms
+          differently. Describe what the replacement does instead of assuming
+          the label settles it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“This function returns an accepted receipt result and records its
+          arguments” is clear even if we disagree about its taxonomic
+          family.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Vitest's vi.fn can be configured with behavior and can
+          record calls. That means one object may serve both stub-like and
+          spy-like roles.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important questions: what is real, what is replaced, what answer
+          does it give, and what observation are we making?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those four questions prevent most mock confusion before the
+          vocabulary debate starts.</span
+        >
+      </p>
+      <h2 id="pass-the-dependency-like-ordinary-data">
+        Pass the Dependency Like Ordinary Data
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's use a small function whose job is to request a receipt for an
+          accepted order. It receives the sending function as an argument.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>export function requestReceipt(order, sendReceipt) {
+  if (order.status !== 'accepted') return false;
+  sendReceipt({ orderId: order.id, email: order.email });
+  return true;
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This function is synchronous. Returning true means it invoked the
+          supplied function, not that a real email arrived.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We're defining that narrow contract explicitly. A production
+          delivery workflow would need asynchronous results, errors, retries,
+          and other decisions. We tackle promise outcomes in Episode
+          Eight.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Passing sendReceipt is dependency injection in ordinary JavaScript.
+          Functions are values; we can pass one to another function. No special
+          testing syntax required.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the real application, the caller supplies the real dependency. In
+          this focused test, we supply a controlled function.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And order.email is synthetic data in our test. We don't fetch a real
+          customer's address to make the example feel authentic.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>import { expect, test, vi } from 'vitest';
+import { requestReceipt } from './request-receipt.js';
+
+test('requests one receipt for an accepted order', () =&gt; {
+  const sendReceipt = vi.fn();
+  const order = { id: 'order-demo', status: 'accepted', email: 'pizza@example.test' };
+
+  const requested = requestReceipt(order, sendReceipt);
+
+  expect(requested).toBe(true);
+  expect(sendReceipt).toHaveBeenCalledTimes(1);
+  expect(sendReceipt).toHaveBeenCalledWith({
+    orderId: 'order-demo', email: 'pizza@example.test',
+  });
+});</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The replacement doesn't send anything. Vitest records that our real
+          function called it once with the expected payload.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Vi is the Vitest utility object. Fn and those call matchers are
+          testing APIs. The object literal, import, and ordinary function call
+          are JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. This is an interaction test because requesting the dependency
+          is the behavior under examination.</span
+        >
+      </p>
+      <h2 id="is-that-an-implementation-detail">
+        Is That an Implementation Detail?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Earlier we said don't obsess over whether a helper got called. Now
+          we're counting calls. Have we contradicted ourselves before
+          lunch?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The distinction is why the interaction matters. Here the operation's
+          contract is to request a receipt once for an accepted order. The
+          dependency call is the observable boundary of that
+          responsibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we were testing an internal helper named buildReceiptPayload,
+          requiring it to be called once might just freeze the current
+          structure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A useful interaction assertion protects a meaningful effect:
+          don't send when rejected, send the intended data, avoid duplicate
+          requests within the operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But even our one-call assertion doesn't prove exactly-once email
+          delivery across retries, crashes, or repeated HTTP requests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It proves one invocation in this local scenario. Distributed
+          delivery guarantees require more design and different tests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That distinction matters. “Called once” in a unit test is not the
+          same promise as “the customer can never receive two receipts.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Give the test its actual scope, and it remains useful without
+          making impossible claims.</span
+        >
+      </p>
+      <h2 id="the-negative-case-is-often-the-point">
+        The Negative Case Is Often the Point
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What other case should we write?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A rejected order must not request a receipt. That's a meaningful
+          absence of a side effect.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>test('does not request a receipt for a rejected order', () =&gt; {
+  const sendReceipt = vi.fn();
+  const order = { id: 'order-demo', status: 'rejected', email: 'pizza@example.test' };
+
+  expect(requestReceipt(order, sendReceipt)).toBe(false);
+  expect(sendReceipt).not.toHaveBeenCalled();
+});</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the function returns false but still sends the message, the second
+          assertion catches it. Return value alone wasn't enough.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And we create a fresh mock function in each test so prior
+          call history can't contaminate the result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A negative assertion also needs the correct observation window. In
+          this synchronous function, after it returns is enough. If it schedules
+          work later, checking immediately may be premature.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Excellent async preview. “Wasn't called yet” isn't always “will not
+          be called.” Control or await the relevant lifecycle.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should be as careful with absence as with presence. Silence at one
+          instant is a small observation.</span
+        >
+      </p>
+      <h2 id="a-stub-supplies-a-situation">A Stub Supplies a Situation</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose another function asks a stock service how many pizzas are
+          available. A stub can return zero so we can reliably test the sold-out
+          path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I don't need to empty the actual restaurant. The dependency's answer
+          creates the condition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Then we call the real ordering logic and assert the sold-out
+          response. We're testing how our code responds to that answer, not
+          whether the stock service correctly counts pizzas.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What makes a bad stub?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One that supplies impossible or incorrectly shaped data without
+          acknowledging it. If the real service returns an object with
+          availableCount and the stub returns a bare number, we might test a
+          fantasy interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or if every stub immediately succeeds, we build a suite set in a
+          universe without failures, delays, or malformed responses.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use representative success and failure shapes informed by
+          the actual contract. Validate external data where appropriate and test
+          that validation separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A TypeScript interface helps describe expected shape during
+          development. It doesn't guarantee the external response obeys it, or
+          that our mock has captured all its semantics.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So keep the real integration represented in other tests, and update
+          doubles when the contract changes.</span
+        >
+      </p>
+      <h2 id="spies-can-still-do-the-real-thing">
+        Spies Can Still Do the Real Thing
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about spying on an existing object's method?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A spy can observe calls to an existing function. In Vitest, spying on
+          a method doesn't automatically mean the original implementation stops
+          running. You must deliberately replace its behavior if the real side
+          effect should be prevented.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Critical. “I put a spy on sendEmail” is not a guarantee that no email
+          was sent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For our teaching example, injecting a fresh vi.fn is clearer
+          because there is no original side effect to accidentally
+          preserve.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I do spy on an existing method, I need to understand whether it
+          calls through, how to replace its implementation, and how to restore
+          it afterward.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The tool name alone doesn't settle those semantics. This is a
+          good moment for “Jules Googles It,” except we use the installed
+          version's documentation instead of folklore.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. Professionals look up the exact behavior before pointing a
+          test at an email sender.</span
+        >
+      </p>
+      <h2 id="clearing-resetting-restoring">Clearing, Resetting, Restoring</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Three cleanup words that sound interchangeable and aren't. Clearing
+          usually removes recorded call history. Resetting also changes mock
+          behavior according to the tool's reset semantics. Restoring puts an
+          original spied-on implementation back.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And exact details vary across tools and versions, so don't memorize a
+          vague cross-framework slogan as an API contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. For Vitest spies, mockRestore is the targeted operation when
+          we want the original method back. Global cleanup helpers and
+          configuration options exist, but their scope matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Restoring spies doesn't mean every fake timer, global stub, or module
+          cache modification has been undone. Each kind of replacement can have
+          its own lifecycle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use cleanup appropriate to what you changed. Fresh local
+          doubles are often simpler than modifying globals.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And cleanup belongs in a runner-managed teardown or a try-finally
+          when necessary, so a failed assertion doesn't skip it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A leaked mock can make the next test pass or fail for the wrong
+          reason, especially when tests share a process or state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The replacement has to leave the rehearsal room when its scene
+          ends.</span
+        >
+      </p>
+      <h2 id="module-mocks-have-extra-machinery">
+        Module Mocks Have Extra Machinery
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes a dependency is imported directly into the module rather
+          than passed as an argument. Runners provide module mocking to replace
+          what that import resolves to.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful, but now we're interacting with module loading and
+          transformation, not just passing a function.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Hoisting, import timing, caches, and ESM restrictions can
+          affect behavior. Vitest and Jest don't have identical rules in every
+          mode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So this series isn't going to pretend vi.mock is a magical ordinary
+          function call that can be placed anywhere and behave the same
+          way.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Use it when appropriate, consult the relevant docs, and keep
+          the replacement close to the external boundary. Don't mock the module
+          you're supposedly testing and then assert its configured answer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the classic “I told the mock to return pizza, and
+          astonishingly, pizza.” The application has contributed nothing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A real function under test must still run. Otherwise we're only
+          checking that our test double remembers its instructions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't rewrite an entire application around injection just to
+          avoid learning module mocks. Choose a sensible seam for the actual
+          project.</span
+        >
+      </p>
+      <h2 id="fakes-need-their-own-skepticism">
+        Fakes Need Their Own Skepticism
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An in-memory repository can be a useful fake for fast tests. It
+          stores and retrieves records without a real database.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But JavaScript object lookup doesn't reproduce database uniqueness
+          constraints, transactions, collation, query behavior, or
+          concurrency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A fake can answer a narrower question about application
+          decisions. Real-database integration tests cover the persistence
+          behavior it cannot reproduce.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And maintaining a sophisticated fake can become a second
+          implementation of the database. Then we have two systems and one is
+          mostly wishful thinking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keep it small, and know its limitations. If the test's question is
+          about a database constraint, use the actual database technology in an
+          isolated test environment when practical.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same with a fake authentication layer. Convenient for rendering a
+          signed-in UI. Not evidence that the server enforces authorization
+          correctly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. UI state and security enforcement are separate
+          responsibilities.</span
+        >
+      </p>
+      <h2 id="when-mocks-make-refactoring-hurt">
+        When Mocks Make Refactoring Hurt
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A test checks that function A calls B, B calls C, and C calls D. I
+          combine B and C. Behavior is unchanged. Everything fails.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The tests encoded the internal call graph. Sometimes that graph
+          includes meaningful contracts, but often it's incidental
+          structure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Repair by testing the public result or external effect where
+          possible. Keep interaction checks only where the interaction itself
+          matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Also watch for tests that specify every argument in enormous
+          detail when only a few fields are relevant to the contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Though don't make assertions so partial they miss unsafe extra data.
+          A receipt payload that accidentally includes a secret deserves a
+          failure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good correction. Partial matching is a choice, not automatically
+          better. If the allowed payload shape is security-relevant, assert the
+          full intended shape or validate it explicitly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Again, why are we checking this? “Less brittle” shouldn't mean
+          “unable to notice meaningful differences.”</span
+        >
+      </p>
+      <h2 id="the-contract-has-to-meet-reality-somewhere">
+        The Contract Has to Meet Reality Somewhere
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >How do we stop a test suite full of doubles drifting away from
+          reality?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keep some tests at real integration boundaries. Use documented
+          contracts, representative fixtures, and intentional updates. Where
+          useful, contract tests can check that consumer expectations and
+          provider behavior remain compatible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A contract test doesn't necessarily exercise the whole user journey,
+          but it can detect mismatched request or response assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a sandbox provider test still has limits. It may not reproduce
+          all production behavior, regional rules, rate limits, or failure
+          modes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Evidence from different scopes complements itself. We don't
+          need every focused test to hit a real service, but we shouldn't have
+          no test ever connect the actual wires.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should ordinary automated tests hit a production service just
+          because that's the most “real.” Use isolated environments and test
+          credentials with appropriate permissions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Controlled realism, chosen for the question.</span>
+      </p>
+      <h2 id="listener-workshop-which-thing-is-real">
+        Listener Workshop — Which Thing Is Real?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A test replaces the payment client with a function that resolves to
+          approved. It calls the real checkout service and checks that an order
+          becomes accepted. What does it establish?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That the checkout service follows its acceptance path for the
+          approved response we supplied, under this setup. It doesn't prove the
+          provider approves real payments or that our HTTP adapter sends a valid
+          request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What other scenario would you want?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Declined payment. A dependency error. Maybe an uncertain outcome or
+          duplicate request, depending on the contract. Those might need
+          distinct behavior, not a single generic failure bucket.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What would be an over-mock?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Replacing the checkout service itself with a function that returns
+          accepted and then asserting accepted. We skipped the subject.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What would be an unsafe setup?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A spy that still invokes a live payment method, or real credentials
+          exposed to untrusted test code. Use the controlled dependency and
+          isolated environment deliberately.</span
+        >
+      </p>
+      <h2 id="rehearsal-a-dangerous-spy">Rehearsal: A Dangerous Spy</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's repair the fictional receipt incident from the opening. Someone
+          attaches a spy to the mail client's send method, calls requestReceipt
+          through the real adapter, then checks that send was called once.
+          Messages appear in the test inbox.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First, stop using that path until we understand the side effect. The
+          spy observed the original method but didn't replace it. We wanted a
+          controlled dependency, not a witness.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The author says the assertion passed, so the test worked.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The assertion worked, but the test setup violated our intention to
+          avoid real delivery. Passing doesn't excuse an unwanted side
+          effect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How do we repair it?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For the focused receipt-decision test, pass a fresh local double
+          directly. For an adapter test, replace the actual network boundary or
+          use an isolated service designed for testing, with explicit
+          configuration and restricted credentials.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And verify that the test cannot quietly fall back to the production
+          endpoint.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Configuration should fail clearly if the isolated
+          environment isn't present. A fallback to live service is the wrong
+          kind of helpful.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The double's return value should match what the caller expects, too.
+          If the real method returns a promise and the replacement returns
+          undefined, timing and error behavior may differ.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. Shape includes asynchronous behavior, not just object
+          properties. A promise-returning contract needs a promise-like success
+          or failure in the test when that behavior matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then cleanup restores any modified method, and a separate integration
+          check covers the real adapter's request shape.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now we can say which responsibility each check protects. We didn't
+          merely turn the inbox off and hope the evidence remained valid.</span
+        >
+      </p>
+      <h2 id="call-order-can-be-meaningful-or-accidental">
+        Call Order Can Be Meaningful or Accidental
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if a test asserts that validation happens before saving? Is that
+          too internal?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It depends on the contract. If invalid input must never be persisted,
+          the important observation is no save for invalid input. That can avoid
+          coupling to the exact helper sequence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But some workflows really require an order, such as establishing
+          authorization before performing a protected effect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then test the externally meaningful guarantee. We may need
+          interaction evidence, but phrase it around the safety property rather
+          than the current function names.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So “doesn't write for an unauthorized request” is often stronger and
+          clearer than “calls checkPermission before call number three.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Though temporal ordering can matter when the side effect itself
+          reveals data or consumes resources. Choose an observation that would
+          fail for the actual unsafe behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What about counting log calls?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the log is an audit requirement, maybe. If it's a debug message
+          somebody happened to add, probably not. Logging can be a real product
+          or operational contract, but it shouldn't become sacred
+          accidentally.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And don't assert that sensitive data appears in logs merely because
+          the current implementation prints it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Please no. Characterizing a leak isn't endorsing it. The desired test
+          may be that the sensitive field is absent.</span
+        >
+      </p>
+      <h2 id="a-double-that-s-too-helpful">A Double That's Too Helpful</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another subtle failure: our fake repository returns a record even
+          when the requested ID is wrong. Every lookup succeeds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then a bug in the ID passed by the application may never surface. A
+          realistic enough fake should distinguish the relevant IDs or the test
+          should assert the request argument if that's part of the
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A double that accepts anything can hide incorrect
+          collaboration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But making the fake reject every unspecified detail can make tests
+          brittle. We need to encode the relevant contract, not every incidental
+          option.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That balance takes judgment. Ask what mistakes the double should help
+          expose and which details the test intentionally ignores.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like to imagine introducing a plausible bug. Wrong order ID,
+          missing email, sending for rejected orders. Would this test fail? If
+          not, either the test isn't aimed at that behavior or the assertion
+          needs work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A small manual mutation check can make that concrete before adopting
+          any mutation-testing tool.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if every bug I imagine still passes, the mock may be starring in
+          its own fictional production. Time to reconnect the subject.</span
+        >
+      </p>
+      <h2 id="write-down-the-replacement-boundary">
+        Write Down the Replacement Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A short test comment can help when a double's limitation isn't
+          obvious. Something like: real checkout decision, controlled payment
+          response, adapter covered separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's useful context, unlike a comment that says “create mock” above
+          the line creating a mock. Explain the choice or limitation the code
+          can't show by itself.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And keep it accurate as the suite changes. If the separate adapter
+          test disappears, that comment becomes a false reassurance.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same with fixture responses copied from old documentation. They need
+          review when the contract changes. The replacement is maintained code,
+          not a frozen souvenir from the first implementation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A double should make the question easier to ask while keeping its
+          assumptions visible.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. We can lie to the dependency without lying to ourselves about
+          what we tested.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Test doubles make dependencies controllable so we can test our code's
+          decisions and interactions without unnecessary real side
+          effects.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They also create assumptions. Keep those assumptions visible, clean
+          up replacements, and connect to reality with other tests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next: the DOM. Buttons, labels, simulated browsers, and why querying
+          by role can reveal a better interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Our software lies now come with accessible names.</span>
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

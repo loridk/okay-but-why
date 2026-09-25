@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: Where Does My App Actually Live? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to Containers &amp; Infrastructure episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: Where Does My App Actually Live?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/1029fad5-111e-41cd-aeea-1c197c922d86"
+      ></script>
+      <div class="redcirclePlayer-1029fad5-111e-41cd-aeea-1c197c922d86"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#files-are-not-a-running-application"
+            >Files Are Not a Running Application</a
+          >
+        </li>
+        <li>
+          <a href="#the-runtime-is-doing-a-job">The Runtime Is Doing a Job</a>
+        </li>
+        <li><a href="#a-server-is-a-role-too">A Server Is a Role, Too</a></li>
+        <li>
+          <a href="#the-number-after-localhost">The Number After Localhost</a>
+        </li>
+        <li>
+          <a href="#old-person-yells-at-hosting">Old Person Yells at Hosting</a>
+        </li>
+        <li>
+          <a href="#local-is-forgiving-production-has-visitors"
+            >Local Is Forgiving. Production Has Visitors.</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Our podcast application is ready for the world.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Excellent. Where is it?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>On my laptop.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And where is your laptop?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >About to close, because I want lunch. I see a flaw in our global
+          availability strategy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? This is Containers and Infrastructure.
+          We're following a fictional little podcast application from a laptop
+          to somewhere other people can use it. No application homework. No
+          surprise Kubernetes installation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A sentence that should appear on more invitations.</span>
+      </p>
+      <h2 id="files-are-not-a-running-application">
+        Files Are Not a Running Application
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's start with what your laptop is actually doing. We have source
+          code for a page that lists episodes, and a little backend that can
+          return episode information. What's the difference between that folder
+          and the application?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The folder is instructions and other files. It can sit there doing
+          absolutely nothing. If I email you the source code, I haven't emailed
+          you a running process.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A process is an instance of a program being executed. When you
+          start the backend, the operating system creates a process, gives it
+          resources, and manages its execution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like opening an editor creates running software. The editor's
+          executable was on disk before I opened it. The backend isn't
+          metaphysically different just because nobody gave it a toolbar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The computer's CPU executes instructions. RAM holds working
+          data the running software needs. Storage holds files that can survive
+          switching the machine off. Those aren't three brands of the same
+          thing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >CPU is doing work, RAM is the active working space, storage is
+          keeping things. With the usual warning that a metaphor is not a
+          computer engineering degree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And RAM is generally volatile. If our episode list exists only in a
+          JavaScript variable, restarting the process loses that variable.
+          Saving data to durable storage is a separate act.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is already why a database matters. A variable called
+          allMyVeryImportantEpisodes is not a backup policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The operating system coordinates all this: processes, memory, files,
+          devices, networking. Windows, Linux, and macOS are operating systems.
+          Our framework lives above that machinery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Above, but not independent of. If the disk fills up, the framework
+          does not get to appeal to its branding department.</span
+        >
+      </p>
+      <h2 id="the-runtime-is-doing-a-job">The Runtime Is Doing a Job</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now our backend is written in JavaScript, so in this example Node is
+          the runtime executing it outside the browser. The runtime supplies the
+          machinery and APIs the program relies on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In a PHP application, PHP does that job. A web server may pass a
+          request to PHP workers, which execute the application and return a
+          response. I didn't need to personally start each worker in cPanel for
+          those processes to exist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a useful distinction. A hosting interface can arrange things
+          on your behalf. It doesn't remove the runtime. Likewise, npm can start
+          a command, but npm isn't the operating system or necessarily the
+          process that serves visitors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We covered that general toolchain distinction before. The new
+          question is where the resulting process stays alive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And what it needs to stay useful. Our backend needs compatible
+          dependencies, configuration, some memory, and permission to read the
+          right files. If it talks to a database, that database has to exist and
+          be reachable too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A lot of the phrase “the app is broken” is actually “one of its
+          assumptions stopped being true.”</span
+        >
+      </p>
+      <h2 id="a-server-is-a-role-too">A Server Is a Role, Too</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >When our backend waits for requests, it's acting as a server. The
+          word can mean the software providing a service, or the machine running
+          that software. Context matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So my laptop can be a server. Not a very sensible production server
+          while I carry it to lunch, but a server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Data-center machines may have hardware designed for continuous
+          operation and particular workloads. But there's no sacred server
+          particle that your laptop lacks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Just uninterrupted power, predictable connectivity, and someone who
+          doesn't put it in a tote bag.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those differences count! Production reliability comes from
+          arrangements around the computer, not the label on the box. Hosting
+          means arranging somewhere for software or content to be served. A
+          cloud platform is one way to obtain infrastructure and services. We'll
+          unpack it later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server, hosting, cloud. Related words, different questions. What
+          provides the service? Where and under whose care does it run? How are
+          we obtaining the resources?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Beautiful. Now a browser wants our episode list. How does it reach
+          the right process rather than your editor?</span
+        >
+      </p>
+      <h2 id="the-number-after-localhost">The Number After Localhost</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the port. My development URL has localhost, a colon, and a
+          number like three thousand.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A port is a numbered endpoint used with a network address and
+          transport protocol. For this web example, the server listens for
+          connections on a particular TCP port. The operating system helps
+          direct incoming traffic to the listening software.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not a physical hole in the laptop. And the number isn't a secret
+          application ID that works everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Localhost means this computer's local networking context. In
+          your browser right now, that's your laptop. If you send me a localhost
+          link, my browser looks on my computer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which explains why sending the link does not count as deployment.
+          You've sent yourself to your own house to see something in mine.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We will complicate “this computer” when containers introduce separate
+          networking contexts. For today, our browser and backend are on the
+          same laptop. The browser connects to the backend's listening port and
+          requests the episode list.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I stop the backend process, the source files remain, but there may
+          be nothing listening there. Refreshing the browser can't resurrect the
+          backend through determination.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor does a process listening locally automatically make it reachable
+          from the public internet. Addresses, routing, firewall rules, and what
+          interface it listens on matter. We'll introduce those only as we need
+          them.</span
+        >
+      </p>
+      <h2 id="old-person-yells-at-hosting">Old Person Yells at Hosting</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I used to upload files to a hosting account. FTP client, directory on
+          the server, refresh the page. This conversation sounds more
+          complicated than what I did.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How much was the hosting company already doing?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Running the machine, maintaining the web server, providing PHP,
+          routing my domain to the right site. Often providing the database too.
+          cPanel exposed some of those controls.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the simplicity was real for you. It was an interface over work
+          someone else performed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And FTP transferred files. It wasn't the web server. Historical FTP
+          also isn't a recommendation for moving credentials or code unencrypted
+          now; use the secure deployment mechanism your host supports.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is why static sites are a useful case. A static site's build may
+          run Node on a developer machine or build service. The deployed result
+          can just be HTML, CSS, JavaScript, and images. A web server serves
+          those files; the visitor's browser runs the browser JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need Node running in production merely because Node helped
+          build the files. But somebody's server process still answers the
+          request for the HTML.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Different parts execute in different places. “Where does my
+          app live?” sometimes needs more than one answer.</span
+        >
+      </p>
+      <h2 id="local-is-forgiving-production-has-visitors">
+        Local Is Forgiving. Production Has Visitors.
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Locally I can restart a process whenever I want. Production has
+          somebody trying to listen to an episode while I'm changing
+          things.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Production is the environment actually serving intended users. It
+          needs suitable configuration, protected credentials, durable data, and
+          a way to notice failure. A development server's convenient defaults
+          are not automatically appropriate there.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That includes showing a useful error when the API is unavailable. A
+          forever spinner isn't improved by hosting it on an expensive
+          computer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And we need a way to start the application again after a crash or
+          machine restart. Somebody must own that responsibility, whether it's
+          us or a managed hosting service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the inventory is concrete now. Code and dependencies. A runtime if
+          required. Running processes. An operating system. CPU, memory,
+          storage. A route from users to the service. And people or services
+          keeping the arrangement working.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The dashboard may hide that inventory, but it doesn't make it
+          disappear.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means the cloud has not replaced computers. It has mostly
+          replaced me knowing where the computers are.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: if computers can run many processes, why did we start
+          carving them into virtual machines?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Presumably because letting every application share one enormous junk
+          drawer had consequences.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          A deployed application ultimately runs as processes on computers. A
+          static site still needs software to serve its files, even when its
+          build tools do not run in production.
+        </p>
+        <h3>Key terms</h3>
+        <dl>
+          <dt><strong>CPU / RAM / storage</strong></dt>
+          <dd>
+            Instruction execution / active working memory / persistent files.
+          </dd>
+          <dt><strong>Operating system</strong></dt>
+          <dd>Manages processes, memory, files, devices, and networking.</dd>
+          <dt><strong>Runtime</strong></dt>
+          <dd>
+            Executes the application in its required environment, such as Node
+            or PHP.
+          </dd>
+          <dt><strong>Server / hosting / cloud</strong></dt>
+          <dd>
+            Service-providing software or machine / an arrangement for serving
+            software or content / a model for obtaining infrastructure and
+            services.
+          </dd>
+        </dl>
+        <h3>Trace the local request</h3>
+        <ol>
+          <li>
+            The browser requests the episode list from a local listening port.
+          </li>
+          <li>
+            The operating system delivers the connection to the server process.
+          </li>
+          <li>The runtime executes application code and returns a response.</li>
+          <li>
+            Stopping the process leaves source files on disk but removes the
+            running service.
+          </li>
+        </ol>
+        <p>
+          Build tools and deployed runtimes are separate decisions. Browser
+          JavaScript executes on the visitor’s machine.
+        </p>
+        <h3>Official sources and further reading</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_web_server"
+              >MDN: What is a web server?</a
+            >
+          </li>
+        </ul>
+        <p>
+          Sources checked September 23, 2026. Examples are explanatory teaching
+          material; no fictional application was built or deployed.
+        </p>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

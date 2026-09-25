@@ -1,0 +1,29 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">The browser derives accessibility information from the document and exposes it through accessibility APIs. A matching screenshot does not imply matching semantics or behavior.</p>
+<h3>Choose from the job, then style it</h3>
+<dl>
+<dt><strong>Go to a destination</strong></dt><dd>Use an <code>a</code> element with a real <code>href</code>. Preserve browser navigation conventions when using a client-side router.</dd>
+<dt><strong>Perform an action</strong></dt><dd>Use <code>button</code>. Specify <code>type="button"</code> for non-submit actions inside forms; use <code>type="submit"</code> intentionally.</dd>
+<dt><strong>Identify content hierarchy</strong></dt><dd>Use meaningful headings and levels. CSS controls size; heading semantics communicate structure.</dd>
+<dt><strong>Group items</strong></dt><dd>Use lists when items form a list; do not rely on decorative bullets alone.</dd>
+<dt><strong>Identify major page areas</strong></dt><dd>Use <code>main</code> and appropriate <code>nav</code> elements. Name multiple navigation landmarks distinctly when needed. Avoid region clutter.</dd>
+<dt><strong>Name an input</strong></dt><dd>Use a persistent visible <code>label</code>. An explicit label's <code>for</code> matches the input's unique <code>id</code>; the input's <code>name</code> serves form submission.</dd>
+<dt><strong>Group related form choices</strong></dt><dd>Use <code>fieldset</code> with a useful <code>legend</code>. Native radio buttons with the same <code>name</code> provide mutually exclusive selection.</dd>
+<dt><strong>Present tabular data</strong></dt><dd>Use a table, meaningful header cells, and an appropriate caption. Do not use a data table merely for page layout.</dd>
+</dl>
+<h3>Explicit and implicit labels</h3>
+<figure class="card code"><figcaption>HTML label alternatives<span>html</span></figcaption><pre tabindex="0"><code>&lt;!-- Explicit association --&gt;
+&lt;label for="delivery-name"&gt;Delivery name&lt;/label&gt;
+&lt;input id="delivery-name" name="deliveryName" autocomplete="name"&gt;
+
+&lt;!-- Implicit association: a separate alternative --&gt;
+&lt;label&gt;Delivery name
+  &lt;input name="deliveryName" autocomplete="name"&gt;
+&lt;/label&gt;</code></pre></figure>
+<h3>Inspect the rendered result</h3>
+<ol><li>Inspect the actual HTML element, not the framework component's name.</li><li>Inspect the computed accessibility role, name, and relevant state.</li><li>Check heading and landmark structure for useful navigation.</li><li>Operate the control and complete its task; semantics alone do not establish behavior.</li></ol>
+<p>The deliberately broken fragment in the transcript is a comparison, not a recommended implementation. The native form fragment is not a complete order-processing or payment system.</p>
+<h3>Resources</h3>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/Glossary/Accessibility_tree">MDN: Accessibility tree</a></li><li><a href="https://www.w3.org/WAI/tutorials/forms/labels/">WAI: Labeling Controls</a></li><li><a href="https://www.w3.org/WAI/tutorials/page-structure/">WAI: Page Structure Tutorial</a></li><li><a href="https://www.w3.org/WAI/tutorials/tables/">WAI: Tables Tutorial</a></li></ul>
+</section>

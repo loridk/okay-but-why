@@ -1,0 +1,13 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Orchestration becomes useful when coordinating workloads across infrastructure is itself a substantial operational problem.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Scheduling</strong></dt><dd>Choose an eligible machine using resource requests and placement rules.</dd>
+<dt><strong>Reconciliation</strong></dt><dd>Repeatedly work to reduce the gap between desired and observed state.</dd>
+<dt><strong>Service discovery</strong></dt><dd>Give clients a way to find changing workload destinations.</dd>
+<dt><strong>Scaling</strong></dt><dd>Change workload capacity; automatic scaling needs explicit configuration and suitable signals.</dd></dl>
+<h3>Problem → mechanism</h3><ul><li>Instance disappears → maintain a desired replica count.</li><li>New workload needs a machine → scheduling.</li><li>Instance addresses change → service discovery.</li><li>New release must preserve capacity → configured rolling replacement.</li><li>Traffic changes → evaluate scaling and the actual bottleneck.</li></ul><p>Docker tooling can build images used by Kubernetes. Kubernetes uses compatible container runtimes through CRI; it does not require Docker Engine on every node. Removing dockershim did not invalidate ordinary Docker-built images.</p><p>Recovery requires capacity, working dependencies, valid configuration, and an appropriate data strategy. Kubernetes does not supply application correctness, automatic database replication, or a staffed operations team.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://kubernetes.io/docs/concepts/overview/components/">Kubernetes components</a></li>
+<li><a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">Kubernetes container runtimes</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

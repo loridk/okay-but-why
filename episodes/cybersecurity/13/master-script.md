@@ -42,7 +42,7 @@ PARISA: Origin means scheme, host, and port.
 
 JULES: Exactly.
 
-`https://example.com` and `http://example.com` are different origins because scheme differs.
+JULES: `https://example.com` and `http://example.com` are different origins because scheme differs.
 
 PARISA: `https://api.example.com` is different from `https://example.com` because host differs.
 
@@ -59,7 +59,7 @@ PARISA: Because I can visit multiple websites at once.
 
 JULES: Exactly.
 
-Your browser may have an authenticated banking session open while you visit a random site.
+JULES: Your browser may have an authenticated banking session open while you visit a random site.
 
 PARISA: Without browser isolation, random site JavaScript could potentially read bank pages.
 
@@ -194,7 +194,7 @@ JULES: Classic defense: unpredictable CSRF token tied to the user session.
 
 PARISA: Legitimate form includes token.
 
-Attacker’s site cannot read the token due to same-origin policy.
+PARISA: Attacker’s site cannot read the token due to same-origin policy.
 
 JULES: Exactly.
 
@@ -317,7 +317,7 @@ PARISA: If I use curl and the request works, then use fetch and the browser bloc
 
 JULES: But the browser has a different responsibility.
 
-It is simultaneously running code from many origins while holding your cookies and authenticated sessions.
+JULES: It is simultaneously running code from many origins while holding your cookies and authenticated sessions.
 
 PARISA: Curl is not logged into my bank in another tab.
 
@@ -330,7 +330,7 @@ PARISA: Some cross-origin requests don’t preflight.
 
 JULES: Right.
 
-Certain methods and content types qualify as CORS “simple requests.”
+JULES: Certain methods and content types qualify as CORS “simple requests.”
 
 PARISA: Which means developers cannot assume “preflight is the thing preventing CSRF.”
 
@@ -392,7 +392,7 @@ PARISA: The modern web made SameSite cookies much more prominent.
 
 JULES: Yes.
 
-`SameSite=Lax` blocks cookies on many cross-site subrequests while allowing some top-level navigation use cases.
+JULES: `SameSite=Lax` blocks cookies on many cross-site subrequests while allowing some top-level navigation use cases.
 
 PARISA: `Strict` is more restrictive.
 
@@ -443,9 +443,9 @@ JULES: Correct.
 
 PARISA: Public API.
 
-No cookies.
+PARISA: No cookies.
 
-Data is intentionally public.
+PARISA: Data is intentionally public.
 
 JULES: `Access-Control-Allow-Origin: *` can be totally appropriate.
 
@@ -477,7 +477,7 @@ JULES: Exactly.
 
 PARISA: Since CSRF is cookie-heavy, remind me.
 
-`Secure` means only send over HTTPS.
+PARISA: `Secure` means only send over HTTPS.
 
 JULES: Yes.
 
@@ -551,19 +551,19 @@ PARISA: Don’t teach yourself that the browser’s security model is the bug.
 
 PARISA: Old websites were mostly same-origin by accident.
 
-HTML, PHP, database, assets—all on one host.
+PARISA: HTML, PHP, database, assets—all on one host.
 
 JULES: Modern frontends made cross-origin architecture normal.
 
 PARISA: SPA on one origin.
 
-API on another.
+PARISA: API on another.
 
-Auth provider somewhere else.
+PARISA: Auth provider somewhere else.
 
-CDN.
+PARISA: CDN.
 
-Analytics.
+PARISA: Analytics.
 
 JULES: Which made browser security boundaries much more visible to ordinary application developers.
 

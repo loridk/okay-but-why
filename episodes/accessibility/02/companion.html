@@ -1,0 +1,1594 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 2: HTML Was Already Doing This — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Accessibility episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: HTML Was Already Doing This</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/630c82e7-4b16-479d-a260-35981931f409"
+      ></script>
+      <div class="redcirclePlayer-630c82e7-4b16-479d-a260-35981931f409"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#from-the-dom-to-another-view-of-the-page"
+            >From the DOM to Another View of the Page</a
+          >
+        </li>
+        <li>
+          <a href="#related-trees-different-jobs"
+            >Related Trees, Different Jobs</a
+          >
+        </li>
+        <li>
+          <a href="#the-two-visually-identical-checkouts"
+            >The Two Visually Identical Checkouts</a
+          >
+        </li>
+        <li>
+          <a href="#a-button-does-something-a-link-goes-somewhere"
+            >A Button Does Something; a Link Goes Somewhere</a
+          >
+        </li>
+        <li>
+          <a href="#headings-are-navigation-not-font-sizes"
+            >Headings Are Navigation, Not Font Sizes</a
+          >
+        </li>
+        <li>
+          <a href="#landmarks-are-places-not-confetti"
+            >Landmarks Are Places, Not Confetti</a
+          >
+        </li>
+        <li>
+          <a href="#a-label-is-a-relationship">A Label Is a Relationship</a>
+        </li>
+        <li>
+          <a href="#tables-when-things-are-actually-tabular"
+            >Tables When Things Are Actually Tabular</a
+          >
+        </li>
+        <li>
+          <a href="#browser-defaults-are-someone-else-s-maintained-work"
+            >Browser Defaults Are Someone Else's Maintained Work</a
+          >
+        </li>
+        <li>
+          <a href="#follow-one-change-through-the-browser"
+            >Follow One Change Through the Browser</a
+          >
+        </li>
+        <li>
+          <a href="#the-delivery-choices-rebuilt-without-guesswork"
+            >The Delivery Choices, Rebuilt Without Guesswork</a
+          >
+        </li>
+        <li>
+          <a href="#html-was-doing-work-before-we-arrived"
+            >HTML Was Doing Work Before We Arrived</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I have two buttons.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. A manageable episode.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Same dimensions. Same color. Same text. Same little shadow.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>One of them is a div, isn't it?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This was supposed to be a reveal.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have worked on websites. The div is wearing a button costume and
+          hoping nobody asks for identification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>They both respond when I click them.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we've established they work for your finger attached to your
+          mouse. What does the browser think they are?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's today's question.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Because I already know which one I'd choose. I want to
+          understand what happens after that choice leaves my editor.</span
+        >
+      </p>
+      <h2 id="from-the-dom-to-another-view-of-the-page">
+        From the DOM to Another View of the Page
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Last time we looked at different ways
+          through the same checkout. Today: why does choosing the right HTML
+          element matter when CSS can make almost anything look like almost
+          anything?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Starting with the DOM, which we already know. The browser parses our
+          HTML into a document structure. JavaScript can inspect and change that
+          structure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Elements, attributes, text, relationships. The browser also
+          calculates style and layout. But the pixels aren't the only useful
+          output.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because another application can't reliably infer “this blue rectangle
+          places an order” from its excellent border radius.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browsers derive accessibility information and expose it through
+          platform accessibility APIs. A useful mental model is an accessibility
+          tree: a structured view containing relevant objects and information
+          about them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Role, name, state, that sort of thing?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. What something is, what identifies it, whether it's checked
+          or expanded, and how it relates to other information. We'll go deeper
+          into names and ARIA later. For now, HTML already supplies a lot of
+          those ingredients.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the DOM is not literally handed to a screen reader as a bag of
+          tags and a note saying “you work it out.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The browser does interpretation. Assistive technology uses
+          what the browser exposes, through the operating system's interfaces
+          and other integration mechanisms. The exact implementation varies, but
+          that separation is the important part.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is an API problem, in the useful sense from our earlier series.
+          Another system needs information in a form it can understand. Our page
+          isn't only communicating with eyeballs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And that information can support speech, braille, navigation, and
+          interaction. A screen reader isn't simply an audio recording of the
+          rendered page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which explains why preserving structure matters even when the page
+          looks unchanged. I've altered an interface consumed by other
+          software.</span
+        >
+      </p>
+      <h2 id="related-trees-different-jobs">Related Trees, Different Jobs</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Is the accessibility tree a copy of the DOM with friendlier
+          names?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. It's derived from the document and other browser information.
+          Some DOM elements are only layout containers and may not appear as
+          meaningful objects. Hidden content is often excluded. Native controls
+          may expose structure that doesn't correspond neatly to the markup you
+          wrote.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So three nested wrappers for layout don't necessarily become three
+          things a screen reader announces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And CSS isn't irrelevant. Display and visibility can affect
+          whether content is exposed. But a CSS class called primary-button
+          doesn't assign button semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The browser doesn't read our naming convention as a declaration of
+          purpose. Otherwise half the web would have the role “temporary fix
+          final two.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please don't make that a specification proposal.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Too late. I have a committee.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine a simple order summary. A heading, a list of pizzas, a
+          delivery link, and a place-order button. The accessibility view can
+          communicate those meaningful structures while ignoring wrappers that
+          exist to align the total.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if JavaScript changes the button's state, the browser can expose
+          updated information. This is a living interface, not a document
+          exported once at page load.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Though how and when updates are announced depends on the change
+          and the assistive technology. Merely altering text doesn't guarantee
+          an announcement at the moment you wanted.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We'll save the “why didn't it announce?” spiral for ARIA. Today I
+          just want to know that the information exists and where it came
+          from.</span
+        >
+      </p>
+      <h2 id="the-two-visually-identical-checkouts">
+        The Two Visually Identical Checkouts
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Version A of our checkout uses a div styled as a heading, spans
+          styled as field labels, a clickable div for payment, and another
+          clickable div that navigates to delivery information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Version B uses a heading, associated labels, a button, and a link
+          with a destination. Same visual design.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Here's a deliberately incomplete fragment from A, then a native
+          version of the control choices in B.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>html</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>&lt;!-- Problem: appearance and a click handler do not supply native behavior. --&gt;
+&lt;div class=&quot;page-title&quot;&gt;Checkout&lt;/div&gt;
+&lt;span&gt;Delivery name&lt;/span&gt;
+&lt;input id=&quot;delivery-name-bad&quot;&gt;
+&lt;div class=&quot;button&quot; onclick=&quot;placeOrder()&quot;&gt;Place order&lt;/div&gt;
+
+&lt;!-- Native structure: handler and server-side order processing are separate. --&gt;
+&lt;h1&gt;Checkout&lt;/h1&gt;
+&lt;form action=&quot;/orders&quot; method=&quot;post&quot;&gt;
+  &lt;label for=&quot;delivery-name&quot;&gt;Delivery name&lt;/label&gt;
+  &lt;input id=&quot;delivery-name&quot; name=&quot;deliveryName&quot; autocomplete=&quot;name&quot; required&gt;
+  &lt;a href=&quot;/delivery&quot;&gt;Delivery information&lt;/a&gt;
+  &lt;button type=&quot;submit&quot;&gt;Place order&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners: the first version only places words near a field and
+          draws a button shape. The second explicitly associates the name label
+          with the input, uses a real link for navigation, and uses a submit
+          button in a form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The example endpoint is fictional. Real order processing still needs
+          server validation and all the payment and security work. The point
+          here is what HTML supplies before our application code adds
+          anything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The second version gives the browser useful facts. This is a heading.
+          This label belongs to this field. This link has a destination. This
+          control submits this form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It also gives behavior. The native button participates in expected
+          keyboard interaction. The link supports familiar navigation actions.
+          The label can enlarge the practical click target by activating the
+          associated control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a surprisingly large inheritance for changing a few tag
+          names.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It isn't complete accessibility, though. We can still write confusing
+          labels, break the layout, remove focus indicators, or process errors
+          badly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native HTML is a strong starting contract. It isn't a force field
+          around the rest of our decisions.</span
+        >
+      </p>
+      <h2 id="a-button-does-something-a-link-goes-somewhere">
+        A Button Does Something; a Link Goes Somewhere
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's separate buttons and links, because visual design systems keep
+          making them both look like rounded rectangles and hoping nobody
+          notices.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A link with an href navigates to a resource or location. A button
+          triggers an action. Save, expand, submit, open a dialog.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If “Delivery information” takes me to another page, it should be a
+          link. If “Show delivery options” expands something here, a button is a
+          likely fit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the application handles navigation client-side, a real link
+          can still represent that destination. Your router should preserve
+          useful browser behavior, including modified clicks and opening a new
+          tab.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The address bar didn't become an obsolete accessory because we
+          installed a framework.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native buttons activate with Enter and Space. Links normally activate
+          with Enter; Space generally scrolls the page instead. Those
+          differences reflect established interaction patterns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why “make every element respond to every key” isn't the
+          solution. Users have expectations. We'll do the keyboard episode
+          next.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's also the default button type inside a form. If a button is
+          only opening delivery details, explicitly use type button so it
+          doesn't accidentally submit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A tiny attribute with a very large ability to prevent “why did my
+          order submit when I opened the coupon panel?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if a link has no real destination and only runs an action, that's
+          worth reconsidering. A fake href can produce unexpected jumps or
+          browser behavior you then spend code trying to suppress.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should choose the element from what it does, then style it. The
+          screenshot is not the specification.</span
+        >
+      </p>
+      <h2 id="headings-are-navigation-not-font-sizes">
+        Headings Are Navigation, Not Font Sizes
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's move from controls to page structure. What does a heading give
+          us beyond bold text?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A statement about the content hierarchy. Checkout is the page's main
+          subject. Delivery details and Order summary are sections. Their
+          headings should express that relationship.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Screen-reader users can navigate by headings or inspect a heading
+          list. That can make a long page manageable without reading everything
+          from the beginning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Similar to how I visually scan for the part I need. We shouldn't
+          require linear reading just because the presentation method
+          differs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A large paragraph styled like a heading may look right but doesn't
+          necessarily participate in that navigation. Conversely, making
+          something a heading solely to obtain a font size invents structure
+          that doesn't exist.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use CSS for font size. Use heading levels for hierarchy. This was a
+          good idea when I learned HTML and remains a good idea while my editor
+          asks me to update fourteen extensions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Heading text matters as much as heading elements. “More” and “Other”
+          don't help someone choose between sections if they lose the
+          surrounding visual context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Payment details” tells me where I'm going. “Let's finish this!”
+          tells me the copywriter needs a holiday.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Lists do similar structural work. A group of delivery steps or basket
+          items can be exposed as a list, rather than unrelated paragraphs with
+          decorative bullets.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The grouping is information. We shouldn't accidentally discard it
+          because the visual version still looks grouped.</span
+        >
+      </p>
+      <h2 id="landmarks-are-places-not-confetti">
+        Landmarks Are Places, Not Confetti
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Navigation and main content also have native elements. Nav identifies
+          a navigation section. Main identifies the primary content.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which lets someone bypass repeated material and orient themselves.
+          Particularly useful when the top of every page has an ambitious
+          navigation bar.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We still need judgment. Not every group of links needs its own
+          navigation landmark. Not every wrapper should become a named
+          region.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>If everything is a landmark, the map is just shouting.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If you have multiple navigation landmarks, meaningful distinct names
+          can help tell them apart. “Primary” and “Account,” for example. ARIA
+          can provide those names; we'll unpack that mechanism in Episode
+          4.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a form element doesn't automatically guarantee a useful named
+          form landmark in every situation. We need to distinguish the element's
+          form behavior from how a region is exposed for navigation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A suitably named form can provide a landmark, but don't add
+          names to every form just to increase the landmark count. Inspect the
+          result and consider whether it's helpful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where browser inspection can answer what the browser actually
+          exposed. We don't have to infer everything from remembering a table of
+          elements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One of the pleasures of understanding the tree is that it gives you
+          something to investigate. “The screen reader was weird” becomes a more
+          concrete question about role, name, state, or structure.</span
+        >
+      </p>
+      <h2 id="a-label-is-a-relationship">A Label Is a Relationship</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want to spend a minute on labels, because developers can know
+          “inputs need labels” without following why visual proximity isn't
+          enough.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A sighted person might infer that the words above a box describe it.
+          The browser needs a programmatic association to communicate that
+          reliably.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >With an explicit label, the label's for attribute points to the
+          input's id. Those two values connect the elements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The name attribute does a different job. It identifies the field in
+          submitted form data. Matching a label's for to the name instead of the
+          id doesn't establish the relationship.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same field, two distinct concerns. Browser semantics and form
+          submission are not playing a casual matching game.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can also nest an input inside its label, an implicit association.
+          Both patterns are useful. Explicit associations can be especially
+          clear when layout separates the label and control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And IDs need to be unique. A reusable component that renders the same
+          id six times can produce a relationship to the wrong control even
+          though every individual snippet looks reasonable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Frameworks can help generate IDs, but a framework doesn't change the
+          requirement. Inspect the rendered DOM, not just the component's
+          intentions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Placeholder text isn't a substitute. It disappears as I type, may
+          have poor contrast, and isn't a persistent visible label. We'll
+          connect that to design in Episode 5.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For groups, fieldset and legend communicate shared context. “Delivery
+          method” can label a set of radio choices like collection or
+          delivery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Without group context, hearing “Collection, radio button” may leave
+          me asking what I'm collecting. With context, the individual option
+          makes sense.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Radio buttons with the same name also give us native mutually
+          exclusive selection behavior. Again: information and behavior working
+          together.</span
+        >
+      </p>
+      <h2 id="tables-when-things-are-actually-tabular">
+        Tables When Things Are Actually Tabular
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I feel an ancient argument approaching.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Layout tables?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We'll keep it brief. Tables for actual tabular data are useful.
+          Tables used to position the entire page confuse structure and
+          layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose our delivery fee comparison has columns for area and price.
+          The relationship between row and column is the point. Table headers
+          can make those relationships available beyond visual alignment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A grid of divs may look identical but requires us to rebuild
+          information we already had a native vocabulary for.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Use a caption when it helps identify the table, and real header cells
+          for row or column headings. Complex tables require more care, but we
+          don't need a complex table to present three delivery areas.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor do we need to turn every product card layout into a table. The
+          question is whether rows and columns express data relationships, not
+          whether the CSS happens to use Grid.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSS Grid is a layout system. An HTML table is semantic structure for
+          tabular data. Similar-looking arrangements, different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the recurring problem in miniature. Appearance isn't meaning.
+          We can align paragraphs into columns without making them a
+          spreadsheet.</span
+        >
+      </p>
+      <h2 id="browser-defaults-are-someone-else-s-maintained-work">
+        Browser Defaults Are Someone Else's Maintained Work
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why do teams replace native controls so often?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Styling. Inconsistent appearance. A design that genuinely needs a
+          different interaction. Sometimes historical limitations. Sometimes
+          somebody wanted a custom select and didn't notice they'd adopted a
+          second profession.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Native selects can have platform-specific presentation, which may be
+          inconvenient for visual uniformity but familiar to users. Replacing
+          one means owning keyboard behavior, focus, state, naming, and
+          interaction with assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Plus touch behavior, high-contrast situations, long option text, and
+          whatever the browser team already spent years discovering.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That doesn't mean custom controls are forbidden. It means their cost
+          includes responsibilities that aren't visible in the mockup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a well-maintained component library supplies the control, we still
+          need to verify our integration. We can give an accessible component a
+          useless name or break it with styling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or use the component for the wrong task. An application menu is not
+          automatically the right structure for ordinary website navigation just
+          because both are called menus in design meetings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Words in meetings are weakly typed.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Extremely.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The older-web lesson isn't “never use JavaScript.” It's “know what
+          you're replacing.” I have happily written JavaScript for decades. I
+          would just prefer not to rebuild a button on a Wednesday.</span
+        >
+      </p>
+      <h2 id="follow-one-change-through-the-browser">
+        Follow One Change Through the Browser
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's do a mental debugging pass. Our place-order control looks fine,
+          but someone says they can't find it among buttons with their screen
+          reader.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First, inspect what rendered. Not the React component named Button.
+          The actual element.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>It's a div with a click listener.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the role problem is unsurprising. The browser wasn't told this
+          is a button. The component's name exists in our code, not as a promise
+          to assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We replace it with a native button and keep the same class. Now the
+          browser exposes button semantics and supplies the usual
+          interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the text is only a decorative shopping-bag icon. We still need an
+          appropriate name. That leads to Episode 4, not an automatic claim that
+          all problems are fixed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose it does have visible text, “Place order,” and we can reach it
+          with the keyboard. We inspect the computed name and role to see what
+          the browser derived.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then actually activate it and verify the task. A perfect button that
+          runs a broken handler is still a broken checkout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That separation helps debugging. Semantics, interaction, application
+          result, and feedback are related but independently breakable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is far more useful than arguing whether the page “has
+          accessibility.” We can identify what information or behavior is
+          missing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when the result differs between browser and assistive-technology
+          combinations, we have a narrower example to investigate rather than a
+          whole application of mystery.</span
+        >
+      </p>
+      <h2 id="the-delivery-choices-rebuilt-without-guesswork">
+        The Delivery Choices, Rebuilt Without Guesswork
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's do one more practical comparison. Our checkout has two options:
+          delivery and collection. In the first design they're styled cards.
+          Clicking a card changes its background.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Visually, one is selected. Underneath, we have two divs, a selected
+          class, and a hidden input somebody updates manually.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is the moment to ask what interaction we actually have. One
+          choice from a small group, with a name for the group and a label for
+          each choice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which sounds remarkably like radio buttons.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Precisely. Put native radios in a fieldset, give the group a legend
+          like Delivery method, and label the choices. We can still style the
+          surrounding labels as cards while preserving the actual
+          controls.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The shared name makes the native radio group mutually exclusive. The
+          checked state gives the browser information, and the browser supplies
+          the expected keyboard behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now we don't need a hidden field whose value can disagree with the
+          selected class. The input is the data-bearing control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >There's still a styling trap: if we hide the real radio with display
+          none and make only the card clickable, we can remove the control from
+          the very interaction path we meant to preserve.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So style deliberately. Keep the native control available, or use an
+          established visually hidden technique carefully, with a visible focus
+          treatment on the presented choice. Then test. “Native somewhere in the
+          DOM” is not enough if our CSS makes it unusable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the delivery option also has supporting text about the
+          delivery window. Does all of that have to become the radio's
+          name?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not necessarily. The name should identify the option. Supporting
+          details may be a description. That leads into our ARIA episode, where
+          we'll distinguish identification from explanation instead of making
+          every label a paragraph.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. Now the order summary. The original design is a series of text
+          nodes separated by line breaks: margherita, garlic bread, sparkling
+          water.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If those are the basket items, a list communicates grouping. Each
+          item can include quantity, price, and an appropriately named Remove
+          control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Do we need a table instead?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Depends on the information. If the user is comparing a set of values
+          across columns, a table may express useful relationships. If each item
+          is a self-contained card, a list may be clearer. We choose from the
+          content, not from whichever tag feels most accessible today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if it's a table, use headers. Column alignment in CSS isn't
+          itself a programmatic connection between Price and the numbers below
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Think about receiving one data cell without the visual row
+          and column context. Which labels make its meaning recoverable?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's useful beyond screen-reader output. We are explicitly
+          describing relationships the design already relies on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now a tricky one: the whole basket item is clickable to edit, and it
+          contains a Remove button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We shouldn't simply wrap an interactive control inside another
+          interactive control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. Avoid conflicting nested activation. Provide a clear edit link
+          or button and a separate remove button with meaningful names. The
+          visual card doesn't need to become one enormous ambiguous
+          control.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So some accessibility fixes require revisiting interaction design,
+          not exchanging one div for another tag and hoping the nesting becomes
+          legal.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. Native first is a decision method, not a search-and-replace
+          operation. Meaning, structure, and behavior have to agree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Last question: our frontend component is called DeliveryCard. Does
+          the component need to expose all of this to its caller?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It needs a clear contract. Maybe the component owns the radio and
+          label relationship and accepts the option text and value. But the
+          rendered HTML must still fit into the group correctly. Encapsulation
+          should preserve semantics, not conceal whether they exist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So in code review we can inspect the actual output for one instance
+          and for several instances. Unique IDs, sensible grouping, correct
+          selected state, usable labels.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. That's more durable than saying “we used the accessible
+          component.” The component can help establish the contract, and our
+          usage must still honor it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >I like how ordinary this solution is. Radios, labels, lists, maybe a
+          table. The visual design can remain polished.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Semantic HTML isn't a request to make the site look like a browser
+          from 1998. Though I could provide references.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Please don't bring back the tiled background.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It had excellent enthusiasm. Variable contrast, admittedly, but
+          excellent enthusiasm.</span
+        >
+      </p>
+      <h2 id="html-was-doing-work-before-we-arrived">
+        HTML Was Doing Work Before We Arrived
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's my takeaway: semantic HTML isn't accessibility decoration.
+          It's how we give the browser meaning it can pass to other systems,
+          often with useful behavior already attached.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the accessibility tree helps explain why two visually identical
+          interfaces can provide very different experiences.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'm not choosing a button because an accessibility checklist likes
+          buttons. I'm choosing it because it describes the operation and gives
+          the platform a chance to do its job.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then we verify the rest: name, state, behavior, presentation, and the
+          actual task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The native element is the beginning of the explanation, not the
+          end.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time we put the mouse away and follow focus through our
+          checkout.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Temporarily. The episode title is Throw Away Your Mouse, but please
+          don't create electronic waste for a pedagogical bit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Put it somewhere inconvenient.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Like underneath the component library's documentation.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Harsh.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Affectionate. Now show me what your second button is made of.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>An actual button.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Okay. That's actually pretty cool.</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          The browser derives accessibility information from the document and
+          exposes it through accessibility APIs. A matching screenshot does not
+          imply matching semantics or behavior.
+        </p>
+        <h3>Choose from the job, then style it</h3>
+        <dl>
+          <dt><strong>Go to a destination</strong></dt>
+          <dd>
+            Use an <code>a</code> element with a real <code>href</code>.
+            Preserve browser navigation conventions when using a client-side
+            router.
+          </dd>
+          <dt><strong>Perform an action</strong></dt>
+          <dd>
+            Use <code>button</code>. Specify <code>type="button"</code> for
+            non-submit actions inside forms; use
+            <code>type="submit"</code> intentionally.
+          </dd>
+          <dt><strong>Identify content hierarchy</strong></dt>
+          <dd>
+            Use meaningful headings and levels. CSS controls size; heading
+            semantics communicate structure.
+          </dd>
+          <dt><strong>Group items</strong></dt>
+          <dd>
+            Use lists when items form a list; do not rely on decorative bullets
+            alone.
+          </dd>
+          <dt><strong>Identify major page areas</strong></dt>
+          <dd>
+            Use <code>main</code> and appropriate <code>nav</code> elements.
+            Name multiple navigation landmarks distinctly when needed. Avoid
+            region clutter.
+          </dd>
+          <dt><strong>Name an input</strong></dt>
+          <dd>
+            Use a persistent visible <code>label</code>. An explicit label's
+            <code>for</code> matches the input's unique <code>id</code>; the
+            input's <code>name</code> serves form submission.
+          </dd>
+          <dt><strong>Group related form choices</strong></dt>
+          <dd>
+            Use <code>fieldset</code> with a useful <code>legend</code>. Native
+            radio buttons with the same <code>name</code> provide mutually
+            exclusive selection.
+          </dd>
+          <dt><strong>Present tabular data</strong></dt>
+          <dd>
+            Use a table, meaningful header cells, and an appropriate caption. Do
+            not use a data table merely for page layout.
+          </dd>
+        </dl>
+        <h3>Explicit and implicit labels</h3>
+        <figure class="card code">
+          <figcaption>HTML label alternatives<span>html</span></figcaption>
+          <pre tabindex="0"><code>&lt;!-- Explicit association --&gt;
+&lt;label for="delivery-name"&gt;Delivery name&lt;/label&gt;
+&lt;input id="delivery-name" name="deliveryName" autocomplete="name"&gt;
+
+&lt;!-- Implicit association: a separate alternative --&gt;
+&lt;label&gt;Delivery name
+  &lt;input name="deliveryName" autocomplete="name"&gt;
+&lt;/label&gt;</code></pre>
+        </figure>
+        <h3>Inspect the rendered result</h3>
+        <ol>
+          <li>
+            Inspect the actual HTML element, not the framework component's name.
+          </li>
+          <li>
+            Inspect the computed accessibility role, name, and relevant state.
+          </li>
+          <li>Check heading and landmark structure for useful navigation.</li>
+          <li>
+            Operate the control and complete its task; semantics alone do not
+            establish behavior.
+          </li>
+        </ol>
+        <p>
+          The deliberately broken fragment in the transcript is a comparison,
+          not a recommended implementation. The native form fragment is not a
+          complete order-processing or payment system.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/Accessibility_tree"
+              >MDN: Accessibility tree</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/tutorials/forms/labels/"
+              >WAI: Labeling Controls</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/tutorials/page-structure/"
+              >WAI: Page Structure Tutorial</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/tutorials/tables/"
+              >WAI: Tables Tutorial</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

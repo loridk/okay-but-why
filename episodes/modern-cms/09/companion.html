@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 9: APIs, Headless Drupal &amp; Modern Drupal — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 9: APIs, Headless Drupal &amp; Modern Drupal</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/0913f1c0-5c0d-4090-94d1-f5eccd4bc763"
+      ></script>
+      <div class="redcirclePlayer-0913f1c0-5c0d-4090-94d1-f5eccd4bc763"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#separate-the-responsibilities"
+            >Separate the Responsibilities</a
+          >
+        </li>
+        <li>
+          <a href="#json-api-is-a-specific-contract"
+            >JSON:API Is a Specific Contract</a
+          >
+        </li>
+        <li>
+          <a href="#serialization-is-a-translation-boundary"
+            >Serialization Is a Translation Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#make-a-small-read-request">Make a Small Read Request</a>
+        </li>
+        <li>
+          <a href="#relationships-don-t-fetch-themselves-for-free"
+            >Relationships Don't Fetch Themselves for Free</a
+          >
+        </li>
+        <li>
+          <a href="#authentication-isn-t-authorization"
+            >Authentication Isn't Authorization</a
+          >
+        </li>
+        <li>
+          <a href="#two-applications-mean-two-cache-stories"
+            >Two Applications Mean Two Cache Stories</a
+          >
+        </li>
+        <li><a href="#what-did-we-give-up">What Did We Give Up?</a></li>
+        <li>
+          <a href="#a-good-reason-and-a-weak-reason"
+            >A Good Reason and a Weak Reason</a
+          >
+        </li>
+        <li>
+          <a href="#recipes-solve-a-different-modernization-problem"
+            >Recipes Solve a Different Modernization Problem</a
+          >
+        </li>
+        <li>
+          <a href="#drupal-cms-and-canvas-aren-t-new-names-for-core"
+            >Drupal CMS and Canvas Aren't New Names for Core</a
+          >
+        </li>
+        <li>
+          <a href="#design-the-boundary-before-choosing-the-framework"
+            >Design the Boundary Before Choosing the Framework</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What if Drupal didn't render the frontend?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Would it get a holiday?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It would provide content through an API, and another application
+          would render it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>So Drupal keeps its job, and we hire another application.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's one way to describe it.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Let's ask what we're paying the new application to do.</span
+        >
+      </p>
+      <h2 id="separate-the-responsibilities">Separate the Responsibilities</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Headless or decoupled Drupal means
+          separating some or all of the visitor-facing presentation from
+          Drupal's own frontend rendering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Editors can still work in Drupal. Content still has fields,
+          relationships, revisions, and permissions. Another application asks
+          Drupal for data and decides how to present it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That application might use React, Next.js, a mobile
+          framework, or another technology. Drupal doesn't require React merely
+          because we've chosen an API boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does headless mean every page is rendered in the browser. A
+          separate frontend can render on a server, generate pages ahead of
+          time, or combine approaches.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good distinction. Decoupling describes responsibilities and
+          communication. Rendering location and timing are additional
+          decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can also decouple only part of a site. Drupal can render most
+          pages while a specialized interactive feature uses an API. We don't
+          have to amputate the entire theme to add one useful widget.</span
+        >
+      </p>
+      <h2 id="json-api-is-a-specific-contract">
+        JSON:API Is a Specific Contract
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal core includes a JSON:API module that exposes content entities
+          through a standardized resource-oriented API. It's opinionated about
+          how those resources are represented.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >JSON is the data format. JSON:API, with the punctuation, is a
+          specification for a particular document and interaction structure. An
+          endpoint returning arbitrary JSON isn't automatically a JSON:API
+          endpoint.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Drupal's module maps entity types and bundles to resource
+          types. An Event node bundle can appear as node double-underscore event
+          in the resource type and under a node slash event endpoint.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Attributes represent values on the resource, while relationships
+          identify related resources. That maps nicely to our structured-content
+          work: the API doesn't have to scrape a location out of a
+          paragraph.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Resource identifiers commonly use UUIDs in Drupal JSON:API. Don't
+          assume the API resource ID is the same as the numeric node ID you saw
+          in an admin URL.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the sort of small assumption that creates a very long
+          debugging afternoon.</span
+        >
+      </p>
+      <h2 id="serialization-is-a-translation-boundary">
+        Serialization Is a Translation Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Serialization turns application data into a transferable
+          representation. Drupal's internal entity object has methods and
+          framework state; the client receives a document describing allowed
+          data, not a live PHP object.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we choose what crosses the boundary. The frontend doesn't gain
+          direct access to Drupal's database or service container because it
+          knows the API URL.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. JSON:API provides conventions for attributes, relationships,
+          pagination, filtering, and related-resource inclusion. The available
+          values still depend on the site's model and access rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Drupal's REST module is another API mechanism, with a different
+          configuration and resource model. And GraphQL would be another choice
+          through appropriate contributed tooling, not a hidden synonym for
+          JSON:API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. REST is an architectural style; Drupal REST and Drupal
+          JSON:API are specific implementations with different contracts. We'll
+          leave the deeper HTTP and API-design exploration to our separate API
+          series.</span
+        >
+      </p>
+      <h2 id="make-a-small-read-request">Make a Small Read Request</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our companion includes a complete Node.js script that asks an
+          existing Drupal site for a few public Event records. It uses modern
+          JavaScript and Node's built-in fetch, not Drupal-specific
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't create the Drupal site or its Event bundle. Those are
+          explicit prerequisites. It reads a base URL from the environment so
+          nobody mistakes our fictional university for an actual service.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>const base = process.env.DRUPAL_BASE_URL;
+if (!base) throw new Error('Set DRUPAL_BASE_URL to your test Drupal site.');
+
+const endpoint = new URL('/jsonapi/node/event', base);
+if (!['https:', 'http:'].includes(endpoint.protocol)) {
+  throw new Error('Use an HTTP(S) Drupal URL.');
+}
+endpoint.searchParams.set('fields[node--event]', 'title');
+endpoint.searchParams.set('page[limit]', '5');
+
+const response = await fetch(endpoint, {
+  headers: { Accept: 'application/vnd.api+json' },
+  signal: AbortSignal.timeout(10000),
+});
+if (!response.ok) throw new Error(`Drupal returned HTTP ${response.status}.`);
+
+const document = await response.json();
+if (!Array.isArray(document.data)) {
+  throw new Error('Expected a JSON:API resource collection.');
+}
+for (const resource of document.data) {
+  const title = resource?.attributes?.title;
+  if (typeof resource?.id !== 'string' || typeof title !== 'string') {
+    throw new Error('An event did not match the expected data shape.');
+  }
+  console.log(`${resource.id}: ${title}`);
+}
+if (document.links?.next) {
+  console.log('More results are available; this example reads only one page.');
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The optional-chaining syntax checks whether intermediate properties
+          exist before reading deeper. That's JavaScript. The array check and
+          string checks happen at runtime because remote data isn't made
+          trustworthy by our expectations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A TypeScript type annotation alone wouldn't validate this response.
+          We'd still need runtime validation, possibly with a schema library in
+          a larger application. Here the small checks make the boundary visible
+          without another dependency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The example limits fields and results. In a real application, use
+          pagination deliberately and handle errors, empty results, retries
+          where appropriate, and loading feedback.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An empty array might mean no matching events. It might also mean the
+          current caller lacks access to them. Don't diagnose every empty
+          response as a broken database.</span
+        >
+      </p>
+      <h2 id="relationships-don-t-fetch-themselves-for-free">
+        Relationships Don't Fetch Themselves for Free
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the event relates to a location, the API can represent that
+          relationship. Clients can request related data through supported
+          inclusion patterns or separate requests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should inspect the real field machine names. A relationship called
+          field location only exists if our site actually defines it that
+          way.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And asking for every relationship recursively can create
+          large responses and expensive work. Request what the interface needs,
+          avoid repeated per-item fetches where practical, and measure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The same old query-design lesson, now with network round trips. An
+          API boundary can make inefficient access patterns more expensive and
+          more visible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can also make the contract clearer. The frontend needs an event
+          title, date, location label, and URL—not an unrestricted copy of every
+          field in the CMS.</span
+        >
+      </p>
+      <h2 id="authentication-isn-t-authorization">
+        Authentication Isn't Authorization
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Drupal already has permissions. Does the API honor them?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It uses entity and field access mechanisms, so their correctness
+          matters. Enabling an API makes those access decisions visible through
+          another interface. We must audit what anonymous and authenticated
+          callers can retrieve.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A field hidden from the theme may still be available through an API
+          if access permits it. Presentation hiding was never a confidentiality
+          rule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. JSON:API is read-only by default in its standard
+          configuration. Enabling writes is a separate decision requiring
+          appropriate permissions, authentication, validation, and request
+          protections.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Authentication identifies the caller. Authorization decides what that
+          caller may do. A successfully logged-in person is not automatically
+          allowed to edit every event or publish a pending revision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Credential handling depends on the architecture. A server-side
+          frontend may hold server credentials securely, but it must not
+          accidentally grant every visitor the service account's powers. Browser
+          clients can't keep a shared secret hidden in shipped JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Session-cookie requests need the appropriate CSRF protection for
+          mutations. Token-based systems have their own storage and lifecycle
+          concerns. OAuth support may come from a contributed module or an
+          external identity setup; it isn't something JSON:API invents for
+          us.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And CORS controls which browser origins can read certain cross-origin
+          responses. It isn't authentication, and it doesn't stop non-browser
+          clients from making requests.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We will continue saying that until the internet develops object
+          permanence.</span
+        >
+      </p>
+      <h2 id="two-applications-mean-two-cache-stories">
+        Two Applications Mean Two Cache Stories
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal may cache API responses. The separate frontend may cache
+          fetched data or rendered pages. A CDN or browser may cache another
+          layer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Updating the event in Drupal doesn't automatically invalidate a page
+          generated yesterday by another application. Drupal's internal cache
+          tags do not telepathically cross the network.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We need an agreed freshness strategy: expiration, webhooks,
+          explicit invalidation, rebuilds, or a combination. We should also
+          handle delivery failures and avoid letting an unauthenticated caller
+          trigger arbitrary expensive rebuilds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And previews need a separate path. A reviewer should see the pending
+          revision with appropriate access, while the public cache continues
+          serving approved content.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Don't put authenticated preview responses into a shared public cache.
+          Include the relevant identity or authorization boundary, or avoid
+          caching that response where sharing would be unsafe.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why the phrase “just fetch it” has such a short shelf life in
+          an editorial system.</span
+        >
+      </p>
+      <h2 id="what-did-we-give-up">What Did We Give Up?</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I like building frontends in React. I also don't want to pretend that
+          recreating every CMS integration is a free weekend.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Please continue. This is the most comforting sentence I've heard
+          about headless architecture.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >If Drupal renders the site, it already has ways to connect menus,
+          forms, language handling, access, contextual editing, previews, field
+          formatters, and cache metadata to output. In a separate frontend, we
+          need to decide how each required feature works across the
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some capabilities remain in Drupal but need frontend integration.
+          Others may require a new implementation. A contributed module that
+          outputs a ready-made Drupal form doesn't automatically supply a
+          polished React equivalent.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Redirects, canonical URLs, error pages, search, sitemaps,
+          accessibility, and analytics also need owners. They weren't just
+          decorative accessories on the old theme.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And editors may lose the ability to preview exactly what visitors see
+          unless we build that preview deliberately. Developer comfort matters,
+          but it's not the only person's workflow in the system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the tradeoff. A decoupled frontend can offer independent
+          deployment, specialized interactions, multiple channels, and a good
+          fit for an established frontend team. It also adds contracts,
+          operations, and coordination.</span
+        >
+      </p>
+      <h2 id="a-good-reason-and-a-weak-reason">
+        A Good Reason and a Weak Reason
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Bellweather has a mobile app, campus displays, and a website all
+          using event data. Is that a good reason for APIs?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Structured content and a shared API can support multiple
+          consumers. It doesn't necessarily require replacing Drupal's website
+          theme, though. Drupal can render the web while serving data to other
+          channels.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >If the main website needs a highly specialized application experience
+          and our team already operates the chosen frontend stack, full
+          decoupling might make sense.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Weak reason: “Twig feels old, and our frontend should be
+          modern.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server-rendered, accessible HTML can be entirely modern. A
+          second application is justified by requirements, not by avoiding a
+          template language's birthday.</span
+        >
+      </p>
+      <h2 id="recipes-solve-a-different-modernization-problem">
+        Recipes Solve a Different Modernization Problem
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Another current Drupal improvement is Recipes. These package setup
+          instructions that can install extensions and apply configuration to a
+          site.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a recipe could help establish an editorial feature without someone
+          manually reproducing every configuration click. It doesn't require a
+          headless frontend.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Recipes are applied, rather than remaining enabled and
+          uninstalled like modules. Applying one can enable modules, but the
+          recipe itself isn't a long-running module governing all future
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means changing a recipe later isn't automatically a migration
+          for every site that once applied it. Ongoing updates and configuration
+          management still need a plan.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Composer can obtain recipes and their dependencies. Current
+          recommended project tooling supports their placement and dependency
+          handling; older projects may need additional setup.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>yaml</span></figcaption>
+        <pre tabindex="0"><code>name: Bellweather API foundation
+description: Enables core JSON:API; access must be reviewed separately.
+type: Site
+install:
+  - jsonapi</code></pre>
+      </figure>
+
+      <figure class="card terminal" aria-label="Terminal output 1">
+        <figcaption>Terminal output 1<span>sh</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code># Example layout: project/recipes/bellweather_api/recipe.yml
+# Existing test site; execute from project/web.
+php core/scripts/drupal recipe ../recipes/bellweather_api -v</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This enables the module. It does not create the Event bundle,
+          configure an OAuth server, grant permissions, or prove the exposed
+          data is appropriate. Small example, specific promise.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And because it changes site configuration, inspect and export the
+          result through the project's normal workflow before deployment.</span
+        >
+      </p>
+      <h2 id="drupal-cms-and-canvas-aren-t-new-names-for-core">
+        Drupal CMS and Canvas Aren't New Names for Core
+      </h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >The current product direction can be confusing because Drupal CMS is
+          also a named product built on Drupal core. Drupal CMS 2.0 launched in
+          January 2026 with Canvas as its default visual editing
+          experience.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Drupal CMS version two is not Drupal core version two. Wonderful.
+          Version numbers have joined the terminology party.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Core, the assembled Drupal CMS product, and projects such as
+          Canvas have separate release tracks. Canvas was previously known as
+          Experience Builder. Read compatibility requirements rather than
+          assuming a Drupal 10 site can install every current package.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >These tools aim to make building and editing sites more approachable.
+          They don't erase the need to understand entities, access,
+          configuration, or the distinction between developer components and
+          editor-facing composition.</span
+        >
+      </p>
+      <h2 id="design-the-boundary-before-choosing-the-framework">
+        Design the Boundary Before Choosing the Framework
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before Bellweather decouples, I want a small vertical test: one
+          event, one list, one preview, one restricted field, one publication
+          update, and one failure when Drupal is temporarily unavailable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That test tells us whether the proposed architecture supports the
+          actual editorial and visitor experience. We can measure response time,
+          freshness, accessibility, and operational complexity.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And if integrated Drupal with a few interactive components meets the
+          needs, we can choose it without apologizing to the JavaScript
+          ecosystem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I wasn't planning to apologize, but it's nice to have support.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The separate API series goes deeper into contracts, HTTP behavior,
+          authentication, and integration design. Here, the connection is that
+          structured CMS data can serve more than one presentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Headless Drupal isn't automatically modern Drupal but better. It's a
+          different division of work. Next time, we compare the choices and ask
+          what problem we're actually solving.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Decoupling changes who owns presentation and integration. It does not
+          remove Drupal content, permission, editorial, or operational
+          responsibilities.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 9 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">JSON / JSON:API</th>
+              <td>
+                Data format / a specific resource-document and interaction
+                specification.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Serialization</th>
+              <td>
+                Turning application data into a transferable representation.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Resource type</th>
+              <td>
+                Drupal JSON:API commonly maps entity type plus bundle to a
+                resource type.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Authentication / authorization</th>
+              <td>Who is calling / what that caller may do.</td>
+            </tr>
+            <tr>
+              <th scope="row">CORS</th>
+              <td>
+                Browser cross-origin response access policy, not authentication.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Recipe</th>
+              <td>
+                Applied setup/configuration instructions, not an enabled module
+                with an uninstall lifecycle.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Drupal CMS / core / Canvas</th>
+              <td>
+                Assembled product / underlying platform / separately versioned
+                visual-building project.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Continue into the API series</h3>
+        <p>
+          <a href="../../apis/index.html"
+            >APIs — How Software Talks to Other Software</a
+          >
+          develops the HTTP, contract, authentication, and integration topics
+          beyond this CMS-focused introduction.
+        </p>
+        <p>
+          The Node.js example reads a single public page of results. The recipe
+          example enables JSON:API only; it does not create content types or
+          grant access.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li>
+            <strong>Code card 1:</strong> read-events.<wbr />mjs; Node.<wbr />js
+            22+ and an existing public JSON:API endpoint
+          </li>
+          <li>
+            <strong>Code card 2:</strong> Minimal recipe.<wbr />yml for an
+            existing site's reviewed setup workflow
+          </li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>Test anonymous and authenticated entity and field access.</li>
+          <li>
+            Keep read-only mode unless writes are a deliberate requirement.
+          </li>
+          <li>
+            Test preview access and prevent private responses entering public
+            caches.
+          </li>
+          <li>
+            Define publication-to-frontend freshness and failed-webhook
+            behavior.
+          </li>
+          <li>
+            Prototype one event, one list, one preview, one restricted field,
+            and one outage.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/core-modules-and-themes/core-modules/jsonapi-module"
+              >JSON:API overview</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/core-modules-and-themes/core-modules/jsonapi-module/security-considerations"
+              >JSON:API access and read-only configuration</a
+            >
+          </li>
+          <li><a href="https://jsonapi.org/format/">Specification</a></li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/extending-drupal/drupal-recipes/how-to-download-and-apply-drupal-recipes"
+              >Recipes</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/blog/drupal-cms-20-is-here-visual-building-ai-and-site-templates-transform-drupal"
+              >Drupal CMS 2.0</a
+            >
+          </li>
+          <li>
+            <a href="https://www.drupal.org/project/canvas">Canvas releases</a>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>2 code cards · 1 terminal cards</footer>
+  </body>
+</html>

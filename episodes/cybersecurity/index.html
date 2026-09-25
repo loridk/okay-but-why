@@ -1,23 +1,343 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cybersecurity Series — Okay, But Why?</title>
-  <link rel="stylesheet" href="../styles.css">
-</head>
-<body class="index-page">
-  <header>
-    <p><a href="../index.html">← All podcast series</a></p>
-    <p class="eyebrow">Episode guide</p>
-    <h1>Cybersecurity Series</h1>
-    <p class="intro">Cybersecurity for developers, with broad Security+ coverage hiding behind the scenes so the show can focus on understanding instead of acronym soup.</p>
-  </header>
-  <main>
-    <ul>
-      <li><a class="card" href="01/companion.html"><strong>Episode 1: Cybersecurity — What Are We Actually Protecting?</strong><span class="meta">Transcript and study companion</span></a></li><li class="card"><strong>Episode 2: Networking, But Now Everyone Is Suspicious</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 3: Firewalls, Segmentation, VPNs &amp; Zero Trust</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 4: Authentication — Prove You&#x27;re You</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 5: Authorization &amp; IAM — Are You Allowed to Do That?</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 6: Cryptography Without the Wizard Robes</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 7: HTTPS, TLS, Certificates &amp; PKI</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 8: Social Engineering — Hacking the Squishy Humans</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 9: Malware, Ransomware &amp; Other Assholes</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 10: How Attacks Actually Happen</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 11: XSS — You Put WHAT in My DOM?</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 12: Injection — Stop Concatenating Untrusted Shit</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 13: CSRF, CORS &amp; Same-Origin Policy — Why Is the Browser Yelling at Me?</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 14: Sessions, Cookies, Tokens &amp; API Security</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 15: OWASP &amp; Threat Modeling — Please Imagine the Worst</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 16: Dependencies, Supply Chains &amp; Secrets</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 17: Vulnerabilities, CVEs &amp; Pentesting</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 18: Secure Architecture &amp; Cloud Security</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 19: Security Operations — Who Watches the Logs?</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 20: Incident Response — Production Is on Fire and Security Joined Slack</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 21: Digital Forensics — Don&#x27;t Touch Anything</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 22: Risk, Governance, Privacy &amp; Compliance</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 23: Business Continuity &amp; Disaster Recovery</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 24: Secure Development &amp; DevSecOps — Security Before Friday</strong><span class="meta">Planned</span></li><li class="card"><strong>Episode 25: So You Want to Take Security+</strong><span class="meta">Planned</span></li>
-    </ul>
-  </main>
-  <footer>Okay, But Why? — Tech concepts without the ceremonial fog.</footer>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cybersecurity Series — Okay, But Why?</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+
+  <body class="index-page">
+    <header>
+      <p><a href="../index.html">← All podcast series</a></p>
+      <p class="eyebrow">Episode guide</p>
+
+      <h1>Cybersecurity Series</h1>
+
+      <p class="intro">
+        Cybersecurity for developers, with broad Security+ coverage hiding
+        behind the scenes so the show can focus on understanding instead of
+        acronym soup.
+      </p>
+    </header>
+
+    <main>
+      <ul>
+        <li>
+          <a class="card" href="01/companion.html">
+            <strong>
+              Episode 1: Cybersecurity — What Are We Actually Protecting?
+            </strong>
+            <span class="meta">
+              Confidentiality, integrity, availability, assets, threats,
+              vulnerabilities, risk, attack surfaces, and why security is really
+              about protecting systems people depend on.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="02/companion.html">
+            <strong>
+              Episode 2: Networking, But Now Everyone Is Suspicious
+            </strong>
+            <span class="meta">
+              IP addresses, ports, protocols, DNS, TCP and UDP, packets, common
+              network services, and how ordinary networking becomes part of an
+              attack surface.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="03/companion.html">
+            <strong>
+              Episode 3: Firewalls, Segmentation, VPNs &amp; Zero Trust
+            </strong>
+            <span class="meta">
+              Firewalls, network segmentation, VLANs, DMZs, VPNs, proxies,
+              defense in depth, least privilege, and what zero trust actually
+              means.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="04/companion.html">
+            <strong>Episode 4: Authentication — Prove You're You</strong>
+            <span class="meta">
+              Passwords, password managers, MFA, biometrics, authentication
+              factors, password attacks, account recovery, and why identity
+              proof is harder than it looks.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="05/companion.html">
+            <strong>
+              Episode 5: Authorization &amp; IAM — Are You Allowed to Do That?
+            </strong>
+            <span class="meta">
+              Authentication versus authorization, identity and access
+              management, roles, permissions, least privilege, access-control
+              models, provisioning, and privilege escalation.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="06/companion.html">
+            <strong>Episode 6: Cryptography Without the Wizard Robes</strong>
+            <span class="meta">
+              Encryption, hashing, symmetric and asymmetric cryptography, keys,
+              salts, signatures, integrity, confidentiality, and why encoding is
+              not encryption.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="07/companion.html">
+            <strong>Episode 7: HTTPS, TLS, Certificates &amp; PKI</strong>
+            <span class="meta">
+              How HTTPS uses TLS, certificates, certificate authorities, public
+              and private keys, trust chains, handshakes, and PKI to protect
+              connections.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="08/companion.html">
+            <strong>
+              Episode 8: Social Engineering — Hacking the Squishy Humans
+            </strong>
+            <span class="meta">
+              Phishing, spear phishing, impersonation, pretexting, baiting,
+              tailgating, urgency, authority, trust, and why humans are part of
+              every security system.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="09/companion.html">
+            <strong>Episode 9: Malware, Ransomware &amp; Other Assholes</strong>
+            <span class="meta">
+              Viruses, worms, trojans, ransomware, spyware, rootkits, botnets,
+              persistence, command and control, infection paths, and defensive
+              layers.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="10/companion.html">
+            <strong>Episode 10: How Attacks Actually Happen</strong>
+            <span class="meta">
+              Reconnaissance, initial access, exploitation, persistence,
+              privilege escalation, lateral movement, exfiltration, impact, and
+              attack-chain thinking.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="11/companion.html">
+            <strong>Episode 11: XSS — You Put WHAT in My DOM?</strong>
+            <span class="meta">
+              Reflected, stored, and DOM-based cross-site scripting; output
+              encoding, unsafe DOM APIs, sanitization, Content Security Policy,
+              and treating untrusted content as data.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="12/companion.html">
+            <strong>
+              Episode 12: Injection — Stop Concatenating Untrusted Shit
+            </strong>
+            <span class="meta">
+              SQL injection, command injection, parameterized queries, prepared
+              statements, input handling, validation, and why string
+              concatenation creates dangerous boundaries.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="13/companion.html">
+            <strong>
+              Episode 13: CSRF, CORS &amp; Same-Origin Policy — Why Is the
+              Browser Yelling at Me?
+            </strong>
+            <span class="meta">
+              Same-origin policy, CORS, CSRF, preflight requests, credentials,
+              CSRF tokens, SameSite cookies, and the different problems these
+              browser protections solve.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="14/companion.html">
+            <strong>
+              Episode 14: Sessions, Cookies, Tokens &amp; API Security
+            </strong>
+            <span class="meta">
+              Sessions, cookies, bearer tokens, JWTs, expiration, rotation,
+              secure storage, API authorization, object-level access control,
+              rate limiting, and secret handling.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="15/companion.html">
+            <strong>
+              Episode 15: OWASP &amp; Threat Modeling — Please Imagine the Worst
+            </strong>
+            <span class="meta">
+              OWASP, common application risks, threat modeling, trust
+              boundaries, data flows, abuse cases, STRIDE, and thinking about
+              attacks before somebody else does.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="16/companion.html">
+            <strong>
+              Episode 16: Dependencies, Supply Chains &amp; Secrets
+            </strong>
+            <span class="meta">
+              Third-party dependencies, package ecosystems, lockfiles,
+              dependency scanning, compromised packages, software supply chains,
+              secrets, credentials, and repository hygiene.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="17/companion.html">
+            <strong>Episode 17: Vulnerabilities, CVEs &amp; Pentesting</strong>
+            <span class="meta">
+              Vulnerabilities, CVEs, CVSS, scanning, penetration testing,
+              responsible disclosure, remediation, false positives, and
+              prioritizing findings by actual risk.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="18/companion.html">
+            <strong>
+              Episode 18: Secure Architecture &amp; Cloud Security
+            </strong>
+            <span class="meta">
+              Defense in depth, secure defaults, isolation, shared
+              responsibility, cloud IAM, storage permissions, security groups,
+              encryption, configuration, and minimizing blast radius.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="19/companion.html">
+            <strong>
+              Episode 19: Security Operations — Who Watches the Logs?
+            </strong>
+            <span class="meta">
+              Logging, monitoring, alerting, SIEM, detection, indicators of
+              compromise, baselines, telemetry, false positives, and turning
+              system activity into useful security signals.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="20/companion.html">
+            <strong>
+              Episode 20: Incident Response — Production Is on Fire and Security
+              Joined Slack
+            </strong>
+            <span class="meta">
+              Preparation, detection, analysis, containment, eradication,
+              recovery, communication, lessons learned, evidence preservation,
+              and responding without making the incident worse.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="21/companion.html">
+            <strong>
+              Episode 21: Digital Forensics — Don't Touch Anything
+            </strong>
+            <span class="meta">
+              Evidence collection, preservation, chain of custody, disk and
+              memory artifacts, timestamps, logs, forensic integrity, and why
+              casually poking the compromised machine is a bad plan.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="22/companion.html">
+            <strong>
+              Episode 22: Risk, Governance, Privacy &amp; Compliance
+            </strong>
+            <span class="meta">
+              Risk assessment, likelihood and impact, controls, policies,
+              governance, privacy, data classification, regulatory requirements,
+              compliance, and why compliant does not automatically mean secure.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="23/companion.html">
+            <strong>
+              Episode 23: Business Continuity &amp; Disaster Recovery
+            </strong>
+            <span class="meta">
+              Business impact analysis, backups, redundancy, recovery
+              objectives, disaster recovery, continuity planning, testing, and
+              keeping essential services alive when things go sideways.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="24/companion.html">
+            <strong>
+              Episode 24: Secure Development &amp; DevSecOps — Security Before
+              Friday
+            </strong>
+            <span class="meta">
+              Secure development practices, threat modeling, code review,
+              dependency and secret scanning, CI/CD security, SAST, DAST,
+              environment separation, and moving security into the development
+              lifecycle.
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="25/companion.html">
+            <strong>Episode 25: So You Want to Take Security+</strong>
+            <span class="meta">
+              Connect the concepts from the series to Security+ domains,
+              terminology, scenario questions, study strategy, and understanding
+              the material instead of memorizing acronym soup.
+            </span>
+          </a>
+        </li>
+      </ul>
+    </main>
+
+    <footer>Okay, But Why? — Tech concepts without the ceremonial fog.</footer>
+  </body>
 </html>

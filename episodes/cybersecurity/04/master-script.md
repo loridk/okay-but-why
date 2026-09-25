@@ -35,19 +35,19 @@ JULES: This is going to be fun.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Last time we built boundaries around networks.
 
-Firewalls.
+PARISA: Firewalls.
 
-Segmentation.
+PARISA: Segmentation.
 
-VPNs.
+PARISA: VPNs.
 
-Zero Trust.
+PARISA: Zero Trust.
 
 JULES: And Zero Trust immediately made identity very important.
 
@@ -57,7 +57,7 @@ JULES: Exactly.
 
 PARISA: So today we need to answer a deceptively simple question.
 
-Who are you?
+PARISA: Who are you?
 
 JULES: More specifically: can you prove that identity claim?
 
@@ -70,13 +70,13 @@ PARISA: Let’s separate two words people casually merge.
 
 JULES: Good.
 
-**Identification** is claiming an identity.
+JULES: **Identification** is claiming an identity.
 
 PARISA: “I’m Parisa.”
 
 JULES: Right.
 
-**Authentication** is proving that claim.
+JULES: **Authentication** is proving that claim.
 
 PARISA: “Here is evidence that I’m Parisa.”
 
@@ -84,7 +84,7 @@ JULES: Exactly.
 
 PARISA: Username is usually identification.
 
-Password is authentication evidence.
+PARISA: Password is authentication evidence.
 
 JULES: Correct.
 
@@ -105,9 +105,9 @@ PARISA: Shared systems especially.
 
 JULES: Right.
 
-If multiple people can access a system, it needs some way to decide whether the person requesting access is legitimate.
+JULES: If multiple people can access a system, it needs some way to decide whether the person requesting access is legitimate.
 
-The simplest scalable answer was a secret known by the user and the system.
+JULES: The simplest scalable answer was a secret known by the user and the system.
 
 PARISA: Password.
 
@@ -115,13 +115,13 @@ JULES: Exactly.
 
 PARISA: And passwords are attractive because they’re cheap.
 
-No special hardware.
+PARISA: No special hardware.
 
-No biometric sensor.
+PARISA: No biometric sensor.
 
-No external device.
+PARISA: No external device.
 
-Just type a secret.
+PARISA: Just type a secret.
 
 JULES: Right.
 
@@ -134,7 +134,7 @@ JULES: Humans always happen.
 
 JULES: Authentication factors are often grouped by the type of evidence they provide.
 
-Something you **know**.
+JULES: Something you **know**.
 
 PARISA: Password. PIN.
 
@@ -181,9 +181,9 @@ PARISA: Let’s insult passwords carefully.
 
 JULES: Passwords are not inherently useless.
 
-A strong unique password can still be a valid authentication factor.
+JULES: A strong unique password can still be a valid authentication factor.
 
-The problems come from how humans and systems handle them.
+JULES: The problems come from how humans and systems handle them.
 
 PARISA: Humans reuse them.
 
@@ -217,14 +217,14 @@ PARISA: So “password security” isn’t just “make users try harder.”
 
 JULES: No. That’s one of the biggest lessons.
 
-Authentication is a system design problem, not a moral test for users.
+JULES: Authentication is a system design problem, not a moral test for users.
 
 
 ## How Passwords Should Be Stored
 
 PARISA: Developer time.
 
-If my application stores passwords, what should I do?
+PARISA: If my application stores passwords, what should I do?
 
 JULES: Never store plaintext passwords.
 
@@ -236,29 +236,29 @@ PARISA: Because the application does not need the original password back.
 
 JULES: Exactly.
 
-Use a dedicated password-hashing function.
+JULES: Use a dedicated password-hashing function.
 
 PARISA: Argon2id, bcrypt, scrypt, PBKDF2 depending on platform and requirements.
 
 JULES: Right.
 
-These are intentionally expensive compared with general-purpose hashes.
+JULES: These are intentionally expensive compared with general-purpose hashes.
 
 PARISA: Because attackers are going to guess.
 
 JULES: Exactly.
 
-If a password database is stolen, the attacker can try candidate passwords offline.
+JULES: If a password database is stolen, the attacker can try candidate passwords offline.
 
-A fast hash lets them try guesses very quickly.
+JULES: A fast hash lets them try guesses very quickly.
 
-A password-hashing function deliberately increases the cost of each guess.
+JULES: A password-hashing function deliberately increases the cost of each guess.
 
 PARISA: And we salt each password.
 
 JULES: Yes.
 
-A **salt** is random data added to the password before hashing and stored alongside the hash.
+JULES: A **salt** is random data added to the password before hashing and stored alongside the hash.
 
 PARISA: Not secret.
 
@@ -299,7 +299,7 @@ JULES: For many purposes. It is not designed to be slow and memory-hard for pass
 
 PARISA: So the problem is not merely “is this a good hash?”
 
-It is “is this algorithm appropriate for passwords?”
+PARISA: It is “is this algorithm appropriate for passwords?”
 
 JULES: Exactly.
 
@@ -343,7 +343,7 @@ PARISA: Exhaustive or broad guessing.
 
 JULES: Right.
 
-**Password spraying** flips the pattern: try a small number of common passwords against many accounts.
+JULES: **Password spraying** flips the pattern: try a small number of common passwords against many accounts.
 
 PARISA: To avoid account lockouts.
 
@@ -366,11 +366,11 @@ JULES: The server can control the rate.
 
 PARISA: Rate limiting.
 
-Delays.
+PARISA: Delays.
 
-Temporary lockouts.
+PARISA: Temporary lockouts.
 
-Risk-based challenges.
+PARISA: Risk-based challenges.
 
 JULES: Exactly.
 
@@ -378,7 +378,7 @@ PARISA: But permanent account lockouts can be abused for denial of service.
 
 JULES: Right.
 
-If I can lock your account just by intentionally failing logins, I’ve gained a weapon.
+JULES: If I can lock your account just by intentionally failing logins, I’ve gained a weapon.
 
 PARISA: So controls need to balance attack resistance and availability.
 
@@ -411,15 +411,15 @@ JULES: Convenient, but can be abused through push fatigue if users are bombarded
 
 PARISA: “Approve sign-in?”
 
-“No.”
+PARISA: “No.”
 
-“Approve sign-in?”
+PARISA: “Approve sign-in?”
 
-“No.”
+PARISA: “No.”
 
-“Approve sign-in?”
+PARISA: “Approve sign-in?”
 
-“Fine, fuck off.”
+PARISA: “Fine, fuck off.”
 
 JULES: And the attacker wins.
 
@@ -434,19 +434,19 @@ PARISA: Meaning a fake website can’t simply ask me to copy over a reusable cod
 
 JULES: Exactly.
 
-Protocols like FIDO2 and WebAuthn use public-key cryptography.
+JULES: Protocols like FIDO2 and WebAuthn use public-key cryptography.
 
 PARISA: The authenticator keeps a private key.
 
-The service gets the corresponding public key.
+PARISA: The service gets the corresponding public key.
 
 JULES: Right.
 
-When you authenticate, the service sends a challenge.
+JULES: When you authenticate, the service sends a challenge.
 
-Your authenticator signs it.
+JULES: Your authenticator signs it.
 
-The private key does not need to be sent to the server.
+JULES: The private key does not need to be sent to the server.
 
 PARISA: And the credential is scoped to the site or relying party.
 
@@ -481,7 +481,7 @@ PARISA: Important distinction: my fingerprint is not being sent to the website.
 
 JULES: Exactly.
 
-The local device uses the biometric to authorize use of the private credential.
+JULES: The local device uses the biometric to authorize use of the private credential.
 
 PARISA: That is a really important privacy distinction.
 
@@ -504,7 +504,7 @@ JULES: They do.
 
 PARISA: My fingerprint is not secret in the same way a password is secret.
 
-I leave fingerprints on things.
+PARISA: I leave fingerprints on things.
 
 JULES: Correct.
 
@@ -516,11 +516,11 @@ PARISA: So systems often store a biometric template, not a literal photograph of
 
 JULES: Right.
 
-And biometric systems have false acceptance and false rejection rates.
+JULES: And biometric systems have false acceptance and false rejection rates.
 
 PARISA: False acceptance: wrong person gets accepted.
 
-False rejection: right person gets rejected.
+PARISA: False rejection: right person gets rejected.
 
 JULES: Exactly.
 
@@ -535,11 +535,11 @@ PARISA: Security+ has numbers for this, doesn’t it?
 
 JULES: Terms, yes.
 
-**FAR**, false acceptance rate.
+JULES: **FAR**, false acceptance rate.
 
-**FRR**, false rejection rate.
+JULES: **FRR**, false rejection rate.
 
-And **CER**, crossover error rate, where the two rates intersect.
+JULES: And **CER**, crossover error rate, where the two rates intersect.
 
 PARISA: Lower crossover error generally indicates better biometric accuracy.
 
@@ -558,7 +558,7 @@ PARISA: Possession of a device plus cryptographic proof.
 
 JULES: Exactly.
 
-A smart card may hold a private key used to authenticate the user.
+JULES: A smart card may hold a private key used to authenticate the user.
 
 PARISA: Often paired with a PIN.
 
@@ -581,9 +581,9 @@ JULES: And administrators.
 
 PARISA: Fewer passwords.
 
-Centralized account lifecycle.
+PARISA: Centralized account lifecycle.
 
-Centralized MFA policy.
+PARISA: Centralized MFA policy.
 
 JULES: Exactly.
 
@@ -606,9 +606,9 @@ JULES: Exactly.
 
 PARISA: Sign in with Google.
 
-Sign in with Microsoft.
+PARISA: Sign in with Microsoft.
 
-Enterprise SSO.
+PARISA: Enterprise SSO.
 
 JULES: Those can use standards like SAML or OpenID Connect depending on context.
 
@@ -635,11 +635,11 @@ PARISA: We’ll get deeper into tokens and API auth later.
 
 PARISA: Here’s another developer distinction.
 
-I authenticate once, but I make many requests afterward.
+PARISA: I authenticate once, but I make many requests afterward.
 
 JULES: Right.
 
-The application usually establishes a **session** or gives the client some form of token representing authenticated state.
+JULES: The application usually establishes a **session** or gives the client some form of token representing authenticated state.
 
 PARISA: So the password does not get resent with every click.
 
@@ -699,17 +699,17 @@ JULES: Modern systems may also adjust authentication based on context.
 
 PARISA: New device.
 
-Impossible travel.
+PARISA: Impossible travel.
 
-Unusual location.
+PARISA: Unusual location.
 
-Known compromised credential.
+PARISA: Known compromised credential.
 
-Suspicious IP reputation.
+PARISA: Suspicious IP reputation.
 
 JULES: Exactly.
 
-Instead of demanding the same friction on every request, the system can step up authentication when risk increases.
+JULES: Instead of demanding the same friction on every request, the system can step up authentication when risk increases.
 
 PARISA: That sounds useful, but also potentially creepy if implemented with huge amounts of behavioral tracking.
 
@@ -719,7 +719,7 @@ PARISA: Security and privacy are related but not identical goals.
 
 JULES: Correct.
 
-A security control can still create privacy concerns.
+JULES: A security control can still create privacy concerns.
 
 PARISA: Good place to keep that visible.
 
@@ -732,13 +732,13 @@ JULES: Many modern guidelines no longer recommend periodic password changes with
 
 PARISA: Because humans respond by incrementing the number.
 
-`Winter2026!`
+PARISA: `Winter2026!`
 
-`Spring2026!`
+PARISA: `Spring2026!`
 
 JULES: Exactly.
 
-Forced rotation can encourage predictable passwords and unnecessary friction.
+JULES: Forced rotation can encourage predictable passwords and unnecessary friction.
 
 PARISA: Better controls include longer passwords, blocklists for known-compromised passwords, MFA, password managers, and changing credentials when compromise is suspected.
 
@@ -796,11 +796,11 @@ JULES: Very true.
 
 PARISA: CAPTCHAs that blind users cannot complete.
 
-Time limits that punish people who need more time.
+PARISA: Time limits that punish people who need more time.
 
-MFA flows that assume everyone can use a smartphone.
+PARISA: MFA flows that assume everyone can use a smartphone.
 
-Biometric requirements that assume every user can provide the same biometric.
+PARISA: Biometric requirements that assume every user can provide the same biometric.
 
 JULES: Security controls that block legitimate users damage availability.
 
@@ -810,21 +810,21 @@ JULES: Exactly.
 
 PARISA: So authentication needs secure alternatives.
 
-Accessible labels.
+PARISA: Accessible labels.
 
-Keyboard support.
+PARISA: Keyboard support.
 
-Clear errors.
+PARISA: Clear errors.
 
-Enough time.
+PARISA: Enough time.
 
-Multiple MFA options when possible.
+PARISA: Multiple MFA options when possible.
 
 JULES: And recovery paths that don’t collapse security while trying to be usable.
 
 PARISA: This is not “accessibility after security.”
 
-It is part of whether the authentication system works.
+PARISA: It is part of whether the authentication system works.
 
 
 ## Okay, That’s Actually Pretty Cool
@@ -835,19 +835,19 @@ It is part of whether the authentication system works.
 
 PARISA: My click is that authentication is evidence.
 
-Not “enter password.”
+PARISA: Not “enter password.”
 
-Evidence.
+PARISA: Evidence.
 
 JULES: Exactly.
 
 PARISA: Something I know.
 
-Something I have.
+PARISA: Something I have.
 
-Something I am.
+PARISA: Something I am.
 
-Sometimes contextual evidence like where I am or how I’m behaving.
+PARISA: Sometimes contextual evidence like where I am or how I’m behaving.
 
 JULES: Yep.
 
@@ -885,13 +885,13 @@ JULES: Exactly.
 
 PARISA: Identification is claiming an identity.
 
-Authentication is proving it.
+PARISA: Authentication is proving it.
 
 JULES: Passwords are knowledge factors.
 
-Phones and hardware keys can be possession factors.
+JULES: Phones and hardware keys can be possession factors.
 
-Biometrics are inherence factors.
+JULES: Biometrics are inherence factors.
 
 PARISA: MFA requires different factor categories.
 
@@ -899,13 +899,13 @@ JULES: Passwords should be stored using dedicated salted password-hashing algori
 
 PARISA: Rate limiting helps against online guessing.
 
-Unique passwords help against credential stuffing.
+PARISA: Unique passwords help against credential stuffing.
 
-Password managers make unique strong passwords practical.
+PARISA: Password managers make unique strong passwords practical.
 
 JULES: MFA reduces dependence on one credential.
 
-Phishing-resistant methods like FIDO2/WebAuthn can prevent users from handing reusable secrets to fake sites.
+JULES: Phishing-resistant methods like FIDO2/WebAuthn can prevent users from handing reusable secrets to fake sites.
 
 PARISA: Passkeys use public-key credentials and can remove the website’s need to store password verifiers.
 
@@ -925,7 +925,7 @@ JULES: Next time is “Okay, but are you allowed to do that?”
 
 PARISA: Finally.
 
-The computer learns boundaries.
+PARISA: The computer learns boundaries.
 
 [MUSIC]
 

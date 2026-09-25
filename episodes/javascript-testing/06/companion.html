@@ -1,0 +1,1415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Testing the DOM Without a Browser — Mostly — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Testing the DOM Without a Browser — Mostly</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/3e0f773f-1402-4eae-96f6-12d2746a07ab"
+      ></script>
+      <div class="redcirclePlayer-3e0f773f-1402-4eae-96f6-12d2746a07ab"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#we-need-to-observe-the-interface"
+            >We Need to Observe the Interface</a
+          >
+        </li>
+        <li>
+          <a href="#a-simulated-dom-isn-t-a-rendering-engine"
+            >A Simulated DOM Isn't a Rendering Engine</a
+          >
+        </li>
+        <li><a href="#a-small-real-widget">A Small Real Widget</a></li>
+        <li>
+          <a href="#arrange-a-document-then-use-it"
+            >Arrange a Document, Then Use It</a
+          >
+        </li>
+        <li><a href="#why-query-by-role">Why Query by Role?</a></li>
+        <li>
+          <a href="#labels-are-not-placeholders">Labels Are Not Placeholders</a>
+        </li>
+        <li><a href="#get-query-find">Get, Query, Find</a></li>
+        <li>
+          <a href="#simulating-a-user-is-more-than-dispatching-click"
+            >Simulating a User Is More Than Dispatching Click</a
+          >
+        </li>
+        <li>
+          <a href="#a-keyboard-check-with-a-purpose"
+            >A Keyboard Check With a Purpose</a
+          >
+        </li>
+        <li><a href="#test-ids-have-a-job-too">Test IDs Have a Job Too</a></li>
+        <li>
+          <a href="#the-dom-can-tell-a-security-story"
+            >The DOM Can Tell a Security Story</a
+          >
+        </li>
+        <li>
+          <a href="#listener-workshop-a-missing-error"
+            >Listener Workshop — A Missing Error</a
+          >
+        </li>
+        <li><a href="#follow-the-failed-query">Follow the Failed Query</a></li>
+        <li>
+          <a href="#removal-is-a-transition-too">Removal Is a Transition Too</a>
+        </li>
+        <li>
+          <a href="#forms-have-built-in-behavior"
+            >Forms Have Built-In Behavior</a
+          >
+        </li>
+        <li>
+          <a href="#when-the-dom-test-is-the-wrong-instrument"
+            >When the DOM Test Is the Wrong Instrument</a
+          >
+        </li>
+        <li>
+          <a href="#read-the-page-like-a-listener"
+            >Read the Page Like a Listener</a
+          >
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The test can't find the button.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Is there a button?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Visually, yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That answer has a trench coat on. What's the element?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A div with a click handler.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then perhaps the test has found a product problem while looking for a
+          button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. Today: DOM Testing Library,
+          jsdom, meaningful queries, and the difference between simulating an
+          interaction and running an actual browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >My traditional HTML knowledge has entered the chat, carrying a native
+          button.</span
+        >
+      </p>
+      <h2 id="we-need-to-observe-the-interface">
+        We Need to Observe the Interface
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our calculation tests can prove a fee rule for selected inputs. They
+          don't prove the interface presents it or lets someone interact with
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For that, we need to create DOM content, perform an action, and
+          inspect the result. The DOM is the document object model: the objects
+          representing document structure that JavaScript can work with.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. DOM Testing Library provides utilities for finding and
+          waiting for elements in that structure. It doesn't replace the runner,
+          and it doesn't create a full browser by itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So in our setup, Vitest runs the test. Jsdom supplies many
+          browser-like document APIs inside Node. Testing Library helps us query
+          that document. User-event simulates interactions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And jest-dom adds useful DOM-specific matchers, despite its name also
+          working with Vitest when configured appropriately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Five names, distinct jobs. Suddenly the package pile is less
+          mysterious.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You don't need all of them for a pure function. Here the behavior
+          actually involves a document.</span
+        >
+      </p>
+      <h2 id="a-simulated-dom-isn-t-a-rendering-engine">
+        A Simulated DOM Isn't a Rendering Engine
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What can jsdom tell us?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It implements many web standards and supports working with a document
+          in Node. It is useful for structural and interaction-oriented tests.
+          It doesn't lay out and paint the page like a full browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a test can find a button and activate its handler, but cannot
+          establish that the button is visible at the right position on a narrow
+          phone screen.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Layout, real browser behavior, some APIs, and visual
+          rendering require other evidence. Even a matcher named visible
+          operates within the environment's available information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It isn't doing a human visual inspection. We should not read the
+          English matcher name as a universal claim.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A real-browser test can cover capabilities absent from
+          jsdom, though it still only covers the conditions and assertions we
+          choose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That makes “without a browser” a practical description of this setup,
+          not a promise that we can replace all browser testing.</span
+        >
+      </p>
+      <h2 id="a-small-real-widget">A Small Real Widget</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's write a plain JavaScript cart widget. No React yet. It starts
+          empty and has an Add pizza button. Clicking updates a status
+          message.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>export function mountCart(root) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Add pizza';
+
+  const status = document.createElement('p');
+  status.setAttribute('role', 'status');
+  status.textContent = 'Cart is empty';
+
+  button.addEventListener('click', () =&gt; {
+    status.textContent = '1 pizza in cart';
+  });
+
+  root.replaceChildren(button, status);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Audio description: a native button named Add pizza, followed by a
+          status paragraph. The click changes the status to one pizza in cart.
+          This deliberately demonstrates a single add action, not a full cart
+          counter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The DOM methods are web-platform APIs used from JavaScript. The
+          arrow function is JavaScript. The role attribute is HTML accessibility
+          semantics, not a testing decoration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Native button gives us keyboard behavior without recreating it. Type
+          button avoids accidental form submission if we later place it inside a
+          form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And textContent inserts text rather than interpreting it as HTML.
+          That is a useful habit when displaying text that could eventually come
+          from data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We aren't claiming this tiny widget is a complete accessible
+          checkout. It has a meaningful control and a status region, which are
+          relevant choices at this boundary.</span
+        >
+      </p>
+      <h2 id="arrange-a-document-then-use-it">
+        Arrange a Document, Then Use It
+      </h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>// @vitest-environment jsdom
+import { afterEach, expect, test } from 'vitest';
+import { screen } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/vitest';
+import { mountCart } from './mount-cart.js';
+
+afterEach(() =&gt; document.body.replaceChildren());
+
+test('adding a pizza updates the cart status', async () =&gt; {
+  const user = userEvent.setup();
+  const root = document.createElement('main');
+  document.body.append(root);
+  mountCart(root);
+
+  await user.click(screen.getByRole('button', { name: 'Add pizza' }));
+
+  expect(screen.getByRole('status')).toHaveTextContent('1 pizza in cart');
+});</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The first comment is a Vitest environment directive. We still need
+          jsdom installed in the practice project. The imports identify the
+          libraries supplying queries, interactions, and matchers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Screen doesn't mean a physical screen or screenshot. It's a Testing
+          Library query object bound to the document body. The test asks for a
+          button with the accessible name Add pizza.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then it simulates a click and waits for that interaction helper to
+          finish. Finally it checks the status text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Async and await are JavaScript. User.click is a library API returning
+          asynchronous work. ToHaveTextContent is from jest-dom, not a built-in
+          Vitest matcher by default.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. AfterEach removes the test document contents. This widget
+          has no global event listener or timer, but more complicated components
+          need cleanup for those resources too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Removing DOM nodes alone doesn't cancel every external subscription
+          someone created.</span
+        >
+      </p>
+      <h2 id="why-query-by-role">Why Query by Role?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could find the button by a CSS class. Why use role and name?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because “button named Add pizza” describes the control's meaning. A
+          class like blue-wide-button describes styling or implementation.
+          Refactoring CSS shouldn't necessarily break the behavioral test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the accessible name disappears, the query may fail, which can
+          reveal an actual usability problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessible name means the name exposed for the control, derived
+          through browser accessibility rules. Visible button text often
+          supplies it, but labels and ARIA can affect it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So getByRole with a name is closer to the semantic interaction we
+          intend than a chain of nested selectors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Closer doesn't mean identical to using a screen reader. It doesn't
+          test the real announcement timing, navigation mode, or every
+          assistive-technology interaction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It encourages meaningful markup and catches some semantic
+          regressions. It isn't an accessibility certification.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a role query fails, inspect the actual markup and accessible name
+          before adding a test ID. Sometimes the test is showing us that the
+          interface has no usable label.</span
+        >
+      </p>
+      <h2 id="labels-are-not-placeholders">Labels Are Not Placeholders</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What about a delivery-address field?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give it a persistent label. A placeholder can provide an example, but
+          it shouldn't be the only way someone learns what the field
+          means.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In a test, getByRole textbox with the label's accessible name, or
+          getByLabelText where appropriate, can target it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An input with an associated label is ordinary HTML. The test query
+          recognizes the relationship; it doesn't create it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If someone replaces the label with visually adjacent text
+          that isn't programmatically associated, a meaningful query can expose
+          the regression.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But we shouldn't slap an aria-label on everything solely to appease a
+          test. Use native visible labels where they suit the interface. ARIA
+          has real meaning and can override other naming sources.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if several controls have the same name, the query ambiguity may
+          reflect a real design issue or a need to scope to a meaningful
+          region.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Two Add pizza buttons for two menu cards could be legitimate. Then
+          identify the relevant card or give controls enough context. Don't just
+          grab the first match and hope the DOM order stays friendly.</span
+        >
+      </p>
+      <h2 id="get-query-find">Get, Query, Find</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Testing Library has different query families. GetBy looks for a match
+          now and throws if the expected single match isn't available. QueryBy
+          can return null when absent, which is useful for checking absence.
+          FindBy waits asynchronously for a match.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the single-element versions complain about multiple matches.
+          That's helpful ambiguity, not the library being picky for sport.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. AllBy variants are available when multiple elements are
+          intended. But don't use getAllBy and select index zero just to silence
+          a query that should be specific.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For something that should already exist, use get. For something
+          expected not to exist, query. For something that appears after
+          asynchronous work, await find. That's a useful starting
+          distinction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We'll go deeper into waiting in Episode Eight. A find query
+          isn't a substitute for understanding when the state should
+          change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a missing element can mean wrong scope, wrong accessible name,
+          wrong timing, or a real rendering bug. Read the diagnostic DOM
+          output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tests are easier to debug when the query expresses the thing we
+          actually want.</span
+        >
+      </p>
+      <h2 id="simulating-a-user-is-more-than-dispatching-click">
+        Simulating a User Is More Than Dispatching Click
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why user-event instead of calling dispatchEvent myself?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >User-event models interactions at a higher level, including related
+          events and checks where supported. A click or typed input can involve
+          more than one low-level event.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So it helps avoid a test that dispatches an impossible isolated event
+          and skips important behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Low-level event utilities still have uses, particularly for
+          cases the higher-level helper doesn't support. But choose the
+          abstraction that matches the action.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And await the user-event methods used here. If we don't wait for the
+          interaction helper, assertions may race with its work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. UserEvent.setup creates an interaction session. Keeping the
+          same session for related actions can model state such as held
+          keys.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yet it's still a simulation in our chosen environment. It doesn't
+          prove a physical device or a real browser follows every path
+          identically.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Use real-browser checks for behavior that depends on actual
+          browser implementation, layout, or device conditions.</span
+        >
+      </p>
+      <h2 id="a-keyboard-check-with-a-purpose">
+        A Keyboard Check With a Purpose
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's test keyboard access to our one-button widget. With the new
+          document, tab once to the button, then press Enter.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>javascript</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>test('the add action works from the keyboard', async () =&gt; {
+  const user = userEvent.setup();
+  const root = document.createElement('main');
+  document.body.append(root);
+  mountCart(root);
+
+  await user.tab();
+  expect(screen.getByRole('button', { name: 'Add pizza' })).toHaveFocus();
+  await user.keyboard('{Enter}');
+
+  expect(screen.getByRole('status')).toHaveTextContent('1 pizza in cart');
+});</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The braces around Enter are user-event's keyboard notation inside an
+          ordinary JavaScript string. They aren't JSX or JavaScript object
+          syntax here.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the scenario assumes this isolated fixture has one focusable
+          control. In the real page, the tab sequence is larger and needs its
+          own appropriate checks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This catches replacing the native button with a non-focusable
+          click-only div in this widget. It doesn't prove the focus indicator
+          has adequate contrast or isn't clipped.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does it prove the status is announced correctly by every screen
+          reader. That's a separate real interaction to examine.</span
+        >
+      </p>
+      <h2 id="test-ids-have-a-job-too">Test IDs Have a Job Too</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Are test IDs forbidden?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. Sometimes a meaningful semantic or text query isn't suitable. A
+          stable test identifier can be an explicit contract between the
+          interface and the test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Better than a fragile CSS path through seven wrappers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Often, yes. But if a button lacks an accessible name, adding
+          data-testid doesn't repair the button. It only gives the test another
+          handle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use the best query for the reason you're testing. A chart
+          canvas might need a different strategy from a labelled text
+          field.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't make tests resistant to every meaningful UI change. If the
+          label changes from “Place order” to something misleading, maybe we
+          want a test or review to notice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Resilience means surviving incidental changes, not ignoring product
+          behavior.</span
+        >
+      </p>
+      <h2 id="the-dom-can-tell-a-security-story">
+        The DOM Can Tell a Security Story
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose the server gives us an error containing text that looks like
+          HTML. If we insert it as text, a DOM test can verify that it's
+          displayed as text rather than creating an element.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That can protect a specific rendering decision. It doesn't replace a
+          complete injection review or prove all output contexts are safe.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't teach innerHTML with untrusted strings merely because it
+          makes fixture setup shorter. Static trusted fixture markup is
+          different from rendering user-controlled values.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Our widget uses textContent for content. Real applications
+          need context-appropriate safe rendering and validation at trust
+          boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also don't put live secrets into document fixtures. Test output often
+          prints the DOM on failure. That's convenient until the DOM contains
+          something private.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Synthetic fixtures keep those reports easier to share safely.</span
+        >
+      </p>
+      <h2 id="listener-workshop-a-missing-error">
+        Listener Workshop — A Missing Error
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A form rejects an invalid delivery address. The test uses getByText
+          immediately after clicking Submit, but the error arrives after a
+          request. It fails intermittently. First thought?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Understand the async boundary. Await the interaction, then wait for
+          the meaningful error state using an appropriate async query. Don't add
+          an arbitrary two-second nap.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What should the query express?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Ideally the actual user-facing error or relevant role and text. If
+          the error is associated with a field, test the relationship where
+          appropriate, not only that a red div exists.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What still needs human or real-browser evaluation?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether focus behavior is useful, whether the message is
+          understandable, whether it's announced appropriately, and whether the
+          layout remains usable. Some of those can have automated checks too,
+          but this one assertion doesn't cover them all.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good. That's the point: let each test make a clear claim.</span>
+      </p>
+      <h2 id="follow-the-failed-query">Follow the Failed Query</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's return to the missing button. The test asks for a button named
+          Add pizza. It finds none. What do you inspect first?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The rendered document. Did the widget mount? Is the content inside
+          the document body that screen searches? Is the element actually a
+          button, and what accessible name does it have?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose it's a native button, but an aria-label says “plus.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then that accessible name may override the visible Add pizza text. We
+          need to decide whether plus is a useful name. Usually describing the
+          action is clearer than naming the icon shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the test failure can start a markup review, not just a selector
+          rewrite.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. If the intended accessible name is Add pizza, fix the
+          interface. If the requirement changed intentionally, update the test.
+          Don't automatically chase the current implementation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose there are three matching buttons because the menu contains
+          three items.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then our fixture or query is ambiguous. Scope to a named item region
+          where that structure makes sense, or provide distinctive action names.
+          Don't use the first match just because it happens to be Mushroom
+          today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Testing Library's within helper can scope queries to a chosen
+          container.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a library utility. The product still needs meaningful
+          structure. A test-only wrapper with no relationship to the real
+          interface might hide the problem rather than explain it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the element lives in a detached container, screen won't
+          necessarily see it because screen queries the body.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then attach it appropriately or query the intended container
+          explicitly. Again, understand the environment before deciding the
+          application is broken.</span
+        >
+      </p>
+      <h2 id="removal-is-a-transition-too">Removal Is a Transition Too</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We've mostly tested things appearing. What about removing a pizza
+          from the cart?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First assert the pizza is present, then perform the removal, then
+          assert it's absent. Otherwise an absence assertion can pass because we
+          never rendered it in the first place.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a useful pattern. Establish the initial state so the test
+          proves a transition, not merely a final snapshot.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if removal is asynchronous, wait for disappearance using the
+          appropriate library helper or a retrying assertion. An immediate query
+          might still find the old state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What else should we observe?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The cart total updates, if that's within scope. The empty-state
+          message appears when the last item is removed. Focus remains somewhere
+          useful if the focused Remove button disappeared.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Focus is often forgotten because the DOM looks correct
+          afterward.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. A keyboard user needs a sensible next location, not just the
+          correct number of elements. We can automate a specific focus
+          expectation, then evaluate whether the chosen behavior actually feels
+          usable in a real browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a status message can communicate the removal without moving focus
+          unnecessarily.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes, depending on the design. We shouldn't use focus movement as an
+          announcement mechanism by default. Define the interaction
+          deliberately.</span
+        >
+      </p>
+      <h2 id="forms-have-built-in-behavior">Forms Have Built-In Behavior</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the Add pizza button sits in a form and accidentally submits
+          it. A click test only checks the cart text, so it still passes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then we've missed another meaningful effect. Native form behavior
+          matters. Button type, submit handlers, validation, and keyboard
+          submission should be considered in the component's actual
+          context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A standalone button fixture can miss that context.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. Isolated tests are useful, but the integration into a form
+          deserves a check if that's how the widget is used. The test boundary
+          should include the behavior we're worried about.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Would you directly call the submit handler?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For a unit test of extracted handler logic, perhaps. For form
+          interaction, use the form through meaningful controls. Calling the
+          handler bypasses native event behavior and may omit the actual user
+          path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Same reason not to set an input's value property and assume you've
+          reproduced typing and its events.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. The state update may depend on an event. Use the interaction
+          helper appropriate to the user action, then verify the result. If a
+          low-level event is intentional, explain why.</span
+        >
+      </p>
+      <h2 id="when-the-dom-test-is-the-wrong-instrument">
+        When the DOM Test Is the Wrong Instrument
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The dropdown options are clipped behind an overflow container. Can
+          our jsdom test catch it?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not through real layout. Use a browser and inspect the rendered
+          behavior at relevant sizes. A structural test can verify options exist
+          while every customer still can't see them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The text contrast is too low?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A role query won't establish contrast. Use appropriate accessibility
+          checks and visual evaluation. The test shouldn't claim more than it
+          observes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>The keyboard focus indicator is removed by CSS?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >ToHaveFocus can still pass because the element has focus. Visibility
+          of the indicator is another property. That distinction is a perfect
+          example of why matcher names need interpretation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The status message appears in the DOM but isn't announced as expected
+          by a screen reader?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We need real assistive-technology evaluation for that experience.
+          Verify the markup and update pattern, but don't assume a DOM assertion
+          has listened to the announcement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So the efficient strategy is not to force everything into jsdom. Use
+          it for the things it can tell us clearly, and choose other checks for
+          the rest.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. The simulated environment earns its place by giving useful
+          fast feedback. It doesn't need to pretend to be a browser, a screen
+          reader, and a human with opinions about button placement.</span
+        >
+      </p>
+      <h2 id="read-the-page-like-a-listener">Read the Page Like a Listener</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's an audio-first way to design the test. Describe the interface
+          without pointing. “There is a button named Add pizza. Activating it
+          changes the cart status to one pizza.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That description maps naturally to our query, action, and assertion.
+          It avoids relying on “the blue thing over there.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the description requires visual position, ask whether that
+          position is actually the behavior under test. Sometimes it is, such as
+          a layout issue. Then choose a browser-based visual check. Otherwise,
+          find the semantic relationship.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a delivery field, say its label. For a menu item, identify the
+          item and its action. For an error, say what the user needs to
+          learn.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This doesn't mean every interface can be reduced to simple text. It
+          means our test should express a meaningful interaction rather than an
+          accidental DOM address.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It also helps when localization changes copy. We can decide which
+          tests verify exact language and which verify the broader interaction
+          with controlled translations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Don't casually use an English regular expression in every test and
+          then call the interface language-independent. The fixture's language
+          is part of the scenario.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And keep query precision appropriate. A vague match for “add” might
+          find Add address instead of Add pizza once the interface grows.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The failure we want is informative. The pass we want is specific.
+          Both start with saying what the person is trying to do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which brings us back to ordinary web fundamentals.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. The new tool is useful partly because it encourages us to
+          preserve things the web already knew how to express.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >DOM tests let us exercise interface behavior quickly in a controlled
+          document environment. Testing Library encourages queries based on
+          meaning, and user-event models interactions above the single-event
+          level.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Jsdom isn't a complete browser. Meaningful queries help
+          accessibility, but they aren't an accessibility audit. Native HTML
+          remains an excellent collaborator.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next: React testing. Same user-oriented questions, with React
+          handling the rendering and state updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The button may acquire JSX. It will still need to be a button.</span
+        >
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

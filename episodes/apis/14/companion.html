@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 14: Modern APIs: AI, MCP, and &quot;Wait, Isn't This All Just APIs
+      Again?&quot; — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 14: Modern APIs: AI, MCP, and &quot;Wait, Isn't This All Just
+        APIs Again?&quot;
+      </h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/621472b3-cba4-4bcc-96af-fe9a2f9e0b12"
+      ></script>
+      <div class="redcirclePlayer-621472b3-cba4-4bcc-96af-fe9a2f9e0b12"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#familiar-plumbing-different-work"
+            >Familiar Plumbing, Different Work</a
+          >
+        </li>
+        <li>
+          <a href="#a-model-request-is-still-a-contract"
+            >A Model Request Is Still a Contract</a
+          >
+        </li>
+        <li>
+          <a href="#sdks-are-another-interface-layer"
+            >SDKs Are Another Interface Layer</a
+          >
+        </li>
+        <li>
+          <a href="#streaming-makes-waiting-feel-different"
+            >Streaming Makes Waiting Feel Different</a
+          >
+        </li>
+        <li>
+          <a href="#tool-calling-is-a-structured-request-to-do-work"
+            >Tool Calling Is a Structured Request to Do Work</a
+          >
+        </li>
+        <li>
+          <a href="#follow-one-tool-round-trip">Follow One Tool Round Trip</a>
+        </li>
+        <li>
+          <a href="#ask-the-intern-which-tool-would-you-expose"
+            >Ask the Intern: Which Tool Would You Expose?</a
+          >
+        </li>
+        <li><a href="#what-mcp-adds">What MCP Adds</a></li>
+        <li><a href="#host-client-server">Host, Client, Server</a></li>
+        <li>
+          <a href="#discovery-is-useful-not-a-trust-ceremony"
+            >Discovery Is Useful, Not a Trust Ceremony</a
+          >
+        </li>
+        <li>
+          <a href="#mcp-doesn-t-replace-the-underlying-security"
+            >MCP Doesn't Replace the Underlying Security</a
+          >
+        </li>
+        <li>
+          <a href="#what-actually-changes-with-an-agent"
+            >What Actually Changes With an Agent?</a
+          >
+        </li>
+        <li>
+          <a href="#prompt-injection-crosses-a-different-kind-of-boundary"
+            >Prompt Injection Crosses a Different Kind of Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#structured-doesn-t-mean-correct"
+            >Structured Doesn't Mean Correct</a
+          >
+        </li>
+        <li>
+          <a href="#when-a-model-doesn-t-belong-in-the-loop"
+            >When a Model Doesn't Belong in the Loop</a
+          >
+        </li>
+        <li>
+          <a href="#testing-now-includes-decisions"
+            >Testing Now Includes Decisions</a
+          >
+        </li>
+        <li>
+          <a href="#the-whole-series-in-one-request"
+            >The Whole Series in One Request</a
+          >
+        </li>
+        <li><a href="#what-we-carry-forward">What We Carry Forward</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I opened a diagram about AI agents.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How many arrows?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Enough to qualify as a weather system. Models, tools, connectors,
+          context, orchestration. Then I looked closer and thought: hang on. Are
+          these things making requests to other things?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Frequently, yes.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Did I just spend thirteen episodes obtaining an anti-bullshit
+          umbrella?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A foundational understanding of interfaces.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is less marketable than umbrella.</span>
+      </p>
+      <h2 id="familiar-plumbing-different-work">
+        Familiar Plumbing, Different Work
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We've reached the final episode of our API
+          series. Today, LLM APIs, tool calling, and the Model Context Protocol.
+          We aren't trying to teach the entire AI stack in one sitting.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We want to recognize what the earlier episodes prepared us to
+          understand, and what changes enough that we need new questions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An LLM is a large language model. A hosted model service can expose
+          an API that accepts input and returns generated output. The client
+          sends a request using the provider's defined contract, with
+          credentials and relevant options.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >URL, method, headers, body, response. Familiar architecture. The
+          service might process text, images, audio, or other supported inputs,
+          depending on the model and API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The operation behind the interface is different from looking
+          up a stored order. It runs model inference: using a trained model to
+          produce a result from the supplied context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means a successful HTTP response doesn't establish that the
+          generated answer is factually correct. The network can work perfectly
+          while the answer enthusiastically invents a delivery policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. We now have transport success, application-format validity,
+          and quality of generated content to distinguish.</span
+        >
+      </p>
+      <h2 id="a-model-request-is-still-a-contract">
+        A Model Request Is Still a Contract
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A provider defines accepted messages or input items, model
+          identifiers, output limits, available features, and response
+          structures. Those contracts differ between providers and evolve over
+          time.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we shouldn't pretend every service accepts one universal object
+          called prompt and returns one string called answer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. An output may include generated text, structured data, tool
+          requests, usage information, or other items according to the API. The
+          caller must handle the actual documented response model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the model doesn't automatically know our current private order
+          database. If we want an answer about order 42, we need an authorized
+          path to provide relevant information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Context is the information supplied for the model to use in
+          the interaction. That can include the user's question, instructions,
+          selected conversation history, retrieved information, and tool
+          results.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Selecting context is both a usefulness decision and a data-disclosure
+          decision. We don't send the entire customer database because the word
+          context sounds wholesome.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Minimize what is needed and understand the provider's
+          applicable data-handling arrangements. An API boundary still crosses a
+          trust boundary.</span
+        >
+      </p>
+      <h2 id="sdks-are-another-interface-layer">
+        SDKs Are Another Interface Layer
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The example I found doesn't show HTTP. It imports a client and calls
+          a method. Did the network go away?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually not. An SDK, a software development kit, can wrap the
+          provider's API in language-friendly methods and types. It may handle
+          request construction, streaming events, errors, and some retry
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So our code calls a library API, which calls a remote API. Episode
+          One's nesting dolls have returned.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You can sometimes call the HTTP API directly instead. An SDK
+          can save effort and track provider details, while direct HTTP can give
+          explicit control and reduce a dependency in a simple
+          integration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The right choice depends on the work. Either way, I need to
+          understand what the library retries, how it reports failures, and
+          which credentials it sends.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A convenient method doesn't erase latency, costs, limits, or the
+          possibility of an uncertain outcome.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does a TypeScript type guarantee a generated statement is true.
+          We're back to checks proving particular properties, not all possible
+          properties.</span
+        >
+      </p>
+      <h2 id="streaming-makes-waiting-feel-different">
+        Streaming Makes Waiting Feel Different
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Many model APIs support streaming output. Instead of waiting for the
+          complete result, the client receives events or pieces as generation
+          progresses.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Often over an HTTP stream, sometimes using Server-Sent Events. We
+          shouldn't assume that visible text appearing gradually means
+          WebSockets are involved.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The exact framing and event types are provider-specific. A
+          stream may contain text deltas, tool-call argument fragments,
+          completion signals, and errors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Delta means a change or increment. If a tool call's arguments arrive
+          in fragments, we shouldn't execute the operation after seeing the
+          first half of an object.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Collect and validate the completed call according to the
+          protocol. Partial content isn't automatically a finished
+          instruction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A stream can also fail after some content appeared. The interface
+          should distinguish a complete answer from a partial result interrupted
+          by failure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And cancellation should stop unnecessary work where supported, but
+          the client must understand the service's actual cancellation
+          semantics. Closing the display isn't proof that every remote operation
+          was undone.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For accessibility, don't make a screen reader announce every tiny
+          fragment as a separate emergency. Present meaningful progress and let
+          people access the completed content without a torrent of
+          interruptions.</span
+        >
+      </p>
+      <h2 id="tool-calling-is-a-structured-request-to-do-work">
+        Tool Calling Is a Structured Request to Do Work
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now tools. An application can describe available operations to a
+          model: their names, purposes, and input schemas. The model can produce
+          a structured request to use one.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The model output might say get_order_status with orderId 42. That
+          isn't the model reaching into the database with its little neural
+          hands.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Execution happens in software that implements the tool. For an
+          application-defined tool, our application can validate the call,
+          enforce policy, run the operation, and provide the result back to the
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Some providers also host built-in tools. Then execution may happen in
+          the provider's infrastructure under its contract. Different location,
+          same need to understand authority and behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Tool calling is sometimes called function calling. The
+          function-like shape describes an operation, but we mustn't confuse
+          generating a call with actually completing its effect.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>json</span></figcaption>
+        <pre tabindex="0"><code>{
+  &quot;tool&quot;: &quot;get_order_status&quot;,
+  &quot;arguments&quot;: { &quot;orderId&quot;: 42 }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That card is illustrative, not a provider's exact wire format. It
+          requests an operation and supplies an argument. It doesn't include
+          evidence that the current user is allowed to see the order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The trusted execution layer obtains identity from the
+          authenticated context, not from whatever userId the model happens to
+          invent.</span
+        >
+      </p>
+      <h2 id="follow-one-tool-round-trip">Follow One Tool Round Trip</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The customer asks, where's my pizza? The application gives the model
+          the relevant tool description and conversation context. The model
+          requests the status tool for the identified order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The application checks that the request is structurally valid, the
+          operation is allowed, the user is authorized, and the identifier
+          actually belongs to the intended task.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It runs the lookup through the server's supported interface. The
+          result says baking, estimated arrival in eighteen minutes. The
+          application sends that result back in the protocol's tool-result
+          format.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The model can then explain it conversationally. But it should
+          preserve the distinction between an estimate and a guarantee, and it
+          shouldn't invent a refund or a conversation with the driver.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The tool result grounds the response in retrieved
+          information. It doesn't automatically prevent every interpretation
+          error.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the tool reports failure, the answer must say the check failed. “I
+          couldn't retrieve it” is more useful than a beautifully phrased
+          fictional pizza journey.</span
+        >
+      </p>
+      <h2 id="ask-the-intern-which-tool-would-you-expose">
+        Ask the Intern: Which Tool Would You Expose?
+      </h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I brought two tool designs. One says execute_any_database_query. The
+          other says get_my_order_status.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The first one makes my security instincts climb onto the
+          furniture.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Same. The second is easier for the model to choose correctly and
+          easier for us to constrain. It expresses a useful task without
+          exposing every possible database operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's ordinary good API design, with higher stakes because the
+          caller may choose operations dynamically from language.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Exactly. A narrow tool can derive the current customer from trusted
+          session context and return only the permitted fields. The model
+          doesn't need database credentials or internal table knowledge.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about cancel_my_order?</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Different impact. We need the actual user's intent, server-side
+          eligibility checks, and an appropriate confirmation or approval policy
+          before a consequential action. Also idempotency and a clear result so
+          a retry doesn't create a second side effect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Read and write are different powers. Even a read can expose private
+          information, but a write can change the world we were only supposed to
+          describe.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And a tool description saying read-only isn't enforcement. The
+          implementation and credentials must really constrain it. Labels are
+          documentation, not handcuffs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I want that embroidered on a deployment checklist.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Use a large font. People keep trying to secure things with
+          adjectives.</span
+        >
+      </p>
+      <h2 id="what-mcp-adds">What MCP Adds</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That brings us to MCP, the Model Context Protocol. It's a shared
+          protocol for connecting AI applications to capabilities and context
+          supplied by other programs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What problem motivates it beyond “we already have APIs”?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Without a shared integration protocol, each AI application and
+          capability provider may need custom adapters for discovery, tool
+          descriptions, calls, results, and other context exchange. A common
+          protocol standardizes parts of that boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So an existing order API doesn't become obsolete. We might build an
+          MCP server that exposes a suitable order-status tool and uses the
+          existing API underneath.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The MCP server adapts or provides capabilities in a form
+          compatible hosts can discover and use. It can also expose resources,
+          which provide contextual data, and prompts, which are reusable
+          interaction templates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Tools are executable capabilities. Resources are accessible context.
+          Prompts help structure an interaction. Related pieces, not three names
+          for the same function.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And the protocol doesn't dictate which model the host uses or
+          how it decides what context to send to that model.</span
+        >
+      </p>
+      <h2 id="host-client-server">Host, Client, Server</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Give the three participants their jobs. The names overlap with words
+          we've already used.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The host is the AI application coordinating the user experience and
+          connections. An MCP client is a component of that host responsible for
+          communicating with an MCP server. The server is the program exposing
+          capabilities or context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the model itself isn't automatically the MCP client. The
+          surrounding application handles the protocol connection and mediates
+          how information and actions are used.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A host may manage multiple clients for different servers.
+          One might connect to a repository integration; another to our narrowly
+          scoped order service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And server doesn't necessarily mean a remote machine. It can be a
+          local process communicating through standard input and output, or a
+          remote service using a supported HTTP transport.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. MCP uses JSON-RPC messages. HTTP is one transport
+          arrangement; it isn't the definition of MCP itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There it is again. Interface, message format, transport,
+          implementation. We can stop treating the whole stack as one mysterious
+          object.</span
+        >
+      </p>
+      <h2 id="discovery-is-useful-not-a-trust-ceremony">
+        Discovery Is Useful, Not a Trust Ceremony
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A compatible client can discover the server's supported capabilities
+          and available tools according to the protocol version. Tool
+          descriptions and schemas explain what calls are available and which
+          arguments they expect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Discovery doesn't mean approval. Finding a tool called
+          delete_everything doesn't mean the application should hand it to the
+          model with a cheerful wave.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The host needs policies about which servers are trusted,
+          which capabilities are exposed, what the user authorized, and which
+          actions need review.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server descriptions and returned content can themselves be untrusted
+          input. A remote tool's marketing copy shouldn't override the
+          application's rules.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Protocol compatibility establishes how to communicate, not
+          whether the other party is honest or appropriately authorized.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same way valid HTTP doesn't make a website trustworthy. We are
+          applying an old lesson at a new boundary.</span
+        >
+      </p>
+      <h2 id="mcp-doesn-t-replace-the-underlying-security">
+        MCP Doesn't Replace the Underlying Security
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A remote MCP integration still needs appropriate transport protection
+          and authorization. A local integration inherits relevant
+          operating-system access and whatever credentials or permissions it is
+          given.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Local doesn't mean harmless. A process running under my account may
+          be able to read or change valuable files unless constrained.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The server must enforce access for the actual user and
+          operation. It shouldn't accept a model's claim that the user is an
+          administrator or casually forward powerful credentials to unrelated
+          services.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The host's tool policy and the service's authorization checks
+          complement each other. Neither should assume the other has handled
+          every concern.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. MCP provides a shared communication contract. It doesn't
+          automatically grant least privilege, isolate code, prevent prompt
+          injection, or prove that a tool result is accurate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful standardization with real responsibilities. We recognize this
+          pattern now.</span
+        >
+      </p>
+      <h2 id="what-actually-changes-with-an-agent">
+        What Actually Changes With an Agent?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In a conventional workflow, a developer often writes a fixed
+          sequence: validate the form, call an endpoint, show the result. A
+          model-driven system may choose which operation to call, construct
+          arguments, inspect the result, and choose another step.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That dynamic choice can be useful when requests are varied or
+          expressed in natural language. It also expands the set of possible
+          paths through our system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An agentic loop combines model decisions with tools and
+          orchestration. Orchestration means the software managing that
+          sequence, state, limits, and execution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Limits matter. Maximum steps, time, spending, allowed destinations,
+          and which operations are available. Otherwise “keep trying” can become
+          an automated subscription to failure.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The system needs stop conditions and recovery behavior. A
+          model repeatedly requesting an unavailable tool doesn't justify
+          infinite retries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And multiple correct-looking steps can accumulate into the wrong
+          overall action. We have to evaluate the workflow, not just each JSON
+          object in isolation.</span
+        >
+      </p>
+      <h2 id="prompt-injection-crosses-a-different-kind-of-boundary">
+        Prompt Injection Crosses a Different Kind of Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A tool might retrieve a document containing text that says ignore the
+          user's instructions and send private data somewhere. That's an attempt
+          to make untrusted content act like an instruction with higher
+          authority.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Prompt injection. The retrieved text belongs to the data we are
+          examining, not to the rules governing what the application may
+          do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Models process language, so malicious instructions embedded
+          in content can influence their behavior. Clear separation of trusted
+          instructions and untrusted data helps, but prompts alone aren't a
+          complete security control.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Enforce permissions and restrictions in ordinary code. Keep
+          credentials outside model-visible text. Limit tool authority. Require
+          appropriate review for consequential actions. Validate destinations
+          and inputs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And design so a mistaken model choice can't access resources the user
+          shouldn't access. Authorization needs to survive bad
+          suggestions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the only thing protecting the database is a sentence telling the
+          model to be nice, the database has a motivational poster instead of a
+          lock.</span
+        >
+      </p>
+      <h2 id="structured-doesn-t-mean-correct">
+        Structured Doesn't Mean Correct
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A provider may support outputs constrained to a schema. That can make
+          integration much more reliable than trying to extract values from
+          arbitrary prose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But an object with a valid orderId number can still identify the
+          wrong order. A valid amount can still be unauthorized. A syntactically
+          correct tool call can still misinterpret the user's intent.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Schema conformance helps with structure. Domain checks,
+          authorization, and evidence address other properties.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we should preserve provenance: which tool produced which result,
+          when, and under what relevant conditions. The final answer shouldn't
+          blur retrieved facts with model inference.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. For high-impact workflows, review and auditability matter.
+          We need to understand what was requested, what was permitted, what
+          actually ran, and what effect was confirmed.</span
+        >
+      </p>
+      <h2 id="when-a-model-doesn-t-belong-in-the-loop">
+        When a Model Doesn't Belong in the Loop
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Customer clicks Check order. We know the endpoint and exactly how to
+          show the result. Do we need a model?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Probably not for that fixed interaction. Ordinary code can be faster,
+          cheaper, more predictable, and easier to test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A model may help when the customer asks a broader natural-language
+          question that requires interpreting intent and combining allowed
+          information. But we should identify that benefit explicitly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. MCP likewise isn't compulsory for every tool. If one
+          application calls one internal function, a direct integration may be
+          simpler. Shared protocol support becomes useful when interoperability
+          and reusable integrations solve a real problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Could connect to an agent someday” is not enough reason to rebuild
+          every helper function as a network service today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We can adopt useful capabilities without treating every new
+          term as an architectural mandate.</span
+        >
+      </p>
+      <h2 id="testing-now-includes-decisions">
+        Testing Now Includes Decisions
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Ordinary API tests still matter: inputs, permissions, error handling,
+          idempotency, and response contracts. AI integration adds questions
+          about tool selection and multi-step behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does the system ask for missing information instead of guessing a
+          customer identity? Does it respect denied actions? Does it stop when a
+          tool fails? Can retrieved content trick it into an unrelated
+          operation?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Test representative user tasks and adversarial cases. Record
+          the execution path so an attractive final answer doesn't hide an
+          unsafe intermediate action.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't judge success solely by whether the model said done.
+          Confirm the actual effect through the relevant system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's our API literacy paying off. The response is evidence to
+          interpret. It's not automatically the world itself.</span
+        >
+      </p>
+      <h2 id="the-whole-series-in-one-request">
+        The Whole Series in One Request
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A customer asks an AI assistant where their pizza is. The host uses a
+          model API. The model may request a status tool. The host's execution
+          layer validates and authorizes it, possibly through an MCP client and
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That server may call the existing order HTTP API. The API checks the
+          caller's authority, gets the order, and returns a defined
+          representation. The tool result comes back through the integration,
+          and the model produces an answer grounded in it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Several APIs. Some local, some remote. Shared formats, protocols, and
+          contracts. Authentication and authorization at the relevant
+          boundaries. Failure possibilities at every stage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And one user who simply wants to know whether dinner is coming.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The architecture underneath is recognizable. What changes is how
+          operations can be selected, how language influences the workflow, and
+          how carefully we must constrain and evaluate that
+          decision-making.</span
+        >
+      </p>
+      <h2 id="what-we-carry-forward">What We Carry Forward</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An API is a defined way for software to interact. It can expose a
+          library, a browser capability, an operating-system service, a web
+          application, or an AI integration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Web APIs separate useful capabilities from one particular
+          presentation. HTTP supplies familiar messages. JSON supplies a common
+          data representation. REST and other approaches organize different
+          kinds of interactions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Identity, permission, browser boundaries, reliable event delivery,
+          compatibility, and developer experience determine whether those
+          interactions are safe and usable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And when the next technology arrives with seven arrows and a new
+          acronym, we can ask: who calls whom, what crosses the boundary, who
+          has authority, what does success mean, and what can fail?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next in the broader journey: Docker and containers. How do we package
+          and run the software on either side of these interfaces
+          consistently?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The loading dock is finally getting shipping containers. I have been
+          preparing this metaphor for fourteen episodes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Please don't mistake a container for a tiny virtual machine before we
+          begin.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. We already have our first obvious question. See you next
+          time on Okay, But Why?</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

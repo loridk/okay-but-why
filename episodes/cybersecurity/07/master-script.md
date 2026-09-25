@@ -25,7 +25,7 @@ JULES: The hosting panel is choosing violence.
 
 PARISA: Fine.
 
-My TLS certificate expired and the browser has turned my perfectly innocent website into a crime scene.
+PARISA: My TLS certificate expired and the browser has turned my perfectly innocent website into a crime scene.
 
 JULES: That is because the browser no longer has enough evidence that the connection is trustworthy.
 
@@ -37,21 +37,21 @@ JULES: Security warnings are supposed to be dramatic.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
 PARISA: Last time we learned cryptographic primitives.
 
-Symmetric encryption.
+PARISA: Symmetric encryption.
 
-Asymmetric encryption.
+PARISA: Asymmetric encryption.
 
-Hashes.
+PARISA: Hashes.
 
-Signatures.
+PARISA: Signatures.
 
-Keys.
+PARISA: Keys.
 
 JULES: Today we use them in one of the most important security protocols developers interact with every day.
 
@@ -84,13 +84,13 @@ JULES: Exactly.
 
 PARISA: Coffee-shop Wi-Fi.
 
-ISP.
+PARISA: ISP.
 
-Corporate proxy.
+PARISA: Corporate proxy.
 
-Compromised router.
+PARISA: Compromised router.
 
-Malicious access point.
+PARISA: Malicious access point.
 
 JULES: Any untrusted or compromised point in the path is why we want end-to-end protection between client and server.
 
@@ -105,13 +105,13 @@ PARISA: Let’s settle the naming thing.
 
 JULES: SSL came first.
 
-Secure Sockets Layer.
+JULES: Secure Sockets Layer.
 
 PARISA: Old protocol family.
 
 JULES: Obsolete and insecure.
 
-TLS—Transport Layer Security—is the modern successor.
+JULES: TLS—Transport Layer Security—is the modern successor.
 
 PARISA: People still casually say SSL certificate.
 
@@ -134,11 +134,11 @@ JULES: Yes.
 
 JULES: Three big properties.
 
-Encryption.
+JULES: Encryption.
 
-Integrity.
+JULES: Integrity.
 
-Authentication.
+JULES: Authentication.
 
 PARISA: Encryption so observers can’t read the HTTP contents.
 
@@ -161,7 +161,7 @@ JULES: Yep.
 
 PARISA: I type `https://example.com`.
 
-How does my browser know the server it reached is really `example.com`?
+PARISA: How does my browser know the server it reached is really `example.com`?
 
 JULES: The server presents a digital certificate.
 
@@ -175,7 +175,7 @@ JULES: Yes.
 
 PARISA: But now I have another problem.
 
-Why should I trust the issuer?
+PARISA: Why should I trust the issuer?
 
 JULES: Welcome to PKI.
 
@@ -211,7 +211,7 @@ PARISA: Let’s make the chain explicit.
 
 JULES: **Root CA** is the trust anchor.
 
-Its certificate is typically self-signed and distributed through operating systems, browsers, or managed trust stores.
+JULES: Its certificate is typically self-signed and distributed through operating systems, browsers, or managed trust stores.
 
 PARISA: We trust it because it was placed in the trusted store through some external process.
 
@@ -233,9 +233,9 @@ PARISA: Why not have root CAs sign every website directly?
 
 JULES: Protect the root keys.
 
-Root keys can be kept offline or used rarely.
+JULES: Root keys can be kept offline or used rarely.
 
-If an intermediate is compromised, it can be revoked without replacing the entire root trust anchor.
+JULES: If an intermediate is compromised, it can be revoked without replacing the entire root trust anchor.
 
 PARISA: Blast radius.
 
@@ -248,17 +248,17 @@ PARISA: What does the browser check?
 
 JULES: Several things.
 
-Is the certificate currently valid?
+JULES: Is the certificate currently valid?
 
-Is the requested hostname included?
+JULES: Is the requested hostname included?
 
-Does the certificate chain lead to a trusted root?
+JULES: Does the certificate chain lead to a trusted root?
 
-Are the signatures valid?
+JULES: Are the signatures valid?
 
-Has the certificate been revoked, where revocation checking applies?
+JULES: Has the certificate been revoked, where revocation checking applies?
 
-Are the algorithms and parameters acceptable?
+JULES: Are the algorithms and parameters acceptable?
 
 PARISA: So if the certificate says `evil.example` but I requested `bank.example`, browser says no.
 
@@ -283,9 +283,9 @@ PARISA: Certificates prove who owns the company, right?
 
 JULES: Careful.
 
-Many common web certificates are **Domain Validation**, DV.
+JULES: Many common web certificates are **Domain Validation**, DV.
 
-They primarily prove control over the domain name at issuance time.
+JULES: They primarily prove control over the domain name at issuance time.
 
 PARISA: Not “this company is morally trustworthy.”
 
@@ -314,21 +314,21 @@ PARISA: Okay. How does the connection get established?
 
 JULES: Simplified TLS 1.3 version.
 
-The client says hello and offers supported cryptographic parameters.
+JULES: The client says hello and offers supported cryptographic parameters.
 
-The server responds with its choices and certificate.
+JULES: The server responds with its choices and certificate.
 
-They perform a key exchange.
+JULES: They perform a key exchange.
 
-The client validates the certificate.
+JULES: The client validates the certificate.
 
-Both sides derive symmetric session keys.
+JULES: Both sides derive symmetric session keys.
 
-Then application traffic is encrypted.
+JULES: Then application traffic is encrypted.
 
 PARISA: So asymmetric crypto helps establish trust and shared secrets.
 
-Symmetric crypto handles the actual bulk data.
+PARISA: Symmetric crypto handles the actual bulk data.
 
 JULES: Exactly what we discussed last episode.
 
@@ -362,13 +362,13 @@ PARISA: Why do certificates expire?
 
 JULES: Several reasons.
 
-Limit the lifetime of credentials.
+JULES: Limit the lifetime of credentials.
 
-Force periodic revalidation.
+JULES: Force periodic revalidation.
 
-Reduce exposure if keys or information become stale.
+JULES: Reduce exposure if keys or information become stale.
 
-Encourage algorithm and ecosystem updates.
+JULES: Encourage algorithm and ecosystem updates.
 
 PARISA: Operational downside: expired certificates cause outages.
 
@@ -382,7 +382,7 @@ PARISA: Let’s Encrypt changed the web here.
 
 JULES: Massively.
 
-Free automated DV certificates made HTTPS much easier to deploy at scale.
+JULES: Free automated DV certificates made HTTPS much easier to deploy at scale.
 
 PARISA: Which is a reminder that good security gets adopted faster when it stops being painful.
 
@@ -401,13 +401,13 @@ PARISA: If attacker steals the server private key—
 
 JULES: Severity depends on protocol configuration and timing, but it is serious.
 
-They may impersonate the server under some conditions until the credential is revoked or expires.
+JULES: They may impersonate the server under some conditions until the credential is revoked or expires.
 
 PARISA: So certificate management includes protecting private keys.
 
 JULES: Yes.
 
-Hardware Security Modules, cloud key services, restricted permissions, rotation, monitoring.
+JULES: Hardware Security Modules, cloud key services, restricted permissions, rotation, monitoring.
 
 PARISA: Not `private-key.pem` emailed to five developers.
 
@@ -432,7 +432,7 @@ PARISA: Browser asks whether the certificate is still good.
 
 JULES: Conceptually, yes.
 
-Real browser revocation behavior has complexities and tradeoffs around privacy, performance, and failure handling.
+JULES: Real browser revocation behavior has complexities and tradeoffs around privacy, performance, and failure handling.
 
 PARISA: Security infrastructure is never just one clean request.
 
@@ -500,15 +500,15 @@ JULES: Defense in depth through browser policy.
 
 PARISA: Cloud architecture complication.
 
-Sometimes TLS ends at a load balancer or reverse proxy.
+PARISA: Sometimes TLS ends at a load balancer or reverse proxy.
 
 JULES: Right.
 
-That’s **TLS termination**.
+JULES: That’s **TLS termination**.
 
 PARISA: Client has encrypted connection to the edge.
 
-Then the proxy talks to backend systems.
+PARISA: Then the proxy talks to backend systems.
 
 JULES: Which may use another encrypted connection or, depending on architecture, plaintext inside a trusted network.
 
@@ -598,7 +598,7 @@ JULES: You are trying to make this segment longer.
 
 PARISA: Important distinction.
 
-HTTPS protects transport.
+PARISA: HTTPS protects transport.
 
 JULES: Correct.
 
@@ -639,23 +639,23 @@ JULES: Yep.
 
 PARISA: Browser trusts root CAs.
 
-Root authorizes intermediates.
+PARISA: Root authorizes intermediates.
 
-Intermediate signs site certificate.
+PARISA: Intermediate signs site certificate.
 
-Browser verifies chain, hostname, validity, and signatures.
+PARISA: Browser verifies chain, hostname, validity, and signatures.
 
-TLS performs a handshake.
+PARISA: TLS performs a handshake.
 
-Both sides derive symmetric keys.
+PARISA: Both sides derive symmetric keys.
 
-Then HTTP travels inside the protected channel.
+PARISA: Then HTTP travels inside the protected channel.
 
 JULES: Exactly.
 
 PARISA: Which means HTTPS is not “the server has a certificate.”
 
-It is certificate validation plus cryptographic negotiation plus encrypted authenticated transport.
+PARISA: It is certificate validation plus cryptographic negotiation plus encrypted authenticated transport.
 
 JULES: Beautiful.
 
@@ -695,7 +695,7 @@ JULES: Modern TLS uses asymmetric mechanisms to establish shared secrets and sym
 
 PARISA: HSTS helps prevent downgrade to HTTP.
 
-mTLS authenticates clients with certificates too.
+PARISA: mTLS authenticates clients with certificates too.
 
 JULES: And HTTPS protects the connection, not the moral character or application security of the website.
 

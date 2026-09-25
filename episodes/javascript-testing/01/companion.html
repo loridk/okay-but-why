@@ -1,0 +1,1372 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: Why Are We Testing Code That Already Works? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to JavaScript Testing episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: Why Are We Testing Code That Already Works?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/bd06cf0c-5542-4ece-8cfc-e53c6db6c33a"
+      ></script>
+      <div class="redcirclePlayer-bd06cf0c-5542-4ece-8cfc-e53c6db6c33a"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#a-memory-we-can-run">A Memory We Can Run</a></li>
+        <li><a href="#the-bug-that-came-back">The Bug That Came Back</a></li>
+        <li>
+          <a href="#before-the-testing-framework-arrives"
+            >Before the Testing Framework Arrives</a
+          >
+        </li>
+        <li><a href="#who-decides-the-answer">Who Decides the Answer?</a></li>
+        <li>
+          <a href="#a-passing-test-makes-a-small-claim"
+            >A Passing Test Makes a Small Claim</a
+          >
+        </li>
+        <li>
+          <a href="#the-refactor-we-can-explain">The Refactor We Can Explain</a>
+        </li>
+        <li>
+          <a href="#read-the-failure-like-a-developer"
+            >Read the Failure Like a Developer</a
+          >
+        </li>
+        <li>
+          <a href="#the-red-check-is-part-of-the-check"
+            >The Red Check Is Part of the Check</a
+          >
+        </li>
+        <li>
+          <a href="#what-deserves-automation-first"
+            >What Deserves Automation First?</a
+          >
+        </li>
+        <li>
+          <a href="#the-human-is-still-in-the-room"
+            >The Human Is Still in the Room</a
+          >
+        </li>
+        <li>
+          <a href="#try-the-question-before-the-code"
+            >Try the Question Before the Code</a
+          >
+        </li>
+        <li>
+          <a href="#the-first-week-on-a-real-project"
+            >The First Week on a Real Project</a
+          >
+        </li>
+        <li><a href="#okay-that-s-why">Okay, That's Why</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>The button works.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Excellent. How do we know?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I clicked it. A pizza appeared in my basket. I removed the pizza. I
+          put the pizza back because that felt unnecessarily hostile.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And after we change the delivery fee?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I click it again.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And after we change the discount? And when somebody changes the cart
+          while you're on holiday?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They can click it. I do not personally own the clicking
+          franchise.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to <em>Okay, But Why?</em>. We're starting JavaScript Testing
+          with the question that gets skipped when a tutorial opens by
+          installing four packages.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why am I writing code to check code that I have already seen
+          working?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because we'd like to keep checking certain things without requiring a
+          human to remember every previous incident.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine. But if this turns into making a green progress bar happy, I'm
+          leaving.</span
+        >
+      </p>
+      <h2 id="a-memory-we-can-run">A Memory We Can Run</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's return to our fictional Nervous Robot Pizza Delivery. A
+          customer chooses pizzas, sees a total, and places an order. You've
+          checked that journey manually. That is evidence.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you. Sometimes testing discussions make it sound as though
+          using the actual website is embarrassing peasant behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It isn't. You notice things an automated check may never have been
+          instructed to notice. Confusing wording. A keyboard trap. An error
+          that technically appears but makes no human sense.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The order button that runs away when the error message makes the
+          layout jump. I have met that button. We are enemies.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated tests let us repeat selected checks. Given this starting
+          situation, do this thing, then compare what happened with what we
+          expected.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Starting situation, action, observation. That's a test whether a
+          person does it or a program does it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Automation makes some checks repeatable and relatively cheap to
+          rerun. It doesn't automatically make them good checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A photocopier will reproduce a terrible memo with admirable
+          consistency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The judgment is deciding what matters and what observation
+          would tell us it broke. The computer handles repetition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the value isn't that machines have superior pizza judgment. It's
+          that I can store a specific expectation somewhere other than my tired
+          brain.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A memory we can run. And share with the next person working on the
+          code.</span
+        >
+      </p>
+      <h2 id="the-bug-that-came-back">The Bug That Came Back</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Give me the incident that pays for this.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our fictional delivery rule says orders with a subtotal of at least
+          twenty dollars get free delivery. Below that, delivery costs three
+          dollars. We're using dollars and whole cents for this teaching
+          example, with no tax, discount, or geographic complications yet.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>At least twenty. So twenty itself qualifies.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Somebody writes greater than twenty. Nineteen dollars gets a fee.
+          Twenty-one gets free delivery. Their two manual checks pass. Exactly
+          twenty is wrong.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A boundary bug. Not an exotic computer science problem. A very
+          ordinary misunderstanding represented by one character.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We fix it. Six months later somebody rewrites the calculation and
+          makes the same mistake. A regression is behavior that used to work
+          becoming broken again after a change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which doesn't have to mean literally the same line came back. We lost
+          the promised behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A regression test records that example: a subtotal of two
+          thousand cents should have a zero-cent fee. Each time we run the test,
+          it asks whether that promise still holds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It won't discover every pricing bug. It remembers this one.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a small family of nearby examples can remember the rule more
+          clearly than the single incident. Below the threshold, exactly at it,
+          above it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is already more useful than “test returns something.” A wrong
+          price is also something. Sometimes it's an excitingly large
+          something.</span
+        >
+      </p>
+      <h2 id="before-the-testing-framework-arrives">
+        Before the Testing Framework Arrives
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can demonstrate the idea using ordinary JavaScript before choosing
+          a test runner.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Good. Let the concept enter the room before its luggage.</span>
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>javascript</span></figcaption>
+        <pre tabindex="0"><code>function deliveryFee(subtotalCents) {
+  return subtotalCents &gt;= 2000 ? 0 : 300;
+}
+
+const actual = deliveryFee(2000);
+if (actual !== 0) {
+  throw new Error(`Expected free delivery; received ${actual} cents`);
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We call a function with two thousand cents. It returns the fee. If
+          the fee isn't zero, we throw an error that describes the
+          disagreement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >None of that is testing-specific syntax. The function, constant,
+          comparison, and thrown error are JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The question mark and colon are JavaScript's conditional
+          operator. Here they mean return zero if the threshold is met;
+          otherwise return three hundred. We could write the same decision using
+          an if statement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the backticks make a JavaScript template literal. The
+          dollar-and-braces part inserts the actual value into the message. It
+          isn't the test runner issuing a tiny invoice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This check doesn't need a framework to be a check. But if we have
+          fifty checks, we'll want useful reporting, separate names, setup, and
+          a way to keep running after one fails.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our primitive version stops at the first uncaught error. Useful proof
+          of the idea; inconvenient test-suite receptionist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's part of why test runners exist. We'll separate their
+          responsibilities in Episode Four. Today, notice that a test runs some
+          real code and compares its behavior with an expectation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important sentence is “two thousand qualifies,” not which package
+          printed the failure in red.</span
+        >
+      </p>
+      <h2 id="who-decides-the-answer">Who Decides the Answer?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >There's an obvious problem. I wrote the function. I wrote the test.
+          If I misunderstood the delivery policy, I can be wrong in
+          stereo.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The source of the expected answer is sometimes called a test
+          oracle. That doesn't mean mystical software that knows truth. It means
+          our basis for deciding whether the result is right.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In this case, the agreed pricing rule and worked examples. Preferably
+          confirmed with whoever owns that rule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A test can faithfully enforce the wrong requirement. Or we
+          can accidentally calculate the expected answer using the same faulty
+          logic as the application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I shouldn't say, “Expected is whatever this other copy of my fee
+          function says.” That's two interns checking each other's imaginary
+          homework.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Work out a concrete answer independently. For exactly twenty dollars,
+          the rule says free delivery. We can write zero explicitly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Hard-coded test data isn't automatically bad. Sometimes the visible
+          literal is the explanation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Later we can use properties and generated examples for broader
+          exploration, but those still need meaningful properties. A computer
+          cannot infer our business intent from enthusiasm.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can infer it from a meeting transcript only as badly as the rest
+          of us.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A useful test discussion might reveal the requirement isn't settled.
+          Does the threshold use the subtotal before discounts or after
+          discounts? Do delivery orders and pickup orders behave
+          differently?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the test is helping us ask the question. It isn't permission to
+          silently pick an answer and convert it into company policy.</span
+        >
+      </p>
+      <h2 id="a-passing-test-makes-a-small-claim">
+        A Passing Test Makes a Small Claim
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's read the green result carefully. This implementation produced
+          the expected output for these inputs in this environment during this
+          run.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That is a much smaller sentence than “the website works.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Much smaller. A fee function test doesn't prove the interface
+          displays the fee. It doesn't prove the server uses the same rule. It
+          doesn't prove the customer can reach the checkout with a
+          keyboard.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It also doesn't prove that a browser-submitted total should be
+          trusted. A customer can modify their request regardless of our
+          beautifully tested JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The server remains responsible for authoritative pricing and
+          validation. Tests should check that responsibility at the server
+          boundary too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Accessibility and security haven't been promoted to magical
+          consequences of having tests.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >They're things we make specific checks for, combined with review and
+          other forms of evaluation. We might automate a permission-denied case
+          or check that a form field has an accessible name.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And then acknowledge what those checks don't cover. One denied
+          request isn't a complete authorization review. One label isn't an
+          accessible checkout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That limitation doesn't make the checks worthless. It makes their
+          scope important.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A smoke alarm doesn't cook dinner. I still want the smoke
+          alarm.</span
+        >
+      </p>
+      <h2 id="the-refactor-we-can-explain">The Refactor We Can Explain</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose our fee logic is spread through a long function. We want to
+          extract it into a smaller function without changing what customers
+          pay.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's refactoring: changing internal structure while preserving the
+          behavior we mean to preserve. Not sneaking a new pricing model in
+          under a reassuring commit message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We establish tests for the relevant behavior first. Then change the
+          structure. If the same checks pass, we have evidence we preserved
+          those cases.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Evidence, not a force field. But better than crossing my fingers
+          while moving twelve conditions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Good tests can reduce the effort required to make a change
+          responsibly. Badly coupled tests may fail whenever we rename a helper,
+          even though the output is unchanged.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then they protect the furniture arrangement instead of the building's
+          function.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes internal behavior matters. A function that promises to
+          avoid duplicate requests may need an interaction check. But we should
+          know why we're asserting it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a test says a private helper must be called twice because that's
+          what today's implementation does, it may be preserving an
+          accident.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll return to that throughout the series. Tests should make
+          intentional changes easier to assess, not make all changes equally
+          miserable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I appreciate this goal. “Maintenance tool” sounds considerably better
+          than “additional code nobody is allowed to touch.”</span
+        >
+      </p>
+      <h2 id="read-the-failure-like-a-developer">
+        Read the Failure Like a Developer
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine a test fails: expected zero, received three hundred.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I want the test name, the input, and the relevant rule. “Exactly
+          twenty dollars qualifies for free delivery” gives me somewhere to
+          start.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What don't you do?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Immediately replace zero with three hundred until the dashboard calms
+          down. First I ask whether the application is wrong, the test is wrong,
+          or the requirement changed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A failing check is a disagreement. Investigation tells us what the
+          disagreement means.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Could also be the environment. Missing configuration, wrong time
+          zone, stale data, or a dependency behaving differently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A good failure message narrows the search, but it doesn't
+          perform the diagnosis. That's one reason to keep tests focused and
+          fixtures understandable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fixture meaning prepared test data or setup, not the light hanging
+          over my desk. Our fictional cart containing one twenty-dollar pizza is
+          a fixture.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. If a delivery test requires forty unrelated customer fields,
+          reading the failure becomes an archaeological expedition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if it depends on the order a different test ran in, the
+          archaeology is haunted.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tests need isolation appropriate to their scope. Each should arrange
+          what it needs and clean up state it changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We'll get to shared databases and clocks. For now, “I ran it alone
+          and it passed” is a clue, not a resolution.</span
+        >
+      </p>
+      <h2 id="the-red-check-is-part-of-the-check">
+        The Red Check Is Part of the Check
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >How do we know our test can notice the bug? Maybe I wrote an
+          assertion against the wrong value.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a new regression test, run it against the broken behavior when
+          practical. See it fail for the reason you intended. Then fix the
+          behavior and see it pass.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important part is the reason. A missing import is red, but it
+          doesn't prove we caught the fee problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Or temporarily introduce the relevant mistake in a local
+          exercise: change greater-than-or-equal to greater-than. Our boundary
+          test should reject it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then restore the correct code. Please don't publish the deliberate
+          bug as a pedagogical surprise.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is related to test-driven development: writing a failing test,
+          making it pass, and improving the design while keeping it passing. You
+          don't have to adopt an entire methodology to benefit from checking
+          that a new test fails meaningfully.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And writing the test first doesn't automatically make the requirement
+          correct. We are still responsible for the thinking part.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Tests can be written before implementation, during debugging, or
+          around existing behavior. The order helps with different goals; none
+          gives us omniscience.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A theme is developing. Computers are extremely useful and cannot
+          absolve me of being a developer.</span
+        >
+      </p>
+      <h2 id="what-deserves-automation-first">
+        What Deserves Automation First?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You're joining a project with very few tests. Where do you
+          start?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Something important, reasonably stable, and possible to observe. A
+          calculation that caused incidents. A permission rule. A critical order
+          journey. Not necessarily whichever function is easiest to reach.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Why not test every line immediately?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because we have limited time and the tests themselves cost something.
+          Writing them, understanding failures, updating fixtures, maintaining
+          the environment. I want useful confidence per unit of effort.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Frequency of change matters too. A frequently edited pricing rule may
+          benefit from fast focused checks. A fragile connection between modules
+          may need an integration test.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a low-impact prototype we're discarding tomorrow may not justify
+          an elaborate harness. Though “prototype” has a suspicious habit of
+          celebrating its fifth birthday in production.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then reassess as its role changes. Risk includes how bad a failure
+          would be, how likely it seems, and how hard it would be to detect or
+          recover from.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Don't turn that into fake arithmetic. We can discuss those factors
+          without pretending we know the bug probability to three decimal
+          places.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good point. The purpose is prioritization. Not making a spreadsheet
+          look scientifically inevitable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, a test nobody runs has limited protective value. Make the
+          checks discoverable, reasonably fast, and part of the normal
+          workflow.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Locally while changing code, and in continuous integration when code
+          is proposed for the shared project. We'll unpack the machinery
+          later.</span
+        >
+      </p>
+      <h2 id="the-human-is-still-in-the-room">
+        The Human Is Still in the Room
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say all automated tests pass and I open checkout. The error
+          says “invalid entity operation.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Our test checked that an error appeared.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A customer learns nothing. They don't know whether they were charged
+          or what to do next. That matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could improve the test to check more meaningful wording or state.
+          But a human noticing a new problem is still valuable. Exploration asks
+          questions we didn't pre-script.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Manual regression checking and exploratory testing aren't identical.
+          Following a repeatable checklist is one activity. Investigating
+          unfamiliar behavior and learning where the product feels wrong is
+          another.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated checks can free time for that investigation. They shouldn't
+          be used to dismiss it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or dismiss testers. The person who asks the question that saves us
+          from shipping a nonsense workflow is contributing engineering
+          judgment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tests also help communication. A small concrete example can expose
+          disagreement faster than a paragraph saying “delivery should work
+          correctly.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That paragraph is a haunted house for assumptions. Correctly
+          according to whom? Before which discount? In which country? For
+          pickup?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A test forces at least some of those choices into the open.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Provided we write it to express the decision, not just to increase
+          the count.</span
+        >
+      </p>
+      <h2 id="try-the-question-before-the-code">
+        Try the Question Before the Code
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Listener exercise. No laptop needed. The shop says free delivery
+          starts at twenty dollars. Name three concrete examples you would want
+          remembered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nineteen dollars and ninety-nine cents costs three dollars. Twenty
+          dollars costs zero. Twenty dollars and one cent also costs zero. That
+          tests both sides and the boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Now name something those examples don't answer.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether discounts change the qualifying subtotal. Whether pickup gets
+          charged. Whether the server enforces the rule. Whether the displayed
+          total matches the accepted order.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Excellent. The next useful action might be another test, a
+          requirements question, or a different kind of investigation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We aren't trying to feel bad that three examples don't prove the
+          universe. We're trying to know what they actually tell us.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the central habit for the series. What are we checking, why
+          does it matter, and what remains outside the check?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And can the failure tell the next tired developer something useful?
+          That developer may be me after lunch.</span
+        >
+      </p>
+      <h2 id="the-first-week-on-a-real-project">
+        The First Week on a Real Project
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me make this less tidy. I join a project on Monday. No tests.
+          Long files. Several things named final. The team needs a delivery-fee
+          change by Friday. Where does this philosophy actually start?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First, understand the current behavior and the requested change. Find
+          the path responsible for the fee. Run the application and inspect any
+          existing verification commands. Don't assume absence of a test folder
+          means nobody has checks anywhere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then choose a reachable boundary. Maybe the function can be called
+          directly. Maybe the first useful check has to go through an endpoint
+          because the logic is tangled.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Add one meaningful example around the behavior you need to
+          preserve or change. You don't need to establish a complete testing
+          architecture before making useful progress.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'd write down the rule and the expected numbers in the task too.
+          Otherwise my test becomes the only place anyone discovers we
+          interpreted “at least” differently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. Then run the new check and confirm it exercises the intended
+          code. If it exposes the bug, make the smallest appropriate correction.
+          If you're preserving existing behavior before a refactor, first
+          understand whether that behavior is intentional.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What if the code is very hard to reach without starting half the
+          application?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's information about the current design. Start with a broader
+          check if necessary, then consider a small extraction once you have
+          protection. Don't turn the deadline into an unrequested rewrite.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >By Friday we might have a few useful tests and a clearer boundary.
+          That's a real improvement even though the rest of the repository
+          hasn't become a testing textbook.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The first useful suite often grows from actual changes and
+          incidents. Each test earns its place by protecting something people
+          care about.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Who maintains it?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The team maintaining the behavior. Tests are part of the codebase.
+          Review them, update them when requirements change, and remove obsolete
+          checks deliberately. Don't assign them to a mythical future testing
+          department.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if they take twenty minutes to run, the team may avoid them
+          during tiny edits. We need feedback at a useful cadence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Keep fast focused checks easy to run while broader checks run
+          at appropriate points. We don't need every check on every keystroke,
+          but the important ones must actually happen before the decisions they
+          inform.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So on Monday I don't say, “We need tests because professional people
+          have tests.” I say, “This fee changes often, this boundary has broken
+          before, and these examples will tell us when we lose the rule.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a reason somebody can evaluate. They can ask about cost, risk,
+          and alternatives.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I like that. Testing becomes a practical response to uncertainty
+          instead of an identity badge.</span
+        >
+      </p>
+      <h2 id="okay-that-s-why">Okay, That's Why</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated tests exist because repeatedly checking selected behavior
+          by hand gets expensive, inconsistent, and difficult to share.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They let us preserve useful examples, catch regressions, and change
+          code with more evidence. They don't replace clear requirements or
+          human judgment.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next episode: unit tests. What is a unit, why are pure functions
+          convenient, and does every function deserve its own ceremonial test
+          file?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I'm prepared to have strong feelings about the ceremony.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I assumed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The button works. Now let's decide what we want to keep knowing when
+          we change it.</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

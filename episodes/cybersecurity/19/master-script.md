@@ -66,11 +66,11 @@ JULES: **SIEM** collects and correlates logs from many systems.
 
 PARISA: Search across them.
 
-Create detections.
+PARISA: Create detections.
 
-Dashboards.
+PARISA: Dashboards.
 
-Alerts.
+PARISA: Alerts.
 
 JULES: Exactly.
 
@@ -87,11 +87,11 @@ JULES: Events useful for operations and security without unnecessarily capturing
 
 PARISA: Authentication attempts.
 
-Privilege changes.
+PARISA: Privilege changes.
 
-Sensitive administrative actions.
+PARISA: Sensitive administrative actions.
 
-Access-denied events.
+PARISA: Access-denied events.
 
 JULES: Important application state changes, validation failures where useful.
 
@@ -117,7 +117,7 @@ PARISA: We know IDS and IPS.
 
 JULES: EDR watches endpoints.
 
-NDR—Network Detection and Response—focuses on network behavior.
+JULES: NDR—Network Detection and Response—focuses on network behavior.
 
 PARISA: Different sensors.
 
@@ -132,13 +132,13 @@ JULES: **SOAR** automates workflows across security tools.
 
 PARISA: Alert fires.
 
-Look up IP reputation.
+PARISA: Look up IP reputation.
 
-Disable account.
+PARISA: Disable account.
 
-Open ticket.
+PARISA: Open ticket.
 
-Notify analyst.
+PARISA: Notify analyst.
 
 JULES: Depending on confidence and policy.
 
@@ -153,7 +153,7 @@ PARISA: Threat intelligence is not a giant list of evil IP addresses.
 
 JULES: Correct.
 
-It can include attacker behavior, infrastructure, campaigns, vulnerabilities, industry targeting, tactics and techniques.
+JULES: It can include attacker behavior, infrastructure, campaigns, vulnerabilities, industry targeting, tactics and techniques.
 
 PARISA: Strategic, operational, tactical.
 
@@ -179,13 +179,13 @@ JULES: Exactly.
 
 PARISA: Alert says malicious.
 
-Actually normal.
+PARISA: Actually normal.
 
 JULES: False positive.
 
 PARISA: Alert says nothing.
 
-Actually malicious.
+PARISA: Actually malicious.
 
 JULES: False negative.
 
@@ -202,11 +202,11 @@ JULES: Baselines.
 
 PARISA: Typical login times.
 
-Traffic.
+PARISA: Traffic.
 
-Processes.
+PARISA: Processes.
 
-API volume.
+PARISA: API volume.
 
 JULES: Deviations can become signals, though anomaly does not automatically equal malicious.
 

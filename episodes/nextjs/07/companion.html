@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 7: Did We Just Put the Backend in the Component? — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 7: Did We Just Put the Backend in the Component?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/2c773c11-d5e1-4d49-8b26-b8ba0267b3ba"
+      ></script>
+      <div class="redcirclePlayer-2c773c11-d5e1-4d49-8b26-b8ba0267b3ba"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#we-still-have-a-boundary">We Still Have a Boundary</a>
+        </li>
+        <li>
+          <a href="#the-form-we-already-know">The Form We Already Know</a>
+        </li>
+        <li>
+          <a href="#a-server-function-with-explicit-responsibilities"
+            >A Server Function With Explicit Responsibilities</a
+          >
+        </li>
+        <li>
+          <a href="#expected-errors-are-useful-results"
+            >Expected Errors Are Useful Results</a
+          >
+        </li>
+        <li>
+          <a href="#connect-the-form-to-feedback"
+            >Connect the Form to Feedback</a
+          >
+        </li>
+        <li>
+          <a href="#progressive-enhancement-is-a-contract-to-verify"
+            >Progressive Enhancement Is a Contract to Verify</a
+          >
+        </li>
+        <li>
+          <a href="#pending-does-not-mean-exactly-once"
+            >Pending Does Not Mean Exactly Once</a
+          >
+        </li>
+        <li>
+          <a href="#authorization-is-about-this-operation"
+            >Authorization Is About This Operation</a
+          >
+        </li>
+        <li>
+          <a href="#mutation-and-cache-invalidation"
+            >Mutation and Cache Invalidation</a
+          >
+        </li>
+        <li>
+          <a href="#optimistic-ui-is-a-separate-choice"
+            >Optimistic UI Is a Separate Choice</a
+          >
+        </li>
+        <li><a href="#reads-are-still-reads">Reads Are Still Reads</a></li>
+        <li>
+          <a href="#test-the-user-s-failure-path"
+            >Test the User's Failure Path</a
+          >
+        </li>
+        <li>
+          <a href="#follow-one-submission-all-the-way"
+            >Follow One Submission All the Way</a
+          >
+        </li>
+        <li><a href="#keep-the-user-s-work">Keep the User's Work</a></li>
+        <li>
+          <a href="#the-caller-chooses-more-than-we-think"
+            >The Caller Chooses More Than We Think</a
+          >
+        </li>
+        <li>
+          <a href="#authentication-can-expire-mid-workflow"
+            >Authentication Can Expire Mid-Workflow</a
+          >
+        </li>
+        <li>
+          <a href="#duplicate-requests-and-idempotency"
+            >Duplicate Requests and Idempotency</a
+          >
+        </li>
+        <li>
+          <a href="#publishing-is-a-state-transition"
+            >Publishing Is a State Transition</a
+          >
+        </li>
+        <li>
+          <a href="#convenience-without-pretending"
+            >Convenience Without Pretending</a
+          >
+        </li>
+        <li>
+          <a href="#the-backend-is-still-there">The Backend Is Still There</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This form has a function attached to it.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A Server Function.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It looks like a normal function call.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There's still a network request.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Of course there is. Distributed systems in a cardigan.</span>
+      </p>
+      <h2 id="we-still-have-a-boundary">We Still Have a Boundary</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? DemoCon needs a proposal form. A speaker
+          enters a talk title and abstract. The server validates the submission
+          and stores it for review.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Review is important. Submitting a proposal doesn't instantly publish
+          it on the conference schedule. Our form is not a remote keynote
+          installation service.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. React Server Functions, integrated by Next, let
+          client-facing UI invoke server work through a function-oriented
+          interface. Used for mutations in an action context, they're commonly
+          called Server Actions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So Server Function is the broader concept. Server Action describes
+          its use for an action such as a form mutation. The names overlap in
+          everyday conversation, but they aren't a reason to treat every server
+          helper as a remotely callable action.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A plain server data helper isn't automatically a Server
+          Function. The use server directive marks functions for the framework's
+          server invocation mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And use server does not mean “make this a Server Component.” Server
+          Components are the default in our App Router context without that
+          directive.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Use client defines a client module boundary. Use server
+          identifies callable server functions. Similar-looking directives,
+          different jobs.</span
+        >
+      </p>
+      <h2 id="the-form-we-already-know">The Form We Already Know</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before the modern machinery, a form submitted fields to a server
+          endpoint. The server read the request, validated data, checked access,
+          stored a result, and returned a response or redirect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those responsibilities remain. Server Actions reduce some transport
+          wiring for UI mutations and integrate the response with React and
+          Next.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >They don't remove the network, latency, failures, retries, or
+          malicious callers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A function reference in JSX isn't an ordinary in-process
+          callback when the function lives on the server. Framework code carries
+          the request and result across the boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means arguments are untrusted. A caller can submit values
+          different from those our visible form offers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Treat an exposed action as a public-facing operation.
+          Authenticate and authorize inside the server operation. Don't rely on
+          hiding a button or trusting a disabled field.</span
+        >
+      </p>
+      <h2 id="a-server-function-with-explicit-responsibilities">
+        A Server Function With Explicit Responsibilities
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our code card illustrates the action contract. The authentication and
+          storage helpers are application infrastructure we would implement, not
+          features that appear when we import Next.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>js</span></figcaption>
+        <pre tabindex="0"><code>// app/lib/proposal-actions.js
+'use server';
+
+import { requireUser } from './auth';
+import { createPendingProposal } from './proposals';
+
+export async function submitProposal(previousState, formData) {
+  const user = await requireUser();
+  const titleValue = formData.get('title');
+  const abstractValue = formData.get('abstract');
+
+  if (typeof titleValue !== 'string' || typeof abstractValue !== 'string') {
+    return { message: 'Enter a title and an abstract.' };
+  }
+
+  const title = titleValue.trim();
+  const abstract = abstractValue.trim();
+  if (title.length &lt; 5 || title.length &gt; 120) {
+    return { message: 'Use a title between 5 and 120 characters.' };
+  }
+  if (abstract.length &lt; 40 || abstract.length &gt; 2000) {
+    return { message: 'Use an abstract between 40 and 2000 characters.' };
+  }
+
+  await createPendingProposal({ ownerId: user.id, title, abstract });
+  return { message: 'Proposal received for review.' };
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The directive belongs at the top of the separate action module.
+          Async, await, typeof, object literals, and comparisons are JavaScript.
+          FormData is a Web API. The action's invocation and integration come
+          from React and Next.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The previousState argument is here because we'll call it
+          through useActionState. We don't trust that state for authorization,
+          and this example doesn't need it to validate the new fields.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >FormData values may be strings or files, so checking their types
+          matters before calling trim. TypeScript annotations alone wouldn't
+          perform that check.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We also impose length rules. They are illustrative product
+          limits, not universal rules for talks. Request-size and abuse controls
+          still belong in the real deployment and storage boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The owner identifier comes from server-verified identity. Not a
+          hidden ownerId field supplied by the browser.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. RequireUser must actually verify identity or reject the
+          request. CreatePendingProposal must store a pending record using safe
+          database operations. This card isn't a substitute for implementing
+          those contracts.</span
+        >
+      </p>
+      <h2 id="expected-errors-are-useful-results">
+        Expected Errors Are Useful Results
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A title that's too short is an expected user-correctable condition.
+          Returning a message makes more sense than treating it as a mysterious
+          server crash.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A real form can return field-specific errors and preserve
+          entered values. An unexpected database failure belongs in the
+          application's error handling and server logging, with a safe
+          user-facing message.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No database connection string in the error paragraph. No stack trace
+          containing somebody else's submission.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Also, catching everything can accidentally swallow framework
+          control flow such as redirects. If using redirect after a write, place
+          it appropriately rather than wrapping it in a broad catch that
+          interprets it as failure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. We should understand what our error handling catches, not
+          merely write catch because the linter enjoys punctuation.</span
+        >
+      </p>
+      <h2 id="connect-the-form-to-feedback">Connect the Form to Feedback</h2>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>// app/components/ProposalForm.jsx
+'use client';
+
+import { useActionState } from 'react';
+import { submitProposal } from '../lib/proposal-actions';
+
+const initialState = { message: '' };
+
+export default function ProposalForm() {
+  const [state, formAction, pending] = useActionState(
+    submitProposal,
+    initialState,
+    '/submit',
+  );
+
+  return (
+    &lt;form action={formAction}&gt;
+      &lt;label htmlFor=&quot;proposal-title&quot;&gt;Talk title&lt;/label&gt;
+      &lt;input id=&quot;proposal-title&quot; name=&quot;title&quot; required minLength={5} maxLength={120} /&gt;
+      &lt;label htmlFor=&quot;proposal-abstract&quot;&gt;Abstract&lt;/label&gt;
+      &lt;textarea id=&quot;proposal-abstract&quot; name=&quot;abstract&quot; required minLength={40} maxLength={2000} /&gt;
+      &lt;button type=&quot;submit&quot; disabled={pending}&gt;
+        {pending ? 'Submitting…' : 'Submit proposal'}
+      &lt;/button&gt;
+      &lt;p role=&quot;status&quot;&gt;{state.message}&lt;/p&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >UseActionState is a React Hook. It connects an action result to
+          component state and exposes the action dispatch function and pending
+          state. The three-item destructuring is JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >HtmlFor is React's spelling of the label association. Name supplies
+          the key the server reads. Required and the length attributes provide
+          browser-side assistance, while the server repeats the actual trust
+          checks.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Pending feedback tells the user something is happening. The
+          status region makes the resulting message available without requiring
+          the user to guess where it appeared.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A production form should associate specific field errors with their
+          fields and manage focus when a summary needs attention. This compact
+          card demonstrates the response loop, not every form behavior we would
+          ship.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And the submitted values need preservation on validation
+          failure. React's action form behavior can reset uncontrolled fields
+          after a successful action invocation, so returning a validation
+          message alone isn't a complete value-preservation strategy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important distinction. We would return safe field values and
+          deliberately restore them, or use a controlled form strategy. We
+          mustn't erase a carefully written abstract because its title was one
+          character short.</span
+        >
+      </p>
+      <h2 id="progressive-enhancement-is-a-contract-to-verify">
+        Progressive Enhancement Is a Contract to Verify
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A form using a Server Action can have a baseline that works before
+          client JavaScript finishes loading. That's one benefit of integrating
+          with actual form semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the exact behavior depends on where and how the form is rendered.
+          Server Component forms can submit without JavaScript. Client Component
+          flows need care around hydration and action state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Our useActionState example supplies a stable permalink, slash
+          submit. For the pre-hydration navigation path to preserve the action
+          state, that destination must render the same form with the same action
+          and permalink.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's not enough to paste a URL into a Hook and declare progressive
+          enhancement complete. The destination route must exist, the form
+          contract must match, and we should test with delayed or disabled
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Client-only embellishments, such as a live character
+          counter, can enhance the form. They shouldn't be the sole place
+          essential validation or the ability to submit exists if we're
+          promising that baseline.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Browser validation is also assistance, not server security. A direct
+          request can bypass it completely.</span
+        >
+      </p>
+      <h2 id="pending-does-not-mean-exactly-once">
+        Pending Does Not Mean Exactly Once
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We disabled the button while pending. Does that prevent duplicate
+          submissions?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It reduces accidental repeated clicks in that UI. It doesn't
+          guarantee exactly-once processing. Network retries, multiple tabs, or
+          deliberate requests can still duplicate an operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So if duplicates matter, the server needs a policy. Maybe a unique
+          submission token scoped to the authenticated user, with a database
+          constraint or idempotency record.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That's an application and storage design. A disabled button
+          isn't a distributed lock.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the request times out, the write may already have succeeded.
+          “No response” doesn't necessarily mean “nothing happened.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A retry-safe operation and a way to inspect the resulting
+          submission help users recover without creating duplicates. We don't
+          need to implement that infrastructure in a syntax card, but we need to
+          understand why it exists.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Distributed systems in a cardigan, as promised.</span>
+      </p>
+      <h2 id="authorization-is-about-this-operation">
+        Authorization Is About This Operation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Submitting one's own proposal and publishing any proposal are
+          different permissions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our submit action uses the authenticated user's identifier. A publish
+          action must independently verify organizer privileges and the target
+          record's eligibility.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Binding an argument to an action or hiding it in a form
+          doesn't make it trustworthy. Check identifiers, ownership, allowed
+          transitions, and current state on the server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a speaker can edit only their own draft, an action must enforce
+          that condition in its data operation. Otherwise changing an identifier
+          can turn an edit form into someone else's edit form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Good checks are close enough to the read or write that
+          alternate callers can't accidentally bypass them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next also has request protections around actions, including
+          origin-related checks, but those don't replace our business
+          authorization. Framework protections and application permissions solve
+          different problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Use a maintained patched release, understand deployment
+          origin configuration, and don't disable protections casually to get a
+          proxy setup working.</span
+        >
+      </p>
+      <h2 id="mutation-and-cache-invalidation">
+        Mutation and Cache Invalidation
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does a new pending proposal invalidate the public schedule tag from
+          last episode?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Pending proposals aren't public sessions. Invalidating
+          public-sessions on every private submission would be unnecessary and
+          would imply a product relationship that doesn't exist.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. The public schedule changes when an organizer publishes or
+          edits a public session.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. After an authorized publication successfully commits, the
+          Server Action can call updateTag for the affected public data so
+          subsequent reads don't reuse the old result.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 3">
+        <figcaption>Code card 3<span>js</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>// Excerpt inside an organizer-authorized publication action:
+await publishProposal(proposalId);
+updateTag('public-sessions');</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >PublishProposal is application code. UpdateTag is imported from next
+          slash cache and is allowed in Server Actions. Authorization,
+          validation, transaction handling, and imports are omitted from this
+          excerpt, not optional in the real operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A private proposal queue might have its own freshness
+          strategy. We aren't caching it with the public tag. The invalidation
+          should match data relationships, not just use the same string
+          everywhere.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And expiration doesn't push updates to every open attendee tab. It
+          governs later reads. If we need live schedule updates, that's an
+          additional requirement.</span
+        >
+      </p>
+      <h2 id="optimistic-ui-is-a-separate-choice">
+        Optimistic UI Is a Separate Choice
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could immediately show a proposal as submitted before the response
+          arrives. That's optimistic UI: predicting success to make interaction
+          feel faster.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful sometimes, but we need pending and failure states. We can't
+          permanently tell someone “received” before the server has received and
+          stored it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. React has tools for optimistic state, but using them
+          responsibly means defining rollback or correction behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For our modest proposal form, a clear pending message and confirmed
+          success might be perfectly good. No need to make uncertainty more
+          theatrical.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Agreed. Optimism is a product decision, not a required accompaniment
+          to Server Actions.</span
+        >
+      </p>
+      <h2 id="reads-are-still-reads">Reads Are Still Reads</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Could I call a Server Action to fetch every piece of data in my
+          page?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can misuse many mechanisms, but actions are designed around
+          mutations and action flows. Initial server reads belong naturally in
+          Server Components or shared server data helpers. Public HTTP data
+          contracts belong in Route Handlers when needed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we don't replace the unnecessary self-fetch from last episode with
+          an unnecessary action invocation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Use the simplest appropriate boundary. A normal server
+          function call is enough when we're already on the server reading
+          data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a client needing ongoing polling may fit an HTTP endpoint and a
+          client data strategy better than treating every read as a form
+          action.</span
+        >
+      </p>
+      <h2 id="test-the-user-s-failure-path">Test the User's Failure Path</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >How would we verify this form without starting a giant new test
+          project?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Submit a valid proposal and verify a pending record owned by the
+          caller. Submit invalid values directly to the server operation and
+          confirm rejection. Try another user's identifier in an edit operation.
+          Slow the request and inspect pending feedback. Fail storage and make
+          sure no false success appears.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And keyboard and screen-reader behavior?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Labels, focus order, visible focus, error association, announcement
+          of results, and preservation of the abstract after validation failure.
+          Test the pre-hydration path if we promise it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a meaningful set because it checks the actual boundary and
+          user experience, not merely whether the code contains a use server
+          string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A test asserting we wrote the directive would tell me that we can
+          read our own file. Lovely skill. Limited threat model.</span
+        >
+      </p>
+      <h2 id="follow-one-submission-all-the-way">
+        Follow One Submission All the Way
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A speaker types a title and an abstract. The labels identify the
+          controls, the browser can provide immediate constraint feedback, and
+          activating Submit starts the action path.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The submitted fields cross the network. The server verifies the
+          caller, reads the values, checks their types and limits, and attempts
+          the pending-proposal write.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the response returns a result. Our interface announces confirmed
+          success or explains an expected validation problem. Pending feedback
+          ends when the operation resolves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Each stage has a different responsibility. Browser
+          validation helps the person. Server validation protects the operation.
+          Storage establishes persistence. The response communicates what
+          happened.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we confuse those stages, we might show success when the browser
+          merely accepted the field lengths, before anything was saved.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or assume a correctly typed frontend guarantees correctly shaped
+          requests. The operation must withstand a caller who never loaded our
+          form.</span
+        >
+      </p>
+      <h2 id="keep-the-user-s-work">Keep the User's Work</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's fix the experience implied by our compact card. Someone writes
+          a long abstract, submits, and the title is invalid. What should they
+          see?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Their abstract should remain available, the title error should be
+          clearly associated with the title field, and they should know how to
+          correct it. We should not make them reconstruct their work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A real action result can carry safe submitted values and field
+          errors. The component then deliberately uses them to preserve or
+          restore the form. Or it can use controlled values with an appropriate
+          reset policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That is additional form implementation around the compact
+          example, not something the message string alone accomplishes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And errors need both text and association. Red borders alone aren't
+          enough. An error summary can link to the affected fields, and the
+          fields can reference their messages.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Manage focus deliberately when needed, without yanking it
+          around for every keystroke. Preserve the useful native behavior of
+          labels and controls.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why form quality can't be judged by whether the happy-path
+          screenshot looks tidy.</span
+        >
+      </p>
+      <h2 id="the-caller-chooses-more-than-we-think">
+        The Caller Chooses More Than We Think
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the form contains a hidden field saying status equals
+          pending. Is that how we guarantee proposals stay pending?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >No. The server chooses the allowed status. A caller can change a
+          hidden input or construct a request without the form.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The same applies to owner identifiers, prices, role names,
+          and permissions. Hidden means visually hidden, not trustworthy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our helper should explicitly create the pending state and use the
+          verified user's identifier. It shouldn't spread every submitted field
+          into a database write.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Broad object spreading from untrusted input can accept fields
+          we never meant the user to control. Select the permitted fields and
+          perform the required checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Modern JavaScript makes copying properties concise. It doesn't decide
+          which properties a stranger is allowed to set.</span
+        >
+      </p>
+      <h2 id="authentication-can-expire-mid-workflow">
+        Authentication Can Expire Mid-Workflow
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A user opens the proposal form, writes for twenty minutes, and their
+          session expires. What happens on submit?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server checks current authentication. It can't rely on the fact
+          that the page was visible twenty minutes earlier.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The experience should help them recover without
+          unnecessarily losing the draft. Exactly how we preserve a draft
+          depends on privacy and product choices.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should avoid casually storing sensitive content in browser storage
+          forever. But we also shouldn't silently discard it because a session
+          timed out.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That is a real design decision. The form operation still
+          rejects unauthorized persistence, while the interface offers a clear
+          next step.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another reason an initial route check isn't enough. Permission is
+          relevant when the operation executes, not just when someone first sees
+          the page.</span
+        >
+      </p>
+      <h2 id="duplicate-requests-and-idempotency">
+        Duplicate Requests and Idempotency
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Imagine the server saves the proposal, but the response is lost. The
+          user sees a timeout and presses Submit again.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Without a duplicate policy, we might create two pending proposals.
+          Disabling the button during the first request didn't prevent the
+          second attempt after uncertainty.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. An idempotency mechanism associates repeat attempts with the
+          same intended operation and returns or recognizes the existing result.
+          The server and database must enforce it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A random token generated for each retry wouldn't identify the same
+          operation. The token lifecycle matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Nor should one user's token authorize another user's
+          operation. Scope it appropriately and validate the caller
+          independently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to implement that machinery in the small teaching card.
+          But it's useful to explain why a production submission flow may need
+          more than a spinner.</span
+        >
+      </p>
+      <h2 id="publishing-is-a-state-transition">
+        Publishing Is a State Transition
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An organizer publishes a pending proposal. What else should be true
+          besides “the caller has an organizer role”?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The target exists, it's in an eligible state, and the intended
+          transition is allowed. If two people act concurrently, the storage
+          operation should handle the conflict according to the product's
+          rules.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Authorization asks who may act. Validation also asks whether
+          this action makes sense for the current resource state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >After publication commits, we invalidate the appropriate public
+          cached data. Before that, attendees shouldn't see the proposal simply
+          because the author submitted it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A state transition gives us a natural place to connect the
+          write and its public freshness effect.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's much clearer than “every mutation invalidates everything.” We
+          can explain why this particular operation affects this particular
+          view.</span
+        >
+      </p>
+      <h2 id="convenience-without-pretending">
+        Convenience Without Pretending
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The framework saves us some transport wiring and integrates the
+          response with the UI. That's useful even though all these
+          responsibilities remain.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need a feature to abolish every problem before it counts as
+          helpful. We just need to know which work it actually removes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server Actions remove some repetitive coordination. They
+          don't remove the need to design a trustworthy, recoverable
+          operation.</span
+        >
+      </p>
+      <h2 id="the-backend-is-still-there">The Backend Is Still There</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server Actions can reduce plumbing around UI mutations and integrate
+          forms, pending state, responses, and cache updates. The network
+          operation remains real.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We still validate, authorize, store safely, handle failures, and
+          think about retries. Colocating code doesn't eliminate architectural
+          boundaries; it changes how we express them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The form is more connected to the server operation, but the
+          browser hasn't acquired a database connection or permission to publish
+          arbitrary talks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, actual HTTP endpoints. Because sometimes another
+          application wants data and does not wish to participate in our React
+          family traditions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Route Handlers.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, something whose name describes a job without requiring a
+          passport interview.</span
+        >
+      </p>
+    </main>
+    <footer>3 code cards · 0 terminal cards</footer>
+  </body>
+</html>

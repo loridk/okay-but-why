@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 12: REST Isn't the Only Option — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 12: REST Isn't the Only Option</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/881b0262-0891-4138-82a2-6ceef5c6f6b6"
+      ></script>
+      <div class="redcirclePlayer-881b0262-0891-4138-82a2-6ceef5c6f6b6"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#these-aren-t-all-choices-on-the-same-axis"
+            >These Aren't All Choices on the Same Axis</a
+          >
+        </li>
+        <li>
+          <a href="#graphql-let-the-client-describe-the-data-shape"
+            >GraphQL: Let the Client Describe the Data Shape</a
+          >
+        </li>
+        <li>
+          <a href="#the-selection-doesn-t-make-the-work-cheap"
+            >The Selection Doesn't Make the Work Cheap</a
+          >
+        </li>
+        <li>
+          <a href="#when-graphql-helps-and-when-it-adds-work"
+            >When GraphQL Helps, and When It Adds Work</a
+          >
+        </li>
+        <li>
+          <a href="#rpc-ask-for-an-operation">RPC: Ask for an Operation</a>
+        </li>
+        <li>
+          <a href="#grpc-a-particular-rpc-toolset"
+            >gRPC: A Particular RPC Toolset</a
+          >
+        </li>
+        <li>
+          <a href="#persistent-communication-solves-a-different-problem"
+            >Persistent Communication Solves a Different Problem</a
+          >
+        </li>
+        <li>
+          <a href="#websockets-both-sides-can-send"
+            >WebSockets: Both Sides Can Send</a
+          >
+        </li>
+        <li>
+          <a href="#server-sent-events-one-direction-may-be-enough"
+            >Server-Sent Events: One Direction May Be Enough</a
+          >
+        </li>
+        <li>
+          <a href="#streaming-isn-t-always-a-live-subscription"
+            >Streaming Isn't Always a Live Subscription</a
+          >
+        </li>
+        <li>
+          <a href="#choose-for-the-problem-in-front-of-you"
+            >Choose for the Problem in Front of You</a
+          >
+        </li>
+        <li>
+          <a href="#you-can-combine-them-without-collecting-them"
+            >You Can Combine Them Without Collecting Them</a
+          >
+        </li>
+        <li>
+          <a href="#one-screen-three-plausible-designs"
+            >One Screen, Three Plausible Designs</a
+          >
+        </li>
+        <li>
+          <a href="#a-command-that-doesn-t-want-to-be-a-table"
+            >A Command That Doesn't Want to Be a Table</a
+          >
+        </li>
+        <li>
+          <a href="#a-connection-drops-during-a-dispatch-shift"
+            >A Connection Drops During a Dispatch Shift</a
+          >
+        </li>
+        <li>
+          <a href="#persistence-has-an-operational-bill"
+            >Persistence Has an Operational Bill</a
+          >
+        </li>
+        <li>
+          <a href="#compatibility-exists-in-every-style"
+            >Compatibility Exists in Every Style</a
+          >
+        </li>
+        <li>
+          <a href="#the-team-is-part-of-the-system"
+            >The Team Is Part of the System</a
+          >
+        </li>
+        <li>
+          <a href="#a-small-decision-conversation"
+            >A Small Decision Conversation</a
+          >
+        </li>
+        <li>
+          <a href="#the-interface-idea-survives">The Interface Idea Survives</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I brought alternatives.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>To REST or to software development?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>GraphQL, RPC, gRPC, WebSockets, and Server-Sent Events.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's a conference schedule, not a sentence.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Each solves a different problem.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. Because if this becomes “old thing bad, new thing good,” I'm
+          replacing the microphone with a fax machine.</span
+        >
+      </p>
+      <h2 id="these-aren-t-all-choices-on-the-same-axis">
+        These Aren't All Choices on the Same Axis
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? First, a warning about the comparison
+          itself. REST is an architectural style. GraphQL defines a query
+          language and execution model. RPC is an interaction approach. gRPC is
+          a specific RPC framework. WebSockets and Server-Sent Events address
+          communication patterns and transport behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So lining them up as five interchangeable replacements is like
+          comparing a restaurant layout, a menu language, and a delivery
+          van.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A system can use several. GraphQL can run over HTTP. An
+          application can expose resource-oriented endpoints and also maintain a
+          WebSocket connection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our job is to identify which problem each option addresses, not crown
+          the newest acronym.</span
+        >
+      </p>
+      <h2 id="graphql-let-the-client-describe-the-data-shape">
+        GraphQL: Let the Client Describe the Data Shape
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose our order screen needs an order status, selected item names,
+          and a delivery estimate. One endpoint returns far more than that, or
+          several endpoints must be combined.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Overfetching means getting data we don't need. Underfetching means
+          the response lacks something we need, leading to more requests. Those
+          are descriptions of a particular API and client relationship, not
+          unavoidable laws of REST.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A well-designed HTTP API can offer tailored representations.
+          GraphQL provides a systematic way for clients to select fields from a
+          server-defined schema.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The schema says what types and fields exist and which operations are
+          available. The client can't simply name a private database column and
+          demand it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Server-side execution resolves the requested fields using
+          application logic. The schema is the exposed interface, not a raw
+          database invitation.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>graphql</span></figcaption>
+        <pre tabindex="0"><code>query OrderSummary {
+  order(id: &quot;42&quot;) {
+    id
+    status
+    estimatedMinutes
+  }
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners: ask for order 42 and select three fields. The
+          response's data shape follows that selection. This is GraphQL syntax,
+          not JavaScript or JSON.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The query itself doesn't establish permission. The server must
+          enforce access to that order and fields. The schema also has to define
+          the operation in the first place.</span
+        >
+      </p>
+      <h2 id="the-selection-doesn-t-make-the-work-cheap">
+        The Selection Doesn't Make the Work Cheap
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I request a small shape, is the backend automatically
+          efficient?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Resolving nested fields can trigger many database calls. The
+          common N-plus-one problem happens when retrieving a list leads to
+          another lookup for each item. Batching and careful data access can
+          help.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a client can request an expensive shape. We need limits and cost
+          controls, not merely valid syntax.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. GraphQL's flexibility shifts design work toward schema
+          evolution, resolver performance, authorization, query complexity, and
+          caching strategies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A typed schema also isn't the same as TypeScript in the browser. It
+          defines the API's type system and validation rules. Generated client
+          types can help, but they don't remove runtime or permission
+          concerns.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. GraphQL also defines mutations for state-changing operations
+          and subscriptions for ongoing updates. The exact transport and
+          implementation choices matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And responses can include partial data alongside errors. A client
+          needs to understand that model rather than treating every HTTP 200 as
+          “all fields succeeded.”</span
+        >
+      </p>
+      <h2 id="when-graphql-helps-and-when-it-adds-work">
+        When GraphQL Helps, and When It Adds Work
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can help when several clients need different combinations of a
+          connected data model and a team benefits from a discoverable schema
+          and selection mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can add unnecessary complexity for a tiny integration with three
+          stable operations. We shouldn't build an elaborate schema just because
+          a dashboard needs one extra field.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Ask about client needs, backend cost, caching, and the
+          team's ability to maintain the schema. Flexibility is useful when it
+          answers an actual requirement.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, hiding everything behind one HTTP endpoint doesn't reduce
+          authorization to one check. The meaningful operations and data
+          accesses still need protection.</span
+        >
+      </p>
+      <h2 id="rpc-ask-for-an-operation">RPC: Ask for an Operation</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >RPC means Remote Procedure Call. The interface is organized around
+          operations that resemble calling functions on another system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >EstimateDelivery, CancelOrder, GenerateDailyReport. It can be more
+          direct than pretending every business action is an ordinary
+          replacement of a resource.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. RPC isn't inherently new, and it isn't inherently binary.
+          JSON-RPC, for example, describes structured request and response
+          messages using JSON.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The client sends an operation name and arguments according to a
+          contract. The service returns a result or an error.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That can be natural for command-oriented domains. The tradeoff
+          is that each operation may require more application-specific
+          knowledge, rather than relying as heavily on uniform HTTP resource
+          semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a remote call still isn't a local call. It can time out after
+          work happened, fail because the other system is unavailable, or incur
+          substantial latency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Function-like syntax must not hide those operational facts
+          from our design. Cancellation, retries, and idempotency remain
+          relevant.</span
+        >
+      </p>
+      <h2 id="grpc-a-particular-rpc-toolset">gRPC: A Particular RPC Toolset</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >gRPC provides a framework for defining services and calling their
+          methods across systems. Protocol Buffers commonly describe the
+          messages and service contract, and tooling generates client and server
+          code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Generated code gives developers language-appropriate methods and
+          message types, reducing hand-written request glue. Both sides work
+          from a shared definition.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. gRPC commonly uses HTTP/2 and supports unary calls, server
+          streaming, client streaming, and bidirectional streaming.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Unary means one request message and one response message. Server
+          streaming means a request can receive a sequence of responses. The
+          other modes change which direction carries a sequence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That can fit internal service communication, multilingual
+          systems, and streaming use cases where its tooling and contract model
+          are valuable.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Costs include maintaining the interface definitions, generating code,
+          understanding compatibility rules, and operating the infrastructure.
+          Browser access often needs gRPC-Web or another supported bridge rather
+          than assuming an ordinary browser can use every native gRPC capability
+          directly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. “Uses HTTP” doesn't mean “works like a simple fetch of JSON
+          in every browser.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a compact binary representation can be efficient while being less
+          casually readable in a network inspector. Tooling becomes part of the
+          developer experience.</span
+        >
+      </p>
+      <h2 id="persistent-communication-solves-a-different-problem">
+        Persistent Communication Solves a Different Problem
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now suppose our delivery dashboard needs updates as drivers move.
+          Repeated isolated requests may not be the interaction we want.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We might want a connection that stays open and carries updates over
+          time. That's a different dimension from whether our data model uses
+          resources or remote procedures.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A persistent connection doesn't mean information is
+          automatically fresh, authorized, or reliable forever. It gives us a
+          channel; we still design its messages and lifecycle.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Connections drop. Devices sleep. Proxies time out. A laptop closes
+          because somebody has correctly decided to stop working.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the client needs a plan for reconnecting and catching up.</span
+        >
+      </p>
+      <h2 id="websockets-both-sides-can-send">
+        WebSockets: Both Sides Can Send
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WebSockets establish a channel where both sides can send messages
+          after the connection is established. That can be useful for chat,
+          collaboration, games, or other interactive bidirectional
+          updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But WebSocket doesn't define our order-update schema. We still decide
+          what each message means, how it's versioned, and how errors are
+          reported.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Authentication at connection time and authorization for
+          subscriptions or actions still matter. A connection being open doesn't
+          entitle it to every customer's updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And browser WebSockets don't use CORS in the same way fetch does. The
+          server should validate relevant Origin information and protect the
+          handshake and application messages appropriately.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Don't assume the browser's fetch boundary covers every other
+          communication mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about a slow client?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The application needs limits and a strategy for handling data faster
+          than it can process it. The classic browser WebSocket API doesn't
+          automatically provide the kind of backpressure control some streaming
+          interfaces do.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A permanent firehose is not automatically a premium feature.</span
+        >
+      </p>
+      <h2 id="server-sent-events-one-direction-may-be-enough">
+        Server-Sent Events: One Direction May Be Enough
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server-Sent Events, often SSE, let a server stream text events to a
+          client over HTTP. The browser's EventSource API provides a standard
+          client interface with reconnection behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The stream goes server to client. The client can still make ordinary
+          HTTP requests separately when it needs to send a command.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a dashboard receiving status updates, that asymmetry may
+          be sufficient and simpler than designing bidirectional
+          messaging.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reconnection doesn't automatically mean no missed events. Event IDs
+          and server support for resuming can help, but the application must
+          actually retain or reconstruct the relevant history.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And buffering by servers or proxies, connection limits,
+          authentication choices, and resource use need attention. Native
+          EventSource also has interface constraints, such as not offering
+          arbitrary custom request headers in the same way fetch does.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “stream over HTTP” doesn't erase deployment details. It changes
+          what we need from them.</span
+        >
+      </p>
+      <h2 id="streaming-isn-t-always-a-live-subscription">
+        Streaming Isn't Always a Live Subscription
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A response can also stream the result of one request, such as
+          generated text arriving incrementally. That's different from
+          subscribing indefinitely to future order events.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Both arrive in pieces, but the lifecycle and meaning differ. One
+          response eventually finishes; the subscription may continue until
+          disconnected or cancelled.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We'll see that distinction again with AI APIs. Avoid
+          assuming every streaming response is a WebSocket or every stream is
+          SSE.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Inspect the actual protocol. Our vocabulary should help us ask better
+          questions, not help us guess more confidently.</span
+        >
+      </p>
+      <h2 id="choose-for-the-problem-in-front-of-you">
+        Choose for the Problem in Front of You
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's give the pizza business four requirements. A public menu that
+          changes infrequently. An internal service calculating delivery routes.
+          A dashboard receiving status updates. A collaborative dispatch board
+          where several staff members edit live.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The menu may be well served by an ordinary cacheable HTTP
+          representation. The route calculator might fit a resource-oriented API
+          or RPC, depending on its operations and clients.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The status dashboard may need only SSE or even moderate polling. The
+          collaborative board might justify WebSockets and a carefully designed
+          synchronization model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And GraphQL might help a collection of clients select different parts
+          of a shared domain model, if that flexibility is worth the backend and
+          tooling cost.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. These are candidate fits, not automatic verdicts.
+          Requirements such as offline behavior, organizational ownership,
+          latency, and team experience can change the answer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The useful question is what complexity we remove and what complexity
+          we accept. Every option moves work somewhere.</span
+        >
+      </p>
+      <h2 id="you-can-combine-them-without-collecting-them">
+        You Can Combine Them Without Collecting Them
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A system may use HTTP resource operations for most tasks, a webhook
+          for provider events, and SSE for browser notifications.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a coherent combination if each piece solves a real need. It
+          isn't an invitation to install one of everything so our architecture
+          diagram looks like a sticker-covered laptop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Start with the simplest design that meets the actual
+          requirements. Add a communication pattern when the existing one
+          creates a concrete problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And document the boundaries. Which channel carries authoritative
+          changes? How do clients recover after a disconnect? Are repeated
+          commands safe? Which identity can subscribe to which updates?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Those questions matter more than which technology won an online
+          argument this week.</span
+        >
+      </p>
+      <h2 id="one-screen-three-plausible-designs">
+        One Screen, Three Plausible Designs
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's make the choice less abstract. A support screen shows an order,
+          the customer's permitted contact details, and the last three delivery
+          updates. How could we serve it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >One resource-oriented endpoint could return a deliberately designed
+          support summary. Or several endpoints could supply the pieces. Or a
+          GraphQL query could select the related fields from an exposed
+          schema.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So GraphQL doesn't uniquely make one request possible. We can design
+          a tailored HTTP representation too.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. GraphQL's benefit can be giving many consumers flexible
+          selection within one schema, rather than requiring a new tailored
+          endpoint for every combination.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But that flexibility has to be implemented efficiently and securely.
+          If the support screen is our only consumer and its needs are stable,
+          the tailored endpoint may be simpler.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If a website, mobile app, staff dashboard, and partner
+          integration all need different shapes, a schema-based approach may
+          become more valuable. We need evidence about the actual
+          consumers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the backend can still use shared domain functions underneath
+          either interface. Choosing an external query shape doesn't require
+          duplicating every business rule.</span
+        >
+      </p>
+      <h2 id="a-command-that-doesn-t-want-to-be-a-table">
+        A Command That Doesn't Want to Be a Table
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the dispatcher asks the system to propose a delivery route for
+          twelve stops under several constraints.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's an operation with inputs and a computed result. An RPC method
+          named proposeRoute might communicate the intention clearly.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We could also model route proposals as resources, especially
+          if they're saved, have a lifecycle, or are computed asynchronously.
+          The domain can justify either approach.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The distinction is whether treating the result as an identifiable
+          thing helps consumers. We shouldn't create fake lifecycle complexity
+          solely to avoid a function-like operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Conversely, exposing every database helper as an RPC method
+          can leak internals and make compatibility difficult.
+          Operation-oriented doesn't mean design-free.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We still document units, constraints, errors, authorization, and
+          whether repeated requests can create effects. A method called
+          calculate sounds harmless until it also reserves drivers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Names and contracts must reveal meaningful side effects.
+          Remote calls should not disguise a consequential operation as a
+          trivial getter.</span
+        >
+      </p>
+      <h2 id="a-connection-drops-during-a-dispatch-shift">
+        A Connection Drops During a Dispatch Shift
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our dashboard uses WebSockets. The connection drops for thirty
+          seconds. When it reconnects, are we automatically up to date?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. The application needs a recovery protocol. It might fetch a fresh
+          snapshot, request events after a known sequence, or combine a snapshot
+          with subsequent updates.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we only listen for future events after reconnecting, we can miss
+          everything that happened during the gap.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The channel doesn't supply the entire synchronization model.
+          We also need to avoid applying old events over newer state and handle
+          duplicate messages where relevant.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >SSE's reconnection features help manage the connection, but the same
+          question remains: can the server actually resume from the last event
+          ID, and what happens if that history is no longer available?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A fresh snapshot can be a sensible fallback. The UI should
+          indicate when information is stale or disconnected rather than
+          pretending the dashboard is still live.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A little green dot is not a freshness guarantee. It needs to reflect
+          something meaningful about the connection and data state.</span
+        >
+      </p>
+      <h2 id="persistence-has-an-operational-bill">
+        Persistence Has an Operational Bill
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A long-lived connection consumes resources over time. Servers and
+          intermediaries need suitable limits, timeouts, and behavior under
+          load.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which changes deployment planning compared with a simple short
+          request. Scaling, connection routing, graceful restarts, and slow
+          consumers become part of the design.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. You also need a strategy for credentials expiring or
+          permissions changing during a connection. A user who loses access
+          shouldn't keep receiving private updates indefinitely because the
+          handshake happened earlier.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So authorization can need ongoing enforcement at subscriptions or
+          messages, not merely one check when the socket opens.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And a persistent connection isn't automatically more
+          efficient. If updates are rare and modest polling meets the needs, the
+          simpler approach might have a lower total cost.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We measure the whole system and user experience, not just the number
+          of request lines in a diagram.</span
+        >
+      </p>
+      <h2 id="compatibility-exists-in-every-style">
+        Compatibility Exists in Every Style
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does choosing a schema-driven tool remove versioning problems?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It can make some compatibility rules explicit and enable useful
+          tooling. But changing field meaning, deleting an operation, or
+          introducing an unsupported required input can still break
+          consumers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Generated clients may make a mismatch visible earlier, but they don't
+          guarantee every deployed client updates at the same time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. With binary schemas, you need to follow that format's
+          evolution rules. With GraphQL, deprecation and field evolution need a
+          policy. With WebSocket messages, you still need a defined contract for
+          message types and versions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The transport doesn't absolve us of maintaining agreements. We have
+          simply chosen a different way to express them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Which is why understanding APIs broadly is more durable than
+          learning one fashionable request syntax.</span
+        >
+      </p>
+      <h2 id="the-team-is-part-of-the-system">
+        The Team Is Part of the System
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose gRPC fits technically, but nobody on a small team has
+          operated it, and the main consumer is a browser. Does technical fit
+          settle the decision?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. Tooling, browser integration, support burden, deployment, and
+          learning costs all belong in the comparison. A theoretically elegant
+          choice can be impractical for the actual team.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conversely, familiar isn't automatically best if the existing
+          approach creates a severe, measured problem. We can learn a new tool
+          when its benefits justify the work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Avoid both trend worship and reflexive refusal. Write down
+          the concrete requirement the change serves and how we'll know it
+          helped.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fewer round trips for a measured workflow, a needed streaming
+          capability, stronger contract tooling across languages. Those are
+          arguments. “Everyone's moving to it” is a weather report.</span
+        >
+      </p>
+      <h2 id="a-small-decision-conversation">A Small Decision Conversation</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The product asks for delivery updates within roughly a minute. We
+          have a small number of active users, and the provider only supports
+          polling. What do you choose?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Probably bounded polling with sensible intervals, pause behavior when
+          appropriate, and clear stale-state handling. We can't manufacture
+          provider webhooks by wanting them.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now hundreds of dispatchers need rapid two-way coordination and the
+          application already has a maintained real-time infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A persistent bidirectional design becomes a stronger candidate. We
+          still specify message semantics, access checks, reconnection, and
+          conflict handling.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The requirement changed, so the tradeoff changed. The
+          earlier choice wasn't foolish just because a different problem needs
+          something else.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the habit we're building. Name the problem, understand the
+          mechanism, and choose the cost we're willing to carry.</span
+        >
+      </p>
+      <h2 id="the-interface-idea-survives">The Interface Idea Survives</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >GraphQL shapes data requests through a schema. RPC organizes remote
+          operations as calls. gRPC supplies a particular contract and tooling
+          ecosystem. WebSockets support bidirectional messaging; SSE supports
+          server-to-client event streams.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And all still expose defined ways for software to interact. Inputs,
+          outputs, authority, failure, and compatibility remain our
+          concerns.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >REST wasn't wrong. It was one answer with particular properties.
+          Alternatives can solve different problems without making every
+          existing endpoint embarrassing.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time, API design as developer experience. How can an interface
+          be technically functional and still make people hate every minute of
+          using it?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, my collection of unhelpful error messages has academic
+          value.</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

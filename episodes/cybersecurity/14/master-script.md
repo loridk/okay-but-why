@@ -41,7 +41,7 @@ PARISA: This episode already needs a whiteboard.
 
 PARISA: Welcome to *Okay, But Why?*
 
-I’m Parisa.
+PARISA: I’m Parisa.
 
 JULES: And I’m Jules.
 
@@ -58,13 +58,13 @@ PARISA: Each request is its own thing.
 
 JULES: Right.
 
-But applications need continuity.
+JULES: But applications need continuity.
 
-Who is this user?
+JULES: Who is this user?
 
-What did they put in their cart?
+JULES: What did they put in their cart?
 
-Are they logged in?
+JULES: Are they logged in?
 
 PARISA: So we create a session.
 
@@ -346,11 +346,11 @@ JULES: Yes.
 
 PARISA: Schema validation.
 
-Types.
+PARISA: Types.
 
-Ranges.
+PARISA: Ranges.
 
-Required fields.
+PARISA: Required fields.
 
 JULES: Good.
 
@@ -367,7 +367,7 @@ JULES: Please don’t.
 
 PARISA: Give clients useful stable errors.
 
-Log sensitive diagnostics internally with appropriate access.
+PARISA: Log sensitive diagnostics internally with appropriate access.
 
 JULES: Exactly.
 

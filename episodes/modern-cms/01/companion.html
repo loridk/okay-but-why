@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 1: What the Hell Is a CMS? — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html">← Back to Modern CMS Development episodes</a>
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: What the Hell Is a CMS?</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/09601e86-745b-4f44-b7cd-f0ffcd5278d1"
+      ></script>
+      <div class="redcirclePlayer-09601e86-745b-4f44-b7cd-f0ffcd5278d1"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#meet-a-website-with-colleagues"
+            >Meet a Website With Colleagues</a
+          >
+        </li>
+        <li>
+          <a href="#content-is-not-the-rectangle"
+            >Content Is Not the Rectangle</a
+          >
+        </li>
+        <li>
+          <a href="#users-roles-and-the-publish-button"
+            >Users, Roles, and the Publish Button</a
+          >
+        </li>
+        <li><a href="#saving-isn-t-publishing">Saving Isn't Publishing</a></li>
+        <li><a href="#media-has-a-life-too">Media Has a Life Too</a></li>
+        <li>
+          <a href="#four-labels-that-aren-t-synonyms"
+            >Four Labels That Aren't Synonyms</a
+          >
+        </li>
+        <li>
+          <a href="#wordpress-and-drupal-answer-differently"
+            >WordPress and Drupal Answer Differently</a
+          >
+        </li>
+        <li>
+          <a href="#follow-one-change-all-the-way-through"
+            >Follow One Change All the Way Through</a
+          >
+        </li>
+        <li>
+          <a href="#the-question-behind-the-admin-screen"
+            >The Question Behind the Admin Screen</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The university would like to change a sentence on its website.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A promisingly small request.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The sentence is on forty-seven pages. Nobody knows which forty-seven.
+          Three departments disagree about the replacement. The person who
+          approved the old sentence has retired, and the document called
+          final-final is apparently a protected historical artifact.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>I retract my optimism.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to content management. The HTML is doing absolutely fine. The
+          humans are on fire.</span
+        >
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? This is Modern CMS Development. CMS means
+          content management system. We're starting before the installation
+          screen: what is the work we're asking this thing to do?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because I can build a page. I have been building pages since personal
+          websites came with a guestbook and an alarming amount of enthusiasm.
+          Write HTML, upload it, link to it. That remains a perfectly
+          serviceable solution to some problems.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if it's your website, you know the markup, and the changes are
+          occasional, that may be enough.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then someone else needs to change office hours. They don't know HTML.
+          I can teach them, make the change myself, or give them a form that
+          edits those hours without exposing the whole page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That form is the beginning of a different product. The visitor-facing
+          website answers visitors' questions. The editorial interface helps
+          people maintain the answers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I used to build those with PHP and a database. A table, a form, a
+          login screen, a save button. Not because PHP insisted on being a CMS.
+          Because the organization wanted to update information without waiting
+          for me.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then the save button acquires coworkers. Validation. Permissions.
+          Preview. Image uploads. A record of who changed what. Recovery when
+          someone pastes the entire annual report into the title field.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A very ambitious title.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A CMS packages recurring content-management capabilities instead of
+          making every team build that admin application again. It still
+          requires design and maintenance. It just changes what you start
+          with.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the original problem isn't that developers couldn't concatenate a
+          heading with a paragraph. It's that maintaining information became an
+          ongoing organizational activity.</span
+        >
+      </p>
+      <h2 id="meet-a-website-with-colleagues">
+        Meet a Website With Colleagues
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our running example is a fictional university, Bellweather
+          University. It has departments, people, degree programs, courses,
+          events, news, and buildings. It also has a public lecture called Moss
+          After Dark.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, an event that respects my interests and bedtime. Who owns
+          the event information?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An events coordinator writes it. A department communications editor
+          reviews it. Visitors need the correct time, venue, access information,
+          and registration link.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >None of those people should need a developer to replace Tuesday with
+          Thursday. But the coordinator also shouldn't need permission to
+          install arbitrary software on the server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's already a content-management requirement: separate the ability
+          to edit a piece of information from the ability to change the
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And separate our jobs. The coordinator understands the event. The
+          developer understands the system. Neither should have to become the
+          other person to correct a time.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The system also needs to remember what the event is. If we store one
+          giant HTML page, the date exists for a human reader, but the software
+          may not know which bit is a date.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I can put it in a database column. A date column, not a string called
+          miscellaneous vibes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Structured content gives meaningful pieces their own homes.
+          Title, starting time, location, description. The CMS can validate
+          them, sort by them, and reuse them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Familiar database thinking. The CMS supplies an interface and rules
+          around it.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>CONTENT RECORD                         PRESENTATIONS
+Event: Moss After Dark                 Full event page
+Start: 2026-10-15T18:30:00-04:00  ---&gt;   Department event list
+Location: Greenhouse                    Search result
+Description: an evening moss walk       Calendar/API consumer
+
+One meaningful record can support several outputs.
+Each output still needs suitable labels, formatting and access rules.</code></pre>
+      </figure>
+      <h2 id="content-is-not-the-rectangle">Content Is Not the Rectangle</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What if the designer says the event needs a big purple card?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a presentation decision. Purple, spacing, typography, and
+          whether the location appears before the date belong to how the content
+          is shown.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Although the description might still include paragraphs, links, and
+          an occasional list. Separating content from presentation doesn't mean
+          banning formatted text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A description is prose. A start time is a date. Making both
+          editable doesn't require storing both as an unstructured slab of
+          markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where I want to resist the perfect-content-model police. If
+          an essay is an essay, let it be an essay. I don't need separate fields
+          for introduction, second thought, and emotionally significant
+          semicolon.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Agreed. Structure should serve actual operations. If we need upcoming
+          events, a real date field helps. If nobody needs to query paragraph
+          four separately, giving paragraph four its own entity is probably
+          enthusiasm escaping supervision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The useful question is what the system must understand, not how many
+          form controls we can create.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And how much editing effort those controls impose. Structure that
+          makes developers happy while editors abandon the form hasn't solved
+          the whole problem.</span
+        >
+      </p>
+      <h2 id="users-roles-and-the-publish-button">
+        Users, Roles, and the Publish Button
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next, users. A user account identifies someone acting in the system.
+          Roles group permissions so we can manage responsibilities without
+          configuring every person from scratch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like assigning someone the editor role instead of individually
+          ticking fifty boxes. But a job title doesn't magically tell us what
+          permissions belong in that role.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. At Bellweather, contributors can draft events. Reviewers can
+          approve them. A smaller group can change the content model or install
+          extensions. The permission system has to implement the actual
+          boundaries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And hiding a button isn't enforcement. If the server accepts a
+          publish request from someone who shouldn't publish, the interface is
+          just a suggestion.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Permission checks belong on the operation, including API operations.
+          The admin screen should make the permitted actions understandable, but
+          the server has to decide whether the action is allowed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What about volunteers who only edit their department?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the requirement is more specific than a broad editor role. We may
+          need ownership rules, group membership, department-based access, or an
+          extension. We should investigate the CMS's actual capabilities before
+          promising that any role can express every organizational chart.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. “Has permissions” is not the same as “already implements our
+          policy.”</span
+        >
+      </p>
+      <h2 id="saving-isn-t-publishing">Saving Isn't Publishing</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The coordinator changes the venue from Greenhouse to Library. They
+          save the change. Should the public site immediately update?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Depends. If the room is flooded, perhaps yes. If they're proposing a
+          move that isn't confirmed, absolutely not.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the distinction between editing and publication. A workflow
+          describes allowed states and transitions: draft, review, published,
+          perhaps archived. Permissions determine who can make each
+          transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A state machine with people involved. That is a familiar thing
+          wearing a lanyard.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And revisions preserve versions of the record. An editor can compare
+          changes and, where supported, restore an earlier version. The
+          currently published version can remain public while a newer draft is
+          reviewed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Provided we've configured a system that supports that behavior. “Has
+          revisions” alone doesn't prove pending drafts stay private.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Revisions, moderation, and access control connect, but they
+          are different capabilities. We test the whole journey: save a pending
+          change, view anonymously, review, publish, view again.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, a revision is not a backup. It doesn't rescue a missing
+          database, an accidentally deleted upload directory, or an entire
+          compromised site.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Editorial history and operational recovery solve different
+          failures. You may need both.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And scheduling publication is another capability to verify. A date
+          field called publish later does not employ a tiny person to press the
+          button at midnight.</span
+        >
+      </p>
+      <h2 id="media-has-a-life-too">Media Has a Life Too</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The coordinator uploads a photograph of the greenhouse. We could
+          treat it as a file path in the event body. A media system can instead
+          manage it as a reusable item with metadata.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Credit, copyright or permission notes, an accessible description
+          where appropriate, and perhaps different image sizes. This is already
+          more than “the bytes arrived.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A file is the stored asset. A media record can represent that asset
+          and its editorial information. Different CMSes model that relationship
+          differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reuse is useful, but context matters. Alternative text describes the
+          image's purpose in this use. A photo identifying the entrance may need
+          different treatment from the same photo used as decoration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So one reusable image doesn't mean one eternally correct description
+          in every context. The content model and rendering need room for the
+          editorial decision.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Likewise, “uploaded successfully” doesn't mean “publicly safe.”
+          Restrict file types, handle size limits, validate server-side, and
+          decide whether a file is public or protected. Student records do not
+          belong next to the campus mascot photos.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An organization can accidentally turn its CMS into a document dump.
+          Choosing the right system includes deciding what information should
+          never be stored there.</span
+        >
+      </p>
+      <h2 id="four-labels-that-aren-t-synonyms">
+        Four Labels That Aren't Synonyms
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's separate some marketing words before they merge into a
+          subscription.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A CMS manages content and editorial work. A framework supplies
+          building blocks and conventions for developing applications. You can
+          build a CMS using a framework, but installing a framework doesn't
+          necessarily give editors a content interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A site builder focuses on composing sites or pages, often visually.
+          It might include a CMS, but moving a rectangle around and governing a
+          thousand records aren't the same capability.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And a hosting platform provides the environment where the application
+          runs. Some hosts bundle maintenance and editing products, but renting
+          execution space doesn't define your content model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >These categories overlap in products. They aren't interchangeable
+          responsibilities. A restaurant can sell dinner and rent out a room;
+          food and accommodation remain different requirements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Drupal makes this especially confusing because it's both a CMS and a
+          platform developers extend deeply. It uses framework components. That
+          doesn't make every Symfony application Drupal, or every Drupal site a
+          custom application assembled from nothing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >WordPress also has APIs and extension points. Calling it a CMS
+          doesn't mean developers are forbidden to build sophisticated things
+          with it.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>text</span></figcaption>
+        <pre
+          tabindex="0"
+        ><code>CMS              Who creates, reviews, stores and publishes content?
+Framework        How do developers build application behavior?
+Site builder     How do people compose pages and site layouts?
+Hosting platform Where does the software run, and who operates it?
+
+A product may fill several roles. Check each role separately.</code></pre>
+      </figure>
+      <h2 id="wordpress-and-drupal-answer-differently">
+        WordPress and Drupal Answer Differently
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WordPress starts from a strong publishing tradition: posts, pages,
+          themes, and plugins. That gives many projects an approachable starting
+          point and a large ecosystem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Drupal puts a lot of emphasis on configurable data structures,
+          relationships, displays, and workflows. Which can fit a university
+          beautifully, while making a three-page club website feel like it's
+          applying for university accreditation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Neither statement is a law about what the software can do. WordPress
+          can manage structured content. Drupal can run a straightforward
+          publication. We're describing common strengths and the shape of the
+          work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The expensive mistake is choosing by tribal identity. “Real
+          developers use this.” “Serious organizations use that.” Serious
+          organizations also publish broken PDFs. Prestige is not a requirements
+          document.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We should compare editorial tasks, content relationships, integration
+          needs, available skills, and ongoing maintenance. The same platform
+          can be a good choice for one team and a costly choice for
+          another.</span
+        >
+      </p>
+      <h2 id="follow-one-change-all-the-way-through">
+        Follow One Change All the Way Through
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's replay the venue change with the system in place. The
+          coordinator signs in, opens the existing event, chooses Library from a
+          location field, adds a reason, and saves a draft revision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The reviewer sees what changed. They check that the library entrance
+          and accessibility information are correct. They approve the transition
+          to published.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The public event page and department listing should now reflect the
+          change. If either shows an old copy, our rendering or caching needs
+          attention. Publication isn't complete merely because the admin
+          interface showed a green message.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if the event also feeds a mobile app, we need to understand when
+          that consumer refreshes. A CMS can be the source of content without
+          controlling every copy downstream.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why we're going to spend time on structure, rendering,
+          caching, extensions, deployments, and APIs. They're connected to this
+          very ordinary requirement: people need the correct room.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if Bellweather has one page, one editor, and two changes a
+          year?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then hand-maintained HTML, or a small static-site workflow, might be
+          completely fine. Don't introduce an editorial machine just because
+          machines are available.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What if it has a thousand contributors, multilingual program
+          information, shared staff profiles, and approval rules?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then “I'll just make a PHP form” may be the opening sentence of a CMS
+          development project we're pretending isn't one.</span
+        >
+      </p>
+      <h2 id="the-question-behind-the-admin-screen">
+        The Question Behind the Admin Screen
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A CMS isn't primarily a tool for developers to build pages. It
+          manages content and the people and processes around that
+          content.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means the person writing the information is a user of our
+          product too. If we make publishing confusing, inconsistent, or
+          inaccessible, we have shipped a broken interface even when the public
+          homepage is gorgeous.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The content, the authoring process, and the output all matter. We can
+          choose how tightly they connect, but we can't make the
+          responsibilities disappear.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time: WordPress. How did a blogging tool become the thing people
+          reach for when someone says “we need a website”?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There will be hooks.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Finally, somewhere to hang the forty-seven versions of that
+          sentence.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          A CMS manages information and the people and processes that keep it
+          useful. The public page is one output of that work.
+        </p>
+        <h3>Translate the terminology</h3>
+        <table>
+          <caption>
+            Episode 1 reference
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Useful mental model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Content</th>
+              <td>
+                The information people maintain, such as an event date or
+                description.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Presentation</th>
+              <td>
+                How information is arranged and rendered for a particular
+                audience.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Role</th>
+              <td>
+                A grouping of permissions; the exact policy still needs design.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Revision</th>
+              <td>A saved version of a record, not a full-system backup.</td>
+            </tr>
+            <tr>
+              <th scope="row">Workflow</th>
+              <td>Allowed states and transitions in the editorial process.</td>
+            </tr>
+            <tr>
+              <th scope="row">CMS / framework / site builder / host</th>
+              <td>
+                Content operations / application construction / page composition
+                / execution environment; products may overlap.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Bellweather example</h3>
+        <p>
+          Moss After Dark is a fictional university event. Its date and location
+          are structured values; its description remains prose. One record
+          supports a detail page, a list, and other consumers.
+        </p>
+        <h3>Code card file and example guide</h3>
+        <ol>
+          <li>
+            <strong>Code card 1:</strong> Content and presentation are different
+            decisions
+          </li>
+          <li><strong>Code card 2:</strong> Translate the product claim</li>
+        </ol>
+        <h3>Try the reasoning</h3>
+        <ol>
+          <li>
+            Describe one change from authoring through review to publication.
+          </li>
+          <li>
+            Identify which fields the system needs to query or validate
+            separately.
+          </li>
+          <li>Test the editorial interface as a user who cannot publish.</li>
+          <li>
+            Decide who owns media rights, accessible descriptions, archiving,
+            and recovery.
+          </li>
+        </ol>
+        <h3>Sources and further reading</h3>
+        <p>
+          Version-sensitive research checked September 16, 2026. Examples are
+          teaching material; see their stated prerequisites and limitations.
+        </p>
+        <ul>
+          <li>
+            <a href="https://developer.wordpress.org/plugins/post-types/"
+              >WordPress concepts</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.drupal.org/docs/user_guide/en/understanding-data.html"
+              >Drupal content concepts</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

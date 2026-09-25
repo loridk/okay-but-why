@@ -42,17 +42,17 @@ JULES: Secure development means security decisions happen throughout the softwar
 
 PARISA: Requirements.
 
-Design.
+PARISA: Design.
 
-Implementation.
+PARISA: Implementation.
 
-Testing.
+PARISA: Testing.
 
-Deployment.
+PARISA: Deployment.
 
-Operations.
+PARISA: Operations.
 
-Retirement.
+PARISA: Retirement.
 
 JULES: Exactly.
 
@@ -69,11 +69,11 @@ JULES: Security requirements say what must not happen and what protections are r
 
 PARISA: MFA for admins.
 
-Audit sensitive changes.
+PARISA: Audit sensitive changes.
 
-Encrypt regulated data.
+PARISA: Encrypt regulated data.
 
-Session expires after defined period.
+PARISA: Session expires after defined period.
 
 JULES: Exactly.
 
@@ -84,11 +84,11 @@ PARISA: Threat modeling.
 
 JULES: Trust boundaries.
 
-Least privilege.
+JULES: Least privilege.
 
-Data minimization.
+JULES: Data minimization.
 
-Secure defaults.
+JULES: Secure defaults.
 
 PARISA: Authentication and authorization architecture.
 
@@ -103,13 +103,13 @@ JULES: Exactly.
 
 PARISA: Parameterized queries.
 
-Contextual output encoding.
+PARISA: Contextual output encoding.
 
-Safe APIs.
+PARISA: Safe APIs.
 
-Validation.
+PARISA: Validation.
 
-Secrets outside source.
+PARISA: Secrets outside source.
 
 JULES: Memory-safe languages where appropriate, dependency hygiene, error handling.
 
@@ -122,11 +122,11 @@ JULES: Human review can catch security issues automated tools miss.
 
 PARISA: Authorization logic.
 
-Dangerous assumptions.
+PARISA: Dangerous assumptions.
 
-Secret handling.
+PARISA: Secret handling.
 
-New trust boundaries.
+PARISA: New trust boundaries.
 
 JULES: Exactly.
 
@@ -197,9 +197,9 @@ PARISA: Which means security policy can be checked before deployment.
 
 JULES: Public bucket.
 
-Open security group.
+JULES: Open security group.
 
-Overprivileged role.
+JULES: Overprivileged role.
 
 PARISA: Policy as code.
 
@@ -214,11 +214,11 @@ JULES: Treat it as privileged identity.
 
 PARISA: Minimal token permissions.
 
-Protected environments.
+PARISA: Protected environments.
 
-Approval for sensitive releases.
+PARISA: Approval for sensitive releases.
 
-Short-lived cloud credentials.
+PARISA: Short-lived cloud credentials.
 
 JULES: Exactly.
 
@@ -231,7 +231,7 @@ JULES: Reduces risk of uncontrolled rebuild differences.
 
 PARISA: Sign artifacts.
 
-Verify provenance.
+PARISA: Verify provenance.
 
 JULES: Supply-chain security meets deployment.
 
@@ -255,17 +255,17 @@ JULES: Yes.
 
 PARISA: Here’s where DevSecOps can become awful.
 
-Tool blocks deployment with unclear vulnerability nobody owns.
+PARISA: Tool blocks deployment with unclear vulnerability nobody owns.
 
 JULES: Security gate needs actionable information.
 
 PARISA: What failed?
 
-Why?
+PARISA: Why?
 
-Who owns it?
+PARISA: Who owns it?
 
-How do we fix or formally accept risk?
+PARISA: How do we fix or formally accept risk?
 
 JULES: Exactly.
 
@@ -312,13 +312,13 @@ JULES: Vulnerabilities emerge after release.
 
 PARISA: Inventory.
 
-Monitor advisories.
+PARISA: Monitor advisories.
 
-Test patches.
+PARISA: Test patches.
 
-Deploy.
+PARISA: Deploy.
 
-Verify.
+PARISA: Verify.
 
 JULES: Secure lifecycle includes maintenance.
 
@@ -327,9 +327,9 @@ JULES: Secure lifecycle includes maintenance.
 
 PARISA: Unsupported framework.
 
-Old OS.
+PARISA: Old OS.
 
-Abandoned dependency.
+PARISA: Abandoned dependency.
 
 JULES: Technical debt becomes security debt.
 

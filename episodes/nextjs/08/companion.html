@@ -1,0 +1,1298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 8: Oh, So There IS a Backend — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 8: Oh, So There IS a Backend</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/4e544bc3-1090-4d3b-a702-707469e9b2b1"
+      ></script>
+      <div class="redcirclePlayer-4e544bc3-1090-4d3b-a702-707469e9b2b1"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#an-interface-other-clients-understand"
+            >An Interface Other Clients Understand</a
+          >
+        </li>
+        <li>
+          <a href="#a-route-file-answers-http">A Route File Answers HTTP</a>
+        </li>
+        <li>
+          <a href="#the-same-data-different-representation"
+            >The Same Data, Different Representation</a
+          >
+        </li>
+        <li><a href="#methods-have-meaning">Methods Have Meaning</a></li>
+        <li>
+          <a href="#input-is-still-untrusted">Input Is Still Untrusted</a>
+        </li>
+        <li>
+          <a href="#cache-policy-has-two-places">Cache Policy Has Two Places</a>
+        </li>
+        <li>
+          <a href="#the-backend-for-this-frontend"
+            >The Backend for This Frontend</a
+          >
+        </li>
+        <li>
+          <a href="#do-not-build-an-open-proxy">Do Not Build an Open Proxy</a>
+        </li>
+        <li>
+          <a href="#cors-is-not-authorization">CORS Is Not Authorization</a>
+        </li>
+        <li>
+          <a href="#webhooks-reverse-the-direction"
+            >Webhooks Reverse the Direction</a
+          >
+        </li>
+        <li>
+          <a href="#a-handler-is-not-an-infinite-worker"
+            >A Handler Is Not an Infinite Worker</a
+          >
+        </li>
+        <li><a href="#check-the-http-contract">Check the HTTP Contract</a></li>
+        <li><a href="#choosing-the-interface">Choosing the Interface</a></li>
+        <li>
+          <a href="#the-lobby-display-has-its-own-failure-story"
+            >The Lobby Display Has Its Own Failure Story</a
+          >
+        </li>
+        <li>
+          <a href="#a-contract-can-evolve-carefully"
+            >A Contract Can Evolve Carefully</a
+          >
+        </li>
+        <li>
+          <a href="#pagination-is-about-resource-boundaries"
+            >Pagination Is About Resource Boundaries</a
+          >
+        </li>
+        <li>
+          <a href="#status-codes-are-part-of-the-conversation"
+            >Status Codes Are Part of the Conversation</a
+          >
+        </li>
+        <li>
+          <a href="#a-webhook-must-survive-repetition"
+            >A Webhook Must Survive Repetition</a
+          >
+        </li>
+        <li>
+          <a href="#test-from-outside-the-ui">Test From Outside the UI</a>
+        </li>
+        <li>
+          <a href="#the-backend-has-a-doorbell">The Backend Has a Doorbell</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Last episode we removed some form endpoint plumbing.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Correct.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>This episode we're adding an endpoint.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>For a different caller.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I would like everyone listening to appreciate that the reason is
+          doing actual work in that sentence.</span
+        >
+      </p>
+      <h2 id="an-interface-other-clients-understand">
+        An Interface Other Clients Understand
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? A Server Component can read data directly.
+          A Server Action can handle a UI mutation. But DemoCon's lobby display
+          wants the public schedule as JSON.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's a separate client. It doesn't need our component tree, and it
+          shouldn't depend on a framework-specific action invocation
+          protocol.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A Route Handler lets us define an HTTP endpoint with
+          methods, status codes, headers, and response bodies. That's a contract
+          many kinds of clients understand.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So an API remains useful when there is an actual boundary to expose:
+          another app, an integration, a webhook, a downloadable representation,
+          or browser code that needs a particular HTTP contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We aren't undoing the lesson about unnecessary self-fetching.
+          The page and endpoint can share a server data helper. The endpoint
+          exists for clients that need the transport boundary.</span
+        >
+      </p>
+      <h2 id="a-route-file-answers-http">A Route File Answers HTTP</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our public endpoint will be slash api slash sessions. In App Router,
+          a route file exports functions named for the HTTP methods it
+          handles.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>js</span></figcaption>
+        <pre tabindex="0"><code>// app/api/sessions/route.js
+import { getCachedPublicSessions } from '../../lib/cached-sessions';
+
+export async function GET() {
+  const sessions = await getCachedPublicSessions();
+  return Response.json({ sessions });
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Route dot js is Next's file convention. Export and async are
+          JavaScript. GET is the named export the framework recognizes for the
+          HTTP method. Response.json is a Web API, not JSX and not a React
+          rendering function.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The helper is the cached public reader we introduced
+          earlier. The response shape is an object with a sessions property. The
+          caller receives JSON, not a React component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The api folder is a naming convention we chose. App Router handlers
+          aren't restricted to a folder literally named api.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A handler can serve an appropriate route elsewhere. We use
+          api because it clearly distinguishes our machine-facing path from
+          slash sessions, the human-facing page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And we don't put page and route files at the exact same route and ask
+          Next to guess whether the caller wanted HTML or JSON. We give the two
+          interfaces distinct paths here.</span
+        >
+      </p>
+      <h2 id="the-same-data-different-representation">
+        The Same Data, Different Representation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The public page calls getCachedPublicSessions to render links. The
+          handler calls it to serialize public data. Neither calls the
+          other.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The shared helper is the reusable operation. Rendering and HTTP
+          serialization are different adapters around it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. That makes it easier to keep the published-only rule
+          consistent without coupling the page to a network request to
+          itself.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But sharing the helper doesn't mean we can blindly expose every field
+          it ever gains. An API response is a public contract. We should
+          deliberately select and document its fields.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. If our helper later returns internal data for another use, the
+          handler mustn't accidentally broaden its response. A separate public
+          representation or explicit mapping is a useful guard.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“The browser doesn't display it” still isn't a privacy policy.
+          Neither is “it's only in JSON.”</span
+        >
+      </p>
+      <h2 id="methods-have-meaning">Methods Have Meaning</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >GET retrieves a representation. It shouldn't publish a proposal or
+          delete a session. POST commonly creates a resource or performs a
+          submitted operation. Other methods have their own semantics.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A state-changing GET is especially dangerous because browsers,
+          crawlers, prefetchers, and intermediaries may request it without a
+          deliberate destructive action.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Method semantics help clients and infrastructure reason
+          about requests. Don't treat the method name as decoration around an
+          arbitrary function.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a successful response should have an appropriate status. An
+          invalid request isn't a 200 with the word error buried in an object
+          unless there's a deliberate protocol reason.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Status codes, headers, and body shape work together. A client
+          should be able to distinguish malformed input, unauthenticated access,
+          forbidden access, a missing resource, and a server failure where
+          relevant.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >While being careful not to reveal private record existence
+          unnecessarily. Sometimes a missing-style response is the appropriate
+          public behavior even if the server knows more.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. HTTP gives us vocabulary; application security determines
+          what we disclose.</span
+        >
+      </p>
+      <h2 id="input-is-still-untrusted">Input Is Still Untrusted</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the lobby display requests a track filter through the query
+          string. We can read it from the request URL using URL and
+          URLSearchParams.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 2">
+        <figcaption>Code card 2<span>js</span></figcaption>
+        <pre tabindex="0"><code>export async function GET(request) {
+  const url = new URL(request.url);
+  const track = url.searchParams.get('track');
+  const allowedTracks = new Set(['web', 'platform']);
+
+  if (track !== null &amp;&amp; !allowedTracks.has(track)) {
+    return Response.json({ error: 'Unknown track.' }, { status: 400 });
+  }
+
+  // An application helper must implement filtering and public-field selection.
+  const sessions = await getPublicSessionsForTrack(track);
+  return Response.json({ sessions });
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A standalone handler illustration, not an addition beside the
+          previous GET in the same file. We would import or implement that
+          helper. URL and URLSearchParams are Web APIs; Set and null are
+          JavaScript.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Here, null means no filter. A real contract should decide
+          what repeated query keys mean and enforce query limits. We don't let
+          an arbitrary string become a database instruction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The allowlist doesn't replace safe database parameterization. It's a
+          product validation rule layered with safe storage access.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a JSON body, request.json parses it, but parsing isn't
+          schema validation. It can throw on malformed JSON, and a successfully
+          parsed object may still contain nonsense.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript can describe the shape we expect. Runtime code must
+          establish that the request actually has that shape.</span
+        >
+      </p>
+      <h2 id="cache-policy-has-two-places">Cache Policy Has Two Places</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our first handler reads an explicitly cached public function. That is
+          one reuse policy. HTTP response caching is another.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So returning JSON doesn't automatically decide whether a browser or
+          CDN can store the response. We need appropriate response headers and
+          hosting behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And Route Handler rendering behavior depends on the Next
+          configuration. With Cache Components enabled, GET handlers follow its
+          prerendering model; supported cached work can be prepared, while
+          runtime inputs and uncached work affect that path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why “GET handlers are always uncached” and “GET handlers are
+          always cached” are both bad blanket advice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Without Cache Components, current handlers have their own
+          explicit caching options and defaults. Always name the model. Also, a
+          route handler isn't a React UI tree, so we don't wrap its Response in
+          a Suspense component.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can use a cached helper inside it. We don't turn the JSON into a
+          component because the rest of the app uses components.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And private responses need suitable cache controls. Never mark
+          a personalized result publicly cacheable merely because that makes a
+          benchmark happy.</span
+        >
+      </p>
+      <h2 id="the-backend-for-this-frontend">The Backend for This Frontend</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >BFF. Backend for frontend, not best friend forever, though ours is
+          trying.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A BFF adapts backend services to the needs of a particular frontend.
+          It may combine data, keep upstream credentials on the server,
+          normalize responses, or simplify browser calls.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >DemoCon might have a scheduling service and a speaker-profile
+          service. Our handler could combine their public data into one
+          representation the lobby display needs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. But every extra layer adds work and a failure point. Don't
+          aggregate everything by default. Ask whether the client contract
+          benefits enough to justify it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the same backend serves many unrelated clients, stuffing every
+          business rule into a frontend-specific handler can make ownership
+          awkward.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Shared domain rules may belong in a service independent of
+          this web app. The BFF should adapt the contract, not become a secret
+          second implementation of critical business rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That is the distinction between useful glue and a second backend
+          pretending it's just glue.</span
+        >
+      </p>
+      <h2 id="do-not-build-an-open-proxy">Do Not Build an Open Proxy</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keeping an upstream API credential on the server is useful. But a
+          handler that accepts any destination URL and fetches it with our
+          credentials is dangerous.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have given strangers a server-side network client wearing our
+          badge. They might target internal addresses or unintended
+          services.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Restrict destinations and operations, validate input, use
+          minimal credentials, and don't blindly forward sensitive incoming
+          headers to arbitrary upstreams.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also control request sizes, timeouts, and response sizes where
+          appropriate. Otherwise an endpoint designed to list twenty talks can
+          become a resource-exhaustion service.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And errors returned to the caller should be useful without
+          exposing upstream tokens or internal topology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Security belongs in the design of the proxying operation, not a
+          checkbox after the fetch statement.</span
+        >
+      </p>
+      <h2 id="cors-is-not-authorization">CORS Is Not Authorization</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If a different website calls our endpoint from browser JavaScript,
+          cross-origin policy enters the picture. CORS controls which
+          cross-origin browser reads are allowed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It doesn't stop a command-line client or server from sending a
+          request. It is not an authentication system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A public schedule endpoint may intentionally allow broad
+          reading. A private organizer endpoint needs actual authentication and
+          authorization, regardless of CORS headers.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And credentialed cross-origin browser access has stricter rules. We
+          should allow the intended origins, not spray wildcard headers around
+          until the error disappears.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Cookies also raise cross-site request concerns for
+          mutations. Framework action protections aren't automatically identical
+          to whatever custom protocol we create in a Route Handler.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Each exposed operation needs the protections appropriate to how it's
+          called. Reusing the same repository doesn't mean every boundary has
+          the same behavior.</span
+        >
+      </p>
+      <h2 id="webhooks-reverse-the-direction">
+        Webhooks Reverse the Direction
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A webhook is an incoming request from another system announcing an
+          event. For example, a trusted content service tells DemoCon that
+          published schedule data changed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We verify that the request really came from the expected source and
+          hasn't been tampered with. Merely containing a field called
+          secret-looking-event isn't evidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Many providers sign the raw request body. Verify according to
+          their protocol before parsing or acting, using the exact bytes they
+          signed. Also consider replay protection and duplicate delivery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Webhooks are often retried. The handler should be idempotent where
+          necessary, and it should acknowledge success according to the
+          provider's contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >After a verified schedule-change event, a handler can revalidate the
+          public cache. It cannot call updateTag, which is Server Action-only.
+          It can use revalidateTag with the freshness behavior we intend.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Max profile if stale-while-revalidate is acceptable; explicit
+          immediate expiration if that is required and supported. Again, pick
+          the behavior rather than the nicest-sounding verb.</span
+        >
+      </p>
+      <h2 id="a-handler-is-not-an-infinite-worker">
+        A Handler Is Not an Infinite Worker
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Could we generate a two-hour conference video inside a Route
+          Handler?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A deployment may impose execution time, memory, body-size, and
+          connection limits. A request handler is generally a poor place for
+          long-running durable work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Better to validate and enqueue the job, then return an appropriate
+          response and provide a way to inspect progress.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly, if the product needs that work. We're not adding a queue to
+          DemoCon's small schedule example. We are identifying where request
+          handlers stop being a good fit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And realtime connections depend on hosting support. A framework file
+          convention doesn't guarantee a platform supports a persistent
+          WebSocket server.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Runtime and deployment capabilities are part of the design.
+          Next's backend facilities don't replace every kind of backend
+          infrastructure.</span
+        >
+      </p>
+      <h2 id="check-the-http-contract">Check the HTTP Contract</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What should we verify for the public schedule endpoint?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A normal GET returns the documented shape and only public fields. A
+          valid filter does what it says. An invalid filter returns an
+          appropriate error. Private or unpublished information never appears.
+          Upstream failure produces a safe response rather than a fake empty
+          schedule.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And caching?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check the freshness policy and response headers in the actual
+          deployment. If a publication event invalidates data, verify the
+          endpoint eventually or immediately reflects it according to that
+          policy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What about clients?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A client checks the status before trusting the body, handles a slow
+          or failed response, and doesn't assume an empty array means the
+          network worked unless the contract says so.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's enough for a focused check. No need to audit every endpoint
+          pattern ever invented.</span
+        >
+      </p>
+      <h2 id="choosing-the-interface">Choosing the Interface</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let me choose among our three tools. A Server Component needs initial
+          public data: call the shared server helper. A proposal form in our
+          React UI changes state: a Server Action may simplify that flow. A
+          lobby display wants JSON: Route Handler.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Different callers and contracts, same underlying domain
+          where appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we need a public integration API with independent clients, we
+          design versioning, access, limits, and compatibility intentionally. We
+          don't tell partners to reverse-engineer a React action request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Server Actions are application UI machinery, not a
+          substitute for every public API contract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the backend already exists independently, Next can consume it
+          without annexing it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. Integration doesn't require ownership of every
+          service.</span
+        >
+      </p>
+      <h2 id="the-lobby-display-has-its-own-failure-story">
+        The Lobby Display Has Its Own Failure Story
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The lobby screen asks for the schedule. Our handler returns a
+          successful JSON response. What does the display need to do before
+          showing it?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Check the response status, parse the body, and verify the expected
+          representation. Then render the public sessions. It should also have a
+          plan for a slow request or unavailable service.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If it retains the last successful schedule during an outage, it
+          should communicate that appropriately. A frozen display labeled live
+          can be misleading.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The API's cache policy and the client's refresh behavior
+          cooperate to determine freshness. Neither alone tells us what
+          attendees are seeing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We should also avoid synchronized polling from a hundred screens
+          every exact second if that creates needless load. The refresh schedule
+          should fit the need and capacity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A tiny endpoint can become popular. Rate, payload size, and
+          caching decisions matter even when the handler itself is three lines
+          long.</span
+        >
+      </p>
+      <h2 id="a-contract-can-evolve-carefully">
+        A Contract Can Evolve Carefully
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We add a room field to the public response. Existing clients may
+          ignore it. But what if we rename title to name?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That can break clients expecting title. An API contract includes
+          field names and meaning, not just “it returns JSON.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a separate client creates a compatibility obligation. We can't
+          refactor the response casually as if every caller deploys in the same
+          commit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. For a small internal integration, coordination may be
+          enough. A public API may need explicit versioning and deprecation
+          practices. The scale of the process follows the callers and
+          promises.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another reason not to expose our complete database model. Public
+          representations should change according to consumer needs, not every
+          internal schema refactor.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Stable identifiers are useful too. A client should not infer
+          identity solely from a title that an editor may change.</span
+        >
+      </p>
+      <h2 id="pagination-is-about-resource-boundaries">
+        Pagination Is About Resource Boundaries
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our demonstration has a small list, so returning all public sessions
+          is reasonable. What changes if the endpoint covers years of
+          conferences?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We need bounded responses. Pagination or another clear limit prevents
+          an ordinary request from demanding an unbounded query and enormous
+          payload.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Validate page size and cursor inputs. A caller asking for a
+          billion records shouldn't override our resource policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sorting must also be stable enough for the pagination strategy.
+          Otherwise records can repeat or vanish between pages as data
+          changes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Those are data-contract concerns, not Next-specific syntax.
+          Route Handlers give us a place to implement the HTTP boundary; they
+          don't design pagination automatically.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We keep the demo small but recognize where the simple all-records
+          response stops fitting.</span
+        >
+      </p>
+      <h2 id="status-codes-are-part-of-the-conversation">
+        Status Codes Are Part of the Conversation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the client asks for an unsupported track. Our example returns
+          400. Why not return an empty list?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because an unknown input differs from a valid filter with no matches.
+          The client may have a bug or stale configuration. We should make that
+          distinguishable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Suppose an upstream service fails. A safe server-error
+          response communicates failure. A fake successful empty schedule hides
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the endpoint accepts a mutation, a successful creation can
+          identify the new resource. The response should let the caller know
+          what happened, not merely emit a cheerful Boolean.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. We don't need a huge error taxonomy for this demo, but the
+          statuses and body should agree.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Status 200, success false, error null, message maybe” is less a
+          protocol than a cry for help.</span
+        >
+      </p>
+      <h2 id="a-webhook-must-survive-repetition">
+        A Webhook Must Survive Repetition
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The content service sends a schedule-change event twice. What should
+          happen?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The handler verifies both requests, recognizes or safely tolerates
+          the duplicate, and doesn't perform a harmful operation twice.
+          Revalidating the same public tag again may be harmless, but publishing
+          or charging twice wouldn't be.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The operation determines how important deduplication is.
+          Signature verification proves something about the sender and message
+          integrity, not that the event has never been processed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And checking a signature over parsed and reserialized JSON can change
+          the bytes. If the provider signs the raw body, we preserve that exact
+          input for verification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Follow the provider's protocol, including timestamp or replay
+          checks where required. Don't invent a vaguely similar signature
+          algorithm because it seems simpler.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An incoming event is still an untrusted request until verified. The
+          word webhook doesn't confer friendship.</span
+        >
+      </p>
+      <h2 id="test-from-outside-the-ui">Test From Outside the UI</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Why call the endpoint directly during verification instead of only
+          loading the React page?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because the page doesn't necessarily use the endpoint at all. We
+          intentionally share the helper beneath both. A working page can't
+          prove the HTTP method, headers, or response body are correct.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The independent client needs its own contract check. Send
+          valid and invalid requests and inspect the actual response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For protected endpoints, try an unauthenticated call and an
+          authenticated caller without the required permission. The absence of a
+          visible button isn't part of that test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And verify that errors don't leak internals. A handler can
+          work on the happy path and still expose sensitive details when its
+          dependency fails.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a focused boundary check, not an invitation to audit the whole
+          internet.</span
+        >
+      </p>
+      <h2 id="the-backend-has-a-doorbell">The Backend Has a Doorbell</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Route Handlers exist because some work needs an explicit HTTP
+          interface. They use familiar web concepts inside Next's routing and
+          deployment system.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The framework handles dispatch. We still own method semantics,
+          inputs, permissions, response shape, errors, and appropriate
+          limits.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A small endpoint can be simple without being careless.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, images, fonts, metadata, loading, errors, redirects,
+          deployment, and Proxy. The framework has apparently rented the entire
+          building.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We'll inspect which rooms are useful.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And whether we are paying for a ballroom to store one chair.</span
+        >
+      </p>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

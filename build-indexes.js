@@ -2,7 +2,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 const EPISODES_DIRECTORY = path.join(__dirname, "episodes");
-const SERIES_ORDER = ["typescript", "node-npm", "modern-css", "react-frameworks", "web-architecture"];
+const SERIES_ORDER = ["modern-javascript", "typescript", "node-npm", "modern-css", "react-frameworks", "web-architecture", "javascript-testing", "cybersecurity", "nextjs", "apis", "modern-cms"];
 
 function escapeHtml(value) {
   return value
@@ -14,9 +14,14 @@ function escapeHtml(value) {
 
 function titleCase(slug) {
   const names = {
+    "javascript-testing": "JavaScript Testing",
     "modern-css": "Modern CSS — Wait, CSS Does That Now?",
     "node-npm": "Node, npm & the Modern JavaScript Toolchain",
     "react-frameworks": "React & Modern Front-End Frameworks",
+    "modern-cms": "Modern CMS Development",
+    "containers-infrastructure": "Containers & Infrastructure",
+    apis: "APIs — How Software Talks to Other Software",
+    nextjs: "Next.js",
     typescript: "TypeScript",
   };
 
@@ -120,7 +125,11 @@ async function buildSeriesIndex(series) {
 async function main() {
   const allSeries = await getSeries();
 
-  for (const series of allSeries) {
+  const requestedSeries = process.argv[2];
+  if (requestedSeries && !allSeries.some(series => series.slug === requestedSeries)) {
+    throw new Error(`Unknown series: ${requestedSeries}`);
+  }
+  for (const series of allSeries.filter(series => !requestedSeries || series.slug === requestedSeries)) {
     await buildSeriesIndex(series);
   }
 
@@ -146,3 +155,4 @@ main().catch((error) => {
   console.error(`Index build stopped: ${error.message}`);
   process.exitCode = 1;
 });
+

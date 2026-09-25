@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: Your Lighthouse Score Is Not an Accessibility Audit — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Accessibility episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: Your Lighthouse Score Is Not an Accessibility Audit</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/bf2f66f9-e633-4b23-878f-567339954535"
+      ></script>
+      <div class="redcirclePlayer-bf2f66f9-e633-4b23-878f-567339954535"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#a-result-needs-a-scope">A Result Needs a Scope</a></li>
+        <li>
+          <a href="#what-the-machine-can-ask">What the Machine Can Ask</a>
+        </li>
+        <li>
+          <a href="#lighthouse-is-one-useful-view"
+            >Lighthouse Is One Useful View</a
+          >
+        </li>
+        <li>
+          <a href="#axe-core-is-an-engine-not-a-human-evaluator"
+            >axe-core Is an Engine, Not a Human Evaluator</a
+          >
+        </li>
+        <li>
+          <a href="#source-checks-catch-a-different-moment"
+            >Source Checks Catch a Different Moment</a
+          >
+        </li>
+        <li>
+          <a href="#wave-makes-structure-visible"
+            >WAVE Makes Structure Visible</a
+          >
+        </li>
+        <li>
+          <a href="#ask-the-browser-what-it-knows"
+            >Ask the Browser What It Knows</a
+          >
+        </li>
+        <li>
+          <a href="#put-away-the-mouse-and-complete-the-task"
+            >Put Away the Mouse and Complete the Task</a
+          >
+        </li>
+        <li>
+          <a href="#enlarge-reflow-and-change-the-conditions"
+            >Enlarge, Reflow, and Change the Conditions</a
+          >
+        </li>
+        <li>
+          <a href="#a-screen-reader-is-a-tool-to-learn"
+            >A Screen Reader Is a Tool to Learn</a
+          >
+        </li>
+        <li>
+          <a href="#a-worked-failure-with-more-than-one-cause"
+            >A Worked Failure with More Than One Cause</a
+          >
+        </li>
+        <li>
+          <a href="#make-the-report-useful-to-the-next-person"
+            >Make the Report Useful to the Next Person</a
+          >
+        </li>
+        <li>
+          <a href="#accessibility-during-development"
+            >Accessibility During Development</a
+          >
+        </li>
+        <li>
+          <a href="#what-would-we-put-in-the-pull-request"
+            >What Would We Put in the Pull Request?</a
+          >
+        </li>
+        <li>
+          <a href="#back-to-the-person-ordering-dinner"
+            >Back to the Person Ordering Dinner</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Good news. Our checkout got one hundred.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>One hundred what?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Accessibility. Lighthouse. Big green number.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can you close the address dialog with the keyboard?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Not in this deliberately broken teaching example.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Can you read the error message at four hundred percent zoom?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Also no.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then congratulations on one hundred of whatever we actually
+          measured.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That sounded suspiciously like our testing-series finale.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>It has returned with a browser extension and a clipboard.</span>
+      </p>
+      <h2 id="a-result-needs-a-scope">A Result Needs a Scope</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We've spent five episodes connecting
+          people, browser semantics, interaction, ARIA, and visual design. Today
+          we ask what testing tools can establish and where human evaluation
+          still matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not a tool-shaming episode. I like tools. I would prefer software
+          catches an empty button name before a customer has to report it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The problem is interpreting a useful automated result as a much
+          larger claim. Lighthouse's accessibility score summarizes its scored
+          automated accessibility checks. It doesn't include every accessibility
+          requirement or every possible state of the application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a score of one hundred isn't a percentage of disabled people who
+          can use the site. Or a percentage of WCAG we've fulfilled. Or a
+          certificate that the checkout works.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Manual checks aren't included in that score. A result can be valuable
+          within its scope and incomplete for the real task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like a smoke alarm. A quiet alarm is welcome. It doesn't certify that
+          the stairs lead somewhere.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our opening checkout is a fictional example, not a report of a
+          measured live site. We're illustrating bugs that a clean automated run
+          can leave undiscovered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which brings us to the question from the testing series: one hundred
+          percent of what?</span
+        >
+      </p>
+      <h2 id="what-the-machine-can-ask">What the Machine Can Ask</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated tools can inspect many properties of a rendered page.
+          Depending on the engine and configuration, they can detect missing
+          names, invalid ARIA values, some relationship problems, and many
+          contrast failures.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those are real defects. I don't want the limitations discussion to
+          become an excuse to ignore an automated report.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. But a rule has to be something the software can determine
+          from the information it has. It can ask whether a control has a name
+          more reliably than whether that name makes sense to a person doing
+          this task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An icon-only Remove button named “Button seven” has acquired a string
+          without acquiring usefulness.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some tools catch certain suspicious text patterns, but meaningful
+          quality remains contextual. The same applies to alternative
+          text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a product image has alternative text “image,” we technically
+          supplied text and practically shrugged. If it's decorative and repeats
+          nearby information, empty alternative text may be appropriate. The
+          right answer depends on the image's purpose here.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A chart may need a fuller explanation or data alternative. An image
+          used as a link needs a name that communicates the link's purpose. An
+          attribute-presence check can't settle all that.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And an automatically generated description can accurately say “a
+          pizza on a table” while missing the important information: this image
+          distinguishes the gluten-free option. Context decides
+          usefulness.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automation can also flag structural issues around headings, but it
+          can't reliably tell whether the hierarchy expresses the content
+          clearly.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Three technically valid headings called “Stuff,” “More stuff,” and
+          “Final stuff” are not an information architecture triumph.</span
+        >
+      </p>
+      <h2 id="lighthouse-is-one-useful-view">Lighthouse Is One Useful View</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Lighthouse is useful for a quick automated snapshot and for
+          repeatable checks in development workflows. Its accessibility category
+          draws on automated rules, including axe-based checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means running Lighthouse and another axe-based tool doesn't
+          necessarily give us two completely independent sets of evidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Different products can expose different subsets, settings, and
+          reporting, but shared engines mean overlap. We shouldn't add their
+          scores together like scientific confidence points.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the page state matters. If the address dialog is closed when we
+          scan, we haven't necessarily evaluated its open state, its fields, or
+          what happens after validation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Authentication, viewport, loaded content, and tool configuration also
+          affect scope. Save enough context to know what you tested.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Checkout, signed-in test account, dialog open, error state, browser
+          version” tells a colleague something reproducible. “Website got green”
+          tells them your screen had a color.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The report may list items requiring manual review. Those aren't
+          decorative caveats below the number. They're work the score doesn't
+          perform for you.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use the report to find defects and guide investigation. Don't turn it
+          into a trophy that discourages further questions.</span
+        >
+      </p>
+      <h2 id="axe-core-is-an-engine-not-a-human-evaluator">
+        axe-core Is an Engine, Not a Human Evaluator
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's bring Sabrina in for tooling. She's been looking at how these
+          checks fit into normal development.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Hello. I have arrived with a pull request, which is how interns
+          materialize now.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does it contain a giant screenshot of a green number?</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >No. It contains reproducible checks, because I suspected you'd ask
+          what the number meant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Start with axe versus axe-core.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Axe-core is the open-source automated accessibility testing engine.
+          It can be integrated into browser testing and development tools.
+          Products such as axe DevTools provide interfaces around accessibility
+          testing, but the engine is useful beyond clicking an extension after
+          launch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So it can participate in tests for the actual component states we
+          build.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Yes. Open the dialog, wait for the relevant content to render, run a
+          scan. Trigger validation, then scan that state. You can catch
+          recurring machine-detectable problems before a change ships.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Does passing the scan prove the dialog's keyboard behavior?</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >No. We need interaction assertions and manual checks too. The scan
+          can inspect certain properties of the open dialog, but it doesn't
+          replace walking the workflow.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same engine, several useful entry points. None of them secretly
+          becomes an experienced screen-reader user because it runs in
+          continuous integration.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Also read the result categories. Something marked incomplete or
+          requiring review isn't a clean pass. The engine may need a human to
+          determine the outcome.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And don't casually suppress a rule to get a green build.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >If we need an exception, document the specific reason and scope.
+          Otherwise we can make the report cleaner while leaving the interface
+          worse.</span
+        >
+      </p>
+      <h2 id="source-checks-catch-a-different-moment">
+        Source Checks Catch a Different Moment
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where do linters fit?</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Earlier. A linter analyzes source patterns. For example, JSX
+          accessibility lint rules can catch some missing attributes or
+          suspicious interaction patterns while we edit or in a build
+          check.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >JSX is the markup-like syntax used with React and other tooling. The
+          lint rule is tooling inspecting it; this isn't TypeScript secretly
+          checking the human experience.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Exactly. A custom component might require configuration so the linter
+          understands which native element it represents. Otherwise a component
+          named AccessibleButton could render almost anything.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A suspiciously confident name, given Episode 2.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Static checking can't generally know every runtime label, conditional
+          branch, fetched value, CSS effect, or interaction outcome. Framework
+          warnings can help, but the rendered page still matters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So we get layers: source checks, rendered-page scans, interaction
+          tests, and human evaluation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not four competing religions. Different observations of the same
+          product.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >My useful default is small and repeatable: check the components and
+          important states we're changing. Expand coverage based on the actual
+          journeys and risks. Don't install six overlapping products because the
+          settings page looks reassuring.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>You may keep the pull request.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Excellent. I'm returning to the place where the build tells me which
+          line I broke.</span
+        >
+      </p>
+      <h2 id="wave-makes-structure-visible">WAVE Makes Structure Visible</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WAVE is another useful approach. It annotates a page with
+          accessibility information, errors, alerts, and structural
+          details.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which can help me connect a finding to the interface, rather than
+          reading an abstract list of selectors and wondering which rectangle
+          has offended it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It also supports human review of things like alternative text and
+          headings. An alert means investigate the context, not necessarily that
+          the element is definitively wrong.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So neither “everything marked is broken” nor “only red errors matter”
+          is a good interpretation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Learn what the tool's categories mean. Use them to examine the
+          page rather than treating the icon count as an accessibility
+          score.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I'm testing private or authenticated pages, I also need to
+          understand where the tool runs and what data it sends. Tool selection
+          includes privacy, not just rule coverage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >WAVE offers browser extensions as well as its web service. Choose the
+          method that fits your content and organizational rules, and check the
+          current tool documentation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We're not uploading customer checkout data to a public service as a
+          side quest in accessibility.</span
+        >
+      </p>
+      <h2 id="ask-the-browser-what-it-knows">Ask the Browser What It Knows</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser accessibility inspectors bring us directly back to Episode 2.
+          Select an element and inspect its computed accessibility
+          information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Role, name, state, description, and relationships where the browser
+          exposes them. Also whether the element is included or ignored in the
+          accessibility tree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For our delivery disclosure, inspect the button before and after
+          activation. Does expanded change with the panel? Does the name stay
+          useful? Does its controls reference point to the correct panel?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the name is wrong, inspect the source the browser used. A
+          forgotten aria-label might be overriding perfectly good visible text.
+          Fixing the actual cause is better than attaching another attribute on
+          top.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Browser panels differ, so the companion links documentation rather
+          than promising a menu item will live in exactly one place
+          forever.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the inspector isn't a recording of everything a screen reader
+          will say. It's evidence about the browser's exposed information.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the tree is wrong, investigate the markup and browser
+          interpretation. If the tree looks right but the experience is wrong,
+          consider interaction, announcement timing, and the particular
+          assistive-technology combination.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is an excellent debugging boundary. I can stop treating
+          “accessibility bug” as one giant category of ghosts.</span
+        >
+      </p>
+      <h2 id="put-away-the-mouse-and-complete-the-task">
+        Put Away the Mouse and Complete the Task
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the manual pass. Start with an actual task: review the order,
+          edit the delivery address, recover from a validation error, and submit
+          a simulated order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use safe test data and a test payment path. Accessibility testing
+          does not require accidentally ordering forty pizzas.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Run the automated checks in relevant states first, then navigate with
+          the keyboard. Reach every essential action, use the expected keys, and
+          verify the result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check visible focus and order. Open the dialog, move forward and
+          backward, close it, and find where focus returns. Check error
+          recovery. Don't stop after proving Tab reaches the first button.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A button might be focusable but fail to activate. A dialog might open
+          but trap you without an exit. A menu might respond to one arrow key
+          and break when options change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or a native button might fire twice because somebody added a key
+          handler beside click. The semantics can look wonderful while the order
+          submits twice.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The actual application outcome belongs in the test. “Received a
+          click” is weaker than “performed the expected action once and
+          communicated its result.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to automate every manual observation immediately. First
+          understand the failure. Then add a regression check at a useful level
+          if it can reliably protect the behavior.</span
+        >
+      </p>
+      <h2 id="enlarge-reflow-and-change-the-conditions">
+        Enlarge, Reflow, and Change the Conditions
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next, zoom and text resizing. Does the journey still work when
+          content grows and the effective viewport narrows?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Last episode's vanished Place order button is a perfect target. We
+          check labels, help, errors, action buttons, dialogs, and sticky
+          content. We don't merely inspect the header at a different size.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Check text contrast and essential non-text cues, including alternate
+          themes and states. Automated contrast checks can be limited by complex
+          backgrounds and other rendering details, so investigate what wasn't
+          evaluated.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Check whether color carries exclusive meaning. A tool may measure the
+          red text perfectly while missing that red is the only clue something
+          failed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Try reduced-motion settings for the relevant interactions, and check
+          touch target size and spacing on touch interfaces.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need an infinite matrix before making a useful finding. We
+          need deliberate representative conditions, clear scope, and follow-up
+          when evidence points to a gap.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And repeat after meaningful changes. A global typography change can
+          break layouts without altering a single accessibility attribute.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is why “the component was accessible when we bought it” isn't a
+          lifetime warranty.</span
+        >
+      </p>
+      <h2 id="a-screen-reader-is-a-tool-to-learn">
+        A Screen Reader Is a Tool to Learn
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then try a screen reader. The goal isn't to turn yourself into an
+          expert in five minutes. It's to inspect an important dimension of the
+          actual experience.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pick a supported browser and screen-reader combination, learn its
+          basic commands, and use it on a familiar, well-structured page first.
+          Otherwise you can mistake your unfamiliarity with the tool for a bug
+          in every site.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >On Windows, NVDA is a common starting option; VoiceOver is built into
+          Apple platforms. Those are examples, not a promise that testing one
+          combination covers every user.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Learn how to start and stop speech, navigate headings, move through
+          controls, and switch between reading content and interacting with form
+          fields. The exact keys depend on the screen reader and
+          configuration.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Screen-reader browsing often uses navigation commands beyond Tab.
+          Tabbing only through controls won't tell you whether headings,
+          paragraphs, and order information are readable and organized.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor should we demand an exact spoken sentence from every combination.
+          A useful test expectation can be that the correct name, role, and
+          state are available and the action is understandable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Follow the task. Can you find the order summary? Distinguish
+          similarly named controls? Understand the required field? Discover the
+          error? Hear or otherwise access the successful result?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And distinguish missing information from announcements you
+          interrupted yourself. If you move focus immediately after an update,
+          you may have changed what gets spoken. Reproduce carefully.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Document the browser, screen-reader version, relevant mode, and steps
+          when reporting a failure. That gives another person a chance to
+          reproduce it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Developer testing complements testing with experienced users. It
+          doesn't replace their expertise or make one developer's success proof
+          of universal usability.</span
+        >
+      </p>
+      <h2 id="a-worked-failure-with-more-than-one-cause">
+        A Worked Failure with More Than One Cause
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's walk one example through the layers. The address dialog has a
+          Close button and passes an automated name check, but the customer
+          can't finish editing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>First question: what exactly happened?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Keyboard focus went behind the dialog after the last field. Escape
+          did nothing. Clicking the visible cross worked.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's an interaction failure. Inspecting the tree might show role
+          dialog and a good name, but those semantics didn't implement modality
+          or an exit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We correct the dialog behavior and add an interaction regression
+          check for focus containment and closing. Then test it manually
+          again.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now the screen-reader pass reveals that the postal-code field's
+          description still contains yesterday's error even after
+          correction.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Different failure: stale state or a stale relationship. Update the
+          error lifecycle so the current field state and description
+          agree.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then zoom reveals the Close button is clipped. Different layer again.
+          We fix the layout and check the full enlarged dialog.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >None of those fixes makes the automated engine useless. It can still
+          protect useful properties. But the collection of evidence becomes
+          stronger when each check makes a specific claim.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We didn't run the same scan nine times and expect the tenth to become
+          a human.</span
+        >
+      </p>
+      <h2 id="make-the-report-useful-to-the-next-person">
+        Make the Report Useful to the Next Person
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A good issue report should identify the affected task and the
+          barrier, not only quote a rule identifier.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“After opening Edit address, Tab moves into the page behind the
+          modal, so a keyboard user loses the active context.” That's a problem
+          someone can reason about.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Include expected behavior, actual behavior, steps, environment, and
+          relevant evidence. Link the component or criterion when helpful.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the automated report catches it, attach the finding. If it
+          doesn't, say which manual observation established it. We don't need a
+          machine's permission to report a real barrier.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Prioritize by impact and reach, including whether the problem blocks
+          an essential task and whether a shared component spreads it across the
+          site.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A focus bug in the only payment path is not automatically less
+          important than a pile of low-impact findings just because there are
+          fewer screenshots of it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >After fixing it, verify the original reproduction and the relevant
+          neighboring states. The regression test should protect the behavior,
+          not merely assert the exact markup you just wrote.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That last sentence also survived our testing series. We are getting
+          excellent mileage from understanding what a test claims.</span
+        >
+      </p>
+      <h2 id="accessibility-during-development">
+        Accessibility During Development
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Where should all this fit in a normal team's workflow?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >At the decisions. Design reviews consider labels, order, error
+          states, motion, and enlargement. Implementation starts with semantic
+          HTML and appropriate interaction. Tests grow around real
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Automated scans and linting catch repeatable issues early. Manual
+          checks cover the changed journey. Broader evaluation and user
+          involvement help address what the narrower checks don't
+          establish.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It's not build everything, run Lighthouse Friday afternoon, panic,
+          and ask someone to sprinkle ARIA on the wreckage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A shared component fix can prevent the same problem across many
+          pages. But page composition and content remain important, so component
+          testing doesn't replace journey testing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For existing problems, keep a concrete backlog with ownership. A
+          baseline can help teams avoid new failures while fixing old ones, but
+          it shouldn't become an invisible closet where all known barriers live
+          forever.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And keep reports honest. Say which pages, states, tools, and manual
+          checks were covered. Say what remains untested.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's not pessimism. It's useful engineering evidence.</span>
+      </p>
+      <h2 id="what-would-we-put-in-the-pull-request">
+        What Would We Put in the Pull Request?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's make our development workflow concrete. We've changed the
+          delivery disclosure and address dialog. What evidence would we put in
+          the pull request?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First, state the behavior that changed. The delivery button opens
+          details and reports the current expanded state. The address dialog
+          keeps a usable focus path through validation and returns the user to
+          the checkout when closed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then list the meaningful checks, without pretending we tested the
+          whole site.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. An interaction test can open the disclosure, confirm the
+          content appears, and confirm the expanded state agrees. Close it and
+          check both again. That's protecting observable behavior rather than
+          merely checking that an attribute appears in the source.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For the dialog, test opening, initial focus, the relevant Tab
+          sequence, dismissal, and return. Trigger validation so the test
+          doesn't only cover the easiest path.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And make sure the test environment can establish the thing you're
+          claiming. A simulated DOM can be useful for component behavior, but it
+          doesn't reproduce actual visual layout or every browser focus
+          detail.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So browser tests and manual checks provide different evidence. We
+          shouldn't claim the close button survives zoom based on a unit test
+          that never lays out a page.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Correct. Run the automated accessibility scan in the open dialog and
+          error state. Record the configuration. Then manually complete the
+          keyboard journey and inspect enlarged layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>How much do we write?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Enough for a reviewer to understand scope. “Checked checkout
+          disclosure and address dialog: automated scan in open/error states;
+          keyboard entry, validation, dismissal, and return; enlarged layout;
+          name/state inspection.” Then note the screen-reader combination if it
+          was actually tested.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If it wasn't tested, don't borrow credibility from a checklist item
+          sitting nearby.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Precisely. “Not yet checked with a screen reader” is a useful
+          remaining task. “Accessibility verified” is an unsupported
+          promotion.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the scan reports a pre-existing issue elsewhere in the
+          checkout. It isn't caused by this change.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Record and triage it. Determine whether it blocks the changed journey
+          or release expectations. Don't silently disable the entire rule. A
+          narrow documented exception, when justified, preserves much more
+          information than a global suppression.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if our regression suite takes screenshots but doesn't exercise
+          the error state, we shouldn't assume the screenshots protect that
+          state.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Right. Every test has setup and assertions. The thing we didn't
+          arrange and didn't observe is not covered just because the page
+          appeared during the run.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This also helps avoid unnecessary duplication. We don't need three
+          near-identical scans if they inspect the same state with the same
+          engine and configuration.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Spend that effort on the missing state or manual journey. More tool
+          runs aren't automatically more distinct evidence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >What about a small text-only change to the dialog instructions?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Scope the checks to the change. Review clarity, naming/description
+          relationships if affected, and layout with the new text. We don't need
+          to rerun every test in the history of the internet because one
+          sentence changed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >But a shared focus-management change has a wider impact and needs
+          broader checking.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Match validation to what can plausibly break. That's how
+          accessibility becomes sustainable engineering work instead of a
+          ceremony nobody has time to repeat.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And the reviewer can ask targeted questions: why this focus
+          destination, why this name, what happens on failure?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is much better than asking whether we remembered to make it
+          accessible. We've made the claim concrete enough to inspect.</span
+        >
+      </p>
+      <h2 id="back-to-the-person-ordering-dinner">
+        Back to the Person Ordering Dinner
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our companion has a developer checklist covering automation, keyboard
+          and focus, zoom, browser inspection, screen-reader use, and human
+          judgment. It's a practical pass, not a formal audit methodology or a
+          conformance certificate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The series began with one person trying to order dinner. Different
+          input and output methods, same underlying task.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >HTML gave the browser meaning. Keyboard behavior gave people a path.
+          ARIA filled semantic gaps. Design preserved perceivable,
+          understandable information. Testing helped us discover where the
+          combined experience still failed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the recurring question, “What does the browser know right now?”
+          has a partner: “Can the person actually do what they came here to
+          do?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A tool can establish particular facts. It can't certify the whole
+          human experience from a scan.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's today's “ohhh.” Accessibility tools find detectable problems.
+          A clean report is useful evidence within its scope. It is not proof
+          that the website is completely accessible.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can use the platform well, test as we build, and keep learning
+          from actual use.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nervous Robot's checkout is allowed to remain ordinary. In fact,
+          ordinary buttons have had an outstanding series.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Any final words for the big green number?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Thank you for your contribution. Please stop claiming to be the
+          entire department.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          <strong
+            >A Lighthouse accessibility score of 100 is not proof that a site is
+            completely accessible.</strong
+          >
+          It summarizes scored automated checks, not every requirement, page
+          state, interaction, or human experience. This developer pass is not a
+          formal audit or conformance certificate.
+        </p>
+        <h3>Developer accessibility-testing checklist</h3>
+        <ol>
+          <li>
+            <strong>Define a real task and scope.</strong> Record page/route,
+            user state, viewport, browser, relevant versions, and tool
+            configuration. Use safe test data. Include initial, open, invalid,
+            loading, success, and failure states where relevant.
+          </li>
+          <li>
+            <strong>Run automated checks.</strong> Use Lighthouse and/or
+            axe-based checks deliberately; account for overlap. Run scans after
+            relevant state changes, not only on the initial page. Investigate
+            failures and incomplete/manual-review results.
+          </li>
+          <li>
+            <strong>Put away the mouse.</strong> Complete the essential journey
+            with Tab, Shift+Tab, and the appropriate activation/widget keys.
+            Check every action has a usable keyboard path; test results, not
+            only event firing.
+          </li>
+          <li>
+            <strong>Check focus.</strong> Is it visible and unobscured? Does the
+            order make sense? Do dialogs have an entry, containment while modal,
+            an exit, and a logical return? Do routine updates preserve the
+            user's position?
+          </li>
+          <li>
+            <strong>Enlarge and reflow.</strong> Check text resizing, narrow
+            effective layout, wrapping, clipping, sticky content, dialogs, and
+            error recovery. See Episode 5 for scoped reference values.
+          </li>
+          <li>
+            <strong>Review visual meaning.</strong> Check contrast in actual
+            states/themes, color-independent information, useful labels, target
+            size/spacing, and reduced-motion behavior. Investigate backgrounds
+            and states automation cannot evaluate reliably.
+          </li>
+          <li>
+            <strong>Inspect the accessibility tree.</strong> Check computed
+            role, name, state, description, and relevant ID relationships.
+            Inspect before/after activation and correction; identify which
+            naming source actually won.
+          </li>
+          <li>
+            <strong>Use a screen reader.</strong> Learn basic commands for one
+            supported combination, then follow the task. Navigate both document
+            structure and controls. Check names, groups, instructions, errors,
+            announcements, and final outcome. Record environment and modes.
+          </li>
+          <li>
+            <strong>Think like a human.</strong> Is alternative text appropriate
+            in context? Are names and headings useful? Are instructions,
+            interaction effects, and recovery understandable? Developer testing
+            complements experienced-user involvement.
+          </li>
+          <li>
+            <strong>Report, fix, and verify.</strong> Record steps,
+            expected/actual behavior, impact, and evidence. Add a meaningful
+            regression check when it can protect the behavior. Recheck the
+            failure and related states. Document untested scope.
+          </li>
+        </ol>
+        <h3>What each tool contributes</h3>
+        <dl>
+          <dt><strong>Lighthouse</strong></dt>
+          <dd>
+            A convenient automated page snapshot and repeatable checks. The
+            accessibility score excludes manual checks and does not measure
+            complete WCAG conformance or journey success.
+          </dd>
+          <dt><strong>axe-core / axe DevTools</strong></dt>
+          <dd>
+            Axe-core is an automated rules engine that can run in browser
+            testing and other tools. DevTools products provide testing
+            interfaces. Scan rendered states; supplement with behavior and
+            manual evaluation.
+          </dd>
+          <dt><strong>WAVE</strong></dt>
+          <dd>
+            Visual annotations for errors, alerts, and structural information.
+            Interpret categories and context; an alert needs investigation, not
+            automatic deletion.
+          </dd>
+          <dt><strong>Browser accessibility inspectors</strong></dt>
+          <dd>
+            Evidence of the browser's computed accessibility information. They
+            help explain wrong names, missing roles, and stale state; they do
+            not reproduce every screen-reader announcement.
+          </dd>
+          <dt><strong>Linters and framework warnings</strong></dt>
+          <dd>
+            Early source-level checks. Custom components may need configuration;
+            runtime content, CSS, and interaction remain outside many static
+            checks.
+          </dd>
+          <dt><strong>Interaction tests</strong></dt>
+          <dd>
+            Exercise known keyboard/focus/application outcomes and protect
+            regressions. Test selection and assertions limit what a green result
+            establishes.
+          </dd>
+          <dt><strong>Manual and experienced-user evaluation</strong></dt>
+          <dd>
+            Inspect context, task completion, reading/navigation, presentation
+            changes, and usability that automated rules cannot settle.
+          </dd>
+        </dl>
+        <h3>Screen-reader starting workflow</h3>
+        <ul>
+          <li>
+            Choose a supported browser/screen-reader combination; record
+            versions and settings.
+          </li>
+          <li>
+            Learn start/stop, speech interruption, heading navigation, control
+            navigation, and reading versus interaction modes from its own guide.
+          </li>
+          <li>
+            Practice on a familiar structured page before diagnosing your
+            application.
+          </li>
+          <li>
+            Test reading structure as well as Tab navigation. A screen reader's
+            reading cursor and DOM focus are not identical.
+          </li>
+          <li>
+            Check available name/role/state and useful outcomes rather than
+            requiring identical wording across products.
+          </li>
+          <li>
+            Do not treat five minutes of developer use as a substitute for
+            experienced-user testing.
+          </li>
+        </ul>
+        <h3>Reusable bug report</h3>
+        <figure class="card code">
+          <figcaption>Evidence template<span>text</span></figcaption>
+          <pre tabindex="0"><code>Task and affected page/component:
+Environment: browser, OS, assistive technology, versions, settings
+Initial state and safe test data:
+Steps and exact keys/actions:
+Expected behavior:
+Actual behavior:
+Barrier / task impact:
+Evidence: automated finding, tree properties, manual observation
+Fix owner and relevant regression check:
+Verification result and remaining untested scope:</code></pre>
+        </figure>
+        <h3>Keep checks inside development</h3>
+        <p>
+          Design decisions → semantic HTML → accessible interaction →
+          state-based automated checks → manual journey verification →
+          regression protection and continued evaluation. A component can pass
+          alone while its composition or content fails; check important journeys
+          too.
+        </p>
+        <h3>Tool and workflow references</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.chrome.com/docs/lighthouse/accessibility/scoring"
+              >Chrome: Lighthouse accessibility scoring</a
+            >
+          </li>
+          <li>
+            <a href="https://github.com/dequelabs/axe-core">Deque: axe-core</a>
+          </li>
+          <li><a href="https://wave.webaim.org/help">WebAIM: WAVE help</a></li>
+          <li>
+            <a
+              href="https://developer.chrome.com/docs/devtools/accessibility/reference"
+              >Chrome DevTools: Accessibility reference</a
+            >
+          </li>
+          <li>
+            <a href="https://github.com/jsx-eslint/eslint-plugin-jsx-a11y"
+              >JSX accessibility linting</a
+            >
+          </li>
+          <li>
+            <a href="https://download.nvaccess.org/documentation/userGuide.html"
+              >NVDA User Guide and keyboard commands</a
+            >
+          </li>
+          <li>
+            <a href="https://support.apple.com/guide/voiceover/welcome/mac"
+              >Apple VoiceOver User Guide</a
+            >
+          </li>
+          <li>
+            <a href="https://www.w3.org/WAI/test-evaluate/"
+              >WAI: Evaluating Web Accessibility</a
+            >
+          </li>
+        </ul>
+        <p>
+          Check current documentation and privacy requirements before sending
+          private pages or data to hosted testing services.
+        </p>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

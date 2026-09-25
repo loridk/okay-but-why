@@ -1,0 +1,1298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Episode 7: Building an API — Listening Companion</title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p>
+        <a href="../index.html"
+          >← Back to APIs — How Software Talks to Other Software episodes</a
+        >
+      </p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 7: Building an API</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/d1de52ae-7987-4448-a113-040be1b18fca"
+      ></script>
+      <div class="redcirclePlayer-d1de52ae-7987-4448-a113-040be1b18fca"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#the-other-end-is-code">The Other End Is Code</a></li>
+        <li>
+          <a href="#routing-gets-the-request-to-the-right-code"
+            >Routing Gets the Request to the Right Code</a
+          >
+        </li>
+        <li>
+          <a href="#three-places-input-can-arrive"
+            >Three Places Input Can Arrive</a
+          >
+        </li>
+        <li><a href="#validate-in-layers">Validate in Layers</a></li>
+        <li><a href="#follow-a-retrieval">Follow a Retrieval</a></li>
+        <li>
+          <a href="#business-logic-isn-t-just-glue"
+            >Business Logic Isn't Just Glue</a
+          >
+        </li>
+        <li>
+          <a href="#the-database-has-its-own-boundary"
+            >The Database Has Its Own Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#a-check-can-become-stale">A Check Can Become Stale</a>
+        </li>
+        <li>
+          <a href="#construct-a-useful-response">Construct a Useful Response</a>
+        </li>
+        <li>
+          <a href="#the-handler-may-not-be-the-whole-story"
+            >The Handler May Not Be the Whole Story</a
+          >
+        </li>
+        <li>
+          <a href="#try-to-break-the-promise">Try to Break the Promise</a>
+        </li>
+        <li>
+          <a href="#building-the-endpoint-isn-t-operating-it"
+            >Building the Endpoint Isn't Operating It</a
+          >
+        </li>
+        <li>
+          <a href="#a-request-is-not-a-function-argument-you-control"
+            >A Request Is Not a Function Argument You Control</a
+          >
+        </li>
+        <li>
+          <a href="#a-tiny-update-with-several-real-decisions"
+            >A Tiny Update With Several Real Decisions</a
+          >
+        </li>
+        <li>
+          <a href="#database-failure-is-not-customer-error"
+            >Database Failure Is Not Customer Error</a
+          >
+        </li>
+        <li>
+          <a href="#framework-features-are-conveniences-with-boundaries"
+            >Framework Features Are Conveniences With Boundaries</a
+          >
+        </li>
+        <li>
+          <a href="#the-boundary-helps-testing">The Boundary Helps Testing</a>
+        </li>
+        <li>
+          <a href="#keep-the-external-contract-smaller-than-the-implementation"
+            >Keep the External Contract Smaller Than the Implementation</a
+          >
+        </li>
+        <li>
+          <a href="#the-familiar-php-connection">The Familiar PHP Connection</a>
+        </li>
+        <li>
+          <a href="#the-magic-was-a-function">The Magic Was a Function</a>
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Today we reveal what lives behind the endpoint.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Please be a person writing an if statement.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A person writing several if statements.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I knew it. Every time somebody says “the platform handles that,” I
+          picture a tired developer deciding whether a value is null.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>There's also a database query.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Luxury infrastructure.</span>
+      </p>
+      <h2 id="the-other-end-is-code">The Other End Is Code</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We've sent requests. Now we receive one.
+          Building an API means implementing the behavior promised by that
+          interface.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not buying an API-shaped appliance. A server receives a request, runs
+          code, and produces a response. My traditional PHP background is
+          suddenly looking suspiciously relevant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Very relevant. A PHP script that reads request information, validates
+          it, performs a query, and returns JSON can implement a web API. So can
+          a route handler in many other languages and frameworks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The HTTP client doesn't need to know which language did the work. It
+          needs the response to fulfill the contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We'll follow an authorized request for order 42, then
+          discuss an update. The code card is pseudocode: a readable description
+          of responsibilities, not a particular framework you can paste into
+          production.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. No invented package named makeBackendSecure.</span>
+      </p>
+      <h2 id="routing-gets-the-request-to-the-right-code">
+        Routing Gets the Request to the Right Code
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A route associates an incoming request pattern with a handler. A
+          handler is the function or code responsible for dealing with a
+          matching request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Method and path matter. GET slash orders slash 42 can mean retrieve
+          an order. A different method at the same path may mean something else
+          or be rejected.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A route pattern might use a parameter placeholder, such as orderId,
+          to capture the identifier from the path. The framework's exact syntax
+          varies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The incoming text 42 becomes a route parameter. It doesn't become
+          trustworthy merely because the router extracted it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Parse and validate it according to the contract. If
+          identifiers must be positive integers within a supported range, check
+          that. If they are opaque strings, don't invent numeric
+          assumptions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And don't casually use a permissive parser that turns 42banana into
+          42. Decide what counts as a valid identifier, then enforce it.</span
+        >
+      </p>
+      <h2 id="three-places-input-can-arrive">Three Places Input Can Arrive</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Route parameters identify something in the path. Query parameters
+          appear after the question mark and commonly influence things like
+          filtering, sorting, or pagination. Request bodies carry content
+          submitted for an operation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our order ID might be in the path. A view choice could be a query
+          parameter. Updated delivery instructions might be in a body.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Those are design conventions, not a security ranking. Every
+          one of those inputs can be controlled by a caller.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Including hidden form fields, disabled controls, and values our own
+          JavaScript generated. Somebody can bypass our interface and send a
+          different request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Headers can carry relevant input too. The server must
+          understand and constrain what it accepts, not simply trust whatever
+          the usual frontend sends.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And some parsers interpret duplicate query parameters differently. We
+          should choose what happens if sort appears twice rather than letting
+          accidental library behavior define a contract.</span
+        >
+      </p>
+      <h2 id="validate-in-layers">Validate in Layers</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >First, can we even read the request? Is the body within size limits?
+          Is its media type supported? Is it syntactically valid?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then shape. Is quantity an integer? Is deliveryInstructions a string
+          of an allowed length? Are required fields present? Are unexpected
+          fields rejected or deliberately ignored?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then business meaning. Does the menu item exist? Is it available? Is
+          this order still editable? Those questions require more than a
+          string-versus-number check.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And access. Is this authenticated caller allowed to read or change
+          this particular order? That's a separate decision even if every field
+          is perfectly shaped.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A valid request to someone else's order is still
+          unauthorized.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >TypeScript on the server can help developers call their own functions
+          correctly. It doesn't inspect an arbitrary request that arrived over
+          the network. Runtime validation is real work we still have to
+          perform.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A schema library may help organize that work. But it doesn't decide
+          all business rules or permissions unless we actually encode those
+          checks.</span
+        >
+      </p>
+      <h2 id="follow-a-retrieval">Follow a Retrieval</h2>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>text</span></figcaption>
+        <pre tabindex="0"><code>handle GET /orders/{orderId}:
+    principal = authenticate(request)
+    orderId = validateOrderIdentifier(request.path.orderId)
+    order = repository.findOrderVisibleTo(principal, orderId)
+
+    if order is absent:
+        return response(404, { error: &quot;order_not_found&quot; })
+
+    summary = {
+        id: order.id,
+        status: order.status,
+        estimatedMinutes: order.estimatedMinutes
+    }
+
+    return response(200, summary, contentType = &quot;application/json&quot;)</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For listeners: establish the caller, check the identifier, fetch only
+          an order visible to that caller, and return an intentionally selected
+          summary. If there's no visible order, return an appropriate not-found
+          response.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The helper names describe responsibilities. Authenticate is not a
+          standard magic function. The application must actually verify
+          credentials. The repository must actually enforce the visibility
+          rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And returning not found for inaccessible resources can be a
+          deliberate disclosure policy. Other interfaces may use forbidden in
+          appropriate situations. We should choose based on what the caller is
+          allowed to learn.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Consistent policy matters more than mechanically revealing
+          whether every identifier exists.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Notice the response isn't the entire database object. We create the
+          public shape deliberately, so a future internal column doesn't quietly
+          become a public field.</span
+        >
+      </p>
+      <h2 id="business-logic-isn-t-just-glue">
+        Business Logic Isn't Just Glue
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now suppose the customer updates delivery instructions. What does the
+          server need to know beyond whether the new value is a string?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Whether the order belongs to them, whether its current state allows
+          an update, and whether the operation is still valid at the moment we
+          save it. Once the driver has completed delivery, changing the gate
+          code is more of a memoir.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Business logic expresses those domain rules. A route handler
+          can coordinate the request while a separate function handles the
+          rule.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Separate responsibilities can make code easier to test and reuse. But
+          we don't need sixteen layers for one small endpoint.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The purpose is understandable boundaries: request
+          interpretation, business decisions, data access, and response
+          construction. The organization can be modest.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the website, mobile app, and internal tool all update
+          instructions, the authoritative server rule should apply to all of
+          them. We don't copy the only enforcement into three clients and hope
+          they agree.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The clients can provide helpful early feedback. The server still
+          enforces the rule.</span
+        >
+      </p>
+      <h2 id="the-database-has-its-own-boundary">
+        The Database Has Its Own Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A data-access layer or repository wraps how the application reads and
+          writes stored information. It may use a database driver's API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Another interface inside our interface. The browser calls our
+          service; our server calls a database library; that library
+          communicates with the database.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Each boundary has inputs, outputs, and failure
+          possibilities. Our external API shouldn't force clients to understand
+          every internal table and join.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And database queries need parameterization. We don't concatenate a
+          caller's text into SQL and hope validation caught every possible
+          problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Validation checks what inputs mean; parameterized queries
+          separate data from query structure. They complement each other.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Access checks can also influence the query. If this caller may only
+          see their orders, constrain the lookup accordingly rather than
+          fetching everything and relying on the frontend to hide the
+          rest.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. Defense belongs at the trusted boundary.</span>
+      </p>
+      <h2 id="a-check-can-become-stale">A Check Can Become Stale</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Here's a race. We read the order and see preparing. We decide
+          instructions can change. Meanwhile another process dispatches it. Then
+          we save the instructions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The earlier check may no longer describe current state. We need the
+          database operation or transaction design to enforce the relevant
+          condition when the update occurs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A transaction groups operations according to the database's
+          guarantees. It isn't a blanket promise that every race disappears; the
+          isolation level and actual query conditions matter.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A conditional update might change the row only if its
+          version or allowed status still matches. If it doesn't, the
+          application returns a conflict or another documented outcome.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which the client can explain as “this order changed; refresh before
+          trying again.” Better than confidently reporting success for something
+          we didn't do.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is where API design and data consistency meet. A beautiful
+          response schema cannot repair a lost update.</span
+        >
+      </p>
+      <h2 id="construct-a-useful-response">Construct a Useful Response</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A response needs an appropriate status, headers, and body when
+          applicable. For a successful retrieval, 200 with a documented
+          representation is common. Creation can use 201. Successful operations
+          with no content can use 204.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Validation problems should produce a useful client-facing error, not
+          a database exception pasted into the body. The exact status might
+          depend on the failure and the contract.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A malformed body differs from a well-formed request violating
+          a business rule. We should choose and document a consistent error
+          scheme.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a field is invalid, identify the field and give a useful message.
+          If the system failed internally, don't leak SQL, filesystem paths,
+          secrets, or stack traces.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A request or correlation identifier can help support connect a public
+          error to restricted logs. It should be safe to share and not itself
+          expose credentials.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The customer needs to know what they can do next. The maintainer
+          needs enough evidence to investigate. Those are related but different
+          outputs.</span
+        >
+      </p>
+      <h2 id="the-handler-may-not-be-the-whole-story">
+        The Handler May Not Be the Whole Story
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Frameworks often let shared code run around route handlers. You may
+          hear middleware, filters, or hooks, depending on the framework.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Shared authentication, request IDs, body limits, or error handling
+          can live there. But “we have middleware” isn't evidence that every
+          route is protected.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Route registration, ordering, and exemptions matter. Test
+          the actual protected operation with missing credentials, wrong
+          permissions, and valid access.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And define what happens when a dependency fails. If the database is
+          unavailable, our handler should fail predictably rather than leaving
+          requests open indefinitely.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Timeouts, resource limits, and graceful errors belong to reliable
+          service behavior. We don't need a vast platform to recognize those
+          responsibilities.</span
+        >
+      </p>
+      <h2 id="try-to-break-the-promise">Try to Break the Promise</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What would you test for our order endpoint?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An allowed user reading their order, an unauthenticated request,
+          another user's order, malformed identifiers, missing orders, and a
+          dependency failure. For an update, invalid fields, forbidden state
+          changes, and concurrent changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I'd also check the response shape. No internal notes or private
+          fields. And test that an added request property doesn't get written
+          just because our code spreads the body into a database update.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Convenient object copying can become mass assignment:
+          letting the caller set properties we never intended to expose.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Modern JavaScript syntax can be elegant while doing an extremely bad
+          thing. The spread operator doesn't know our permission model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Explicitly choose supported fields. Small and boring can be very good
+          here.</span
+        >
+      </p>
+      <h2 id="building-the-endpoint-isn-t-operating-it">
+        Building the Endpoint Isn't Operating It
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One last distinction. We wrote a handler. Are we done running an
+          API?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not necessarily. Deployment, configuration, transport protection,
+          monitoring, capacity, and dependency health still matter. The handler
+          is the behavior at the center, not the whole operational
+          environment.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But we also shouldn't mystify it. “API infrastructure” doesn't mean
+          the request skips ordinary application code.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Understanding the handler gives us a foundation for
+          understanding the operational concerns later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Same as a traditional server-rendered application. Returning data
+          instead of a page changes some responsibilities, but it doesn't remove
+          the database, validation, or the person answering the incident.</span
+        >
+      </p>
+      <h2 id="a-request-is-not-a-function-argument-you-control">
+        A Request Is Not a Function Argument You Control
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In our own program, I might know that a helper always receives a
+          number because all its callers are in the same codebase. An HTTP
+          request is a different situation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The caller can be an old client, a buggy client, a malicious
+          client, or a perfectly reasonable client following documentation we
+          accidentally made ambiguous.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the boundary code translates messy external input into a
+          well-defined internal form. That makes the business function easier to
+          reason about.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. After validating an identifier, we can pass a trusted internal
+          representation to the next layer. That doesn't mean the whole request
+          is trusted; it means this specific property passed the required
+          checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A good distinction. Trust is not a sticker we attach to the entire
+          request after the first if statement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Authentication establishes a principal. Validation
+          establishes input properties. Authorization establishes an allowed
+          action. Each result has a scope.</span
+        >
+      </p>
+      <h2 id="a-tiny-update-with-several-real-decisions">
+        A Tiny Update With Several Real Decisions
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's receive new delivery instructions for order 42. The body says
+          leave it by the side door. What happens first?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The request reaches the appropriate route. The server applies
+          relevant body limits and parsing, establishes the caller, validates
+          the identifier and writable fields, then checks whether the caller can
+          update that order.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The exact ordering can depend on the framework and threat model, but
+          all those responsibilities need a home. We don't need to perform an
+          expensive database lookup on an absurdly large invalid body.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Then the business operation checks that the order is still
+          in an editable state and performs a conditional update or transaction
+          that preserves the rule under concurrency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If successful, we might return the updated representation. That helps
+          the client display what the server actually accepted, including any
+          documented normalization.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the service rejects the update, it returns a meaningful
+          outcome without silently discarding the user's work on the
+          client.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Normalization deserves care. Trimming irrelevant surrounding
+          whitespace might be useful. Silently changing the meaning of someone's
+          address because we dislike punctuation is not.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Validation and normalization should reflect the domain, not
+          arbitrary tidiness preferences.</span
+        >
+      </p>
+      <h2 id="database-failure-is-not-customer-error">
+        Database Failure Is Not Customer Error
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the input is valid, the caller is allowed, but the database
+          connection fails. What status should we choose?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An appropriate server-side failure, not a validation error blaming
+          deliveryInstructions. The specific code depends on what happened and
+          what we can truthfully report.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We also avoid reporting success before the required durable
+          work completed. If the endpoint promises the instructions were saved,
+          the response needs evidence for that promise.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the work is asynchronous, we can instead define a response saying
+          the operation was accepted and provide a way to check its progress.
+          Accepted is not the same word as completed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That distinction is useful for slow exports, report
+          generation, or operations involving other systems.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a timeout doesn't necessarily mean the database did nothing. The
+          application may need to determine the actual outcome before blindly
+          repeating a state-changing operation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The uncertainty we saw from the client's side can also exist
+          between the server and its dependencies.</span
+        >
+      </p>
+      <h2 id="framework-features-are-conveniences-with-boundaries">
+        Framework Features Are Conveniences With Boundaries
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A framework automatically parses JSON and converts route parameters.
+          Can we stop checking those things?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can rely on documented, configured framework behavior for the
+          properties it actually enforces. We still need application-specific
+          checks. A parsed object isn't a valid order update merely because the
+          parser returned it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And automatic error responses may need adaptation to match our public
+          contract. We don't want one route returning a useful structured error
+          while another returns a framework's default HTML page.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Centralized error handling can make those outcomes
+          consistent. But avoid catching every exception and converting it into
+          an HTTP 200 with success false just to simplify one frontend
+          branch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because then HTTP-aware monitoring and clients lose useful outcome
+          information. We can use the protocol's semantics and a meaningful body
+          together.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And if a framework updates, verify the behavior we depend on
+          instead of assuming an implementation detail was a permanent
+          guarantee.</span
+        >
+      </p>
+      <h2 id="the-boundary-helps-testing">The Boundary Helps Testing</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Separating a business rule from HTTP handling can let us test the
+          rule directly. For example, which order states permit
+          delivery-instruction changes?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then integration tests check that the route actually obtains the
+          right identity, calls the rule, persists the result, and returns the
+          promised response. Both kinds of test have useful jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A unit test of canEditOrder doesn't prove the route
+          remembers to call it. A happy-path HTTP test doesn't explore every
+          state transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And access tests need more than “missing token returns an error.”
+          Test two different users. Make sure one can't read or update the
+          other's resources by changing identifiers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Also test tenant boundaries if the service supports multiple
+          organizations. A valid staff role in one organization shouldn't grant
+          access to another organization's orders.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is where realistic negative cases protect the actual promise. We
+          aren't writing tests merely to prove our if statement contains the
+          same condition as itself.</span
+        >
+      </p>
+      <h2 id="keep-the-external-contract-smaller-than-the-implementation">
+        Keep the External Contract Smaller Than the Implementation
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Why not expose a generic endpoint that lets authorized callers choose
+          a table, field, and update value?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because authorized to use the application isn't authorized to
+          manipulate every internal detail. We would need an enormous policy
+          surface, and clients would become coupled to our storage layout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A narrow operation like update delivery instructions
+          captures a useful capability and gives us a manageable set of
+          rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It can evolve internally. We might move instructions into a separate
+          table or add an audit record without changing the client's request
+          shape.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That's the interface benefit from Episode One reappearing on
+          the server side. We preserve the supported behavior while changing how
+          it is implemented.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if a change must become visible, we handle it as a contract
+          change. We don't shrug and tell the mobile team to read the migration
+          file.</span
+        >
+      </p>
+      <h2 id="the-familiar-php-connection">The Familiar PHP Connection</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If I were implementing this in PHP, I'd still need request parsing,
+          validation, access checks, business logic, safe queries, and response
+          construction. The language changes the syntax and libraries, not the
+          existence of the work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Node doesn't make an API inherently modern, and PHP doesn't
+          make it inherently old-fashioned. The contract and implementation
+          quality matter.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A framework can organize the responsibilities, but it can't decide
+          whether a customer should be allowed to edit a dispatched order.
+          That's our domain decision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. The architecture is less mysterious when we separate generic
+          server capabilities from rules belonging to our particular
+          application.</span
+        >
+      </p>
+      <h2 id="the-magic-was-a-function">The Magic Was a Function</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A route identifies the relevant handler. The handler interprets
+          input, enforces identity and permissions, applies business rules,
+          interacts with storage, and constructs a response.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Those responsibilities can be arranged clearly without a forest of
+          abstractions. And they're familiar backend work. An API is a
+          deliberate interface around it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. When you call an endpoint, somebody wrote code on the other
+          side. Understanding that makes both consuming and debugging it less
+          mysterious.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, identity and access. How does that code know who the hell
+          I am?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And why “we have a token” is the beginning of several
+          questions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. I've been meaning to interrogate the token.</span>
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

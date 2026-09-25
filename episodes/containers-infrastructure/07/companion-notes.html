@@ -1,0 +1,24 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">A push transfers source history. A configured pipeline can check it, build a known artifact, and deploy that artifact to an actual runtime environment.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>CI</strong></dt><dd>Frequent integration supported by automated checks.</dd>
+<dt><strong>Continuous delivery</strong></dt><dd>A process that keeps changes releasable, commonly with an explicit production release decision.</dd>
+<dt><strong>Continuous deployment</strong></dt><dd>Automatically releases qualifying changes to production.</dd>
+<dt><strong>Runner / registry / deployment target</strong></dt><dd>Executes pipeline jobs / stores images / runs the released application.</dd></dl>
+<h3>Release path</h3><p>Each arrow represents a configured action; Git itself does not deploy software.</p><figure class="card code"><figcaption>One reviewed change to production<span>Text diagram</span></figcaption><pre tabindex="0"><code>Code → Git → CI checks → build image → test artifact
+                                      │
+                                      ▼
+                                  Registry
+                                      │ deploy known digest
+                                      ▼
+                            Production runtime
+                            + configuration
+                            + restricted secrets
+                            + data and networking
+                                      │
+                                      ▼
+                             Health and monitoring</code></pre></figure><h3>Release questions</h3><ul><li>Which source revision and image digest are deployed?</li><li>What did the checks actually verify?</li><li>Which identity can release, and what can it access?</li><li>How do we detect failure and preserve useful logs?</li><li>Can old and new code coexist with database changes?</li><li>What recovery action has been tested?</li></ul><p>Untrusted workflow code must not inherit production secrets. Rolling back an image does not reverse database changes.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://docs.github.com/en/actions/get-started/understand-github-actions">GitHub Actions concepts</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

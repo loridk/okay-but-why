@@ -1,0 +1,37 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<p class="notice">Dockerfile describes construction. Image is the packaged result. Container is an instance created from that image.</p>
+<h3>Key terms</h3>
+<dl><dt><strong>Base image</strong></dt><dd>Starting filesystem content and configuration for a build stage.</dd>
+<dt><strong>Layer</strong></dt><dd>Stored filesystem changes assembled into an image; metadata instructions are not all filesystem layers.</dd>
+<dt><strong>Registry</strong></dt><dd>Stores and distributes images; Docker Hub is one example.</dd>
+<dt><strong>Tag / digest</strong></dt><dd>A potentially movable name / a content identifier. Pinning needs a deliberate update policy.</dd></dl>
+<h3>Lifecycle</h3><p>A build produces an image. Push distributes it through a registry; pull obtains it elsewhere. Multiple containers can be created from that same image.</p><figure class="card code"><figcaption>From instructions to instances<span>Text diagram</span></figcaption><pre tabindex="0"><code>Dockerfile + build context
+           │ build
+           ▼
+         Image ── push → Registry ── pull → Image on another host
+           │ create and start
+           ├─ Container A (its own runtime state)
+           └─ Container B (its own runtime state)</code></pre></figure><h3>Small annotated example</h3><p><strong>Illustrative Dockerfile only.</strong> Assumes a fictional, plain JavaScript Node API with package.json, package-lock.json, and server.js, no compilation step, and a server that listens on an appropriate container interface. These application files are intentionally not supplied. This is not a complete production configuration.</p><figure class="card code"><figcaption>Build instructions for the fictional API<span>Dockerfile</span></figcaption><pre tabindex="0"><code># Select a Node runtime plus Linux user-space files.
+FROM node:24-bookworm-slim
+
+# Set the directory for subsequent operations.
+WORKDIR /app
+
+# Copy dependency inputs before frequently changing source.
+COPY package.json package-lock.json ./
+# Run during BUILD; requires the assumed lockfile.
+RUN npm ci --omit=dev
+
+# Copy only the entry file needed by this tiny illustration.
+COPY server.js ./
+# Use the non-root user supplied by this base image.
+USER node
+# Documentation only: this does not publish a port.
+EXPOSE 3000
+# Default command when a container STARTS.
+CMD [&quot;node&quot;, &quot;server.js&quot;]</code></pre></figure><p>For a real project, explicitly include all required application files and build steps. Exclude secrets and unwanted files with .dockerignore; .gitignore does not control build context. Review base-image updates and record tested digests. Never add a secret then rely on a later layer to delete it.</p>
+<h3>Official sources and further reading</h3><ul><li><a href="https://docs.docker.com/reference/dockerfile/">Dockerfile reference</a></li>
+<li><a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/">Docker: What is an image?</a></li></ul>
+<p>Sources checked September 23, 2026. Examples are explanatory teaching material; no fictional application was built or deployed.</p>
+</section>

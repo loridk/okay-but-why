@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 4: SSR, SSG, CSR and Please Stop Inventing Acronyms — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to Next.js episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 4: SSR, SSG, CSR and Please Stop Inventing Acronyms</h1>
+      <p>
+        Play the episode and follow the complete transcript. Code and terminal
+        cards appear exactly where they are discussed.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/db159bb6-32cd-49a9-b499-661247d28b55"
+      ></script>
+      <div class="redcirclePlayer-db159bb6-32cd-49a9-b499-661247d28b55"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#two-questions-before-the-acronyms"
+            >Two Questions Before the Acronyms</a
+          >
+        </li>
+        <li><a href="#server-rendering">Server Rendering</a></li>
+        <li><a href="#static-generation">Static Generation</a></li>
+        <li><a href="#client-rendering">Client Rendering</a></li>
+        <li>
+          <a href="#hydration-is-the-handoff">Hydration Is the Handoff</a>
+        </li>
+        <li>
+          <a href="#streaming-starts-the-useful-part-earlier"
+            >Streaming Starts the Useful Part Earlier</a
+          >
+        </li>
+        <li>
+          <a href="#suspense-describes-a-waiting-boundary"
+            >Suspense Describes a Waiting Boundary</a
+          >
+        </li>
+        <li>
+          <a href="#loading-files-package-a-common-pattern"
+            >Loading Files Package a Common Pattern</a
+          >
+        </li>
+        <li><a href="#partial-prerendering">Partial Prerendering</a></li>
+        <li>
+          <a href="#regeneration-is-about-freshness"
+            >Regeneration Is About Freshness</a
+          >
+        </li>
+        <li>
+          <a href="#one-page-several-strategies"
+            >One Page, Several Strategies</a
+          >
+        </li>
+        <li>
+          <a href="#response-timing-affects-failure"
+            >Response Timing Affects Failure</a
+          >
+        </li>
+        <li>
+          <a href="#a-useful-thought-experiment">A Useful Thought Experiment</a>
+        </li>
+        <li>
+          <a href="#measure-the-whole-experience"
+            >Measure the Whole Experience</a
+          >
+        </li>
+        <li>
+          <a href="#three-timelines-for-the-same-talk"
+            >Three Timelines for the Same Talk</a
+          >
+        </li>
+        <li>
+          <a href="#the-slow-region-exercise">The Slow Region Exercise</a>
+        </li>
+        <li>
+          <a href="#a-hydration-mismatch-without-mysticism"
+            >A Hydration Mismatch Without Mysticism</a
+          >
+        </li>
+        <li>
+          <a href="#server-time-is-not-attendee-time"
+            >Server Time Is Not Attendee Time</a
+          >
+        </li>
+        <li>
+          <a href="#faster-feedback-has-limits">Faster Feedback Has Limits</a>
+        </li>
+        <li>
+          <a href="#preparation-is-not-a-security-shortcut"
+            >Preparation Is Not a Security Shortcut</a
+          >
+        </li>
+        <li>
+          <a href="#the-departures-board-makes-sense"
+            >The Departures Board Makes Sense</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We could use SSR with streaming, mix SSG and CSR, and consider
+          PPR.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Are we building a website or reading an airport departures
+          board?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Depends whether the build is delayed.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One sentence containing a verb I recognize. That's all I'm
+          asking.</span
+        >
+      </p>
+      <h2 id="two-questions-before-the-acronyms">
+        Two Questions Before the Acronyms
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Rendering discussions get easier when we
+          separate where work happens from when its result is produced.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server or browser describes location. Before requests or in response
+          to requests describes timing. Those are different axes.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Then ask how the result arrives: all together or incrementally. And
+          whether we can reuse something already produced, which brings in
+          caching.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our conference name hardly changes. A room assignment can change on
+          the morning of the talk. A local favorite changes when someone presses
+          a button. Three pieces of one screen, three different needs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We don't need one acronym to describe every piece and every
+          phase of the entire application. These mechanisms can cooperate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent. I was worried we'd have to choose teams and buy
+          scarves.</span
+        >
+      </p>
+      <h2 id="server-rendering">Server Rendering</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SSR means server-side rendering. People often use it specifically for
+          producing HTML in response to a request: a visit arrives, server work
+          runs, and the resulting HTML goes back.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the part I recognize from PHP. We have a request before
+          producing this response, so we can incorporate information from
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Provided we apply the right validation and access rules. Useful
+          content can reach the browser before the application JavaScript has
+          executed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But the browser still parses HTML, applies CSS, performs layout, and
+          paints. Server rendering doesn't send finished pixels directly into
+          somebody's eyeballs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And slow server work can delay the response. Moving a
+          database query to a server is sensible, but calling it SSR doesn't
+          make a bad query fast.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >An eight-second query remains an eight-second query with a conference
+          badge.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Streaming can let other content arrive while that query runs. That
+          improves when users can see useful information; it doesn't necessarily
+          reduce the slow operation's completion time.</span
+        >
+      </p>
+      <h2 id="static-generation">Static Generation</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >SSG means static site generation. Output is prepared ahead of
+          incoming visits, commonly at build time, and requests receive that
+          prepared result.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like composing the conference program before people arrive.
+          Distribution is easier because the composition work is finished.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With an important limit to the analogy: web output can be regenerated
+          under a supported policy. Static doesn't necessarily mean permanently
+          frozen.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And static doesn't mean noninteractive. A page prepared yesterday can
+          load a favorite button that responds in the browser today.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Preparation timing and browser behavior are different
+          questions. A request-rendered page can be mostly plain content, and a
+          statically generated page can contain rich interaction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our bracket-slug route can have known session paths prepared in
+          advance. A variable URL segment doesn't require a new render on every
+          visit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Conversely, a fixed path such as slash my-schedule can need
+          request-specific work because it depends on the visitor.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Dynamic path shape versus dynamic rendering. The word dynamic is
+          working two jobs and causing scheduling conflicts.</span
+        >
+      </p>
+      <h2 id="client-rendering">Client Rendering</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >CSR means client-side rendering: browser JavaScript produces or
+          updates UI. In a browser-rendered application's initial load,
+          meaningful content may wait for JavaScript and then a data
+          fetch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But client rendering also happens after initial loading. When our
+          favorite state changes, React updates the button in the browser. That
+          doesn't turn every other piece of the website into a browser-only
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. These terms describe work and phases, not necessarily
+          exclusive categories for repositories.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A rich schedule editor might deserve a substantial client interface.
+          Fast local interactions matter there. The published abstract might not
+          need that same machinery.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the useful decision. What does this piece require? Not which
+          rendering acronym has the most enthusiastic social media
+          account.</span
+        >
+      </p>
+      <h2 id="hydration-is-the-handoff">Hydration Is the Handoff</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The server can send a button that looks unfavorited. What makes it
+          respond to a click?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Client code loads, and React hydrates the interactive UI. It connects
+          the expected component behavior to the already-rendered
+          structure.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not just attaching an arbitrary event listener to arbitrary HTML. The
+          initial output must agree with what React expects on the client.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. A mismatch can happen if the server prints one timestamp and
+          the first client render generates another. Or if the initial browser
+          render reads a local preference that wasn't available to the server
+          and changes the markup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The fix begins by deciding what both environments can know initially.
+          Pass consistent server-known data, and handle truly browser-only
+          information at the appropriate point.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A warning-suppression option isn't a general synchronization
+          strategy. Sometimes a deliberate client update is appropriate, but we
+          should understand the transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Invalid HTML nesting can also create trouble because the browser
+          repairs it. React then encounters a different structure than the one
+          the code appears to describe.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Semantic HTML isn't a separate decoration added after
+          performance work. It affects correctness and interaction too.</span
+        >
+      </p>
+      <h2 id="streaming-starts-the-useful-part-earlier">
+        Streaming Starts the Useful Part Earlier
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose the main session information is quick, while related sessions
+          require a slow request. If we wait for both before returning anything,
+          the slow optional region delays the essential information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Instead, send the available content and complete the slower region
+          later.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's the idea behind streaming here. React and Next coordinate
+          incremental delivery and the replacement of fallback content.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Streaming doesn't make a query finish earlier. It changes what has to
+          wait for that query.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. That distinction keeps us honest about performance. Users
+          may be able to read the abstract and find the room while related talks
+          are still loading.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If the room number itself is the slow part, an instantly delivered
+          logo isn't the same as solving the attendee's problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Measure when the user can do the important thing, not just
+          when the first branded rectangle arrives.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Our page loads in a hundred milliseconds; your destination arrives
+          after lunch.” Technically active. Functionally a screensaver.</span
+        >
+      </p>
+      <h2 id="suspense-describes-a-waiting-boundary">
+        Suspense Describes a Waiting Boundary
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suspense is React's way to provide fallback UI around work that can
+          suspend. With supported asynchronous rendering, it says what to
+          display while a subtree isn't ready.</span
+        >
+      </p>
+
+      <figure class="card code" aria-label="Code card 1">
+        <figcaption>Code card 1<span>jsx</span></figcaption>
+        <pre tabindex="0"><code>import { Suspense } from 'react';
+
+export default function SessionPage() {
+  return (
+    &lt;main id=&quot;main-content&quot;&gt;
+      &lt;h1&gt;Boring Deployments, Happy Humans&lt;/h1&gt;
+      &lt;p&gt;A practical session about predictable releases.&lt;/p&gt;
+      &lt;Suspense fallback={&lt;p role=&quot;status&quot;&gt;Loading related sessions…&lt;/p&gt;}&gt;
+        &lt;RelatedSessions /&gt;
+      &lt;/Suspense&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+      </figure>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This card illustrates the boundary. RelatedSessions stands for an
+          asynchronous Server Component we would define or import. It isn't
+          built into Next.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suspense comes from React. The elements are JSX. The status role is
+          an accessibility feature, not a React data-loading instruction.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And wrapping a div in Suspense doesn't cause ordinary fetch calls in
+          effects to become Suspense-aware. The child must use a supported
+          suspending mechanism.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. The boundary also needs to sit above the work that waits. If
+          our page awaits the slow operation before returning the boundary, that
+          boundary can't travel backward in time and show a fallback.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Put the wait inside the child when that is the intended delivery
+          design. I like explanations that tell me why moving a line changes
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Also, a concise loading message should identify what's loading. We
+          don't want five identical spinners with no useful meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Or an assertive announcement every time a skeleton blinks. Assistive
+          technology users don't need a sports commentator for every network
+          request.</span
+        >
+      </p>
+      <h2 id="loading-files-package-a-common-pattern">
+        Loading Files Package a Common Pattern
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A loading file in Next provides loading UI for a route segment
+          through its Suspense integration. It gives us a conventional boundary
+          around the relevant page content beneath the layout.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So loading dot jsx is Next-specific. Suspense is React-specific.
+          Related layers, different ownership.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Explicit boundaries let us choose smaller regions when the
+          product benefits from independent delivery.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But slicing every sentence into a separate boundary would make the
+          page assemble like an extremely annoying jigsaw puzzle.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Group information users need together. Keep layout shifts
+          reasonable. Avoid replacing focused controls unnecessarily. A skeleton
+          isn't automatically good just because it resembles the content that
+          will arrive.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A plain “Loading session details” paragraph is a legitimate starting
+          point. We can improve the visual treatment without abandoning
+          semantics.</span
+        >
+      </p>
+      <h2 id="partial-prerendering">Partial Prerendering</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Partial prerendering means preparing the parts that can be known
+          ahead of time while leaving request-dependent regions to complete
+          later.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Conference title and public shell: ready. A visitor-specific region:
+          wait until we know the visitor.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. In the Next.js 16 approach we're teaching, Cache Components
+          is an explicit configuration choice that integrates cached work and
+          Suspense boundaries into that model. We'll enable it deliberately in
+          Episode Six.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not a claim that every Next 16 app has it enabled. Our earlier
+          examples use the ordinary App Router baseline.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. After enabling it, we need to account for how uncached and
+          request-specific work fits under boundaries. We must not mix
+          incompatible configuration recipes from different models.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a Suspense wrapper doesn't itself make a synchronous paragraph
+          request-dependent. There has to be actual work requiring the request
+          or asynchronous result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The boundary provides a way to wait. It doesn't manufacture
+          a reason to wait.</span
+        >
+      </p>
+      <h2 id="regeneration-is-about-freshness">
+        Regeneration Is About Freshness
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There's another acronym in the drawer.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >ISR: incremental static regeneration. Broadly, updating reusable
+          generated output after the original build under a revalidation
+          policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the schedule needn't remain forever in the state it had when we
+          deployed last Tuesday.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. But policy matters. Some approaches can serve an existing
+          result while refreshing it. Some make a later read wait for fresh
+          data. We'll distinguish those in the caching episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Revalidates after sixty seconds” might not mean a timer proactively
+          visits every page exactly once a minute.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. It can mean the cached result becomes eligible for
+          revalidation, with work triggered by a request. Don't translate
+          implementation settings into freshness promises without checking the
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A room change ten minutes before a talk isn't just an optimization
+          setting. It affects where actual humans stand.</span
+        >
+      </p>
+      <h2 id="one-page-several-strategies">One Page, Several Strategies</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Compose DemoCon mentally. Shared header prepared early. Public
+          session data perhaps reused. Fresh or personalized region completed at
+          request time. Favorite interaction running in the browser.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Static preparation, server rendering, streaming, client updates. One
+          screen. No need to make them fight for the repository's
+          identity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Initial document navigation also differs from later
+          framework navigation. Later visits may request updated React server
+          output and preserve existing layout and client state where
+          appropriate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So performance measurements need to name the journey. Direct entry on
+          a slow phone is different from clicking a prefetched link on my
+          development laptop.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Warm caches can hide slow cold paths. Local services can hide
+          geographic latency. Development mode can behave differently from a
+          production build.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why I don't accept a number followed by three rocket emojis
+          as a complete performance report.</span
+        >
+      </p>
+      <h2 id="response-timing-affects-failure">
+        Response Timing Affects Failure
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a slow region fails after streaming has started, can we always
+          change the response status to 500?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Once headers have been sent, we can't replace the already-sent
+          status. The framework can render an error experience, but HTTP timing
+          still matters.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which means we can't casually defer essential access decisions until
+          after protected output is already on the wire.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Check permissions where protected data is obtained and
+          before disclosing it. A loading boundary isn't a security
+          boundary.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And loading and failure are different states. “Loading…” forever is
+          not an error strategy. It's a hostage situation with an
+          ellipsis.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Optional related-session failure needn't erase the main talk. Good
+          boundary placement expresses which information can fail
+          independently.</span
+        >
+      </p>
+      <h2 id="a-useful-thought-experiment">A Useful Thought Experiment</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Suppose our conference has three pages. A public code of conduct, a
+          published schedule, and an organizer's private submission queue. What
+          do you ask first?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Code of conduct: does it change often, and can prepared content
+          satisfy the requirement? Probably. Schedule: how quickly must edits
+          appear? Submission queue: who is asking, what are they allowed to see,
+          and how fresh must it be?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Notice you didn't begin with framework flags.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because requirements tell me what the flags need to accomplish. If
+          the schedule can be five minutes old, reuse might be fine. If it's
+          showing whether the last seat is available, a stale display cannot
+          authorize the booking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good distinction. Even a fresh display can become outdated before the
+          mutation. The server operation needs its own consistency checks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Rendering strategy and transaction correctness are separate. A page
+          can be fast, pretty, and confidently wrong about the last chair.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Now suppose the organizer queue has an expensive analytics
+          sidebar.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I don't make the queue wait for the sidebar if organizers need to
+          process submissions immediately. That's a possible streaming boundary.
+          But I also investigate the expensive query rather than treating a
+          spinner as a permanent cure.</span
+        >
+      </p>
+      <h2 id="measure-the-whole-experience">Measure the Whole Experience</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>What would we observe in a small production check?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >First meaningful content, time until controls work, data freshness,
+          navigation behavior, and what happens on slow or failed requests. I'd
+          also use a keyboard, because a fast page I can't operate is still
+          broken.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can inspect network timing, server logs, and the rendered output
+          to explain what happened. A number alone doesn't tell us which
+          dependency caused the delay.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if the simplest strategy already meets our needs, we stop. We
+          don't add streaming just to create an opportunity to measure
+          streaming.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. These are mechanisms for serving a user, not a syllabus the
+          production app must complete.</span
+        >
+      </p>
+      <h2 id="three-timelines-for-the-same-talk">
+        Three Timelines for the Same Talk
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's narrate three visits. First, a browser-rendered application.
+          The browser receives a document, downloads and runs application code,
+          then requests session data before displaying the abstract.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The sequence can be optimized, but those dependencies may put
+          JavaScript execution and data fetching before the content the visitor
+          wanted.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Second, request-time server rendering. The server obtains data and
+          produces HTML. The browser can display it, then client code makes
+          interactive pieces work.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We reduce some browser prerequisites, but server response time
+          includes the work needed before sending that output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Third, prepared output. The session content was produced earlier. The
+          response reuses it while the favorite still becomes interactive
+          through client code.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We avoid repeating work per visit but must decide when prepared
+          information becomes too old. Same talk, different critical
+          paths.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. None wins without knowing freshness, latency,
+          infrastructure, and interaction requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Any of them can also be ruined by a ten-megabyte hero image.
+          Rendering doesn't cancel the rest of the web.</span
+        >
+      </p>
+      <h2 id="the-slow-region-exercise">The Slow Region Exercise</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The abstract is quick, but an optional speaker biography service is
+          slow. Where might you put the boundary?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Around the biography, if the session remains useful without it.
+          Essential information shouldn't wait for an optional service.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Now the slow result is the session itself, and we don't know whether
+          the slug identifies a public talk.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different problem. We shouldn't send a made-up title and hope the
+          record exists. Show an honest loading shell, then the session or
+          missing state.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Boundaries express what the interface knows and doesn't know. A
+          placeholder shouldn't make unestablished claims.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If prepared content supplies the title but a room assignment must be
+          fresh, we might separate those regions. The room's pending state must
+          be unmistakable.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A blank spot might imply no room is assigned. A loading
+          message communicates uncertainty instead.</span
+        >
+      </p>
+      <h2 id="a-hydration-mismatch-without-mysticism">
+        A Hydration Mismatch Without Mysticism
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Server renders favorite false. The first client render reads
+          localStorage and renders true. Why is React upset?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The client's expected initial output differs from the server output.
+          React is connecting behavior to an existing structure, and the
+          computations didn't start from the same information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It isn't evidence that storage is evil. We used browser-only
+          information at a point requiring agreement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A deliberate post-hydration update can read it. Or another
+          storage design can make the preference available to the server. Each
+          has tradeoffs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The first may briefly display the default. The second introduces
+          server-readable state and its privacy, caching, and request
+          implications.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Choose according to how important that initial preference is.
+          Suppressing the warning doesn't settle the design question.</span
+        >
+      </p>
+      <h2 id="server-time-is-not-attendee-time">
+        Server Time Is Not Attendee Time
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Dates give another example. The server formats a conference time
+          using its default timezone. The browser formats it using the
+          attendee's timezone. Initial strings differ.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We need a product decision before a formatting trick. Are we showing
+          venue time, visitor time, or both? The schedule should say
+          which.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A consistent timestamp and explicit formatting policy avoid
+          ambiguity. If browser-local formatting is intentionally applied later,
+          design that transition.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Deterministic output needs consistent inputs, not merely identical
+          source code. Environment defaults are inputs too.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Clocks, random values, locale, and storage all reveal the
+          difference.</span
+        >
+      </p>
+      <h2 id="faster-feedback-has-limits">Faster Feedback Has Limits</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can streaming make the experience worse?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Too many independently arriving regions can shift layout or confuse
+          reading order. Someone may start using one region while another moves
+          it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reserve space where practical, group related information, and don't
+          repeatedly steal focus when content arrives.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Also verify the deployment. A proxy buffering the whole
+          response can prevent the incremental delivery we expected.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The presence of Suspense in a file isn't proof of the user's actual
+          network experience.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. We check what arrives and when under realistic
+          conditions.</span
+        >
+      </p>
+      <h2 id="preparation-is-not-a-security-shortcut">
+        Preparation Is Not a Security Shortcut
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If we prepare content for broad public distribution, it must actually
+          be public. Build-time database access doesn't make every record
+          appropriate for output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Select the public representation before generation. If a
+          record later becomes private, remove or invalidate prepared output
+          according to the distribution model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Changing one database flag isn't automatically a recall of every
+          cached copy. Publication and unpublication have lifecycles.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Rendering and caching must support those lifecycles. Faster
+          delivery comes with an obligation to manage what we're
+          distributing.</span
+        >
+      </p>
+      <h2 id="the-departures-board-makes-sense">
+        The Departures Board Makes Sense
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Server rendering produces output on the server. Static generation
+          prepares output ahead of visits. Client rendering produces or updates
+          UI in the browser. Hydration connects interactive code to existing
+          output. Streaming sends useful output incrementally. Partial
+          prerendering combines prepared regions with later work in a supported
+          model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And caching is reuse with a policy. It isn't a geographical location
+          or proof the result is fresh.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: why make an HTTP request to our own application when our
+          Server Component can already call the data-access code?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have sent emails to myself. I try not to put them on the critical
+          path.</span
+        >
+      </p>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>
