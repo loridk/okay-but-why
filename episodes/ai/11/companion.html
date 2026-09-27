@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 11: From Demo to Production: Oh Shit, People Are Actually Using It
+      — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 11: From Demo to Production: Oh Shit, People Are Actually Using
+        It
+      </h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/77874771-bc10-4aef-b972-2fd1497e35bf"
+      ></script>
+      <div class="redcirclePlayer-77874771-bc10-4aef-b972-2fd1497e35bf"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#measure-the-whole-task">Measure the Whole Task</a></li>
+        <li><a href="#cost-per-useful-outcome">Cost per Useful Outcome</a></li>
+        <li>
+          <a href="#caches-have-memory-and-problems"
+            >Caches Have Memory and Problems</a
+          >
+        </li>
+        <li>
+          <a href="#fallbacks-must-keep-their-promises"
+            >Fallbacks Must Keep Their Promises</a
+          >
+        </li>
+        <li><a href="#can-we-run-it-ourselves">Can We Run It Ourselves?</a></li>
+        <li>
+          <a href="#why-gpus-and-what-is-quantization"
+            >Why GPUs, and What Is Quantization?</a
+          >
+        </li>
+        <li>
+          <a href="#privacy-needs-a-system-diagram"
+            >Privacy Needs a System Diagram</a
+          >
+        </li>
+        <li>
+          <a href="#roll-out-something-we-can-support"
+            >Roll Out Something We Can Support</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The pilot team likes Support Assistant. Now more employees want
+          access.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's good.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The provider has rate-limited us, the answers take too long, and
+          someone enabled full request logging.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's less good.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? The model has met operations. Operations
+          would like a word.</span
+        >
+      </p>
+      <h2 id="measure-the-whole-task">Measure the Whole Task</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Start with latency. We care about time to useful output and time to a
+          complete, verified result. A fast first token doesn't make a
+          twelve-step investigation fast.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Trace where time goes: authentication, search, model calls, tool
+          calls, human approval. Look at the slow tail as well as the average.
+          Employees who get the worst waits also exist.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We might reduce irrelevant context, shorten unnecessary output,
+          choose a faster model for an appropriate subtask, or avoid extra model
+          calls. Independent read operations might run concurrently when access
+          and dependency rules allow it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't parallelize a refund and its approval. Dependencies are real
+          even when the diagram has attractive arrows.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Set deadlines, allow cancellation where possible, and
+          explain what is still running. Rate limits require bounded backoff and
+          appropriate queuing or backpressure, not an enthusiastic retry
+          storm.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Put limits on concurrent work and per-user usage. Scaling our web
+          servers doesn't automatically increase the provider's quota.</span
+        >
+      </p>
+      <h2 id="cost-per-useful-outcome">Cost per Useful Outcome</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The companion has a deliberately fictional pricing calculation.
+          Multiply input tokens by the input rate, output tokens by the output
+          rate, and include repeated calls. Then add the rest of the system's
+          cost.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Retrieval, storage, hosting, monitoring, integration maintenance, and
+          human review. A cheap model that creates expensive corrections may
+          lose the comparison.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We can test routing easier tasks to a smaller or less
+          expensive model, but the router itself can make mistakes, and every
+          path needs evaluation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Model choice also includes languages, context, tool behavior, output
+          constraints, data handling, availability, and migration effort. We
+          don't choose solely by a leaderboard unrelated to support work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Provider or model changes need regression checks and a rollout plan.
+          Even a compatible API shape doesn't promise equivalent behavior.</span
+        >
+      </p>
+      <h2 id="caches-have-memory-and-problems">
+        Caches Have Memory and Problems
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Can we cache answers?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes. But caching a generated answer for one employee and
+          showing it to another can leak data or preserve obsolete policy. Keys
+          and validation need to account for relevant permissions, tenant,
+          source versions, model or prompt versions, and freshness.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sometimes the correct answer is don't cache that result. An order
+          status changes. A policy answer may be reusable only under narrow
+          conditions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Retrieval caches, application answer caches, and provider
+          prompt caching are different mechanisms. Prompt caching can reduce
+          repeated input processing under a provider's rules; it doesn't mean
+          our application received a previously verified answer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Permission revocation and source deletion need to affect cached
+          information too. A cache is not a loophole through which yesterday's
+          access remains forever.</span
+        >
+      </p>
+      <h2 id="fallbacks-must-keep-their-promises">
+        Fallbacks Must Keep Their Promises
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the model provider fails, one fallback is ordinary search. Another
+          might be an approved alternative model, tested for this task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But not silently sending private data to another company because the
+          first one is down. An approved data path doesn't automatically
+          transfer to every fallback.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. A degraded mode could show sources without drafting an
+          answer, or preserve the request for the user to retry. State what
+          failed and whether any action occurred.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And reconcile uncertain writes with the authoritative service. We
+          don't ask a language model to guess whether a refund completed during
+          a timeout.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The database or transaction service is the source of truth for the
+          action state.</span
+        >
+      </p>
+      <h2 id="can-we-run-it-ourselves">Can We Run It Ourselves?</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I've brought the local-model question. If we run the model ourselves,
+          do the provider and privacy problems disappear?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Some responsibilities move. Very few disappear.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A hosted model API puts model serving largely with a provider. A
+          self-hosted deployment puts more of that work with us, whether it's on
+          an employee's machine or our own cloud infrastructure.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And open-weight means the model's learned weights are available under
+          its license. It doesn't automatically mean every part of its training
+          data or process is public, or that its license meets every definition
+          of open source.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We check the actual license and permitted uses. “Download” is not a
+          licensing category.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Local and open-weight aren't synonyms either. Open-weight
+          models can be hosted by a service, and local execution depends on what
+          software and weights are available to us.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Tools such as Ollama can help run supported models, while the Hugging
+          Face ecosystem provides model distribution and tooling. Specific
+          supported models, hardware requirements, and cloud features change. We
+          verify the deployment we actually use.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't assume a product is fully offline because one mode runs
+          locally. Check network calls, cloud options, telemetry, updates,
+          integrations, and where prompts and logs go.</span
+        >
+      </p>
+      <h2 id="why-gpus-and-what-is-quantization">
+        Why GPUs, and What Is Quantization?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Neural-network inference involves lots of numerical computation. GPUs
+          are useful because they can perform many relevant operations in
+          parallel. But memory capacity and bandwidth matter too, not just a
+          large number on a graphics-card box.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The model's weights have to fit somewhere, along with working memory.
+          Longer context and simultaneous requests can increase memory
+          use.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Some models can run on CPUs or other accelerators, depending on size,
+          format, and runtime, but performance varies. “It loaded” is not a
+          latency benchmark.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Quantization represents model values with lower precision, often
+          reducing memory requirements and sometimes improving speed with
+          suitable hardware and software. It can affect quality, and the
+          tradeoff depends on the method and workload.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like storing numerical values less precisely, not putting the entire
+          intelligence into a ZIP file and expecting identical behavior.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A four-bit model doesn't imply every runtime allocation is
+          exactly four bits per original parameter. There are scales, metadata,
+          caches, and other overheads.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >So benchmark the exact quantized model on our support examples and
+          target hardware. We don't inherit an unquantized model's evaluation
+          results by association.</span
+        >
+      </p>
+      <h2 id="privacy-needs-a-system-diagram">
+        Privacy Needs a System Diagram
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Self-hosting can give us more control over where inference runs and
+          who operates it. It can also give us patching, capacity planning,
+          access control, backups, and an on-call problem.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Cost shifts toward hardware or rented compute, energy, serving
+          infrastructure, and staff time. It isn't automatically free or cheaper
+          at our workload.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >And keeping inference local doesn't protect a laptop whose logs
+          expose customer records, or a model server listening on a public
+          interface without appropriate protection.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our Containers &amp; Infrastructure series already gave us the
+          questions: where does it run, who can reach it, who owns it, how do we
+          observe and recover it? Adding a GPU doesn't waive the
+          questions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor does it automatically require Kubernetes. Choose operational
+          complexity based on workload and the team's ability to sustain
+          it.</span
+        >
+      </p>
+      <h2 id="roll-out-something-we-can-support">
+        Roll Out Something We Can Support
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For Support Assistant, we can start with a limited group,
+          representative tasks, clear boundaries, a rollback path, and an owner
+          for quality and incidents. Record prompt, model, retrieval, and tool
+          versions for diagnosis.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Log enough to investigate, not every private fact by default. Set
+          retention and access deliberately. Show when evidence was retrieved
+          and make sources usable by keyboard and assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Collect feedback that tells us what failed: wrong policy, missing
+          source, confusing wording, inaccessible interaction, slow response. A
+          thumbs-down alone can be hard to act on.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And watch whether the tool actually helps employees. Adoption is not
+          simply the number of accounts provisioned.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We're back to servers, latency, security, monitoring, and bills. The
+          model is one dependency in a larger system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Final episode next. Who turns “we should use AI” into this whole
+          useful, maintainable arrangement?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Someone willing to ask the awkward first question again.</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <figure class="card">
+          <figcaption>Production, including degraded operation</figcaption>
+          <pre tabindex="0">
+Accessible staff UI → authenticated API → request controller
+  controller → authorized retrieval / tools
+             → approved model adapter → provider OR self-hosted runtime
+             → validated result → UI
+  failure → bounded retry / permitted fallback / ordinary search
+
+Across the path: deadlines, budgets, protected traces,
+versioned configuration, incident ownership, rollback.</pre
+          >
+          <p>
+            Fallbacks preserve the original privacy and authorization
+            requirements. Another provider is not automatically an approved
+            destination. A failed or partial answer is labeled clearly.
+          </p>
+        </figure>
+        <table>
+          <caption>
+            Hosting choices are tradeoffs
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Dimension</th>
+              <th scope="col">Hosted API</th>
+              <th scope="col">Self-hosted / local</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Serving operations</th>
+              <td>Provider operates core model service</td>
+              <td>Your team operates runtime and capacity.</td>
+            </tr>
+            <tr>
+              <th scope="row">Data handling</th>
+              <td>Review provider terms and configuration</td>
+              <td>
+                Control placement; still secure logs, network, and integrations.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Cost</th>
+              <td>Usage charges plus application operations</td>
+              <td>Compute, hardware, power, maintenance, utilization.</td>
+            </tr>
+            <tr>
+              <th scope="row">Model control</th>
+              <td>Available provider models and options</td>
+              <td>
+                Available weights, license, runtime, and hardware constrain
+                choice.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Availability</th>
+              <td>Provider dependency and quotas</td>
+              <td>Your hardware, capacity, and operational readiness.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Fictional cost example — not current provider pricing</h3>
+        <p>
+          Assume 2,000 input tokens at $1 per million and 500 output tokens at
+          $4 per million. Cost per call = 2,000/1,000,000 × $1 + 500/1,000,000 ×
+          $4 = <strong>$0.004</strong>. Three such calls per task =
+          <strong>$0.012</strong>; 10,000 such tasks = <strong>$120</strong>,
+          excluding retries, other token categories, retrieval, infrastructure,
+          and staff time. Real rates and usage differ.
+        </p>
+        <h3>Latency example — invented</h3>
+        <p>
+          0.3 seconds retrieval + 2 seconds first model call + 0.5 seconds tool
+          lookup + 2 seconds final model call = 4.8 seconds before other
+          overhead. Streaming may show text sooner; removing an unnecessary call
+          changes the total more directly.
+        </p>
+        <dl>
+          <dt><strong>Open-weight</strong></dt>
+          <dd>
+            Weights available under a license; not a guarantee of open training
+            data or unrestricted use.
+          </dd>
+          <dt><strong>GPU</strong></dt>
+          <dd>
+            Hardware suited to many parallel numerical operations; memory and
+            bandwidth also matter.
+          </dd>
+          <dt><strong>Quantization</strong></dt>
+          <dd>
+            Lower-precision numerical representation with memory, speed, and
+            quality tradeoffs.
+          </dd>
+          <dt><strong>Prompt caching</strong></dt>
+          <dd>
+            Provider-specific reuse of input processing; distinct from caching a
+            finished answer.
+          </dd>
+        </dl>
+        <h3>Release checklist</h3>
+        <ul>
+          <li>
+            Task-based quality and failure evaluations for the exact
+            model/runtime.
+          </li>
+          <li>
+            Per-user limits, timeouts, rate-limit handling, and cost budgets.
+          </li>
+          <li>
+            Permission-aware cache keys, expiry, and source/permission
+            invalidation.
+          </li>
+          <li>
+            Approved fallback paths and reconciliation of uncertain writes.
+          </li>
+          <li>
+            Protected logs, retention, ownership, rollback, and incident
+            response.
+          </li>
+          <li>
+            Accessible progress, errors, sources, feedback, and ordinary search.
+          </li>
+        </ul>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a href="https://docs.ollama.com/faq"
+              >Ollama FAQ: deployment, networking, and cloud controls</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://huggingface.co/docs/transformers/quantization/overview"
+              >Hugging Face quantization overview</a
+            >
+          </li>
+          <li>
+            <a href="https://huggingface.co/docs/hub/model-cards"
+              >Hugging Face model cards and licenses</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../10/companion.html">Episode 10</a></li>
+            <li><a href="../12/companion.html">Episode 12</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

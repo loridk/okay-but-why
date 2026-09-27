@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 5: Putting AI in Software: Models, APIs &amp; SDKs — Listening
+      Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 5: Putting AI in Software: Models, APIs &amp; SDKs</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/1da09b8b-724c-49ec-99de-d6decc0ff8fa"
+      ></script>
+      <div class="redcirclePlayer-1da09b8b-724c-49ec-99de-d6decc0ff8fa"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#the-model-is-behind-an-interface"
+            >The Model Is Behind an Interface</a
+          >
+        </li>
+        <li>
+          <a href="#which-computer-holds-the-secret"
+            >Which Computer Holds the Secret?</a
+          >
+        </li>
+        <li>
+          <a href="#wait-that-s-just-javascript"
+            >Wait, That's Just JavaScript</a
+          >
+        </li>
+        <li>
+          <a href="#an-answer-arrives-in-pieces">An Answer Arrives in Pieces</a>
+        </li>
+        <li>
+          <a href="#model-choice-has-a-bill-attached"
+            >Model Choice Has a Bill Attached</a
+          >
+        </li>
+        <li>
+          <a href="#failure-is-a-response-too">Failure Is a Response Too</a>
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our prompt experiment can produce a useful draft from a sample
+          policy. Management has asked when the application will be ready.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>We have a text box and optimism.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Two important dependencies. Neither handles authentication.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Today we put the model in software. An
+          alarming amount of this will look like software development.</span
+        >
+      </p>
+      <h2 id="the-model-is-behind-an-interface">
+        The Model Is Behind an Interface
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I use a chat website. How does my own application get that
+          capability? Am I automating the website?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Usually, no. A model provider exposes an API. Our server sends a
+          request describing the input and options, and receives generated
+          output or an error. A chat product and an API can have different
+          features, billing, limits, and data policies even when offered by the
+          same company.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the product's search, memory, or uploaded-file behavior isn't
+          necessarily bundled into a bare model request.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We choose what our own application supplies. Provider
+          request shapes vary, but conceptually we send a model choice,
+          instructions or messages, relevant context, and supported generation
+          options.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The response may contain text, structured data, or later, a request
+          to use a tool. Plus usage information and metadata, depending on the
+          API.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. An SDK is a software library that wraps that API for a
+          language. It can provide types, convenient methods, streaming helpers,
+          and error handling. It doesn't turn the network call into something
+          mystical.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Nor does it eliminate outages. “But the function name was friendly”
+          is rarely accepted by incident review.</span
+        >
+      </p>
+      <h2 id="which-computer-holds-the-secret">
+        Which Computer Holds the Secret?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our simplest architecture has three stops. Browser, our application
+          server, model provider. The browser sends the user's question to our
+          server. Our server authenticates the user, checks what they may
+          access, assembles the request, and calls the provider.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The provider's secret API key stays on the server, in suitable secret
+          configuration. Never embedded in browser JavaScript. Bundling it
+          doesn't hide it. A frontend environment variable doesn't become
+          private because its name contains the word secret.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. And our server endpoint isn't safe merely because it hides the
+          key. It needs access controls and limits so strangers can't use it as
+          our publicly funded robot vending machine.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We also control which data goes out. A user authorized to open a
+          ticket isn't automatically authorized to transmit every attachment to
+          every provider.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. We choose approved data handling and provider arrangements
+          for the task. We can start experiments with invented records while
+          those decisions are being made.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Chef Nervous Robot callback: the interesting trick might be the
+          generated recipe or suggestion, but there still has to be a sensible
+          boundary between the interface and the service doing the
+          generation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We're recalling the model-powered feature, not assuming a
+          particular implementation. Support Assistant has the same
+          architectural question: what should the browser ask our server to
+          do?</span
+        >
+      </p>
+      <h2 id="wait-that-s-just-javascript">Wait, That's Just JavaScript</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The companion has a small TypeScript function that sends a question
+          to our own server endpoint. I see an async function, await, fetch, and
+          response checking.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >All JavaScript features. Async makes the function return a promise.
+          Await pauses that function's progress until the promise settles; it
+          doesn't freeze the whole browser. Fetch performs the request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The type annotations are TypeScript. The object with the question is
+          JavaScript. Turning that object into JSON is also JavaScript. We have
+          successfully resisted inventing an AI dialect.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And when the response arrives, we treat its body as unknown until we
+          check its shape. A type annotation doesn't validate bytes from a
+          server.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We're checking that it contains an answer string. That still doesn't
+          prove the answer is correct. Shape validation and factual evaluation
+          are different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The example calls our fictional endpoint; it isn't
+          pretending that all model vendors share one endpoint or response
+          format. A server-side adapter would translate our application request
+          into the selected provider's current API.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful seam. We can test our own request handling with a fake
+          response, without spending money or sending customer data during every
+          unit test.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And separately test the real provider integration and the quality of
+          the actual model outputs.</span
+        >
+      </p>
+      <h2 id="an-answer-arrives-in-pieces">An Answer Arrives in Pieces</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >With a normal request-response pattern, we might wait for the
+          complete answer. Streaming lets us receive pieces or events as
+          generation proceeds.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which can reduce the time until the person sees something useful. It
+          doesn't necessarily reduce the time required to generate the complete
+          answer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. And streamed pieces aren't guaranteed to align with words,
+          sentences, or complete JSON objects. The provider's event format tells
+          us how to assemble them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't try to parse every little chunk as a complete object. And
+          don't execute an action because the first half of a streamed sentence
+          looked encouraging.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Absolutely. We distinguish partial output, completion, interruption,
+          and failure. A dropped connection after three paragraphs must not look
+          like a finished answer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Accessibility belongs here. If we announce every token through a live
+          region, a screen reader may become an auctioneer trapped in a
+          printer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Instead, provide a useful generating status, allow stopping where
+          supported, keep keyboard focus stable, and announce sensible updates
+          or completion. Let people read the finished answer at their own pace.
+          Test the actual interaction with assistive technology.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And show status in text, not just a spinning decoration. If
+          generation fails, say so and preserve the user's question. We already
+          know how to make asynchronous interfaces kinder.</span
+        >
+      </p>
+      <h2 id="model-choice-has-a-bill-attached">
+        Model Choice Has a Bill Attached
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >How do we choose a model? Representative tasks first. A model that
+          writes wonderful essays may not be our best choice for short
+          policy-grounded answers with strict latency requirements.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We compare quality, speed, input limits, supported structured output
+          and tools, data handling, availability, and cost. “Largest” isn't the
+          same as “best fit.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Hosted APIs often meter input and output tokens separately, sometimes
+          with additional categories. Prices and billing rules change, so use
+          the provider's actual current terms instead of memorizing a number
+          from this episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And our system may make more than one model call per user question.
+          History and repeated policy context can get resent. Retries and tool
+          investigation add work.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Token cost per call is only part of cost per successfully
+          resolved task. Retrieval, storage, operations, and the human's review
+          time matter too.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Latency also has several parts: our server, retrieving information,
+          waiting for the provider, generating output, and transmitting it. “The
+          model is slow” can conceal a very slow database query we wrote
+          ourselves.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A cherished tradition continues.</span>
+      </p>
+      <h2 id="failure-is-a-response-too">Failure Is a Response Too</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>What should happen when the provider is unavailable?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Set timeouts. Handle errors. Tell the user what happened. Offer the
+          ordinary search path or let them retry where appropriate. Retry
+          temporary failures within a limit, with backoff, rather than hammering
+          the dependency.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And retries can cost money or duplicate work. Later, when actions are
+          involved, retrying needs even more care.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Even in our draft-only version, canceled browser requests don't
+          necessarily mean a remote provider stopped processing. We need to
+          understand cancellation behavior instead of assuming it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >For our first application version, we have authenticated staff, a
+          bounded question, approved policy context, a model call, a checked
+          response, and a draft shown with its sources.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No magic UI wrapper. No credentials in the browser. No assumption
+          that generated text is safe HTML or a verified fact.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Wait. That's just software.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Software with a useful but fallible generative dependency.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time, how do we choose the context without making a person
+          manually paste the right policy every time?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Brenda is waiting with her documents.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Tell her to leave the forklift outside.</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <figure class="card">
+          <figcaption>Browser / server / provider boundary</figcaption>
+          <pre tabindex="0">
+Staff browser → your authenticated server → approved model provider
+              ← validated application result ← model response
+
+Provider secret: server only
+Server: authorization, limits, context selection, provider adapter
+Browser: safe rendering, accessible status, correction and retry UI</pre
+          >
+          <p>
+            The fictional /api/support-answer endpoint belongs to this
+            application. The browser example does not implement that endpoint or
+            a provider integration.
+          </p>
+        </figure>
+        <figure class="card code">
+          <figcaption>
+            Browser request to your own backend<span>typescript</span>
+          </figcaption>
+          <pre tabindex="0"><code>export async function askSupport(
+  question: string,
+  signal?: AbortSignal,
+): Promise&lt;string&gt; {
+  const response = await fetch(&quot;/api/support-answer&quot;, {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({ question }),
+    signal,
+  });
+  if (!response.ok) throw new Error(&quot;Answer unavailable&quot;);
+  const body: unknown = await response.json();
+  if (
+    typeof body !== &quot;object&quot; || body === null ||
+    !(&quot;answer&quot; in body) || typeof body.answer !== &quot;string&quot;
+  ) throw new Error(&quot;Unexpected response&quot;);
+  return body.answer;
+}</code></pre>
+        </figure>
+        <p>
+          <a href="request-example.ts">Download the TypeScript example</a>. It
+          requires a server endpoint to produce a live answer; the package
+          checks it with mocked responses. No provider key belongs here. The
+          server must validate request size/content, authentication,
+          authorization, quotas, and any required CSRF protections before
+          calling its provider adapter.
+        </p>
+        <table>
+          <caption>
+            Which language is that?
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Syntax</th>
+              <th scope="col">Belongs to</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">async / await / fetch / JSON.stringify</th>
+              <td>JavaScript / Web APIs</td>
+            </tr>
+            <tr>
+              <th scope="row">question: string and Promise&lt;string&gt;</th>
+              <td>TypeScript; erased from runtime code</td>
+            </tr>
+            <tr>
+              <th scope="row">unknown plus property checks</th>
+              <td>TypeScript safety plus actual JavaScript runtime checks</td>
+            </tr>
+            <tr>
+              <th scope="row">Provider SDK method</th>
+              <td>Library-specific API; verify installed version</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Streaming lifecycle</h3>
+        <ol>
+          <li>Show “Generating” without moving focus.</li>
+          <li>Accumulate provider events according to their contract.</li>
+          <li>Render partial text safely; do not execute partial proposals.</li>
+          <li>Announce completion or failure at a useful granularity.</li>
+          <li>
+            Preserve the question; support cancellation and retry deliberately.
+          </li>
+        </ol>
+        <p>
+          First output latency differs from complete-answer latency. Do not
+          announce every token to a screen reader. This example is intentionally
+          non-streaming to isolate the request boundary.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+              >MDN: using Fetch</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+              >TypeScript narrowing</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html"
+              >WAI: status messages</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../04/companion.html">Episode 4</a></li>
+            <li><a href="../06/companion.html">Episode 6</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

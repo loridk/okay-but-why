@@ -1,0 +1,27 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<figure class="card"><figcaption>MCP roles in Support Assistant</figcaption><pre tabindex="0">Support Assistant (HOST)
+  ├─ model adapter ↔ model API
+  ├─ policy / approval / execution controls
+  ├─ MCP CLIENT ↔ orders MCP SERVER ↔ existing order API
+  └─ MCP CLIENT ↔ docs MCP SERVER ↔ permitted document store</pre><p>The host coordinates the experience. Clients communicate with servers. A server is a program and may run locally or remotely; it need not be a separate machine.</p></figure><table><caption>Different layers</caption><thead><tr><th scope="col">Layer</th><th scope="col">Purpose</th><th scope="col">Does not supply</th></tr></thead><tbody><tr><th scope="row">Business API</th><td>Interface to a service such as orders</td><td>Model decision-making</td></tr><tr><th scope="row">Model tool calling</th><td>Propose an operation with structured arguments</td><td>Permission or automatic execution</td></tr><tr><th scope="row">MCP</th><td>Common integration discovery and exchange</td><td>Truth, business authorization, or model intelligence</td></tr></tbody></table><dl><dt><strong>Tool</strong></dt><dd>Callable capability exposed by a server.</dd><dt><strong>Resource</strong></dt><dd>Context data exposed by a server.</dd><dt><strong>Prompt</strong></dt><dd>Reusable interaction template; not automatically authoritative instructions.</dd><dt><strong>Discovery</strong></dt><dd>Learning supported versions, capabilities, and available features.</dd><dt><strong>Transport</strong></dt><dd>How protocol messages travel, such as stdio or Streamable HTTP.</dd></dl><figure class="card code"><figcaption>Tiny MCP tool-call message, protocol 2026-07-28<span>json</span></figcaption><pre tabindex="0"><code>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 1,
+  &quot;method&quot;: &quot;tools/call&quot;,
+  &quot;params&quot;: {
+    &quot;name&quot;: &quot;getOrderStatus&quot;,
+    &quot;arguments&quot;: {
+      &quot;orderId&quot;: &quot;1234&quot;
+    },
+    &quot;_meta&quot;: {
+      &quot;io.modelcontextprotocol/protocolVersion&quot;: &quot;2026-07-28&quot;,
+      &quot;io.modelcontextprotocol/clientInfo&quot;: {
+        &quot;name&quot;: &quot;support-assistant-example&quot;,
+        &quot;version&quot;: &quot;1.0.0&quot;
+      },
+      &quot;io.modelcontextprotocol/clientCapabilities&quot;: {}
+    }
+  }
+}</code></pre></figure><p>This is one illustrative request, not a complete client or server. It assumes compatible version/capability discovery, an available tool, and transport/authentication setup. Per-request protocol metadata reflects the linked version. Older examples and SDKs may use different lifecycle behavior; verify the host and installed SDK before implementation.</p><h3>USB-C analogy boundary</h3><p>A shared connector reduces repeated integration work. It does not guarantee feature compatibility, safe credentials, trustworthy tool descriptions, or sensible business behavior. Use a direct API integration when that is simpler.</p><h3>Trust decisions</h3><ul><li>Inspect server provenance, permissions, credentials, and network reach.</li><li>Authorize actual records and operations; listing a tool is not approval.</li><li>Treat returned text and descriptions as potentially hostile.</li><li>Keep write approvals and minimal data access independent of model compliance.</li></ul>
+<h3>Resources</h3><ul><li><a href="https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture">MCP architecture, versioned</a></li><li><a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools">MCP tool specification</a></li><li><a href="https://modelcontextprotocol.io/specification/2026-07-28/server/resources">MCP resources</a></li><li><a href="https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices">MCP security practices</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../07/companion.html">Episode 7</a></li><li><a href="../09/companion.html">Episode 9</a></li></ul></nav>
+</section>

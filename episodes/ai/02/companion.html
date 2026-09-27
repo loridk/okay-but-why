@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 2: How Does a Machine Learn Anything? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 2: How Does a Machine Learn Anything?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/78cddaf8-df96-47e1-9faa-121a30b39831"
+      ></script>
+      <div class="redcirclePlayer-78cddaf8-df96-47e1-9faa-121a30b39831"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#rules-we-write-patterns-we-learn"
+            >Rules We Write, Patterns We Learn</a
+          >
+        </li>
+        <li>
+          <a href="#a-mixing-desk-with-limits">A Mixing Desk, With Limits</a>
+        </li>
+        <li>
+          <a href="#learning-the-wrong-shortcut">Learning the Wrong Shortcut</a>
+        </li>
+        <li>
+          <a href="#where-do-language-model-targets-come-from"
+            >Where Do Language-Model Targets Come From?</a
+          >
+        </li>
+        <li>
+          <a href="#training-is-not-inference">Training Is Not Inference</a>
+        </li>
+        <li><a href="#do-we-need-our-own">Do We Need Our Own?</a></li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Support Assistant has been discussed for one meeting. Someone wants
+          to train our own model.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't currently have an agreed definition of “late delivery.” But
+          certainly, let's manufacture intelligence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In fairness, “train” sounds like teaching a colleague the refund
+          policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A colleague who asks sensible questions and consumes sandwiches
+          instead of a terrifying quantity of electricity.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? Today: what learning means when the learner
+          is a machine.</span
+        >
+      </p>
+      <h2 id="rules-we-write-patterns-we-learn">
+        Rules We Write, Patterns We Learn
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >In ordinary programming, I can write a rule: if the shipment missed
+          its guaranteed date and this service level qualifies, flag it for
+          review. I need clear inputs and a clear definition of qualifies.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Now imagine classifying the subject of an incoming support
+          ticket. Billing, delivery, damaged item, something else. You could
+          write keyword rules.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Charge” means billing. Except “the charger was missing,” which is
+          now billing because my rule is a little shit.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And “I paid twice” contains neither “charge” nor “billing.” Rules can
+          work, but covering all those variations becomes awkward. Machine
+          learning lets a training process use examples to adjust a model that
+          predicts the category.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So we might provide tickets with the categories people assigned them.
+          Input and desired output.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's supervised learning. During training, the model makes a
+          prediction. A loss function measures how far that prediction is from
+          the training target. An optimizer adjusts the model's parameters to
+          reduce that loss across examples.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Pause on parameters. In JavaScript, parameters are the names in my
+          function definition. This is a different use of the word.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Here they're adjustable numerical values inside the model.
+          Weights are a major kind. They influence how strongly different
+          signals contribute to the model's computations.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the training process isn't mainly adding finished answers to a
+          filing cabinet. It's adjusting the machinery that produces
+          predictions.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And developers still write plenty of ordinary code:
+          preparing data, choosing the training setup, running the process,
+          measuring the result. “It learns” doesn't mean engineering has left
+          the building.</span
+        >
+      </p>
+      <h2 id="a-mixing-desk-with-limits">A Mixing Desk, With Limits</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Can I picture weights as knobs on a mixing desk? Turn different
+          contributions up or down until the output improves?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >As a first picture, yes. Except there may be a vast number of knobs,
+          connected through complicated computations, and humans don't generally
+          assign each one a tidy meaning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>There's no knob labeled “Refund Knowledge, Slightly More.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Unfortunately. A neural network takes numerical inputs through layers
+          of connected computations. Each layer transforms its input using
+          learned values and nonlinear operations. The final output might be
+          scores for ticket categories.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why layers? Why not one enormous multiplication and a lie down?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Successive transformations can represent more complex relationships.
+          Early and later computations can combine signals in different ways.
+          The nonlinear parts matter: without them, stacking certain simple
+          linear transformations would collapse into another linear
+          transformation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We don't need to do the algebra, but the layers actually need to add
+          expressive power. “More boxes” isn't the explanation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Deep learning uses networks with multiple layers. They're
+          inspired in a very loose historical sense by networks of neurons, but
+          they're mathematical systems, not little biological brains.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And training doesn't know what we morally intended. It optimizes the
+          objective we gave it using the data we supplied.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which is an excellent reason to inspect both.</span>
+      </p>
+      <h2 id="learning-the-wrong-shortcut">Learning the Wrong Shortcut</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Suppose every urgent ticket in our training data happens to contain a
+          particular employee's signature. The model might learn the signature
+          instead of urgency.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It can exploit a correlation that predicts the label in that
+          dataset but fails in real use. Or our labels might encode an old
+          policy, inconsistent human judgments, or unfair decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So “we used real company data” isn't a quality guarantee. Real
+          company data can be spectacularly wrong.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We also need separate data for evaluation. If we test on the same
+          examples used to fit the model, we can mistake memorization or
+          overfitting for generalization.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Overfitting: doing well on the training examples but failing to carry
+          the pattern to new examples.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. A held-out test set helps us estimate that. We must avoid
+          leakage, too: near-duplicate tickets or later information sneaking
+          into both sides can make the result look better than it is.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >If a ticket includes the human's eventual resolution, and that text
+          wasn't available when the ticket arrived, using it to predict the
+          arrival-time category is cheating accidentally.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Exactly. The model won't object to our experimental design.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Rude of it, honestly.</span>
+      </p>
+      <h2 id="where-do-language-model-targets-come-from">
+        Where Do Language-Model Targets Come From?
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >For a large language model, one major training task is predicting the
+          next piece of text from preceding text. The text itself provides the
+          targets. That's often described as self-supervised learning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So nobody has to personally label every sentence “this one ends with
+          sandwich.” The next part is already present in the training
+          text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We'll explain those pieces, called tokens, next episode. Broad
+          training can produce general language capabilities. Later training
+          stages may use examples of following instructions or feedback about
+          preferred behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Not every model is trained in exactly the same sequence,
+          though.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Recipes vary. And machine learning extends far beyond
+          predicting text: clustering can find groupings without category
+          labels; reinforcement learning uses rewards associated with behavior.
+          We're naming those so our ticket classifier doesn't accidentally
+          become the definition of all learning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We are not opening three new courses inside this episode. Close those
+          tabs gently.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Happily.</span>
+      </p>
+      <h2 id="training-is-not-inference">Training Is Not Inference</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Now I've trained a model. A new ticket comes in. What happens?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We run inference: supply the new input to the trained model and
+          compute an output. Its learned weights are ordinarily fixed during
+          that request.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So giving our chat assistant a refund policy doesn't automatically
+          change those weights.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Information in the current request can affect the response
+          without retraining the model. A product may separately store
+          conversations or use permitted data in future training, but that's a
+          different process governed by its design and data policies.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Important distinction. “This conversation didn't update the weights”
+          does not mean “nobody stored this conversation.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Precisely. We'll revisit that when we put the model behind an
+          application.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And a deployed model can become less useful even while its weights
+          stay the same, because the world changes. Different ticket types,
+          changed policies, different language patterns.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's part of why we monitor performance over time. A good
+          evaluation result belongs to a particular task, dataset, and period.
+          It's not a lifetime achievement award.</span
+        >
+      </p>
+      <h2 id="do-we-need-our-own">Do We Need Our Own?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Back to “train our own AI.” We need to ask what they mean. Training a
+          small ticket classifier is very different from pretraining a large
+          general-purpose language model from scratch.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Different data requirements, computing costs, expertise, and reasons
+          to do it. The phrase hides most of the project.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We can often start by using an existing model. Later, adapting an
+          existing model through fine-tuning may help a specific behavior or
+          task, with appropriate data and evaluation. It still isn't the
+          automatic solution to knowing today's internal policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which might just need to be provided when the question is asked. Like
+          giving a capable colleague the current document instead of insisting
+          they permanently memorize every revision.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That analogy works for the information problem, as long as we don't
+          assume the model has the colleague's judgment or responsibility.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good boundary. Also, where does Python come in? People say AI
+          development and immediately hand you a notebook.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Python has a large ecosystem for data work, training, and model
+          research. But using a model in a web application doesn't require
+          rewriting the application in Python. Our small application examples
+          will use TypeScript. The training system and the consuming application
+          can be entirely different software.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Familiar separation. My browser doesn't need to be written in the
+          database's implementation language.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Training adjusts a model using data and an objective.
+          Inference uses the resulting model. Neither removes the need to define
+          the problem.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time we'll look inside the thing that writes suspiciously
+          confident paragraphs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Next-token prediction.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>I predict the next management token is “synergy.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A strong baseline. We should evaluate it.</span>
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <figure class="card">
+          <figcaption>Training and inference are separate</figcaption>
+          <pre tabindex="0">
+Traditional program: written rules + input → output
+
+Training: examples → prediction → loss → parameter updates
+                         ↑______________________|
+                            repeated during training
+
+Inference: new input + trained model → prediction
+           weights ordinarily remain fixed</pre
+          >
+          <p>
+            A training objective guides numerical updates. Inference uses the
+            resulting model; putting a document into a request does not
+            ordinarily update its weights.
+          </p>
+        </figure>
+        <dl>
+          <dt><strong>Parameter / weight</strong></dt>
+          <dd>
+            An adjustable numerical value inside a model; distinct from a
+            function parameter in JavaScript.
+          </dd>
+          <dt><strong>Loss</strong></dt>
+          <dd>
+            A numerical measure used during training to assess predictions
+            against an objective.
+          </dd>
+          <dt><strong>Optimizer</strong></dt>
+          <dd>
+            The procedure that updates parameters to improve that objective.
+          </dd>
+          <dt><strong>Neural network</strong></dt>
+          <dd>
+            Connected layers of mathematical transformations, not a recreation
+            of a human brain.
+          </dd>
+          <dt><strong>Generalization</strong></dt>
+          <dd>
+            Performance on relevant examples beyond those used for fitting.
+          </dd>
+          <dt><strong>Overfitting</strong></dt>
+          <dd>Fitting training-specific patterns that do not transfer well.</dd>
+          <dt><strong>Held-out data</strong></dt>
+          <dd>
+            Examples reserved for assessing performance rather than fitting or
+            repeatedly tuning the model.
+          </dd>
+        </dl>
+        <table>
+          <caption>
+            Different learning setups
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Setup</th>
+              <th scope="col">Example</th>
+              <th scope="col">Important limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Supervised</th>
+              <td>Ticket text with human-assigned category</td>
+              <td>Labels can be wrong or encode bias.</td>
+            </tr>
+            <tr>
+              <th scope="row">Self-supervised</th>
+              <td>Predict the next token from earlier text</td>
+              <td>Prediction targets are not truth verification.</td>
+            </tr>
+            <tr>
+              <th scope="row">Unsupervised</th>
+              <td>Find groups in unlabeled records</td>
+              <td>Groups do not arrive with guaranteed business meaning.</td>
+            </tr>
+            <tr>
+              <th scope="row">Reinforcement learning</th>
+              <td>Adjust behavior using a reward signal</td>
+              <td>Optimizing reward can exploit an imperfect objective.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Support Assistant decision</h3>
+        <p>
+          Try an existing model before proposing foundation-model training. A
+          small classifier, fine-tuning an existing model, and pretraining a
+          large model are different projects. Data rights, quality, leakage,
+          compute, expertise, and evaluation belong in the scope.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developers.google.com/machine-learning/crash-course/neural-networks"
+              >Google ML Crash Course: neural networks</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developers.google.com/machine-learning/crash-course/overfitting/overfitting"
+              >Google ML Crash Course: overfitting</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../01/companion.html">Episode 1</a></li>
+            <li><a href="../03/companion.html">Episode 3</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

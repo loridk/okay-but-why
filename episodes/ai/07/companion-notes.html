@@ -1,0 +1,46 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<figure class="card code"><figcaption>Illustrative tool descriptor; provider wrappers differ<span>json</span></figcaption><pre tabindex="0"><code>{
+  &quot;name&quot;: &quot;getOrderStatus&quot;,
+  &quot;description&quot;: &quot;Read current status for one order the caller is allowed to view.&quot;,
+  &quot;inputSchema&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;orderId&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;pattern&quot;: &quot;^[0-9]{4}$&quot;
+      }
+    },
+    &quot;required&quot;: [
+      &quot;orderId&quot;
+    ],
+    &quot;additionalProperties&quot;: false
+  }
+}</code></pre></figure><figure class="card"><figcaption>The application executes</figcaption><pre tabindex="0">Model proposes call
+ → allowlist + runtime validation
+ → authenticated identity + authorization
+ → controlled function / service
+ → minimal result or explicit failure
+ → model explanation
+
+Risky write: proposal → concrete approval → recheck → execute
+            → authoritative receipt / uncertain-state recovery</pre><p>Model text never supplies the authoritative identity or approval record. Discovery and valid arguments do not authorize access.</p></figure><figure class="card code"><figcaption>Read-only execution boundary with invented in-memory records<span>typescript</span></figcaption><pre tabindex="0"><code>type Session = { tenantId: string; canReadOrders: boolean };
+type Order = { id: string; tenantId: string; status: string };
+
+export function getOrderStatus(
+  session: Session, args: unknown, orders: readonly Order[],
+): { status: string } {
+  if (!session.canReadOrders) throw new Error(&quot;Not allowed&quot;);
+  if (typeof args !== &quot;object&quot; || args === null ||
+      !(&quot;orderId&quot; in args) || typeof args.orderId !== &quot;string&quot; ||
+      !/^[0-9]{4}$/.test(args.orderId) ||
+      Object.keys(args).some(key =&gt; key !== &quot;orderId&quot;)) {
+    throw new Error(&quot;Invalid arguments&quot;);
+  }
+  const order = orders.find(item =&gt;
+    item.id === args.orderId &amp;&amp; item.tenantId === session.tenantId);
+  if (!order) throw new Error(&quot;Order unavailable&quot;);
+  return { status: order.status };
+}</code></pre></figure><p><a href="tool-example.ts">Download the TypeScript example</a>. The four-digit ID rule is fictional. The session must come from trusted server authentication, never model arguments. Production systems need real record-level policy and a permission-scoped database query; this function only demonstrates a small boundary.</p><h3>Before a refund</h3><ul><li>Verify order, amount, currency, policy, actor, and current state.</li><li>Show the exact proposal in a keyboard-accessible confirmation.</li><li>Bind approval to the proposal; invalidate it if the proposal changes.</li><li>Use idempotency and reconcile uncertain outcomes with the service.</li><li>Return the actual transaction result, not a generated assertion.</li></ul>
+<h3>Resources</h3><ul><li><a href="https://json-schema.org/understanding-json-schema/reference/object">JSON Schema object validation</a></li><li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP authorization guidance</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../06/companion.html">Episode 6</a></li><li><a href="../08/companion.html">Episode 8</a></li></ul></nav>
+</section>

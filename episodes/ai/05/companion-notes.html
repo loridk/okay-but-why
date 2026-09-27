@@ -1,0 +1,27 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<figure class="card"><figcaption>Browser / server / provider boundary</figcaption><pre tabindex="0">Staff browser → your authenticated server → approved model provider
+              ← validated application result ← model response
+
+Provider secret: server only
+Server: authorization, limits, context selection, provider adapter
+Browser: safe rendering, accessible status, correction and retry UI</pre><p>The fictional /api/support-answer endpoint belongs to this application. The browser example does not implement that endpoint or a provider integration.</p></figure><figure class="card code"><figcaption>Browser request to your own backend<span>typescript</span></figcaption><pre tabindex="0"><code>export async function askSupport(
+  question: string,
+  signal?: AbortSignal,
+): Promise&lt;string&gt; {
+  const response = await fetch(&quot;/api/support-answer&quot;, {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({ question }),
+    signal,
+  });
+  if (!response.ok) throw new Error(&quot;Answer unavailable&quot;);
+  const body: unknown = await response.json();
+  if (
+    typeof body !== &quot;object&quot; || body === null ||
+    !(&quot;answer&quot; in body) || typeof body.answer !== &quot;string&quot;
+  ) throw new Error(&quot;Unexpected response&quot;);
+  return body.answer;
+}</code></pre></figure><p><a href="request-example.ts">Download the TypeScript example</a>. It requires a server endpoint to produce a live answer; the package checks it with mocked responses. No provider key belongs here. The server must validate request size/content, authentication, authorization, quotas, and any required CSRF protections before calling its provider adapter.</p><table><caption>Which language is that?</caption><thead><tr><th scope="col">Syntax</th><th scope="col">Belongs to</th></tr></thead><tbody><tr><th scope="row">async / await / fetch / JSON.stringify</th><td>JavaScript / Web APIs</td></tr><tr><th scope="row">question: string and Promise&lt;string&gt;</th><td>TypeScript; erased from runtime code</td></tr><tr><th scope="row">unknown plus property checks</th><td>TypeScript safety plus actual JavaScript runtime checks</td></tr><tr><th scope="row">Provider SDK method</th><td>Library-specific API; verify installed version</td></tr></tbody></table><h3>Streaming lifecycle</h3><ol><li>Show “Generating” without moving focus.</li><li>Accumulate provider events according to their contract.</li><li>Render partial text safely; do not execute partial proposals.</li><li>Announce completion or failure at a useful granularity.</li><li>Preserve the question; support cancellation and retry deliberately.</li></ol><p>First output latency differs from complete-answer latency. Do not announce every token to a screen reader. This example is intentionally non-streaming to isolate the request boundary.</p>
+<h3>Resources</h3><ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch">MDN: using Fetch</a></li><li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html">TypeScript narrowing</a></li><li><a href="https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html">WAI: status messages</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../04/companion.html">Episode 4</a></li><li><a href="../06/companion.html">Episode 6</a></li></ul></nav>
+</section>

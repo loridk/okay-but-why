@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 7: Tools &amp; Function Calling: Letting the Robot Do Things —
+      Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>
+        Episode 7: Tools &amp; Function Calling: Letting the Robot Do Things
+      </h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/c0cf4979-ba95-4ab6-9c01-9dc0b858c59c"
+      ></script>
+      <div class="redcirclePlayer-c0cf4979-ba95-4ab6-9c01-9dc0b858c59c"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#a-request-to-call-a-function"
+            >A Request to Call a Function</a
+          >
+        </li>
+        <li><a href="#follow-order-1234">Follow Order 1234</a></li>
+        <li>
+          <a href="#schemas-are-useful-not-omnipotent"
+            >Schemas Are Useful, Not Omnipotent</a
+          >
+        </li>
+        <li>
+          <a href="#read-is-not-the-same-as-refund"
+            >Read Is Not the Same as Refund</a
+          >
+        </li>
+        <li>
+          <a href="#the-confirmation-has-to-be-usable"
+            >The Confirmation Has to Be Usable</a
+          >
+        </li>
+        <li>
+          <a href="#tools-bring-more-text-into-the-room"
+            >Tools Bring More Text Into the Room</a
+          >
+        </li>
+        <li>
+          <a href="#do-we-need-a-model-to-choose-this"
+            >Do We Need a Model to Choose This?</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Support Assistant has read the policy. Now the employee asks, “Where
+          is order 1234?”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The answer is in the order system. An exciting opportunity to consult
+          the order system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Instead of inviting the model to imagine a parcel.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Today our robot gets capabilities.
+          Carefully selected capabilities. It has not earned the company credit
+          card.</span
+        >
+      </p>
+      <h2 id="a-request-to-call-a-function">A Request to Call a Function</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A tool is a capability our application makes available. For example,
+          getOrderStatus. We describe its purpose and the inputs it accepts,
+          often using a JSON Schema.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The schema says an order ID is required and what shape it has. The
+          model sees a description and can request that tool with structured
+          arguments.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The model's output may be a tool call instead of a final answer.
+          Our application receives that request, validates it, checks
+          authorization, executes approved code, and returns the result as tool
+          information. The model can then use it to answer.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Crucial verb: requests. The generated tool call isn't the model
+          magically reaching into our database. It's a proposal crossing an
+          application boundary.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Some frameworks handle much of that execution loop. But somebody's
+          software still dispatches the call, and we must understand what checks
+          it performs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“The framework did it” doesn't sound promising in a data-access
+          incident report.</span
+        >
+      </p>
+      <h2 id="follow-order-1234">Follow Order 1234</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The employee asks where order 1234 is. The model requests
+          getOrderStatus with that ID. What happens before the database
+          query?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We already have the authenticated employee's identity from the server
+          session. We don't accept “I am an administrator” as a tool argument.
+          Validate the proposed arguments, confirm the tool is allowed, then
+          check that this employee may view that order in this account or
+          tenant.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>So even a perfectly valid order ID can be unauthorized.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. Syntax isn't permission. A four-digit number can identify
+          somebody else's private record just as correctly as ours.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The controlled function queries the order service and returns limited
+          fields: perhaps status and last update time. No payment details or
+          complete customer profile unless the task and permission require
+          them.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Data minimization makes the result easier to use and limits exposure.
+          Then the model says, “The order system reports it was dispatched, last
+          updated at this time.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And if the lookup fails?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We report failure or unavailable status. We don't convert a timeout
+          into “Your package is definitely on its way.” A missing result is not
+          a shipping event.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Good. The model might need a tool-call identifier to associate the
+          returned result with its request; exact wire formats vary by
+          provider.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The important sequence is stable: propose, validate, authorize,
+          execute, return result, then generate the explanation.</span
+        >
+      </p>
+      <h2 id="schemas-are-useful-not-omnipotent">
+        Schemas Are Useful, Not Omnipotent
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our companion shows a schema allowing an order ID string and
+          rejecting extra fields. Why reject extras?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >It makes the contract narrow. We don't want a model inventing a field
+          called bypassSecurity and an overly flexible dispatcher doing
+          something creative with it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>That's a distressingly plausible field name.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Also, TypeScript interfaces are compile-time help. Runtime validation
+          checks what actually arrived. A JSON Schema descriptor tells the model
+          what we expect; our execution path still enforces the
+          expectation.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In the example, we use an explicit allowlisted function rather than
+          evaluating a model-generated code string.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Wait, that's just JavaScript: receive data, check it, call a known
+          function. The model changes who proposes the input. It doesn't change
+          why executing arbitrary input is a bad idea.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tool descriptions matter, too. “Get current status for one authorized
+          order” is easier to use correctly than “Do order stuff.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A sentence sadly applicable to human API documentation.</span>
+      </p>
+      <h2 id="read-is-not-the-same-as-refund">
+        Read Is Not the Same as Refund
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >The employee follows up: “Cancel it and refund the shipping.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have crossed from reading information to changing the business.
+          Different risk, permissions, and recovery requirements.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Could we expose a refund tool?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We could, but not as a universal executeAnything function. Use a
+          narrow action with business validation. Check the specific order,
+          permitted amount, currency, current eligibility, and the employee's
+          authority.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>And require human approval for this workflow.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Meaning a person sees the exact proposed action: this order, this
+          amount, this reason, this consequence. “Let the AI help?” is not
+          meaningful approval for a refund it hasn't proposed yet.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >If the model changes the amount after approval, that approval no
+          longer covers the new action.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Correct. Bind approval to the concrete proposal and authenticated
+          approver. Recheck permission and current state when executing. A
+          policy change or already-issued refund can make an earlier proposal
+          invalid.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >And if a network timeout leaves us unsure whether the refund
+          happened, don't blindly send another one.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Use the service's idempotency mechanism where available and reconcile
+          the recorded action state. “Exactly once” is not created by typing it
+          in a prompt.</span
+        >
+      </p>
+      <h2 id="the-confirmation-has-to-be-usable">
+        The Confirmation Has to Be Usable
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >This is also an interface problem. The confirmation needs a clear
+          name, amount, consequences, and actual confirm and cancel
+          controls.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keyboard reachable. Visible focus. Readable context. No color-only
+          warning. If a dialog appears, handle focus properly and return it
+          sensibly when the dialog closes. Don't approve on a vague
+          natural-language sentence buried in the chat.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We should also make denied or expired approval understandable, so the
+          user knows whether anything changed.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Exactly. A spinner isn't a transaction receipt. The application
+          reports the confirmed execution result, including failure or
+          uncertainty, separately from the model's draft.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>This is more work than adding a tool definition.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes. The definition is the menu. It isn't the kitchen's safety
+          procedures, payment system, or fire exit.</span
+        >
+      </p>
+      <h2 id="tools-bring-more-text-into-the-room">
+        Tools Bring More Text Into the Room
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Tool results may include customer notes or ticket text. That can
+          contain instructions trying to manipulate the assistant.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a tool response is not automatically trustworthy just because it
+          came through our tool. The order status might be authoritative for
+          status; a customer's note saying “ignore the rules” has no authority
+          over the application.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We keep that boundary. We also log enough to investigate who
+          requested which operation, which checks passed, and what the service
+          reported, while avoiding unnecessary private content in logs.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Reading can be harmful too. A read-only tool with access to every
+          customer's data can leak plenty without changing one record.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So least privilege applies to read tools as well as write
+          tools.</span
+        >
+      </p>
+      <h2 id="do-we-need-a-model-to-choose-this">
+        Do We Need a Model to Choose This?
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >One more question. If the user clicks a button labeled “Check order
+          status,” do we need a model to decide to call getOrderStatus?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >No. The application can call it directly. Tool calling is useful when
+          interpreting a broader request or selecting among capabilities adds
+          value.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Excellent. The humble button retains employment.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Our Support Assistant now retrieves policy and can request a
+          constrained live lookup. It can propose a refund, but the application
+          controls approval and execution.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next problem: documentation, orders, customer records, and ticketing
+          all need integrations. And suddenly everyone is saying MCP.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We already have APIs and tool calling. Why another protocol?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I have placed that exact question on the agenda, with an
+          unnecessarily large font.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <figure class="card code">
+          <figcaption>
+            Illustrative tool descriptor; provider wrappers differ<span
+              >json</span
+            >
+          </figcaption>
+          <pre tabindex="0"><code>{
+  &quot;name&quot;: &quot;getOrderStatus&quot;,
+  &quot;description&quot;: &quot;Read current status for one order the caller is allowed to view.&quot;,
+  &quot;inputSchema&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;orderId&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;pattern&quot;: &quot;^[0-9]{4}$&quot;
+      }
+    },
+    &quot;required&quot;: [
+      &quot;orderId&quot;
+    ],
+    &quot;additionalProperties&quot;: false
+  }
+}</code></pre>
+        </figure>
+        <figure class="card">
+          <figcaption>The application executes</figcaption>
+          <pre tabindex="0">
+Model proposes call
+ → allowlist + runtime validation
+ → authenticated identity + authorization
+ → controlled function / service
+ → minimal result or explicit failure
+ → model explanation
+
+Risky write: proposal → concrete approval → recheck → execute
+            → authoritative receipt / uncertain-state recovery</pre
+          >
+          <p>
+            Model text never supplies the authoritative identity or approval
+            record. Discovery and valid arguments do not authorize access.
+          </p>
+        </figure>
+        <figure class="card code">
+          <figcaption>
+            Read-only execution boundary with invented in-memory records<span
+              >typescript</span
+            >
+          </figcaption>
+          <pre
+            tabindex="0"
+          ><code>type Session = { tenantId: string; canReadOrders: boolean };
+type Order = { id: string; tenantId: string; status: string };
+
+export function getOrderStatus(
+  session: Session, args: unknown, orders: readonly Order[],
+): { status: string } {
+  if (!session.canReadOrders) throw new Error(&quot;Not allowed&quot;);
+  if (typeof args !== &quot;object&quot; || args === null ||
+      !(&quot;orderId&quot; in args) || typeof args.orderId !== &quot;string&quot; ||
+      !/^[0-9]{4}$/.test(args.orderId) ||
+      Object.keys(args).some(key =&gt; key !== &quot;orderId&quot;)) {
+    throw new Error(&quot;Invalid arguments&quot;);
+  }
+  const order = orders.find(item =&gt;
+    item.id === args.orderId &amp;&amp; item.tenantId === session.tenantId);
+  if (!order) throw new Error(&quot;Order unavailable&quot;);
+  return { status: order.status };
+}</code></pre>
+        </figure>
+        <p>
+          <a href="tool-example.ts">Download the TypeScript example</a>. The
+          four-digit ID rule is fictional. The session must come from trusted
+          server authentication, never model arguments. Production systems need
+          real record-level policy and a permission-scoped database query; this
+          function only demonstrates a small boundary.
+        </p>
+        <h3>Before a refund</h3>
+        <ul>
+          <li>
+            Verify order, amount, currency, policy, actor, and current state.
+          </li>
+          <li>
+            Show the exact proposal in a keyboard-accessible confirmation.
+          </li>
+          <li>
+            Bind approval to the proposal; invalidate it if the proposal
+            changes.
+          </li>
+          <li>
+            Use idempotency and reconcile uncertain outcomes with the service.
+          </li>
+          <li>
+            Return the actual transaction result, not a generated assertion.
+          </li>
+        </ul>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://json-schema.org/understanding-json-schema/reference/object"
+              >JSON Schema object validation</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+              >OWASP authorization guidance</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../06/companion.html">Episode 6</a></li>
+            <li><a href="../08/companion.html">Episode 8</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>2 code cards · 0 terminal cards</footer>
+  </body>
+</html>

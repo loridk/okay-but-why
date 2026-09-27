@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 1: What the Hell Is AI, Actually? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 1: What the Hell Is AI, Actually?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/82e75a40-3242-48a6-8d0c-b69e8fb69e17"
+      ></script>
+      <div class="redcirclePlayer-82e75a40-3242-48a6-8d0c-b69e8fb69e17"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#who-asked-for-this">Who Asked for This?</a></li>
+        <li>
+          <a href="#a-family-with-awkward-boundaries"
+            >A Family With Awkward Boundaries</a
+          >
+        </li>
+        <li>
+          <a href="#generating-is-a-kind-of-task"
+            >Generating Is a Kind of Task</a
+          >
+        </li>
+        <li><a href="#hype-visits-the-studio">Hype Visits the Studio</a></li>
+        <li>
+          <a href="#a-small-experiment-before-a-big-architecture"
+            >A Small Experiment Before a Big Architecture</a
+          >
+        </li>
+        <li><a href="#what-we-know-now">What We Know Now</a></li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Management has sent a message. “We should add AI.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>To what?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Excellent follow-up, but I have an earlier question. To do
+          what?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Increase the amount of AI we have. We're dangerously low.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The dashboard is blinking. Someone fetch a bucket of
+          intelligence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Welcome to Okay, But Why? We're starting our AI series with the
+          question marketing has made unnecessarily difficult: what the hell are
+          we actually talking about?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Because I've seen that label on a chatbot, a photo editor, a washing
+          machine, and a job description that appeared to want an entire
+          computing department in a cardigan.</span
+        >
+      </p>
+      <h2 id="who-asked-for-this">Who Asked for This?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's give ourselves an actual problem. Fictional company. Internal
+          support team. People answer customer questions all day, but the
+          information is scattered.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Policies in one place. Customer records somewhere else. Orders in a
+          third system. Old tickets containing useful answers, wrong answers,
+          and a heroic amount of “following up.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A support employee gets asked whether a delayed order qualifies for a
+          shipping refund. They search the policy, check the order, read the
+          ticket history, and work out which rules apply.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Which is work. The customer sees a slow reply; the employee sees
+          twelve tabs and a policy last edited by someone who has left the
+          company.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Management sees an opportunity for AI.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I see an opportunity to find out where the time is going. Maybe the
+          search is terrible. Maybe nobody owns the documents. Maybe employees
+          can't access the system they need.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or maybe searching across those sources and drafting a supported
+          answer is a useful language-model task.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Yes! I'm not refusing the tool. I'm refusing “tool” as a complete
+          problem statement.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll call the teaching example Support Assistant. Across the series
+          we'll decide what it could do and what machinery that would require.
+          We are not secretly building a startup between episodes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Thank God. I have enough environment variables.</span>
+      </p>
+      <h2 id="a-family-with-awkward-boundaries">
+        A Family With Awkward Boundaries
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Artificial intelligence is the broad field of making computer systems
+          perform tasks associated with intelligence: recognizing patterns,
+          interpreting language, planning, making predictions, and so on.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>That's a category of capabilities, not one algorithm.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. And its boundaries aren't a universally agreed fence.
+          Historically, AI includes systems based on explicitly written rules
+          and symbolic reasoning, not just systems that learn from data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Expert systems. Encode knowledge and rules so the computer can draw
+          conclusions in a limited domain.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. That can be useful without a neural network hiding inside it.
+          But not every ordinary conditional suddenly deserves an AI sticker
+          either.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>My form validation would like a funding round.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Machine learning is a major part of AI. Instead of us manually
+          specifying every rule for a task, a training process uses data to
+          adjust a model so it can make useful predictions or decisions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Model is doing a lot of work there. A model of what?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A mathematical system that maps inputs to outputs, with values
+          learned during training. For a spam classifier, the input might be an
+          email and the output a score for whether it's spam. A language model
+          produces predictions about language. We'll unpack learning next
+          episode.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So a model isn't the whole app. The login screen, database, access
+          controls, and button that somehow says “Submit” three different ways
+          are still ours.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Very much ours. Then deep learning is a family of machine-learning
+          methods using neural networks with multiple layers. Layers let the
+          system learn successive transformations of the data.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Deep” describes the architecture. It doesn't mean the computer has
+          profound thoughts about its father.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. And “neural” is inspiration, not a claim that we've
+          recreated a human brain.</span
+        >
+      </p>
+      <h2 id="generating-is-a-kind-of-task">Generating Is a Kind of Task</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where does generative AI sit in that family?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >It describes systems that generate content: text, images, audio, and
+          other outputs. Most of what people mean by modern generative AI uses
+          deep learning. But “generative” is about what the system does; it
+          isn't simply another perfectly nested box after deep learning.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A weather predictor and an image generator might both use machine
+          learning, but we're asking them to do different jobs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. A large language model, or LLM, is a model trained at scale on
+          language-related data. Modern LLMs can generate text and support tasks
+          like summarizing, translating, extracting information, or writing
+          code. Some systems also handle images or audio.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the chat window is how I interact with one of those systems. It's
+          not synonymous with AI, or even with the model.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. The product might combine a model, instructions, search,
+          file handling, and other software. Different products can use the same
+          underlying model and behave differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like putting the same database behind a library catalog and a
+          catastrophically bad expense system. The engine doesn't determine the
+          entire experience.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a much better analogy than the one I was about to do involving
+          soup.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Save it. We have eleven more episodes.</span>
+      </p>
+      <h2 id="hype-visits-the-studio">Hype Visits the Studio</h2>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >I brought a phrase from the internet: “It understands your
+          business.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Does it understand that nobody knows who can approve a refund?</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span>The landing page was quiet on that point.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An LLM can produce impressive explanations and solve some difficult
+          tasks. But fluent language isn't proof that every statement is
+          correct, or that it has the information necessary for this particular
+          decision.</span
+        >
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Or that it experiences understanding the way a person does. We can
+          discuss observable capabilities without settling consciousness during
+          a support-software meeting.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Sensible. Those meetings already run long.</span>
+      </p>
+
+      <p class="dialogue sabrina">
+        <strong>Sabrina</strong>
+        <span
+          >Also, a demo appearing everywhere in my feed tells us people are
+          sharing a demo. It doesn't tell us how reliably companies operate it,
+          what access it has, or what humans are fixing backstage.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We'll keep that distinction throughout the series. Real capability,
+          useful product behavior, and marketing excitement are three different
+          things.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Sometimes they overlap. Sometimes there's a very expensive gap.</span
+        >
+      </p>
+      <h2 id="a-small-experiment-before-a-big-architecture">
+        A Small Experiment Before a Big Architecture
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Back at Support Assistant, suppose we try a general-purpose LLM with
+          an invented customer question and a short, approved sample
+          policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Invented data first, because “let's experiment” isn't permission to
+          paste customer records into any website we fancy.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We ask it to draft an answer based on that policy. Using the trained
+          model to produce an output is called inference.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Training is how the model acquired its capabilities. Inference is us
+          using those capabilities now.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. And this little experiment tells us something narrower than “AI
+          works.” Can the model turn this supplied information into a useful
+          draft? Does it preserve the important conditions? Does it invent
+          exceptions?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >The existing search process is our comparison. We should observe
+          actual support work: what people search, how often they find the right
+          policy, where they get stuck, and what a wrong answer costs.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >We might discover that better document ownership and keyword search
+          solve most of it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Wonderful. Ship the boring improvement. We don't lose points because
+          the solution won't keynote well.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Or we might find that employees know the situation but not the
+          wording in the policy. A language-based interface could help them find
+          and combine relevant information.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Still with evidence they can inspect. If the assistant drafts an
+          answer beautifully and cites a policy that doesn't say that, we've
+          made misinformation easier to read.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >So our first scope could be a draft for a support employee to review,
+          with the source alongside it. No automatic messages to customers. No
+          refund button connected yet.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's a feature description I can work with. “Help staff find
+          relevant policy and draft an answer they can verify.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Much better than “add AI.”</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We have turned a management noun into a task. An excellent day's
+          work.</span
+        >
+      </p>
+      <h2 id="what-we-know-now">What We Know Now</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >AI is the broad field. Machine learning learns patterns from data.
+          Deep learning uses layered neural networks. Generative AI creates
+          content. An LLM is a kind of model useful for language tasks, often
+          inside a much larger product.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And none of those labels tells us whether the support team needs this
+          particular system.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Next time: how does learning actually happen when nobody typed all
+          the answers into a giant list?</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Someone has already said, “Let's train our own AI.”</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Of course they have.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Fine. Let's find out how much work they've just volunteered other
+          people to do.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <p class="notice">
+          Start with the support task: help staff find relevant evidence and
+          draft an answer they can verify.
+        </p>
+        <figure class="card">
+          <figcaption>A conceptual family, not a product stack</figcaption>
+          <pre tabindex="0">
+Artificial intelligence
+├─ Rule-based / symbolic approaches
+└─ Machine learning
+   └─ Deep learning
+      └─ Many modern language models
+
+Generative AI describes generating content.
+It overlaps these methods; it is not the whole AI field.
+LLM ≠ chat website ≠ complete application.</pre
+          >
+          <p>
+            The nested branches describe broad method families. Generative AI
+            describes a kind of task, so it is shown separately rather than as a
+            misleading universal nested box.
+          </p>
+        </figure>
+        <dl>
+          <dt><strong>AI</strong></dt>
+          <dd>
+            A broad field concerned with computer capabilities associated with
+            intelligence.
+          </dd>
+          <dt><strong>Machine learning</strong></dt>
+          <dd>
+            Methods that use data to adjust models rather than manually specify
+            every task rule.
+          </dd>
+          <dt><strong>Deep learning</strong></dt>
+          <dd>Machine learning using multilayer neural networks.</dd>
+          <dt><strong>Generative AI</strong></dt>
+          <dd>Systems that generate content such as text, images, or audio.</dd>
+          <dt><strong>LLM</strong></dt>
+          <dd>
+            Large language model; a learned model used for language-related
+            tasks.
+          </dd>
+          <dt><strong>Inference</strong></dt>
+          <dd>Using a trained model to compute an output.</dd>
+          <dt><strong>Product</strong></dt>
+          <dd>
+            The interface, model, integrations, controls, and operations
+            experienced together.
+          </dd>
+        </dl>
+        <h3>Historical context</h3>
+        <p>
+          Explicit rules and symbolic approaches preceded today’s generative
+          products and remain useful. Statistical learning, greater data
+          availability, more compute, and deep-learning advances contributed to
+          modern capabilities. This was not a single moment when computers began
+          to “think.”
+        </p>
+        <h3>Define the experiment</h3>
+        <ul>
+          <li>Baseline: observe manual search and answer preparation.</li>
+          <li>
+            Trial: invented question plus approved sample policy → reviewed
+            draft.
+          </li>
+          <li>
+            Check: preserved conditions, missing facts, unsupported claims,
+            review effort.
+          </li>
+          <li>
+            Alternative: better search, document ownership, or a deterministic
+            form.
+          </li>
+        </ul>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a href="https://developers.google.com/machine-learning/intro-to-ml"
+              >Google machine learning introduction</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../02/companion.html">Episode 2</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

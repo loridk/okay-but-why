@@ -1,0 +1,20 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<table><caption>A usable brief</caption><thead><tr><th scope="col">Weak</th><th scope="col">Useful</th></tr></thead><tbody><tr><th scope="row">Help with this refund.</th><td>Draft for an internal support employee using only the supplied policy evidence.</td></tr><tr><th scope="row">Be an expert.</th><td>List missing order facts; do not claim an action has occurred.</td></tr><tr><th scope="row">Here are lots of files.</th><td>Supply current, relevant, authorized passages with source IDs.</td></tr><tr><th scope="row">Return something helpful.</th><td>Return an answer, missing facts, and source identifiers; validate them.</td></tr></tbody></table><figure class="card"><figcaption>Context is a budget</figcaption><pre tabindex="0">Application instructions
++ current user request
++ selected conversation history
++ source passages / tool results
++ reserved generation budget
+→ fit the model/API limits; keep the content relevant</pre><p>Exact accounting varies. A large context limit does not prove reliable use of every passage. Summarization and truncation can lose important information.</p></figure><figure class="card code"><figcaption>Illustrative structured response; not a provider-specific API<span>json</span></figcaption><pre tabindex="0"><code>{
+  &quot;answer&quot;: &quot;The policy requires a missed guaranteed date. I cannot determine eligibility yet.&quot;,
+  &quot;missingFacts&quot;: [
+    &quot;promised delivery date&quot;,
+    &quot;actual delivery date&quot;,
+    &quot;service level&quot;
+  ],
+  &quot;sourceIds&quot;: [
+    &quot;shipping-policy-v3&quot;
+  ]
+}</code></pre></figure><h3>Shape, meaning, authority</h3><ol><li>Parse and validate the response shape at runtime.</li><li>Check that source IDs exist and support the claims.</li><li>Apply authorization and business rules independently.</li></ol><p>Schema-constrained output features vary by provider and model. A valid shape is not factual correctness. Low temperature is not a truth guarantee. Prompting changes input; training changes parameters.</p><h3>Untrusted content</h3><p>Documents and tool results can contain hostile instructions. Labels and delimiters help express boundaries but do not enforce permissions. Render generated text safely; review generated HTML and alt text for security, accuracy, and accessibility.</p>
+<h3>Resources</h3><ul><li><a href="https://json-schema.org/understanding-json-schema">JSON Schema: understanding schemas</a></li><li><a href="https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html">OWASP prompt injection prevention guidance</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../03/companion.html">Episode 3</a></li><li><a href="../05/companion.html">Episode 5</a></li></ul></nav>
+</section>

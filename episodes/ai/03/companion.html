@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 3: LLMs: Extremely Fancy Autocomplete? — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 3: LLMs: Extremely Fancy Autocomplete?</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/0cfb1e6f-c221-46c4-a417-696e1f6d1689"
+      ></script>
+      <div class="redcirclePlayer-0cfb1e6f-c221-46c4-a417-696e1f6d1689"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li><a href="#pieces-before-words">Pieces Before Words</a></li>
+        <li>
+          <a href="#one-more-piece-then-another"
+            >One More Piece, Then Another</a
+          >
+        </li>
+        <li>
+          <a href="#attention-without-the-brain-costume"
+            >Attention, Without the Brain Costume</a
+          >
+        </li>
+        <li>
+          <a href="#what-does-it-know-right-now"
+            >What Does It Know Right Now?</a
+          >
+        </li>
+        <li>
+          <a href="#the-confident-wrong-answer">The Confident Wrong Answer</a>
+        </li>
+        <li>
+          <a href="#a-better-job-description-for-the-model"
+            >A Better Job Description for the Model</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >I've heard two explanations of language models. One: a digital mind
+          that understands everything. Two: autocomplete wearing an expensive
+          coat.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Both have strong poster potential. Neither is enough to design
+          software around.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Welcome to Okay, But Why? We are inspecting the coat.</span>
+      </p>
+      <h2 id="pieces-before-words">Pieces Before Words</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Last episode, training adjusted a model's numerical parameters. Today
+          we use the trained model to generate text. Before the model processes
+          a message, a tokenizer converts that text into tokens.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A token is not always a word.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. It might represent a whole word, part of a word, punctuation,
+          whitespace combined with text, or another unit, depending on the
+          tokenizer. Different models can tokenize the same sentence
+          differently.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So don't count words in an English paragraph and assume that's an
+          exact token count. Especially when we add code, other languages, or
+          strange identifiers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Token IDs are turned into numerical representations the
+          model can process. And the model's output is produced as tokens that
+          can be decoded back into text.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Why bother with pieces instead of a dictionary of every possible
+          word?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Pieces let tokenizers represent unfamiliar words and many
+          combinations without needing a separate vocabulary entry for every
+          possible string. There are tradeoffs in vocabulary size and how many
+          tokens different texts require.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our order identifier isn't a meaningful English word, but the system
+          still needs to handle it.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Handling the characters doesn't mean it knows anything about
+          that order, though. We'll keep that distinction close.</span
+        >
+      </p>
+      <h2 id="one-more-piece-then-another">One More Piece, Then Another</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >In a typical autoregressive LLM, the model uses the available
+          preceding context to calculate scores for possible next tokens. Those
+          scores become a probability distribution, and a decoding procedure
+          selects a token.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Then the selected token becomes part of the context for the next
+          step.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Repeat until an ending condition, an output limit, or
+          another stop. A paragraph is built through successive
+          predictions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That sounds like autocomplete. Why is “just autocomplete”
+          misleading?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Because describing the output step doesn't describe the full
+          capability learned to make those predictions. Predicting language
+          across varied data can require representing relationships involving
+          grammar, facts, code, patterns of reasoning, and much more. The result
+          can support useful tasks far beyond finishing a familiar phrase.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Like saying a compiler “just transforms text.” Technically pointing
+          at something it does, while carefully omitting the interesting
+          machinery.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. But going the other direction and treating fluent generation as
+          a guaranteed truth engine is also wrong. The training objective and
+          generation procedure don't verify each claim against reality.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Probability of a continuation isn't probability that the statement is
+          true.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. If the sentence is “Our refund policy allows,” there may be
+          plausible continuations. That doesn't mean the model has read our
+          policy or is authorized to decide it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our fictional company might not even allow refunds for this service.
+          A beautifully written standard policy would still be the wrong
+          answer.</span
+        >
+      </p>
+      <h2 id="attention-without-the-brain-costume">
+        Attention, Without the Brain Costume
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Where do transformers enter this?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Transformers are a family of neural-network architectures used by
+          many modern language models. A central component is attention: a
+          mechanism that lets representations at one position combine
+          information from other relevant positions.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Give me a sentence to hold on to.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >“The customer returned the headphones because they were broken.”
+          Processing “they” can involve relationships with “headphones” and the
+          surrounding sentence.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if I say “because they were unhappy,” customer becomes more
+          relevant. The nearby word isn't always the right connection.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Attention computes numerical relationships; it's not a little
+          reader deliberately underlining nouns. Multiple layers and attention
+          heads can capture different patterns. Other parts of the network
+          transform those representations, and position information helps
+          distinguish ordering.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So attention isn't the whole transformer. And the model doesn't
+          produce a reliable explanation of its own decision just because we can
+          draw some attention arrows.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Correct. Also, in the usual causal text-generation setup, a position
+          attends to earlier available positions, not future text that hasn't
+          been generated. Architecture variants differ, but that's our useful
+          starting picture.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Okay, that's actually pretty cool. It isn't only looking at the last
+          word. There's machinery for combining information across the available
+          text.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Which helps explain why context matters so much.</span>
+      </p>
+      <h2 id="what-does-it-know-right-now">What Does It Know Right Now?</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's try Support Assistant. We ask, “Can I refund shipping for order
+          1234?”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >A general model may have learned patterns about shipping, refunds,
+          and customer-service language during training. But it doesn't
+          magically have our private order record or current policy.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Even if its answer sounds very specifically like an employee who's
+          been here five years.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Especially then. We need to distinguish learned information in the
+          model's weights from information supplied in the current
+          context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So I provide an approved policy excerpt: guaranteed delivery fees may
+          be refunded after a missed guarantee, subject to certain exclusions.
+          Now it has that information in context.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. It can generate a response informed by the excerpt. But it still
+          needs the order's service level, dates, and exclusions to decide
+          whether this case fits.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Useful response: “I can explain the policy, but I don't have enough
+          order information to assess this case.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Much better than confidently inventing the missing shipping
+          date.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Does providing the policy teach it permanently?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not in the weight-updating sense. We're doing inference with
+          additional context. If the next request doesn't include that policy,
+          or some application mechanism doesn't supply it again, we can't assume
+          it'll be available.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So the familiar chat-history effect can be the application resending
+          previous messages, not the model quietly developing a personal memory
+          of me.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Products may also have explicit storage or memory features.
+          That's application behavior we must inspect, not infer from the model
+          sounding friendly.</span
+        >
+      </p>
+      <h2 id="the-confident-wrong-answer">The Confident Wrong Answer</h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's say we don't give it the policy. It invents “section 7.3 of our
+          delivery guarantee.” Why doesn't the model realize it doesn't have
+          that document?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Models can sometimes recognize uncertainty and can be trained or
+          instructed to abstain. But they can also generate plausible
+          unsupported claims. We often call those hallucinations or
+          confabulations. The label describes the failure; it doesn't explain
+          away the harm.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And asking “Are you sure?” may produce a different paragraph, not
+          independent verification.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Nor does asking for a confidence percentage magically create a
+          calibrated probability. We need evidence and evaluation, which we'll
+          develop throughout the series.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Could it quote something from training exactly?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Sometimes models can reproduce memorized text. So “not a database
+          lookup” does not mean “never memorizes.” But ordinary generation isn't
+          a dependable retrieval interface to a known collection of source
+          records.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That's the distinction I needed. It can contain learned information
+          without letting us treat every generated answer as a retrieved fact
+          with provenance.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. If we need today's order status, we should get it from the order
+          system. If we need policy evidence, retrieve the actual policy.
+          Generation can help explain the evidence; it shouldn't impersonate the
+          evidence.</span
+        >
+      </p>
+      <h2 id="a-better-job-description-for-the-model">
+        A Better Job Description for the Model
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So in Support Assistant, our model is useful at taking relevant text
+          and producing a useful draft. The surrounding software must supply the
+          right information and control what happens to the result.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's a good starting division of responsibility. It may also
+          classify requests or propose tool calls later. But today, just ask it
+          to explain the supplied policy and identify what is missing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >“Extremely fancy autocomplete” reminds us how tokens are generated.
+          It doesn't tell us which tasks work reliably or how to make a product
+          safe.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We answer those by trying representative tasks and measuring
+          behavior.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next time: prompts. Apparently I can change everything by adding “You
+          are a world-class expert” and threatening to be disappointed.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Sabrina has opinions.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Good. I have a policy document and a deeply skeptical eyebrow.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <h3>Tokenization: deliberately schematic</h3>
+        <p>
+          <code>Refunds?</code> could be pictured as
+          <code>[Refund][s][?]</code> or another split. This is an illustration,
+          not the measured output of a named tokenizer. Whitespace, punctuation,
+          code, and language affect counts.
+        </p>
+        <table>
+          <caption>
+            Invented next-token distribution — not model measurements
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Candidate continuation</th>
+              <th scope="col">Illustrative probability</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">eligible</th>
+              <td>0.50</td>
+            </tr>
+            <tr>
+              <th scope="row">available</th>
+              <td>0.30</td>
+            </tr>
+            <tr>
+              <th scope="row">restricted</th>
+              <td>0.15</td>
+            </tr>
+            <tr>
+              <th scope="row">all other candidates combined</th>
+              <td>0.05</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          These sum to one. A candidate’s continuation probability does not
+          measure whether the resulting policy claim is true.
+        </p>
+        <figure class="card">
+          <figcaption>Generation, simplified</figcaption>
+          <pre tabindex="0">
+Text → token IDs → numerical representations
+                   ↓
+      transformer layers: attention + transformations
+                   ↓
+           next-token distribution
+                   ↓
+              decoding choice
+                   ↓
+       append token → repeat or stop</pre
+          >
+          <p>
+            In a typical causal language model, generation uses available
+            preceding context. Attention combines information across relevant
+            positions; it is one component of the architecture, not human
+            attention or a complete explanation of behavior.
+          </p>
+        </figure>
+        <dl>
+          <dt><strong>Context</strong></dt>
+          <dd>Information made available in the current interaction.</dd>
+          <dt><strong>Attention</strong></dt>
+          <dd>
+            Learned computations that combine information from different
+            positions.
+          </dd>
+          <dt><strong>Decoding</strong></dt>
+          <dd>The procedure for selecting output tokens from model scores.</dd>
+          <dt><strong>Hallucination / confabulation</strong></dt>
+          <dd>
+            A plausible but unsupported or false generated claim; a failure
+            description, not a guarantee about its cause.
+          </dd>
+        </dl>
+        <h3>Two sources of apparent knowledge</h3>
+        <ul>
+          <li>
+            <strong>Learned during training:</strong> encoded in parameters; not
+            a dependable database of cited records.
+          </li>
+          <li>
+            <strong>Supplied now:</strong> policy text, messages, and other
+            available context; not a weight update.
+          </li>
+        </ul>
+        <p>
+          Models can sometimes memorize text, but generation is not a reliable
+          lookup interface. Use authoritative systems for current facts.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a href="https://arxiv.org/abs/1706.03762"
+              >Attention Is All You Need — original transformer paper</a
+            >
+          </li>
+          <li>
+            <a href="https://huggingface.co/docs/transformers/tokenizer_summary"
+              >Hugging Face tokenizer overview</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../02/companion.html">Episode 2</a></li>
+            <li><a href="../04/companion.html">Episode 4</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>0 code cards · 0 terminal cards</footer>
+  </body>
+</html>

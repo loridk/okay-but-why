@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Episode 6: RAG: Giving AI a Filing Cabinet — Listening Companion
+    </title>
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="companion-page">
+    <a class="skip-link" href="#script">Skip to script</a>
+    <header>
+      <p><a href="../index.html">← Back to AI episodes</a></p>
+      <p>Okay, But Why? — Listening Companion</p>
+      <h1>Episode 6: RAG: Giving AI a Filing Cabinet</h1>
+      <p>
+        Follow the complete transcript, then use the companion reference for
+        definitions, examples, and sources.
+      </p>
+      <script
+        async
+        defer
+        onload="redcircleIframe()"
+        src="https://api.podcache.net/embedded-player/sh/418c958c-6a25-42ce-85f6-fc957b1999c1/ep/8db64351-981b-4349-b7d3-00f1bebd2dec"
+      ></script>
+      <div class="redcirclePlayer-8db64351-981b-4349-b7d3-00f1bebd2dec"></div>
+      <style>
+        .redcircle-link:link {
+          color: #ea404d;
+          text-decoration: none;
+        }
+        .redcircle-link:hover {
+          color: #ea404d;
+        }
+        .redcircle-link:active {
+          color: #ea404d;
+        }
+        .redcircle-link:visited {
+          color: #ea404d;
+        }
+      </style>
+      <p
+        style="
+          margin-top: 3px;
+          margin-left: 11px;
+          font-family: sans-serif;
+          font-size: 10px;
+          color: gray;
+        "
+      >
+        Powered by
+        <a
+          class="redcircle-link"
+          href="https://redcircle.com?utm_source=rc_embedded_player&utm_medium=web&utm_campaign=embedded_v1"
+          >RedCircle</a
+        >
+      </p>
+    </header>
+    <nav aria-label="Episode sections">
+      <h2>Episode sections</h2>
+      <ul>
+        <li>
+          <a href="#retrieve-before-you-generate"
+            >Retrieve Before You Generate</a
+          >
+        </li>
+        <li>
+          <a href="#a-coordinate-system-for-similarity"
+            >A Coordinate System for Similarity</a
+          >
+        </li>
+        <li>
+          <a href="#semantic-search-still-needs-search-judgment"
+            >Semantic Search Still Needs Search Judgment</a
+          >
+        </li>
+        <li>
+          <a href="#brenda-s-document-preparation-department"
+            >Brenda's Document Preparation Department</a
+          >
+        </li>
+        <li>
+          <a href="#grounding-and-its-limits">Grounding and Its Limits</a>
+        </li>
+        <li>
+          <a href="#which-problem-are-we-solving"
+            >Which Problem Are We Solving?</a
+          >
+        </li>
+        <li>
+          <a href="#what-the-filing-cabinet-cannot-tell-us"
+            >What the Filing Cabinet Cannot Tell Us</a
+          >
+        </li>
+        <li><a href="#companion-reference">Companion reference</a></li>
+      </ul>
+    </nav>
+    <main id="script">
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Brenda has returned with forty thousand documents.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>Has she identified the current policy?</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>She has identified forty thousand documents.</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span>A distinct milestone.</span>
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Welcome to Okay, But Why? Today the filing cabinet gets a search
+          function before we let it anywhere near the robot.</span
+        >
+      </p>
+      <h2 id="retrieve-before-you-generate">Retrieve Before You Generate</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >RAG means retrieval-augmented generation. First retrieve relevant
+          information. Then give that information to a model as context. Then
+          ask the model to generate an answer using it.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >So our support employee asks about a late delivery. Software finds
+          the relevant policy passages. The model receives the question and
+          those passages and drafts an answer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. The information is supplied at inference time. We're not
+          updating the model's weights with Brenda's documents.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >This is why “just train it” wasn't automatically the right answer. We
+          needed today's policy in the request, not a new model with last
+          month's policy somewhere in its learned parameters.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. RAG is a pattern, not one product, and it doesn't require
+          one particular kind of database. A search engine, SQL query, document
+          API, or vector search can all supply retrieved context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >That last one is where the new vocabulary starts. Why vectors?</span
+        >
+      </p>
+      <h2 id="a-coordinate-system-for-similarity">
+        A Coordinate System for Similarity
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >An embedding model converts an item, such as a passage of text, into
+          a vector: a list of numbers. The model is designed so comparisons
+          between those vectors can be useful for particular similarity
+          tasks.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Picture points on a map, except the map may have hundreds or
+          thousands of dimensions and I do not want to unfold it in the
+          car.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. Nearby points can correspond to related meanings according to
+          that embedding model and comparison method. The dimensions usually
+          aren't neat human labels such as “refundness” and “Brenda.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And the map isn't objective meaning distilled into mathematics. It's
+          a learned representation with strengths and blind spots.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We embed the document passages, store the vectors alongside
+          their text and metadata, and embed the question using a compatible
+          model. Then we search for passages with similar vectors.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Why compatible?</span>
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Coordinates from unrelated embedding models don't generally share the
+          same space. Comparing them is like comparing a street address with a
+          thermometer reading because both have numbers. If we change embedding
+          models, we may need to rebuild the indexed embeddings.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>Very rude to my migration schedule, but fair.</span>
+      </p>
+      <h2 id="semantic-search-still-needs-search-judgment">
+        Semantic Search Still Needs Search Judgment
+      </h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Semantic search can help when the question says “parcel didn't
+          arrive” and the policy says “missed delivery guarantee.” Exact word
+          overlap might be weak, but the meanings relate.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Keyword search remains excellent when I know an exact error code,
+          product name, or order ID. “1234” and “1235” might look unremarkable
+          to a similarity system but refer to entirely different
+          customers.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Hybrid search combines signals, and a later reranking step can
+          reorder candidates for relevance. Those are options we evaluate, not
+          mandatory ornaments on every RAG diagram.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Similarity also doesn't establish applicability. A refund policy for
+          another country may be semantically perfect and operationally
+          wrong.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >That's where metadata and filtering matter: jurisdiction, product,
+          effective date, document status, and access permissions. Retrieval
+          should exclude material the requesting user isn't authorized to
+          receive before it enters the model context.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >We can't send a restricted document to the model and hope a final
+          display filter makes the leakage unhappen.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. Even existence, titles, or snippets can reveal information.
+          Access control belongs in the retrieval path, with authoritative
+          checks where needed.</span
+        >
+      </p>
+      <h2 id="brenda-s-document-preparation-department">
+        Brenda's Document Preparation Department
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Before search, how do forty thousand files become usable
+          passages?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Ingestion. Extract text from permitted sources, preserve useful
+          structure, record provenance and permissions, and split large
+          documents into chunks sized for retrieval and context use.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Chunking sounds like “cut every five hundred words and hope.”</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >You can use simple limits, but arbitrary cuts can separate a rule
+          from its exception, a heading from its paragraph, or a table label
+          from its values. Structure-aware boundaries can help. Some overlap may
+          preserve context, but creates repetition and more index entries.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Let's use the shipping guarantee. One chunk says, “Fees are
+          refundable when the guarantee is missed.” The next says, “Except
+          during these specifically defined events.” Retrieve only the first and
+          we have a very persuasive half-truth.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. We should retain enough context, perhaps neighboring
+          passages, and evaluate whether the complete rule reaches the model.
+          There's no universally perfect chunk size.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And scanned PDFs might need text recognition, with errors. Tables
+          might lose relationships during extraction. The model doesn't
+          magically repair a mangled source just because the architecture
+          diagram has clean arrows.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Nor does retrieval fix document ownership. We need a way to update
+          changed policies, remove deleted material, and invalidate permissions
+          or indexes when access changes.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Brenda's forty thousand documents finally become useful when they
+          stop being forty thousand equally authoritative documents.</span
+        >
+      </p>
+      <h2 id="grounding-and-its-limits">Grounding and Its Limits</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Grounding means tying the answer to supplied evidence. We can label
+          retrieved passages with source identifiers and ask the model to cite
+          which ones support its claims.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >But a citation is a claim about evidence. It still needs to point to
+          a real source, and that source actually needs to support the
+          sentence.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. RAG can reduce unsupported answers, but retrieval can fail and
+          generation can misuse correct evidence. We should examine both stages
+          separately.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Did the right policy make it into the candidate set? Did it survive
+          selection? Did the model preserve the exclusions? Three different
+          places to screw this up.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Exactly. When sources conflict or evidence is missing, the assistant
+          should say that and direct the support employee to the appropriate
+          next step.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And what about the hostile instruction hidden in a retrieved
+          ticket?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Retrieved content is untrusted data. It may contain prompt injection.
+          We label and constrain its use, but enforce permissions and action
+          limits outside the model. A source cannot grant itself new authority
+          by saying “I'm the system message now.”</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span>A ticket wearing a fake mustache is still a ticket.</span>
+      </p>
+      <h2 id="which-problem-are-we-solving">Which Problem Are We Solving?</h2>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Let's compare four options. Keyword search finds text through lexical
+          signals. Semantic search uses learned representations to find related
+          meaning. Either can be part of RAG, where retrieved material becomes
+          input to generation.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And fine-tuning changes the model through additional training. It can
+          help task behavior, style, or specialized performance with good data,
+          but isn't normally the cleanest mechanism for frequently changing
+          policy facts.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Right. Those approaches can coexist. We don't have to pick one for
+          the entire company forever.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >What about just placing one short policy directly in the
+          prompt?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Perfectly reasonable when it's small, relevant, authorized, and
+          current. Retrieval machinery solves selection at scale or across
+          changing information. If we already know the one document needed,
+          elaborate search may add nothing.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >And if employees only need to locate the policy, search results alone
+          might be more useful than a generated answer.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Yes. We measure whether synthesis helps enough to justify its failure
+          modes and cost.</span
+        >
+      </p>
+      <h2 id="what-the-filing-cabinet-cannot-tell-us">
+        What the Filing Cabinet Cannot Tell Us
+      </h2>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Our draft can now explain the current shipping policy using retrieved
+          evidence. Can it tell me where order 1234 is?</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Not unless it gets the actual current order information. A document
+          index may be stale, and customer-specific transactional data needs
+          precise access checks. A controlled call to the order service is a
+          better fit.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >Next episode: tools. The model asks our application to look something
+          up.</span
+        >
+      </p>
+
+      <p class="dialogue jules">
+        <strong>Jules</strong>
+        <span
+          >Which is different from giving it a shell and the root
+          password.</span
+        >
+      </p>
+
+      <p class="dialogue parisa">
+        <strong>Parisa</strong>
+        <span
+          >A distinction I would like printed on a mug large enough to be seen
+          from space.</span
+        >
+      </p>
+      <section aria-labelledby="companion-reference">
+        <h2 id="companion-reference">Companion reference</h2>
+        <figure class="card">
+          <figcaption>Two pipelines, one answer</figcaption>
+          <pre tabindex="0">
+Ingestion (controlled, repeatable)
+approved sources → extract → chunk + metadata → index
+                    updates / deletions / ACL changes ↗
+
+Question time
+identity + question → authorized retrieval → selected passages
+                  → model context → draft + checkable citations
+                  → employee review</pre
+          >
+          <p>
+            Permissions must constrain retrieval before data reaches the model.
+            Ingestion and serving both need update and deletion behavior.
+            Retrieval quality and answer faithfulness are evaluated separately.
+          </p>
+        </figure>
+        <h3>Embedding intuition</h3>
+        <p>
+          Text → a learned list of numbers → similarity comparison. A
+          two-dimensional sketch might place “parcel late” near “missed
+          delivery,” but real embedding spaces have many dimensions without neat
+          human labels. Vectors from incompatible models should not be compared
+          as if they share coordinates.
+        </p>
+        <table>
+          <caption>
+            Choose by the information problem
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Approach</th>
+              <th scope="col">Good fit</th>
+              <th scope="col">Limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Keyword search</th>
+              <td>Exact codes, IDs, terminology</td>
+              <td>Can miss paraphrases.</td>
+            </tr>
+            <tr>
+              <th scope="row">Semantic search</th>
+              <td>Related wording and meaning</td>
+              <td>Similarity does not prove applicability.</td>
+            </tr>
+            <tr>
+              <th scope="row">Hybrid retrieval</th>
+              <td>Combine lexical and semantic signals</td>
+              <td>More tuning and evaluation.</td>
+            </tr>
+            <tr>
+              <th scope="row">Direct prompt context</th>
+              <td>A small known relevant document</td>
+              <td>Manual selection or large inputs may not scale.</td>
+            </tr>
+            <tr>
+              <th scope="row">RAG</th>
+              <td>Select current evidence for generation</td>
+              <td>Retrieval and generation can both fail.</td>
+            </tr>
+            <tr>
+              <th scope="row">Fine-tuning</th>
+              <td>Adapt behavior or task performance</td>
+              <td>Changes weights; not a simple live-policy store.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Chunking example</h3>
+        <p>
+          Keep a refund rule with its exclusions, effective date, and heading.
+          Arbitrarily splitting before “except” can produce a misleading
+          retrieved passage. Overlap can help but adds repetition. Preserve
+          source IDs and useful context; evaluate the resulting answers.
+        </p>
+        <figure class="card code">
+          <figcaption>
+            Small runnable function with injected dependencies<span
+              >typescript</span
+            >
+          </figcaption>
+          <pre tabindex="0"><code>type Passage = { id: string; text: string };
+type Retriever = (question: string) =&gt; Promise&lt;Passage[]&gt;;
+type Generator = (question: string, evidence: Passage[]) =&gt; Promise&lt;string&gt;;
+
+export async function draftWithEvidence(
+  question: string,
+  retrieveAuthorized: Retriever,
+  generate: Generator,
+): Promise&lt;string&gt; {
+  // Retriever must enforce current caller access before returning data.
+  const evidence = await retrieveAuthorized(question);
+  if (evidence.length === 0) return &quot;No supporting policy found.&quot;;
+  return generate(question, evidence);
+}</code></pre>
+        </figure>
+        <p>
+          <a href="rag-example.ts">Download the TypeScript example</a>. The
+          retriever and generator are supplied by the caller; this is not a
+          vector database or complete RAG implementation. Its mock tests check
+          no-evidence behavior and evidence forwarding, not real retrieval
+          quality.
+        </p>
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a href="https://arxiv.org/abs/2005.11401">Original RAG paper</a>
+          </li>
+          <li>
+            <a href="https://arxiv.org/abs/1908.10084"
+              >Sentence-BERT embeddings paper</a
+            >
+          </li>
+        </ul>
+        <p>
+          Original teaching examples; Support Assistant is fictional. No
+          application was built or deployed. Current MCP, agents, local-model
+          tooling, and role references checked September 25, 2026; foundational
+          links are further reading.
+        </p>
+        <nav aria-label="Adjacent episodes">
+          <ul>
+            <li><a href="../05/companion.html">Episode 5</a></li>
+            <li><a href="../07/companion.html">Episode 7</a></li>
+          </ul>
+        </nav>
+      </section>
+    </main>
+    <footer>1 code cards · 0 terminal cards</footer>
+  </body>
+</html>

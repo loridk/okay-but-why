@@ -1,0 +1,25 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<figure class="card"><figcaption>Two pipelines, one answer</figcaption><pre tabindex="0">Ingestion (controlled, repeatable)
+approved sources → extract → chunk + metadata → index
+                    updates / deletions / ACL changes ↗
+
+Question time
+identity + question → authorized retrieval → selected passages
+                  → model context → draft + checkable citations
+                  → employee review</pre><p>Permissions must constrain retrieval before data reaches the model. Ingestion and serving both need update and deletion behavior. Retrieval quality and answer faithfulness are evaluated separately.</p></figure><h3>Embedding intuition</h3><p>Text → a learned list of numbers → similarity comparison. A two-dimensional sketch might place “parcel late” near “missed delivery,” but real embedding spaces have many dimensions without neat human labels. Vectors from incompatible models should not be compared as if they share coordinates.</p><table><caption>Choose by the information problem</caption><thead><tr><th scope="col">Approach</th><th scope="col">Good fit</th><th scope="col">Limit</th></tr></thead><tbody><tr><th scope="row">Keyword search</th><td>Exact codes, IDs, terminology</td><td>Can miss paraphrases.</td></tr><tr><th scope="row">Semantic search</th><td>Related wording and meaning</td><td>Similarity does not prove applicability.</td></tr><tr><th scope="row">Hybrid retrieval</th><td>Combine lexical and semantic signals</td><td>More tuning and evaluation.</td></tr><tr><th scope="row">Direct prompt context</th><td>A small known relevant document</td><td>Manual selection or large inputs may not scale.</td></tr><tr><th scope="row">RAG</th><td>Select current evidence for generation</td><td>Retrieval and generation can both fail.</td></tr><tr><th scope="row">Fine-tuning</th><td>Adapt behavior or task performance</td><td>Changes weights; not a simple live-policy store.</td></tr></tbody></table><h3>Chunking example</h3><p>Keep a refund rule with its exclusions, effective date, and heading. Arbitrarily splitting before “except” can produce a misleading retrieved passage. Overlap can help but adds repetition. Preserve source IDs and useful context; evaluate the resulting answers.</p><figure class="card code"><figcaption>Small runnable function with injected dependencies<span>typescript</span></figcaption><pre tabindex="0"><code>type Passage = { id: string; text: string };
+type Retriever = (question: string) =&gt; Promise&lt;Passage[]&gt;;
+type Generator = (question: string, evidence: Passage[]) =&gt; Promise&lt;string&gt;;
+
+export async function draftWithEvidence(
+  question: string,
+  retrieveAuthorized: Retriever,
+  generate: Generator,
+): Promise&lt;string&gt; {
+  // Retriever must enforce current caller access before returning data.
+  const evidence = await retrieveAuthorized(question);
+  if (evidence.length === 0) return &quot;No supporting policy found.&quot;;
+  return generate(question, evidence);
+}</code></pre></figure><p><a href="rag-example.ts">Download the TypeScript example</a>. The retriever and generator are supplied by the caller; this is not a vector database or complete RAG implementation. Its mock tests check no-evidence behavior and evidence forwarding, not real retrieval quality.</p>
+<h3>Resources</h3><ul><li><a href="https://arxiv.org/abs/2005.11401">Original RAG paper</a></li><li><a href="https://arxiv.org/abs/1908.10084">Sentence-BERT embeddings paper</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../05/companion.html">Episode 5</a></li><li><a href="../07/companion.html">Episode 7</a></li></ul></nav>
+</section>

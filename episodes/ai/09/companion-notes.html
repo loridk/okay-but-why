@@ -1,0 +1,20 @@
+<section aria-labelledby="companion-reference">
+<h2 id="companion-reference">Companion reference</h2>
+<table><caption>Working distinctions; industry terminology varies</caption><thead><tr><th scope="col">Pattern</th><th scope="col">Who chooses the path?</th><th scope="col">Support example</th></tr></thead><tbody><tr><th scope="row">Chatbot</th><td>Often one response per message</td><td>Explain supplied policy.</td></tr><tr><th scope="row">Tool assistant</th><td>Model can request bounded capabilities</td><td>Look up an order, then explain.</td></tr><tr><th scope="row">Deterministic workflow</th><td>Code defines the sequence and branches</td><td>Lookup → eligibility → approval.</td></tr><tr><th scope="row">Agentic system</th><td>Model chooses some next steps within controls</td><td>Investigate a varied case using read tools.</td></tr></tbody></table><figure class="card"><figcaption>Bounded investigation loop</figcaption><pre tabindex="0">Goal + authorized scope + current state
+ → propose next step
+ → finish? ask human? limit reached? → STOP
+ → validate + authorize allowed read tool
+ → execute with timeout
+ → record observed result → next step
+
+Writes leave this loop for a separate approval path.</pre><p>Every iteration checks application-enforced limits. The model cannot expand its permissions or declare an action completed without a service result.</p></figure><figure class="card code"><figcaption>Illustrative control flow — pseudocode, not an executable SDK<span>pseudocode</span></figcaption><pre tabindex="0"><code>for at most MAX_STEPS, within TIME and COST budgets:
+    decision = model(goal, authorized_state, allowed_read_tools)
+    if decision needs a person: stop and ask
+    if decision is a supported final answer: return draft
+    call = validate_and_authorize(decision)
+    result = execute_with_deadline(call)
+    append observed result to state
+    if repeated failure or no progress: stop with partial findings
+return limit_reached_and_handoff</code></pre></figure><h3>State is not all chat history</h3><p>Persist authoritative approval and execution records outside the model. Conversation summaries can lose details. Stored memory needs retention and access checks; old access never becomes permanent permission.</p><h3>Multiple agents</h3><p>Separate independent tasks only when useful. A coordinator must reconcile findings, permissions, budgets, and failures. Two models agreeing is not independent evidence if both rely on the same flawed sources. More agents add coordination and cost.</p>
+<h3>Resources</h3><ul><li><a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic: workflows and agents as an architectural distinction</a></li><li><a href="https://www.anthropic.com/engineering/multi-agent-research-system">Anthropic: a concrete multi-agent research system</a></li></ul><p>Original teaching examples; Support Assistant is fictional. No application was built or deployed. Current MCP, agents, local-model tooling, and role references checked September 25, 2026; foundational links are further reading.</p><nav aria-label="Adjacent episodes"><ul><li><a href="../08/companion.html">Episode 8</a></li><li><a href="../10/companion.html">Episode 10</a></li></ul></nav>
+</section>

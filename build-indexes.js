@@ -2,7 +2,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 const EPISODES_DIRECTORY = path.join(__dirname, "episodes");
-const SERIES_ORDER = ["modern-javascript", "typescript", "node-npm", "modern-css", "react-frameworks", "web-architecture", "javascript-testing", "cybersecurity", "nextjs", "apis", "modern-cms"];
+const SERIES_ORDER = ["modern-javascript", "typescript", "node-npm", "modern-css", "react-frameworks", "web-architecture", "javascript-testing", "cybersecurity", "nextjs", "apis", "modern-cms", "accessibility", "containers-infrastructure", "ai"];
 
 function escapeHtml(value) {
   return value
@@ -23,6 +23,7 @@ function titleCase(slug) {
     apis: "APIs — How Software Talks to Other Software",
     nextjs: "Next.js",
     typescript: "TypeScript",
+    ai: "AI",
   };
 
   if (names[slug]) {

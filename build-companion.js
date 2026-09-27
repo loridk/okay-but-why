@@ -50,6 +50,7 @@ function formatSeriesName(slug) {
     apis: "APIs — How Software Talks to Other Software",
     nextjs: "Next.js",
     typescript: "TypeScript",
+    ai: "AI",
   };
 
   if (names[slug]) {
@@ -177,7 +178,7 @@ function createPage(episode, slug, seriesSlug, existingAudio) {
     .map(({ id, text }) => `<li><a href="#${id}">${inlineMarkdown(text)}</a></li>`)
     .join("\n");
   // A comment-only placeholder is invisible; show the local player until published.
-  if (["modern-javascript", "web-architecture", "cybersecurity", "javascript-testing", "nextjs", "apis", "modern-cms", "accessibility", "containers-infrastructure"].includes(seriesSlug) && !/<(?:audio|iframe|script)\b/i.test(existingAudio ?? "")) {
+  if (["modern-javascript", "web-architecture", "cybersecurity", "javascript-testing", "nextjs", "apis", "modern-cms", "accessibility", "containers-infrastructure", "ai"].includes(seriesSlug) && !/<(?:audio|iframe|script)\b/i.test(existingAudio ?? "")) {
     existingAudio = `<audio controls preload="metadata" aria-label="Episode audio"><source src="${escapeHtml(slug)}.wav" type="audio/wav">Your browser does not support the audio player.</audio>
     <!-- Replace the local player with this episode's RedCircle embed when published. -->`;
   }
